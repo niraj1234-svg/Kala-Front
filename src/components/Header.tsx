@@ -55,23 +55,53 @@ const Header: React.FC = () => {
   const menuItems = [
     {
       title: 'NEW ARRIVALS',
-      items: ['All New', 'Clothing', 'Accessories', 'Featured'],
+      items: [
+        { name: 'All New', link: '/products' },
+        { name: 'Clothing', link: '/products?category=Clothing' },
+        { name: 'Accessories', link: '/products?category=Accessories' },
+        { name: 'Featured', link: '/products?featured=true' }
+      ],
     },
     {
       title: 'CLOTHING',
-      items: ['T-Shirts', 'Shirts', 'Hoodies', 'Jackets', 'Pants', 'Shorts', 'Jeans', 'Activewear'],
+      items: [
+        { name: 'T-Shirts', link: '/products?category=T-Shirts' },
+        { name: 'Shirts', link: '/products?category=Shirts' },
+        { name: 'Hoodies', link: '/products?category=Hoodies' },
+        { name: 'Jackets', link: '/products?category=Jackets' },
+        { name: 'Pants', link: '/products?category=Pants' },
+        { name: 'Shorts', link: '/products?category=Shorts' },
+        { name: 'Jeans', link: '/products?category=Jeans' },
+        { name: 'Activewear', link: '/products?category=Activewear' }
+      ],
     },
     {
       title: 'ACCESSORIES',
-      items: ['Hats', 'Bags', 'Belts', 'Sunglasses', 'Watches', 'Wallets'],
+      items: [
+        { name: 'Hats', link: '/products?category=Hats' },
+        { name: 'Bags', link: '/products?category=Bags' },
+        { name: 'Belts', link: '/products?category=Belts' },
+        { name: 'Sunglasses', link: '/products?category=Sunglasses' },
+        { name: 'Watches', link: '/products?category=Watches' },
+        { name: 'Wallets', link: '/products?category=Wallets' }
+      ],
     },
     {
       title: 'COLLECTIONS',
-      items: ['Summer Collection', 'Winter Collection', 'Limited Edition', 'Essentials'],
+      items: [
+        { name: 'Summer Collection', link: '/products?collection=summer' },
+        { name: 'Winter Collection', link: '/products?collection=winter' },
+        { name: 'Limited Edition', link: '/products?collection=limited' },
+        { name: 'Essentials', link: '/products?collection=essentials' }
+      ],
     },
     {
       title: 'SALE',
-      items: ['Up to 50% Off', 'Clearance', 'Last Chance'],
+      items: [
+        { name: 'Up to 50% Off', link: '/products?sale=50' },
+        { name: 'Clearance', link: '/products?sale=clearance' },
+        { name: 'Last Chance', link: '/products?sale=last-chance' }
+      ],
     },
   ];
 
@@ -82,7 +112,7 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-center gap-4">
           <button className="hover:opacity-70">←</button>
           <span className="font-medium tracking-wide">
-            FREE SHIPPING AVAILABLE WORLDWIDE - <span className="underline">READ MORE</span>
+            FREE SHIPPING AVAILABLE WORLDWIDE - <span className="underline cursor-pointer">READ MORE</span>
           </span>
           <button className="hover:opacity-70">→</button>
         </div>
@@ -107,7 +137,7 @@ const Header: React.FC = () => {
 
             {/* Center - Logo */}
             <div className="absolute left-1/2 transform -translate-x-1/2">
-              <a href="#" className="text-2xl sm:text-3xl font-bold tracking-[0.3em] text-white">
+              <a href="/" className="text-2xl sm:text-3xl font-bold tracking-[0.3em] text-white hover:opacity-80 transition-opacity">
                 Appral
               </a>
             </div>
@@ -161,9 +191,9 @@ const Header: React.FC = () => {
               <button className="p-2 hover:opacity-70 transition-opacity text-white">
                 <Search className="w-5 h-5" />
               </button>
-              <button className="p-2 hover:opacity-70 transition-opacity text-white">
+              <a href="/cart" className="p-2 hover:opacity-70 transition-opacity text-white">
                 <ShoppingBag className="w-5 h-5" />
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -190,8 +220,8 @@ const Header: React.FC = () => {
 
             {/* Center - Logo */}
             <div className="absolute left-1/2 transform -translate-x-1/2">
-              <a href="#" className="text-2xl sm:text-3xl font-bold tracking-[0.3em] text-gray-900">
-              Appral
+              <a href="/" className="text-2xl sm:text-3xl font-bold tracking-[0.3em] text-gray-900 hover:opacity-70 transition-opacity">
+                Appral
               </a>
             </div>
 
@@ -244,9 +274,9 @@ const Header: React.FC = () => {
               <button className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-900">
                 <Search className="w-5 h-5" />
               </button>
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-900">
+              <a href="/cart" className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-900">
                 <ShoppingBag className="w-5 h-5" />
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -266,12 +296,12 @@ const Header: React.FC = () => {
 
         {/* Sidebar */}
         <div
-          className={`absolute left-0 top-0 bottom-0 w-full sm:w-96 bg-white shadow-2xl transition-transform duration-300 overflow-y-auto ${
+          className={`absolute left-0 top-0 bottom-0 w-full sm:w-96 bg-white shadow-2xl transition-transform duration-300 overflow-y-auto text-gray-800${
             isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
           {/* Sidebar Header */}
-          <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+          <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between z-10">
             <h2 className="text-xl font-bold tracking-wider">MENU</h2>
             <button
               onClick={() => setIsSidebarOpen(false)}
@@ -292,10 +322,11 @@ const Header: React.FC = () => {
                   {section.items.map((item, itemIndex) => (
                     <li key={itemIndex}>
                       <a
-                        href="#"
+                        href={item.link}
+                        onClick={() => setIsSidebarOpen(false)}
                         className="block text-gray-700 hover:text-black transition-colors text-sm py-1"
                       >
-                        {item}
+                        {item.name}
                       </a>
                     </li>
                   ))}
@@ -305,13 +336,25 @@ const Header: React.FC = () => {
 
             {/* Additional Links */}
             <div className="pt-8 border-t border-gray-200 space-y-3">
-              <a href="#" className="block text-sm font-medium text-gray-900 hover:text-gray-600">
+              <a 
+                href="/about" 
+                onClick={() => setIsSidebarOpen(false)}
+                className="block text-sm font-medium text-gray-900 hover:text-gray-600"
+              >
                 About Us
               </a>
-              <a href="#" className="block text-sm font-medium text-gray-900 hover:text-gray-600">
+              <a 
+                href="/contact" 
+                onClick={() => setIsSidebarOpen(false)}
+                className="block text-sm font-medium text-gray-900 hover:text-gray-600"
+              >
                 Contact
               </a>
-              <a href="#" className="block text-sm font-medium text-gray-900 hover:text-gray-600">
+              <a 
+                href="/stores" 
+                onClick={() => setIsSidebarOpen(false)}
+                className="block text-sm font-medium text-gray-900 hover:text-gray-600"
+              >
                 Store Locator
               </a>
             </div>
