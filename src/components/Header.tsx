@@ -131,13 +131,13 @@ const Header: React.FC = () => {
               onClick={() => setIsSidebarOpen(true)}
               className="flex items-center gap-2 p-2 hover:opacity-70 transition-opacity text-white"
             >
-              <Menu className="w-5 h-5" />
-              <span className="hidden sm:inline text-sm font-medium tracking-wider">MENU</span>
+              <Menu className="w-5 h-5 text-gray-500" />
+              <span className="hidden sm:inline text-sm font-medium tracking-wider text-gray-500">MENU</span>
             </button>
 
             {/* Center - Logo */}
             <div className="absolute left-1/2 transform -translate-x-1/2">
-              <a href="/" className="text-2xl sm:text-3xl font-bold tracking-[0.3em] text-white hover:opacity-80 transition-opacity">
+              <a href="/" className="text-2xl sm:text-3xl font-bold tracking-[0.3em] text-gray-500 hover:opacity-80 transition-opacity">
                 Appral
               </a>
             </div>
@@ -148,7 +148,7 @@ const Header: React.FC = () => {
               <div className="relative currency-dropdown">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="hidden lg:flex items-center gap-1 text-white text-sm hover:opacity-70 transition-opacity"
+                  className="hidden lg:flex items-center gap-1 text-gray-500 text-sm hover:opacity-70 transition-opacity"
                 >
                   <img 
                     src={`https://flagcdn.com/w20/${selectedCurrency.flag}.png`} 
@@ -161,7 +161,7 @@ const Header: React.FC = () => {
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && !isScrolled && (
-                  <div className="absolute top-full right-0 mt-3 w-48 bg-white rounded-lg shadow-xl overflow-hidden z-[100] border border-gray-200">
+                  <div className="absolute top-full right-0 mt-3 w-48 bg-white rounded-lg shadow-xl overflow-hidden z-[100] border border-gray-200 ">
                     {currencies.map((currency) => (
                       <button
                         key={currency.code}
@@ -185,14 +185,14 @@ const Header: React.FC = () => {
                   </div>
                 )}
               </div>
-              <button className="p-2 hover:opacity-70 transition-opacity text-white">
-                <User className="w-5 h-5" />
+              <button className="p-2 hover:opacity-70 transition-opacity text-gray-500">
+                <User className="w-5 h-5 text-gray-500" />
               </button>
-              <button className="p-2 hover:opacity-70 transition-opacity text-white">
-                <Search className="w-5 h-5" />
+              <button className="p-2 hover:opacity-70 transition-opacity text-gray-500">
+                <Search className="w-5 h-5 text-gray-500" />
               </button>
-              <a href="/cart" className="p-2 hover:opacity-70 transition-opacity text-white">
-                <ShoppingBag className="w-5 h-5" />
+              <a href="/cart" className="p-2 hover:opacity-70 transition-opacity text-gray-500">
+                <ShoppingBag className="w-5 h-5 text-gray-500" />
               </a>
             </div>
           </div>
@@ -215,7 +215,7 @@ const Header: React.FC = () => {
               className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-md transition-colors text-gray-900"
             >
               <Menu className="w-5 h-5" />
-              <span className="hidden sm:inline text-sm font-medium tracking-wider">MENU</span>
+              <span className="hidden sm:inline text-sm font-medium tracking-wider ">MENU</span>
             </button>
 
             {/* Center - Logo */}
