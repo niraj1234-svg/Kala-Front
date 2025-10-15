@@ -1,19 +1,18 @@
 import { useState } from 'react';
-import { Heart, Share2, ChevronLeft, ChevronRight, Star, ChevronDown, ChevronUp } from 'lucide-react';
+import { Heart, Share2, ChevronLeft, ChevronRight, Star, Truck, RefreshCw, Shield, ChevronDown, ChevronUp } from 'lucide-react';
 
 const ProductDetailPage = () => {
   // Product data
   const product = {
     id: 1,
-    name: 'Raiments Cream Gilet',
-    price: 98,
-    originalPrice: null,
+    name: 'Premium Cotton Hoodie',
+    price: 65,
+    originalPrice: 85,
     rating: 4.5,
     reviewCount: 128,
-    badge: 'WILL REMAIN AS IS',
+    badge: 'BESTSELLER',
     sku: 'HD-001-BLK',
-    description: 'The Heritage Gilet. Ready for all occasions.',
-    longDescription: 'Introducing the Raiments Cream Gilet. Crafted from heavyweight premium fleece for exceptional warmth, this gilet features an authentic premium leather trim, equipped with durable YKK zips and hidden side pockets for secure storage. The adjustable waistline ensures a tailored fit. Finished with embroidered mallard logo.',
+    description: 'Elevate your casual wardrobe with our Premium Cotton Hoodie. Crafted from 100% organic cotton, this hoodie offers unparalleled comfort and style. Features a relaxed fit, adjustable drawstring hood, and kangaroo pocket.',
     images: [
       'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=800',
       'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=800',
@@ -21,29 +20,28 @@ const ProductDetailPage = () => {
       'https://images.unsplash.com/photo-1622445275576-721325763afe?q=80&w=800',
       'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=80&w=800'
     ],
-    sizes: ['S', 'M', 'L', 'XL'],
+    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     colors: [
-      { name: 'Burgundy', hex: '#800020', available: true },
-      { name: 'White', hex: '#FFFFFF', available: true },
       { name: 'Black', hex: '#000000', available: true },
+      { name: 'White', hex: '#FFFFFF', available: true },
+      { name: 'Gray', hex: '#808080', available: true },
       { name: 'Navy', hex: '#000080', available: false }
     ],
-    inStock: false,
+    inStock: true,
     stockCount: 12,
     details: {
-      materials: 'Heavyweight Premium Fleece',
-      trim: 'Authentic Leather Trim',
-      features: 'Adjustable Drawstring Hood',
-      pockets: 'Hidden Side Pockets',
-      logo: 'Embroidered Mallard Logo'
+      materials: '100% Organic Cotton',
+      fit: 'Relaxed Fit',
+      weight: '400 GSM',
+      care: 'Machine wash cold, tumble dry low',
+      madeIn: 'Portugal'
     },
     features: [
-      'Heavyweight Premium Fleece',
-      'Authentic Leather Trim',
-      'Durable YKK Zips',
-      'Hidden Side Pockets',
-      'Adjustable Waistline',
-      'Embroidered Mallard Logo'
+      'Premium organic cotton fabric',
+      'Adjustable drawstring hood',
+      'Kangaroo front pocket',
+      'Ribbed cuffs and hem',
+      'Reinforced seams for durability'
     ],
     modelInfo: 'Model is 6\'2" (188cm) and wearing size M'
   };
@@ -67,8 +65,18 @@ const ProductDetailPage = () => {
       verified: true,
       comment: 'Great hoodie, very comfortable. Runs slightly large, so consider sizing down.',
       images: []
+    },
+    {
+      id: 3,
+      name: 'Emma L.',
+      rating: 5,
+      date: '1 month ago',
+      verified: true,
+      comment: 'Love the quality and the fit. Perfect for everyday wear!',
+      images: ['https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=200']
     }
   ];
+
   // Recommended products
   const recommendations = [
     {
@@ -101,16 +109,16 @@ const ProductDetailPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
-  const [quantity, _setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [activeTab, setActiveTab] = useState('small');
-  type SectionKey = 'fit' | 'shipping';
-  const [expandedSections, setExpandedSections] = useState<Record<SectionKey, boolean>>({
-    fit: true,
-    shipping: false
+  type SectionKey = 'details' | 'shipping' | 'returns';
+ const [expandedSections, setExpandedSections] = useState<Record<SectionKey, boolean>>({
+    details: true,
+    shipping: false,
+    returns: false
   });
 
-  const toggleSection = (section: SectionKey) => {
+ const toggleSection = (section: SectionKey) => {
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
@@ -122,11 +130,7 @@ const ProductDetailPage = () => {
       alert('Please select a size');
       return;
     }
-    if (!product.inStock) {
-      alert('This product is currently out of stock');
-      return;
-    }
-    alert(`Added to cart: ${product.name} - Size ${selectedSize} - Color ${selectedColor.name} - Quantity: ${quantity}`);
+    alert(`Added to cart: ${product.name} - Size ${selectedSize} - Color ${selectedColor.name}`);
   };
 
   const nextImage = () => {
@@ -146,6 +150,8 @@ const ProductDetailPage = () => {
           <a href="/" className="hover:text-black">Home</a>
           <span className="mx-2">/</span>
           <a href="/products" className="hover:text-black">Products</a>
+          <span className="mx-2">/</span>
+          <a href="/products?category=Hoodies" className="hover:text-black">Hoodies</a>
           <span className="mx-2">/</span>
           <span className="text-black">{product.name}</span>
         </div>
@@ -167,7 +173,7 @@ const ProductDetailPage = () => {
               
               {/* Badge */}
               {product.badge && (
-                <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-2 rotate-2">
+                <div className="absolute top-4 left-4 bg-black text-white text-xs font-bold px-3 py-1 uppercase tracking-wider">
                   {product.badge}
                 </div>
               )}
@@ -209,60 +215,70 @@ const ProductDetailPage = () => {
           </div>
 
           {/* Right - Product Info */}
-          <div className="space-y-5">
+          <div className="space-y-6">
             
-            {/* Title */}
+            {/* Title & Rating */}
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
-              <p className="text-base text-gray-600 mb-3">{product.description}</p>
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">{product.name}</h1>
+              <div className="flex items-center gap-4 mb-2">
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-5 h-5 ${
+                        i < Math.floor(product.rating)
+                          ? 'fill-black text-black'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                  <span className="text-sm font-medium ml-2">{product.rating}</span>
+                </div>
+                <a href="#reviews" className="text-sm text-gray-600 hover:text-black underline">
+                  ({product.reviewCount} reviews)
+                </a>
+              </div>
+              <p className="text-sm text-gray-500">SKU: {product.sku}</p>
             </div>
 
             {/* Price */}
-            <div className="flex items-baseline gap-3 pb-5 border-b border-gray-200">
-              <span className="text-2xl font-bold text-gray-900">£{product.price}.00</span>
+            <div className="flex items-center gap-3">
+              <span className="text-3xl font-bold">£{product.price}</span>
               {product.originalPrice && (
                 <>
-                  <span className="text-lg text-gray-400 line-through">£{product.originalPrice}</span>
-                  <span className="bg-red-100 text-red-700 text-xs font-semibold px-2 py-1 rounded">
+                  <span className="text-xl text-gray-400 line-through">£{product.originalPrice}</span>
+                  <span className="bg-red-100 text-red-700 text-sm font-semibold px-2 py-1">
                     SAVE {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
                   </span>
                 </>
               )}
             </div>
 
-            {/* Stock Status */}
-            <div className="pb-5 border-b border-gray-200">
-              {!product.inStock ? (
-                <div className="flex items-center gap-2 text-gray-500">
-                  <div className="w-2 h-2 rounded-full bg-gray-400"></div>
-                  <span className="text-sm font-medium">Item is out of stock</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-green-600">
-                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                  <span className="text-sm font-medium">In Stock</span>
-                </div>
-              )}
-            </div>
+            {/* Short Description */}
+            <p className="text-gray-700 leading-relaxed">{product.description}</p>
 
             {/* Color Selector */}
-            <div className="pb-5 border-b border-gray-200">
-              <h3 className="text-sm font-semibold mb-3">Color</h3>
-              <div className="flex gap-2">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold uppercase tracking-wider">
+                  Color: <span className="font-normal">{selectedColor.name}</span>
+                </h3>
+              </div>
+              <div className="flex gap-3">
                 {product.colors.map((color) => (
                   <button
                     key={color.name}
                     onClick={() => color.available && setSelectedColor(color)}
                     disabled={!color.available}
-                    className={`relative w-10 h-10 rounded border transition-all ${
-                      selectedColor.name === color.name ? 'ring-2 ring-black ring-offset-2' : 'border-gray-300'
+                    className={`relative w-12 h-12 rounded-full border-2 transition-all ${
+                      selectedColor.name === color.name ? 'border-black scale-110' : 'border-gray-300'
                     } ${!color.available ? 'opacity-30 cursor-not-allowed' : 'hover:border-gray-500'}`}
                     style={{ backgroundColor: color.hex }}
                     title={color.name}
                   >
                     {!color.available && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-full h-0.5 bg-red-500 rotate-45"></div>
+                        <div className="w-full h-0.5 bg-gray-400 rotate-45"></div>
                       </div>
                     )}
                   </button>
@@ -271,18 +287,17 @@ const ProductDetailPage = () => {
             </div>
 
             {/* Size Selector */}
-            <div className="pb-5 border-b border-gray-200">
+            <div>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold">
-                  Size <a href="#" className="text-blue-600 hover:underline text-xs font-normal ml-2">Size chart</a>
-                </h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wider">Select Size</h3>
+                <button className="text-sm text-gray-600 hover:text-black underline">Size Guide</button>
               </div>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-6 gap-2">
                 {product.sizes.map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`py-2.5 text-sm font-medium transition-all border rounded ${
+                    className={`py-3 text-sm font-medium transition-all border ${
                       selectedSize === size
                         ? 'bg-black text-white border-black'
                         : 'bg-white text-gray-900 border-gray-300 hover:border-black'
@@ -292,73 +307,93 @@ const ProductDetailPage = () => {
                   </button>
                 ))}
               </div>
+              <p className="text-xs text-gray-500 mt-2">{product.modelInfo}</p>
             </div>
 
-            {/* Add to Cart Button */}
-            <div className="space-y-3">
-              <button
-                onClick={handleAddToCart}
-                disabled={!product.inStock}
-                className={`w-full py-4 px-8 font-semibold text-base rounded transition-colors ${
-                  product.inStock
-                    ? 'bg-gray-800 text-white hover:bg-black'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-              >
-                {product.inStock ? 'ADD TO CART' : 'SOLD OUT'}
-              </button>
+            {/* Stock Status */}
+            {product.inStock && product.stockCount < 20 && (
+              <div className="bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+                ⚡ Only {product.stockCount} left in stock - Order soon!
+              </div>
+            )}
 
-              <div className="flex items-center gap-2">
+            {/* Quantity & Add to Cart */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center border border-gray-300">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="px-4 py-3 hover:bg-gray-100 transition-colors"
+                  >
+                    -
+                  </button>
+                  <span className="px-6 py-3 border-x border-gray-300 font-medium">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="px-4 py-3 hover:bg-gray-100 transition-colors"
+                  >
+                    +
+                  </button>
+                </div>
+
+                <button
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-black text-white py-3 px-8 font-semibold uppercase tracking-wider hover:bg-gray-900 transition-colors"
+                >
+                  Add to Cart
+                </button>
+
                 <button
                   onClick={() => setIsWishlisted(!isWishlisted)}
-                  className="flex-1 border border-gray-300 py-3 rounded hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                  className="border border-gray-300 p-3 hover:bg-gray-100 transition-colors"
                 >
-                  <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
-                  <span className="text-sm font-medium">Wishlist</span>
+                  <Heart className={`w-6 h-6 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
                 </button>
-                
-                <button className="border border-gray-300 p-3 rounded hover:bg-gray-50 transition-colors">
-                  <Share2 className="w-5 h-5" />
-                </button>
+              </div>
+
+              <button className="w-full border border-black text-black py-3 font-semibold uppercase tracking-wider hover:bg-black hover:text-white transition-colors">
+                Buy Now
+              </button>
+            </div>
+
+            {/* Trust Badges */}
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t">
+              <div className="flex flex-col items-center text-center gap-2">
+                <Truck className="w-6 h-6" />
+                <div>
+                  <p className="text-xs font-semibold">Free Shipping</p>
+                  <p className="text-xs text-gray-500">Orders over £50</p>
+                </div>
+              </div>
+              <div className="flex flex-col items-center text-center gap-2">
+                <RefreshCw className="w-6 h-6" />
+                <div>
+                  <p className="text-xs font-semibold">Free Returns</p>
+                  <p className="text-xs text-gray-500">Within 30 days</p>
+                </div>
+              </div>
+              <div className="flex flex-col items-center text-center gap-2">
+                <Shield className="w-6 h-6" />
+                <div>
+                  <p className="text-xs font-semibold">Secure Payment</p>
+                  <p className="text-xs text-gray-500">SSL Encrypted</p>
+                </div>
               </div>
             </div>
 
-            {/* Product Information Tabs */}
-            <div className="space-y-0 pt-2">
-              {/* Fit Tab */}
+            {/* Expandable Sections */}
+            <div className="space-y-2 pt-4">
+              {/* Details */}
               <div className="border-t border-gray-200">
                 <button
-                  onClick={() => toggleSection('fit')}
+                  onClick={() => toggleSection('details')}
                   className="w-full flex items-center justify-between py-4 text-left"
                 >
-                  <span className="font-semibold text-sm">Fit</span>
-                  {expandedSections.fit ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  <span className="font-semibold uppercase tracking-wider text-sm">Product Details</span>
+                  {expandedSections.details ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                 </button>
-                {expandedSections.fit && (
+                {expandedSections.details && (
                   <div className="pb-4 space-y-3">
-                    <div className="flex gap-8 text-sm">
-                      <button 
-                        onClick={() => setActiveTab('small')}
-                        className={`pb-2 ${activeTab === 'small' ? 'border-b-2 border-black font-semibold' : 'text-gray-500 hover:text-black'}`}
-                      >
-                        Small
-                      </button>
-                      <button 
-                        onClick={() => setActiveTab('true')}
-                        className={`pb-2 ${activeTab === 'true' ? 'border-b-2 border-black font-semibold' : 'text-gray-500 hover:text-black'}`}
-                      >
-                        True to size
-                      </button>
-                      <button 
-                        onClick={() => setActiveTab('large')}
-                        className={`pb-2 ${activeTab === 'large' ? 'border-b-2 border-black font-semibold' : 'text-gray-500 hover:text-black'}`}
-                      >
-                        Large
-                      </button>
-                    </div>
-                    <p className="text-sm text-gray-700 leading-relaxed">
-                      {product.longDescription}
-                    </p>
                     <ul className="space-y-2 text-sm text-gray-700">
                       {product.features.map((feature, idx) => (
                         <li key={idx} className="flex items-start gap-2">
@@ -367,17 +402,39 @@ const ProductDetailPage = () => {
                         </li>
                       ))}
                     </ul>
+                    <div className="grid grid-cols-2 gap-3 pt-3 text-sm">
+                      <div>
+                        <p className="text-gray-500">Material</p>
+                        <p className="font-medium">{product.details.materials}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Fit</p>
+                        <p className="font-medium">{product.details.fit}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Weight</p>
+                        <p className="font-medium">{product.details.weight}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Made In</p>
+                        <p className="font-medium">{product.details.madeIn}</p>
+                      </div>
+                    </div>
+                    <div className="pt-2">
+                      <p className="text-gray-500 text-sm">Care Instructions</p>
+                      <p className="text-sm">{product.details.care}</p>
+                    </div>
                   </div>
                 )}
               </div>
 
-              {/* Shipping & Returns Tab */}
-              <div className="border-t border-b border-gray-200">
+              {/* Shipping */}
+              <div className="border-t border-gray-200">
                 <button
                   onClick={() => toggleSection('shipping')}
                   className="w-full flex items-center justify-between py-4 text-left"
                 >
-                  <span className="font-semibold text-sm">Shipping & Returns</span>
+                  <span className="font-semibold uppercase tracking-wider text-sm">Shipping & Delivery</span>
                   {expandedSections.shipping ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                 </button>
                 {expandedSections.shipping && (
@@ -385,16 +442,40 @@ const ProductDetailPage = () => {
                     <p>• Free standard shipping on orders over £50</p>
                     <p>• Express shipping available for £9.99</p>
                     <p>• Standard delivery: 3-5 business days</p>
+                    <p>• Express delivery: 1-2 business days</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Returns */}
+              <div className="border-t border-b border-gray-200">
+                <button
+                  onClick={() => toggleSection('returns')}
+                  className="w-full flex items-center justify-between py-4 text-left"
+                >
+                  <span className="font-semibold uppercase tracking-wider text-sm">Returns & Exchanges</span>
+                  {expandedSections.returns ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                </button>
+                {expandedSections.returns && (
+                  <div className="pb-4 text-sm text-gray-700 space-y-2">
                     <p>• Free returns within 30 days of purchase</p>
                     <p>• Items must be unworn with tags attached</p>
                     <p>• Refunds processed within 5-7 business days</p>
+                    <p>• Free exchanges for different sizes</p>
                   </div>
                 )}
               </div>
             </div>
+
+            {/* Share */}
+            <button className="flex items-center gap-2 text-sm text-gray-600 hover:text-black">
+              <Share2 className="w-4 h-4" />
+              Share this product
+            </button>
           </div>
         </div>
-  {/* Complete The Look */}
+
+        {/* Complete The Look */}
         <div className="mt-16 pt-16 border-t">
           <h2 className="text-2xl font-bold mb-8 uppercase tracking-wider">Complete The Look</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -415,7 +496,6 @@ const ProductDetailPage = () => {
             ))}
           </div>
         </div>
-
 
         {/* Reviews Section */}
         <div id="reviews" className="mt-16 pt-16 border-t">
@@ -448,12 +528,12 @@ const ProductDetailPage = () => {
                     <div
                       className="h-full bg-black"
                       style={{
-                        width: `${stars === 5 ? 70 : stars === 4 ? 20 : stars === 3 ? 8 : stars === 2 ? 2 : 0}%`
+                        width: `${stars === 5 ? 70 : stars === 4 ? 20 : stars === 3 ? 8 : stars === 2 ? 2 : 0}}%`
                       }}
                     ></div>
                   </div>
                   <span className="text-sm text-gray-600 w-12 text-right">
-                    {stars === 5 ? 90 : stars === 4 ? 26 : stars === 3 ? 10 : stars === 2 ? 2 : 0}
+                    {stars === 5 ? 90 : stars === 4 ? 26 : stars === 3 ? 10 : stars === 2 ?2 : 0}
                   </span>
                 </div>
               ))}
