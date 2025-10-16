@@ -125,12 +125,11 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
             </button>
 
             {/* Center - Logo */}
-            <div className="flex flex-col items-center">
-              <Link to="/" className="text-xl font-bold tracking-wider text-white">
-                4.10
-              </Link>
-              <span className="text-xs tracking-wider text-white">the hustle hour</span>
-            </div>
+           <div className="flex flex-col items-center">
+  <Link to="/" className="text-xl font-bold tracking-wider text-gray-900">
+    <img src="/lo.png" alt="Logo" className="h-10 w-auto" />
+  </Link>
+</div>
 
             {/* Right Side - Icons */}
             <div className="flex items-center gap-2">
@@ -244,11 +243,10 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
 
             {/* Center - Logo */}
             <div className="flex flex-col items-center">
-              <Link to="/" className="text-xl font-bold tracking-wider text-gray-900">
-                4.10
-              </Link>
-              <span className="text-xs tracking-wider text-gray-500">the hustle hour</span>
-            </div>
+  <Link to="/" className="text-xl font-bold tracking-wider text-white">
+    <img src="/lo.png" alt="Logo" className="h-10 w-auto" />
+  </Link>
+</div>
 
             {/* Right Side - Icons */}
             <div className="flex items-center gap-2">
@@ -396,10 +394,11 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
         >
           {/* Sidebar Header */}
           <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-            <div>
-              <div className="text-lg font-bold">4.10</div>
-              <div className="text-xs text-gray-500">the hustle hour</div>
-            </div>
+     <div>
+  <div className="text-lg font-bold">
+    <img src="/lo.png" alt="Logo" className="h-8 w-auto" />
+  </div>
+</div>
             <button
               onClick={() => setIsSidebarOpen(false)}
               className="p-2 rounded-full hover:bg-gray-100"

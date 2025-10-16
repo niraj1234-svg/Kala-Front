@@ -168,9 +168,10 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           
-          {/* Copyright */}
-          <div className="text-sm text-gray-400">
-            © {currentYear} 4.10. All rights reserved.
+          {/* Copyright with Logo */}
+          <div className="flex items-center gap-3 text-sm text-gray-400">
+            <img src="/lo.png" alt="Logo" className="h-6 w-auto" />
+            <span>© {currentYear} All rights reserved.</span>
           </div>
 
           {/* Legal Links */}
