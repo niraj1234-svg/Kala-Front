@@ -36,8 +36,8 @@ const ProductsListingPage: React.FC = () => {
       category: 'T-Shirts',
       size: ['S', 'M', 'L', 'XL'],
       color: 'White',
-      image1: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=600',
-      image2: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=600',
+      image1: '3.jpeg',
+      image2: '4.jpeg',
       badge: 'NEW',
       inStock: true
     },
@@ -48,8 +48,8 @@ const ProductsListingPage: React.FC = () => {
       category: 'Hoodies',
       size: ['M', 'L', 'XL', 'XXL'],
       color: 'Black',
-      image1: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=600',
-      image2: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=600',
+     image1: '8.jpeg',
+      image2: '9.jpeg',
       inStock: true
     },
     {
@@ -59,7 +59,7 @@ const ProductsListingPage: React.FC = () => {
       category: 'Sweatshirts',
       size: ['S', 'M', 'L'],
       color: 'Gray',
-      image1: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=600',
+     image1: '10.jpeg',
       image2: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=80&w=600',
       badge: 'SOLD OUT',
       inStock: false
@@ -71,7 +71,7 @@ const ProductsListingPage: React.FC = () => {
       category: 'Pants',
       size: ['M', 'L', 'XL'],
       color: 'Blue',
-      image1: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=600',
+       image1: '12.jpeg',
       image2: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=600',
       inStock: true
     },
@@ -82,8 +82,8 @@ const ProductsListingPage: React.FC = () => {
       category: 'Shorts',
       size: ['S', 'M', 'L', 'XL'],
       color: 'Beige',
-      image1: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=600',
-      image2: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=600',
+       image1: '8.jpeg',
+      image2: '6.jpeg',
       inStock: true
     },
     {
@@ -93,8 +93,8 @@ const ProductsListingPage: React.FC = () => {
       category: 'Jackets',
       size: ['M', 'L', 'XL'],
       color: 'Black',
-      image1: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=600',
-      image2: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=600',
+      image1: '10.jpeg',
+      image2: '11.jpeg',
       badge: 'NEW',
       inStock: true
     },
@@ -105,7 +105,7 @@ const ProductsListingPage: React.FC = () => {
       category: 'Jeans',
       size: ['S', 'M', 'L', 'XL'],
       color: 'Blue',
-      image1: 'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=600',
+       image1: '12.jpeg',
       image2: 'https://images.unsplash.com/photo-1475178626620-a4d074967452?q=80&w=600',
       inStock: true
     },
@@ -116,8 +116,8 @@ const ProductsListingPage: React.FC = () => {
       category: 'T-Shirts',
       size: ['S', 'M', 'L'],
       color: 'White',
-      image1: 'https://images.unsplash.com/photo-1503341338985-95cf5cfe5802?q=80&w=600',
-      image2: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=600',
+       image1: '1.jpeg',
+      image2: '3.jpeg',
       inStock: true
     }
   ];

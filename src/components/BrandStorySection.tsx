@@ -201,7 +201,7 @@ const BrandStorySection: React.FC = () => {
             className="absolute inset-0 w-full h-full transition-transform duration-100 ease-out"
           >
             <img
-              src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070"
+              src="12.jpeg"
               alt="Our Story"
               className={`w-full h-full object-cover transition-all duration-2000 ease-out ${
                 isVisible ? 'scale-100 blur-0' : 'scale-110 blur-sm'

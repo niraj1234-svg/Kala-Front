@@ -22,7 +22,7 @@ const HeroSection: React.FC = () => {
         className="absolute inset-0 bg-cover bg-center transition-transform duration-100"
         style={{
           backgroundImage:
-            'url(https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?q=80&w=2070)',
+            'url(6.jpeg)',
           transform: `scale(${scale})`,
           opacity: opacity,
         }}

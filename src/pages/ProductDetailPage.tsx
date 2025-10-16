@@ -15,11 +15,11 @@ const ProductDetailPage = () => {
     description: 'The Heritage Gilet. Ready for all occasions.',
     longDescription: 'Introducing the Raiments Cream Gilet. Crafted from heavyweight premium fleece for exceptional warmth, this gilet features an authentic premium leather trim, equipped with durable YKK zips and hidden side pockets for secure storage. The adjustable waistline ensures a tailored fit. Finished with embroidered mallard logo.',
     images: [
-      'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=800',
-      'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=800',
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZlMNdCWIVx0LEJfA_MKzgflK2QKpzJq5jwQ&s',
-      'https://images.unsplash.com/photo-1622445275576-721325763afe?q=80&w=800',
-      'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=80&w=800'
+      '/6.jpeg',
+      '/7.jpeg',
+      '/8.jpeg',
+      '/9.jpeg',
+      '/10.jpeg'
     ],
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
@@ -57,7 +57,7 @@ const ProductDetailPage = () => {
       date: '2 weeks ago',
       verified: true,
       comment: 'Amazing quality! The fabric is so soft and the fit is perfect. Highly recommend.',
-      images: ['https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=200']
+      images: ['/1.jpeg']
     },
     {
       id: 2,
@@ -75,25 +75,25 @@ const ProductDetailPage = () => {
       id: 2,
       name: 'Classic White Tee',
       price: 29,
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=400'
+      image: '/2.jpeg'
     },
     {
       id: 3,
       name: 'Comfort Sweatpants',
       price: 45,
-      image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=400'
+      image: '/3.jpeg'
     },
     {
       id: 4,
       name: 'Crew Neck Sweatshirt',
       price: 55,
-      image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=400'
+      image: '/4.jpeg'
     },
     {
       id: 5,
       name: 'Urban Jacket',
       price: 85,
-      image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=400'
+      image: '/5.jpeg'
     }
   ];
 

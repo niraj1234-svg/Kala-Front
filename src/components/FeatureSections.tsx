@@ -43,7 +43,7 @@ const FeatureSections: React.FC = () => {
             }`}
           >
             <img
-              src="https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?q=80&w=1200"
+              src="8.jpeg"
               alt="Custom Tailoring"
               className="h-full w-full object-cover"
             />
@@ -154,7 +154,7 @@ const FeatureSections: React.FC = () => {
               <div className="grid lg:grid-cols-2 gap-0 bg-black">
                 <div className="relative aspect-[4/5] lg:aspect-auto overflow-hidden">
                   <img
-                    src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1000"
+                    src="9.jpeg"
                     alt="Featured Post"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
@@ -180,17 +180,17 @@ const FeatureSections: React.FC = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJeYRZPlI-rDpsheO12WGGcUahLli2sNLJkg&',
+                img: '8.jpeg',
                 title: 'Behind the Design',
                 cat: 'Process'
               },
               {
-                img: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=800',
+                img: '7.jpeg',
                 title: 'Sustainable Materials',
                 cat: 'Innovation'
               },
               {
-                img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800',
+                img: '6.jpeg',
                 title: 'Style Guide 2025',
                 cat: 'Fashion'
               }
@@ -225,14 +225,18 @@ const FeatureSections: React.FC = () => {
         className="relative h-screen overflow-hidden"
       >
         {/* Video Background */}
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1920"
-            alt="Video Background"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/60"></div>
-        </div>
+       {/* Video Background */}
+<div className="absolute inset-0">
+  <video
+    src="/v3.mp4"
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="w-full h-full object-cover"
+  />
+  <div className="absolute inset-0 bg-black/60"></div>
+</div>
 
         {/* Content */}
         <div className="relative h-full flex flex-col items-center justify-center text-center px-6 text-white">

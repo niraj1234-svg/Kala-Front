@@ -31,14 +31,14 @@ const FeaturedCollections: React.FC = () => {
       id: 1,
       title: 'NEW ARRIVALS',
       subtitle: 'Fresh Styles For The Season',
-      image: 'https://images.unsplash.com/photo-1516826957135-700dedea698c?q=80&w=2070',
+      image: '10.jpeg',
       buttonText: 'SHOP NEW',
     },
     {
       id: 2,
       title: 'BEST SELLERS',
       subtitle: 'Customer Favorites',
-      image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=2036',
+      image: '11.jpeg',
       buttonText: 'SHOP NOW',
     },
   ];

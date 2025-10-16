@@ -21,8 +21,8 @@ const ProductCategoryShowcase: React.FC = () => {
       name: 'Classic White Tee',
       price: '£29.00',
       category: 'T-Shirts',
-      image1: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=600',
-      image2: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=600',
+      image1: '3.jpeg',
+      image2: '4.jpeg',
       badge: 'NEW',
       link: '/products/classic-white-tee'
     },
@@ -31,8 +31,8 @@ const ProductCategoryShowcase: React.FC = () => {
       name: 'Premium Hoodie',
       price: '£65.00',
       category: 'Hoodies',
-      image1: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=600',
-      image2: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=600',
+      image1: '8.jpeg',
+      image2: '9.jpeg',
       link: '/products/premium-hoodie'
     },
     {
@@ -40,7 +40,7 @@ const ProductCategoryShowcase: React.FC = () => {
       name: 'Crew Neck Sweatshirt',
       price: '£55.00',
       category: 'Sweatshirts',
-      image1: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=600',
+      image1: '10.jpeg',
       image2: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=80&w=600',
       badge: 'SOLD OUT',
       link: '/products/crew-neck-sweatshirt'
@@ -50,7 +50,7 @@ const ProductCategoryShowcase: React.FC = () => {
       name: 'Comfort Sweatpants',
       price: '£45.00',
       category: 'Sweatpants',
-      image1: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=600',
+      image1: '12.jpeg',
       image2: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=600',
       link: '/products/comfort-sweatpants'
     },
@@ -59,8 +59,8 @@ const ProductCategoryShowcase: React.FC = () => {
       name: 'Summer Shorts',
       price: '£35.00',
       category: 'Shorts',
-      image1: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=600',
-      image2: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=600',
+      image1: '8.jpeg',
+      image2: '6.jpeg',
       link: '/products/summer-shorts'
     },
     {
@@ -68,8 +68,8 @@ const ProductCategoryShowcase: React.FC = () => {
       name: 'Urban Jacket',
       price: '£85.00',
       category: 'Jackets',
-      image1: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=600',
-      image2: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=600',
+      image1: '10.jpeg',
+      image2: '11.jpeg',
       badge: 'NEW',
       link: '/products/urban-jacket'
     },
@@ -78,7 +78,7 @@ const ProductCategoryShowcase: React.FC = () => {
       name: 'Slim Fit Jeans',
       price: '£75.00',
       category: 'Jeans',
-      image1: 'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=600',
+      image1: '12.jpeg',
       image2: 'https://images.unsplash.com/photo-1475178626620-a4d074967452?q=80&w=600',
       link: '/products/slim-fit-jeans'
     },
@@ -87,8 +87,8 @@ const ProductCategoryShowcase: React.FC = () => {
       name: 'Graphic Print Tee',
       price: '£32.00',
       category: 'T-Shirts',
-      image1: 'https://m.media-amazon.com/images/I/91m44Sgcv6L._UY1100_.jpg',
-      image2: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=600',
+      image1: '1.jpeg',
+      image2: '3.jpeg',
       link: '/products/graphic-print-tee'
     }
   ];
