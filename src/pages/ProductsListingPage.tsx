@@ -205,7 +205,7 @@ const ProductsListingPage: React.FC = () => {
       </div>
 
       {/* Category Tabs - Sticky - Horizontal Scroll on Mobile */}
-      <div className="sticky top-16 sm:top-20 bg-white z-30 border-b shadow-sm">
+      <div className="sticky top-2 sm:top-2 bg-white z-30 border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex overflow-x-auto space-x-4 sm:space-x-8 py-3 sm:py-4 scrollbar-hide">
             {categories.map((cat) => (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/footer';
@@ -13,7 +13,8 @@ import FeatureSections from './components/FeatureSections';
 // NEW PAGES
 import ProductsListingPage from './pages/ProductsListingPage';
 import ProductDetailPage from './pages/ProductDetailPage';
-
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 const HomePage = () => (
   <>
     <HeroSection />
@@ -25,15 +26,41 @@ const HomePage = () => (
 );
 
 const App: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+
+  const handleLogin = (name: string, email: string) => {
+    setUserName(name);
+    setUserEmail(email);
+    setIsLoggedIn(true);
+  };
+
+  const handleSignup = (name: string, email: string) => {
+    setUserName(name);
+    setUserEmail(email);
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserName('');
+    setUserEmail('');
+  };
   return (
+
     <Router>
       <div className="min-h-screen">
-        <Header />
+        <Header 
+        isLoggedIn={isLoggedIn} 
+          userName={userName} 
+          onLogout={handleLogout} />
         
         <Routes>
           {/* Home Page */}
           <Route path="/" element={<HomePage />} />
-          
+           <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+          <Route path="/signup" element={<SignupPage onSignup={handleSignup} />} />
           {/* Products Listing Page */}
           <Route path="/products" element={<ProductsListingPage />} />
           
