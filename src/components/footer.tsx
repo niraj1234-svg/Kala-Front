@@ -170,7 +170,7 @@ const Footer: React.FC = () => {
           
           {/* Copyright */}
           <div className="text-sm text-gray-400">
-            © {currentYear} Raiments. All rights reserved.
+            © {currentYear} appral. All rights reserved.
           </div>
 
           {/* Legal Links */}
