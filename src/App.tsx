@@ -28,7 +28,7 @@ const HomePage = () => (
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
+  const [_userEmail, setUserEmail] = useState('');
 
   const handleLogin = (name: string, email: string) => {
     setUserName(name);

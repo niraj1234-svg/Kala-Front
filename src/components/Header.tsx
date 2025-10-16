@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, Search, ShoppingBag, User, X, ChevronRight, LogOut } from 'lucide-react';
+import { Menu, Search, ShoppingBag, User, X} from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
