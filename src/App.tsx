@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/footer';
+import ScrollToTop from './components/ScrollToTop';
+import { CartProvider } from './CartContext'; 
 
 // Existing pages
 import HeroSection from './components/HeroSection';
@@ -15,7 +17,8 @@ import ProductsListingPage from './pages/ProductsListingPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
-import ScrollToTop from './components/ScrollToTop';
+import CartPage from './pages/CartPage';
+
 const HomePage = () => (
   <>
     <HeroSection />
@@ -48,30 +51,40 @@ const App: React.FC = () => {
     setUserName('');
     setUserEmail('');
   };
-  return (
 
+  return (
     <Router>
-       <ScrollToTop />
-      <div className="min-h-screen">
-        <Header 
-        isLoggedIn={isLoggedIn} 
-          userName={userName} 
-          onLogout={handleLogout} />
-        
-        <Routes>
-          {/* Home Page */}
-          <Route path="/" element={<HomePage />} />
-           <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
-          <Route path="/signup" element={<SignupPage onSignup={handleSignup} />} />
-          {/* Products Listing Page */}
-          <Route path="/products" element={<ProductsListingPage />} />
+      {/* ScrollToTop component to reset scroll position on route change */}
+      <ScrollToTop />
+      
+      {/* Wrap everything with CartProvider */}
+      <CartProvider>
+        <div className="min-h-screen">
+          <Header
+            isLoggedIn={isLoggedIn}
+            userName={userName}
+            onLogout={handleLogout}
+          />
+            
+          <Routes>
+            {/* Home Page */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+            <Route path="/signup" element={<SignupPage onSignup={handleSignup} />} />
+            
+            {/* Products Listing Page */}
+            <Route path="/products" element={<ProductsListingPage />} />
+            
+            {/* Product Detail Page */}
+            <Route path="/products/:id" element={<ProductDetailPage />} />
+            
+            {/* Cart Page */}
+            <Route path="/cart" element={<CartPage />} />
+          </Routes>
           
-          {/* Product Detail Page */}
-          <Route path="/products/:id" element={<ProductDetailPage />} />
-        </Routes>
-        
-        <Footer />
-      </div>
+          <Footer />
+        </div>
+      </CartProvider>
     </Router>
   );
 };

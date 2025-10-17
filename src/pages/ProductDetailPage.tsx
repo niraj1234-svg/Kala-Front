@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { Heart, Share2, ChevronLeft, ChevronRight, Star, ChevronDown, ChevronUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../CartContext'; 
 
 const ProductDetailPage = () => {
+  const navigate = useNavigate();
+  // Use cart context
+  const { addToCart } = useCart();
+  
   // Product data
   const product = {
-    id: 1,
+    id: '1', // Make sure this is a string to match CartItem interface
     name: 'Raiments Cream Gilet',
     price: 98,
     originalPrice: null,
@@ -28,7 +34,7 @@ const ProductDetailPage = () => {
       { name: 'Black', hex: '#000000', available: true },
       { name: 'Navy', hex: '#000080', available: false }
     ],
-    inStock: false,
+    inStock: true, // Changed to true to make it work
     stockCount: 12,
     details: {
       materials: 'Heavyweight Premium Fleece',
@@ -69,28 +75,29 @@ const ProductDetailPage = () => {
       images: []
     }
   ];
+  
   // Recommended products
   const recommendations = [
     {
-      id: 2,
+      id: '2',
       name: 'Classic White Tee',
       price: 29,
       image: '/2.jpeg'
     },
     {
-      id: 3,
+      id: '3',
       name: 'Comfort Sweatpants',
       price: 45,
       image: '/3.jpeg'
     },
     {
-      id: 4,
+      id: '4',
       name: 'Crew Neck Sweatshirt',
       price: 55,
       image: '/4.jpeg'
     },
     {
-      id: 5,
+      id: '5',
       name: 'Urban Jacket',
       price: 85,
       image: '/5.jpeg'
@@ -101,7 +108,7 @@ const ProductDetailPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
-  const [quantity, _setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [activeTab, setActiveTab] = useState('small');
   type SectionKey = 'fit' | 'shipping';
@@ -117,6 +124,7 @@ const ProductDetailPage = () => {
     }));
   };
 
+  // Updated handleAddToCart to use context
   const handleAddToCart = () => {
     if (!selectedSize) {
       alert('Please select a size');
@@ -126,7 +134,28 @@ const ProductDetailPage = () => {
       alert('This product is currently out of stock');
       return;
     }
-    alert(`Added to cart: ${product.name} - Size ${selectedSize} - Color ${selectedColor.name} - Quantity: ${quantity}`);
+
+    // Create cart item from product data
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      size: selectedSize,
+      color: selectedColor.name,
+      image: product.images[0], // Use first image
+      quantity: quantity,
+      category: 'Clothing' // Add a default category
+    };
+
+    // Add to cart using context
+    addToCart(cartItem);
+
+    // Show success message or redirect
+    const confirmResult = window.confirm(`${product.name} added to cart! View cart now?`);
+    if (confirmResult) {
+      // Redirect to cart page
+      navigate('/cart');
+    }
   };
 
   const nextImage = () => {
@@ -165,9 +194,6 @@ const ProductDetailPage = () => {
                 className="w-full h-full object-cover"
               />
               
-          
-            
-
               {/* Navigation Arrows */}
               <button
                 onClick={prevImage}
@@ -290,6 +316,32 @@ const ProductDetailPage = () => {
               </div>
             </div>
 
+            {/* Quantity Selector */}
+            <div className="pb-5 border-b border-gray-200">
+              <h3 className="text-sm font-semibold mb-3">Quantity</h3>
+              <div className="flex items-center border border-gray-300 rounded-md w-32 overflow-hidden">
+                <button 
+                  onClick={() => quantity > 1 && setQuantity(quantity - 1)}
+                  disabled={quantity <= 1}
+                  className="px-3 py-2 text-gray-500 hover:bg-gray-100 disabled:opacity-50"
+                >
+                  -
+                </button>
+                <input 
+                  type="text" 
+                  value={quantity}
+                  readOnly
+                  className="w-12 py-2 text-center text-gray-700 bg-white border-x border-gray-300 focus:outline-none"
+                />
+                <button 
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="px-3 py-2 text-gray-500 hover:bg-gray-100"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
             {/* Add to Cart Button */}
             <div className="space-y-3">
               <button
@@ -390,7 +442,8 @@ const ProductDetailPage = () => {
             </div>
           </div>
         </div>
-  {/* Complete The Look */}
+        
+        {/* Complete The Look */}
         <div className="mt-16 pt-16 border-t">
           <h2 className="text-2xl font-bold mb-8 uppercase tracking-wider">Complete The Look</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -411,7 +464,6 @@ const ProductDetailPage = () => {
             ))}
           </div>
         </div>
-
 
         {/* Reviews Section */}
         <div id="reviews" className="mt-16 pt-16 border-t">

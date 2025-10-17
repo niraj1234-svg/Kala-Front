@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, Search, ShoppingBag, User, X} from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { useCart } from '../CartContext'; 
 interface HeaderProps {
   isLoggedIn: boolean;
   userName: string;
@@ -14,6 +14,10 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  
+  // Get cart state
+  const { getCartCount } = useCart();
+  const cartCount = getCartCount();
 
   const currencies = [
     { code: 'AUD', flag: 'au', name: 'Australian Dollar' },
@@ -125,11 +129,11 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
             </button>
 
             {/* Center - Logo */}
-           <div className="flex flex-col items-center">
-  <Link to="/" className="text-xl font-bold tracking-wider text-gray-900">
-    <img src="/lo.png" alt="Logo" className="h-10 w-auto" />
-  </Link>
-</div>
+            <div className="flex flex-col items-center">
+              <Link to="/" className="text-xl font-bold tracking-wider text-white">
+                <img src="/lo.png" alt="Logo" className="h-10 w-auto" />
+              </Link>
+            </div>
 
             {/* Right Side - Icons */}
             <div className="flex items-center gap-2">
@@ -214,8 +218,13 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
                 <Search className="w-5 h-5" />
               </button>
               
-              <Link to="/cart" className="p-2 rounded-full bg-black/40 text-white hover:bg-black/60">
+              <Link to="/cart" className="p-2 rounded-full bg-black/40 text-white hover:bg-black/60 relative">
                 <ShoppingBag className="w-5 h-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
               </Link>
             </div>
           </div>
@@ -243,10 +252,10 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
 
             {/* Center - Logo */}
             <div className="flex flex-col items-center">
-  <Link to="/" className="text-xl font-bold tracking-wider text-white">
-    <img src="/lo.png" alt="Logo" className="h-10 w-auto" />
-  </Link>
-</div>
+              <Link to="/" className="text-xl font-bold tracking-wider text-white">
+                <img src="/lo.png" alt="Logo" className="h-10 w-auto" />
+              </Link>
+            </div>
 
             {/* Right Side - Icons */}
             <div className="flex items-center gap-2">
@@ -331,8 +340,13 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
                 <Search className="w-5 h-5" />
               </button>
               
-              <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-full">
+              <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-full relative">
                 <ShoppingBag className="w-5 h-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
               </Link>
             </div>
           </div>
@@ -367,8 +381,13 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
             <span className="text-xs mt-1">Account</span>
           </button>
           
-          <Link to="/cart" className="flex flex-col items-center justify-center">
+          <Link to="/cart" className="flex flex-col items-center justify-center relative">
             <ShoppingBag className="w-5 h-5" />
+            {cartCount > 0 && (
+              <span className="absolute top-0 right-1/3 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                {cartCount > 9 ? '9+' : cartCount}
+              </span>
+            )}
             <span className="text-xs mt-1">Cart</span>
           </Link>
         </div>
@@ -394,11 +413,11 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
         >
           {/* Sidebar Header */}
           <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-     <div>
-  <div className="text-lg font-bold">
-    <img src="/lo.png" alt="Logo" className="h-8 w-auto" />
-  </div>
-</div>
+            <div>
+              <div className="text-lg font-bold">
+                <img src="/lo.png" alt="Logo" className="h-8 w-auto" />
+              </div>
+            </div>
             <button
               onClick={() => setIsSidebarOpen(false)}
               className="p-2 rounded-full hover:bg-gray-100"
