@@ -10,7 +10,7 @@ const ProductDetailPage = () => {
     originalPrice: null,
     rating: 4.5,
     reviewCount: 128,
-    badge: 'WILL REMAIN AS IS',
+  
     sku: 'HD-001-BLK',
     description: 'The Heritage Gilet. Ready for all occasions.',
     longDescription: 'Introducing the Raiments Cream Gilet. Crafted from heavyweight premium fleece for exceptional warmth, this gilet features an authentic premium leather trim, equipped with durable YKK zips and hidden side pockets for secure storage. The adjustable waistline ensures a tailored fit. Finished with embroidered mallard logo.',
@@ -165,12 +165,8 @@ const ProductDetailPage = () => {
                 className="w-full h-full object-cover"
               />
               
-              {/* Badge */}
-              {product.badge && (
-                <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-2 rotate-2">
-                  {product.badge}
-                </div>
-              )}
+          
+            
 
               {/* Navigation Arrows */}
               <button
