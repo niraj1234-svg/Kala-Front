@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { X, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface Product {
@@ -48,7 +48,7 @@ const ProductsListingPage: React.FC = () => {
       category: 'Hoodies',
       size: ['M', 'L', 'XL', 'XXL'],
       color: 'Black',
-     image1: '8.jpeg',
+      image1: '8.jpeg',
       image2: '9.jpeg',
       inStock: true
     },
@@ -59,7 +59,7 @@ const ProductsListingPage: React.FC = () => {
       category: 'Sweatshirts',
       size: ['S', 'M', 'L'],
       color: 'Gray',
-     image1: '10.jpeg',
+      image1: '10.jpeg',
       image2: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=80&w=600',
       badge: 'SOLD OUT',
       inStock: false
@@ -71,7 +71,7 @@ const ProductsListingPage: React.FC = () => {
       category: 'Pants',
       size: ['M', 'L', 'XL'],
       color: 'Blue',
-       image1: '12.jpeg',
+      image1: '12.jpeg',
       image2: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=600',
       inStock: true
     },
@@ -82,7 +82,7 @@ const ProductsListingPage: React.FC = () => {
       category: 'Shorts',
       size: ['S', 'M', 'L', 'XL'],
       color: 'Beige',
-       image1: '8.jpeg',
+      image1: '8.jpeg',
       image2: '6.jpeg',
       inStock: true
     },
@@ -105,7 +105,7 @@ const ProductsListingPage: React.FC = () => {
       category: 'Jeans',
       size: ['S', 'M', 'L', 'XL'],
       color: 'Blue',
-       image1: '12.jpeg',
+      image1: '12.jpeg',
       image2: 'https://images.unsplash.com/photo-1475178626620-a4d074967452?q=80&w=600',
       inStock: true
     },
@@ -116,7 +116,7 @@ const ProductsListingPage: React.FC = () => {
       category: 'T-Shirts',
       size: ['S', 'M', 'L'],
       color: 'White',
-       image1: '1.jpeg',
+      image1: '1.jpeg',
       image2: '3.jpeg',
       inStock: true
     }
@@ -204,23 +204,25 @@ const ProductsListingPage: React.FC = () => {
         <p className="text-sm sm:text-base text-gray-600">Showing {filteredProducts.length} products</p>
       </div>
 
-      {/* Category Tabs - Sticky - Horizontal Scroll on Mobile */}
-      <div className="sticky top-2 sm:top-2 bg-white z-30 border-b shadow-sm">
+      {/* Category Tabs - Fixed Position */}
+      <div className="sticky top-0 bg-white z-30 border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex overflow-x-auto space-x-4 sm:space-x-8 py-3 sm:py-4 scrollbar-hide">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`whitespace-nowrap text-xs sm:text-sm font-medium uppercase tracking-wider pb-2 transition-all ${
-                  activeCategory === cat
-                    ? 'text-black border-b-2 border-black'
-                    : 'text-gray-500 hover:text-black'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          <div className="no-scrollbar flex overflow-x-auto py-3 sm:py-4">
+            <div className="flex space-x-4 sm:space-x-8 flex-nowrap">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`whitespace-nowrap text-xs sm:text-sm font-medium uppercase tracking-wider pb-2 transition-all flex-shrink-0 ${
+                    activeCategory === cat
+                      ? 'text-black border-b-2 border-black'
+                      : 'text-gray-500 hover:text-black'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -228,8 +230,8 @@ const ProductsListingPage: React.FC = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         
-        {/* Mobile Filter/Sort Bar - Sticky */}
-        <div className="lg:hidden sticky top-32 sm:top-36 bg-white z-20 -mx-4 px-4 py-3 border-b shadow-sm mb-4 flex gap-2">
+        {/* Mobile Filter/Sort Bar - Fixed Position Under Category Tabs */}
+        <div className="lg:hidden sticky top-[53px] bg-white z-20 -mx-4 px-4 py-3 border-b shadow-sm mb-4 flex gap-2">
           <button
             onClick={() => setIsFilterOpen(true)}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium border border-gray-300 hover:border-black transition-colors relative"
@@ -252,9 +254,9 @@ const ProductsListingPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Mobile Sort Dropdown */}
+        {/* Mobile Sort Dropdown - Adjusted Position */}
         {isSortOpen && (
-          <div className="lg:hidden fixed inset-x-4 top-48 bg-white border shadow-lg z-30 rounded-lg overflow-hidden">
+          <div className="lg:hidden fixed inset-x-4 top-[120px] bg-white border shadow-lg z-30 rounded-lg overflow-hidden">
             {[
               { value: 'featured', label: 'Featured' },
               { value: 'price-low', label: 'Price: Low to High' },
@@ -619,12 +621,12 @@ const ProductsListingPage: React.FC = () => {
             transform: translateY(0);
           }
         }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
+        .no-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
         }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
+        .no-scrollbar::-webkit-scrollbar {
+          display: none; /* Chrome, Safari, Opera */
         }
       `}</style>
     </div>
