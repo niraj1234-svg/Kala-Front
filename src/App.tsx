@@ -15,6 +15,7 @@ import ProductsListingPage from './pages/ProductsListingPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import ScrollToTop from './components/ScrollToTop';
 const HomePage = () => (
   <>
     <HeroSection />
@@ -50,6 +51,7 @@ const App: React.FC = () => {
   return (
 
     <Router>
+       <ScrollToTop />
       <div className="min-h-screen">
         <Header 
         isLoggedIn={isLoggedIn} 
