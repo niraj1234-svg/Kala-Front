@@ -6,11 +6,11 @@ import ScrollToTop from './components/ScrollToTop';
 import { CartProvider } from './CartContext'; 
 
 // Existing pages
-import HeroSection from './components/HeroSection';
+import HeroSection from './components/copyHerosection';
 import FeaturedCollections from './components/FeaturedCollections';
 import BrandStorySection from './components/BrandStorySection';
 import ProductCategoryShowcase from './components/ProductCategoryShowcase';
-import FeatureSections from './components/FeatureSections';
+import FeatureSections from './components/newFeature';
 
 // NEW PAGES
 import ProductsListingPage from './pages/ProductsListingPage';

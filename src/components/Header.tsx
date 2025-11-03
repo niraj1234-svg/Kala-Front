@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, Search, ShoppingBag, User, X} from 'lucide-react';
+import { ChevronDown, Menu, Search, ShoppingBag, User, X} from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../CartContext'; 
 interface HeaderProps {
@@ -59,36 +59,38 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
     };
   }, [isDropdownOpen, isUserMenuOpen]);
 
-  const menuItems = [
+  const mainMenu = [
     {
-      title: 'NEW ARRIVALS',
-      items: [
-        { name: 'All New', link: '/products' },
-        { name: 'Clothing', link: '/products?category=Clothing' },
-        { name: 'Accessories', link: '/products?category=Accessories' },
-        { name: 'Featured', link: '/products?featured=true' }
+      label: 'Shop',
+      path: '/products',
+      children: [
+        { label: 'T-shirts', path: '/products?category=T-Shirts' },
+        { label: 'Sweatshirts', path: '/products?category=Sweatshirts' },
+        { label: 'Hoodies', path: '/products?category=Hoodies' },
+        { label: 'Outerwear', path: '/products?category=Jackets' },
+        { label: 'Accessories', path: '/products?category=Accessories' },
       ],
     },
     {
-      title: 'CLOTHING',
-      items: [
-        { name: 'T-Shirts', link: '/products?category=T-Shirts' },
-        { name: 'Shirts', link: '/products?category=Shirts' },
-        { name: 'Hoodies', link: '/products?category=Hoodies' },
-        { name: 'Jackets', link: '/products?category=Jackets' },
-        { name: 'Pants', link: '/products?category=Pants' },
-        { name: 'Shorts', link: '/products?category=Shorts' }
-      ],
+      label: 'Customize',
+      path: '/customize',
     },
     {
-      title: 'ACCESSORIES',
-      items: [
-        { name: 'Hats', link: '/products?category=Hats' },
-        { name: 'Bags', link: '/products?category=Bags' },
-        { name: 'Belts', link: '/products?category=Belts' }
-      ],
-    }
+      label: 'Behind the Hype',
+      path: '/blog',
+    },
+    {
+      label: 'Street Wire — The Network',
+      path: '/network',
+    },
   ];
+
+  const [openMenu, setOpenMenu] = useState('Shop');
+
+  const handleToggleMenu = (label: string, hasChildren?: boolean) => {
+    if (!hasChildren) return;
+    setOpenMenu(prev => (prev === label ? '' : label));
+  };
 
   // Handle user actions
   const handleUserIconClick = () => {
@@ -354,44 +356,49 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
       </header>
 
       {/* Mobile Fixed Bottom Nav */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_5px_rgba(0,0,0,0.1)] z-50">
-        <div className="grid grid-cols-4 h-14">
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="flex flex-col items-center justify-center"
-          >
-            <Menu className="w-5 h-5" />
-            <span className="text-xs mt-1">Menu</span>
-          </button>
-          
-          <button className="flex flex-col items-center justify-center">
-            <Search className="w-5 h-5" />
-            <span className="text-xs mt-1">Search</span>
-          </button>
-          
-          {/* User Button - Mobile */}
-          <button 
-            onClick={handleUserIconClick}
-            className="flex flex-col items-center justify-center relative"
-          >
-            <User className="w-5 h-5" />
-            {isLoggedIn && (
-              <span className="absolute top-0 right-1/3 bg-green-500 rounded-full w-2 h-2"></span>
-            )}
-            <span className="text-xs mt-1">Account</span>
-          </button>
-          
-          <Link to="/cart" className="flex flex-col items-center justify-center relative">
-            <ShoppingBag className="w-5 h-5" />
-            {cartCount > 0 && (
-              <span className="absolute top-0 right-1/3 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
-                {cartCount > 9 ? '9+' : cartCount}
-              </span>
-            )}
-            <span className="text-xs mt-1">Cart</span>
-          </Link>
+      {/**
+       * Temporarily disabled bottom navigation per request
+       */}
+      {false && (
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_5px_rgba(0,0,0,0.1)] z-50">
+          <div className="grid grid-cols-4 h-14">
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="flex flex-col items-center justify-center"
+            >
+              <Menu className="w-5 h-5" />
+              <span className="text-xs mt-1">Menu</span>
+            </button>
+            
+            <button className="flex flex-col items-center justify-center">
+              <Search className="w-5 h-5" />
+              <span className="text-xs mt-1">Search</span>
+            </button>
+            
+            {/* User Button - Mobile */}
+            <button 
+              onClick={handleUserIconClick}
+              className="flex flex-col items-center justify-center relative"
+            >
+              <User className="w-5 h-5" />
+              {isLoggedIn && (
+                <span className="absolute top-0 right-1/3 bg-green-500 rounded-full w-2 h-2"></span>
+              )}
+              <span className="text-xs mt-1">Account</span>
+            </button>
+            
+            <Link to="/cart" className="flex flex-col items-center justify-center relative">
+              <ShoppingBag className="w-5 h-5" />
+              {cartCount > 0 && (
+                <span className="absolute top-0 right-1/3 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                  {cartCount > 9 ? '9+' : cartCount}
+                </span>
+              )}
+              <span className="text-xs mt-1">Cart</span>
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Sidebar Menu */}
       <div
@@ -474,26 +481,56 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
               </div>
             )}
 
-            {menuItems.map((section, index) => (
-              <div key={index} className="mb-6">
-                <h3 className="text-sm font-bold tracking-widest text-gray-900 mb-3">
-                  {section.title}
-                </h3>
-                <ul>
-                  {section.items.map((item, itemIndex) => (
-                    <li key={itemIndex}>
-                      <Link
-                        to={item.link}
-                        onClick={() => setIsSidebarOpen(false)}
-                        className="block text-gray-700 py-2 hover:text-black"
-                      >
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {mainMenu.map((item) => {
+              const hasChildren = Boolean(item.children?.length);
+              const isOpen = openMenu === item.label;
+
+              return (
+                <div key={item.label} className="mb-6">
+                  <div className="flex items-center justify-between gap-3">
+                    <Link
+                      to={item.path}
+                      onClick={() => setIsSidebarOpen(false)}
+                      className="text-lg font-semibold tracking-wide text-gray-900 hover:text-black"
+                    >
+                      {item.label}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleMenu(item.label, hasChildren)}
+                      disabled={!hasChildren}
+                      className={`rounded-full p-1 transition-all ${
+                        hasChildren ? 'hover:bg-gray-100' : 'opacity-50'
+                      }`}
+                      aria-label={`Toggle ${item.label}`}
+                      aria-expanded={hasChildren ? isOpen : false}
+                    >
+                      <ChevronDown
+                        className={`h-4 w-4 text-gray-700 transition-transform ${
+                          hasChildren && isOpen ? 'rotate-180' : 'rotate-0'
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  {hasChildren && isOpen && (
+                    <ul className="mt-3 space-y-2 border-l border-gray-200 pl-4 text-sm">
+                      {item.children!.map((child) => (
+                        <li key={child.label}>
+                          <Link
+                            to={child.path}
+                            onClick={() => setIsSidebarOpen(false)}
+                            className="block text-gray-600 hover:text-black"
+                          >
+                            {child.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
