@@ -426,7 +426,10 @@ const ProductsListingPage: React.FC = () => {
 
             {/* Products Grid - Responsive */}
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-              {filteredProducts.map((product, index) => (
+              {filteredProducts.map((product, index) => {
+                const animationDelay = Math.min(index, 10) * 80;
+
+                return (
                 <a
                   key={product.id}
                   href={`/products/${product.id}`}
@@ -434,9 +437,9 @@ const ProductsListingPage: React.FC = () => {
                   onMouseEnter={() => setActiveProduct(product.id)}
                   onMouseLeave={() => setActiveProduct(null)}
                   style={{
-                    animation: 'fadeInUp 0.6s ease-out',
-                    animationDelay: `${index * 80}ms`,
-                    animationFillMode: 'backwards'
+                    animation: 'fadeInUp 0.45s ease-out',
+                    animationDelay: `${animationDelay}ms`,
+                    animationFillMode: 'forwards'
                   }}
                 >
                   <div className="relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -479,7 +482,8 @@ const ProductsListingPage: React.FC = () => {
                     </div>
                   </div>
                 </a>
-              ))}
+              );
+              })}
             </div>
           </div>
         </div>

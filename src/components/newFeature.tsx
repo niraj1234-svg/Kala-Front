@@ -39,16 +39,30 @@ const FeatureSections: React.FC = () => {
   ];
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const isMobileViewport = window.matchMedia('(max-width: 768px)');
+
+    if (prefersReducedMotion.matches || isMobileViewport.matches) {
+      setIsVisible({ custom: true, blog: true, video: true });
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const id = entry.target.getAttribute('data-section');
-            if (id) setIsVisible(prev => ({ ...prev, [id]: true }));
+            if (id) {
+              setIsVisible(prev => ({ ...prev, [id]: true }));
+              observer.unobserve(entry.target);
+            }
           }
         });
       },
-      { threshold: 0.3 }
+      {
+        threshold: 0.2,
+        rootMargin: '0px 0px -20% 0px'
+      }
     );
 
     [customRef, blogRef, videoRef].forEach(ref => {
@@ -69,7 +83,7 @@ const FeatureSections: React.FC = () => {
         {/* Left Side - Image */}
         <div className="absolute inset-y-0 left-0 w-full lg:w-1/2">
           <div 
-            className={`h-full w-full transition-transform duration-[2000ms] ease-out ${
+            className={`h-full w-full transition-transform duration-[1200ms] ease-out ${
               isVisible.custom ? 'scale-100' : 'scale-110'
             }`}
           >
@@ -89,7 +103,7 @@ const FeatureSections: React.FC = () => {
               
               {/* Animated Badge */}
               <div 
-                className={`overflow-hidden mb-8 transition-all duration-1000 ${
+                className={`overflow-hidden mb-8 transition-all duration-600 ${
                   isVisible.custom ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
@@ -101,7 +115,7 @@ const FeatureSections: React.FC = () => {
 
               {/* Title */}
               <h2 
-                className={`text-4xl lg:text-5xl xl:text-6xl font-black mb-6 transition-all duration-1000 delay-200 ${
+                className={`text-4xl lg:text-5xl xl:text-6xl font-black mb-6 transition-all duration-600 delay-100 ${
                   isVisible.custom ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
                 }`}
               >
@@ -112,7 +126,7 @@ const FeatureSections: React.FC = () => {
 
               {/* Description */}
               <p 
-                className={`text-gray-700 text-lg mb-8 transition-all duration-1000 delay-400 ${
+                className={`text-gray-700 text-lg mb-8 transition-all duration-600 delay-200 ${
                   isVisible.custom ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
                 }`}
               >
@@ -122,7 +136,7 @@ const FeatureSections: React.FC = () => {
               {/* CTA */}
               <a 
                 href="/customize"
-                className={`inline-block transition-all duration-1000 delay-600 ${
+                className={`inline-block transition-all duration-600 delay-300 ${
                   isVisible.custom ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
                 }`}
               >
@@ -131,7 +145,7 @@ const FeatureSections: React.FC = () => {
                     <span>Get Started</span>
                     <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
                   </div>
-                  <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
+                  <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-400"></div>
                   <div className="absolute inset-0 flex items-center gap-3 px-8 text-black font-bold uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
                     <span>Get Started</span>
                     <ArrowRight className="w-5 h-5" />
@@ -174,7 +188,7 @@ const FeatureSections: React.FC = () => {
               <a
                 key={highlight.title}
                 href={highlight.href}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--color-brown-200)] bg-white shadow-[0_15px_35px_rgba(52,35,24,0.08)] transition-transform duration-500 hover:-translate-y-2 hover:shadow-[0_20px_45px_rgba(52,35,24,0.12)]"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--color-brown-200)] bg-white shadow-[0_15px_35px_rgba(52,35,24,0.08)] transition-transform duration-400 hover:-translate-y-2 hover:shadow-[0_20px_45px_rgba(52,35,24,0.12)]"
               >
                 <div className="relative h-48 w-full overflow-hidden">
                   <img
@@ -211,7 +225,7 @@ const FeatureSections: React.FC = () => {
           {/* Header */}
           <div className="mb-16 lg:mb-24">
             <div 
-              className={`inline-flex items-center gap-2 mb-6 transition-all duration-1000 ${
+              className={`inline-flex items-center gap-2 mb-6 transition-all duration-600 ${
                 isVisible.blog ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'
               }`}
             >
@@ -219,7 +233,7 @@ const FeatureSections: React.FC = () => {
               <span className="text-sm uppercase tracking-[0.3em] font-bold">Latest Stories</span>
             </div>
             <h2 
-              className={`text-5xl lg:text-7xl font-black uppercase transition-all duration-1000 delay-200 ${
+              className={`text-5xl lg:text-7xl font-black uppercase transition-all duration-600 delay-150 ${
                 isVisible.blog ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
               }`}
             >
@@ -229,7 +243,7 @@ const FeatureSections: React.FC = () => {
 
           {/* Featured Post - Large */}
           <div 
-            className={`mb-12 transition-all duration-1000 delay-400 ${
+            className={`mb-12 transition-all duration-600 delay-200 ${
               isVisible.blog ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
             }`}
           >
@@ -239,7 +253,7 @@ const FeatureSections: React.FC = () => {
                   <img
                     src="9.jpeg"
                     alt="Featured Post"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-400 group-hover:scale-105"
                   />
                 </div>
                 <div className="flex flex-col justify-center p-8 lg:p-16 text-white">
@@ -281,16 +295,16 @@ const FeatureSections: React.FC = () => {
               <a 
                 key={i} 
                 href={`/blog/${i+2}`}
-                className={`group block transition-all duration-1000 ${
+                className={`group block transition-all duration-600 ${
                   isVisible.blog ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
                 }`}
-                style={{ transitionDelay: `${600 + i * 150}ms` }}
+                style={{ transitionDelay: `${240 + i * 100}ms` }}
               >
                 <div className="relative aspect-[3/4] overflow-hidden mb-4">
                   <img
                     src={post.img}
                     alt={post.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-400 group-hover:scale-110"
                   />
                 </div>
                 <div className="text-xs uppercase tracking-widest mb-2 text-gray-500">{post.cat}</div>
@@ -326,7 +340,7 @@ const FeatureSections: React.FC = () => {
           
           {/* Play Button */}
           <button 
-            className={`group mb-12 transition-all duration-1000 ${
+            className={`group mb-12 transition-all duration-600 ${
               isVisible.video ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
             }`}
             onClick={() => window.open('https://youtube.com', '_blank')}
@@ -341,7 +355,7 @@ const FeatureSections: React.FC = () => {
 
           {/* Title */}
           <h2 
-            className={`text-5xl lg:text-7xl xl:text-8xl font-black uppercase mb-6 transition-all duration-1000 delay-200 ${
+            className={`text-5xl lg:text-7xl xl:text-8xl font-black uppercase mb-6 transition-all duration-600 delay-150 ${
               isVisible.video ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'
             }`}
           >
@@ -352,7 +366,7 @@ const FeatureSections: React.FC = () => {
 
           {/* Description */}
           <p 
-            className={`text-xl lg:text-2xl text-gray-300 max-w-2xl mb-12 transition-all duration-1000 delay-400 ${
+            className={`text-xl lg:text-2xl text-gray-300 max-w-2xl mb-12 transition-all duration-600 delay-250 ${
               isVisible.video ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
           >
@@ -361,7 +375,7 @@ const FeatureSections: React.FC = () => {
 
           {/* CTA Buttons */}
           <div 
-            className={`flex flex-col sm:flex-row gap-4 transition-all duration-1000 delay-600 ${
+            className={`flex flex-col sm:flex-row gap-4 transition-all duration-600 delay-300 ${
               isVisible.video ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
           >
