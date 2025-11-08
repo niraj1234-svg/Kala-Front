@@ -1,18 +1,17 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
-import Footer from './components/footer';
+
 import ScrollToTop from './components/ScrollToTop';
 import { useAuthStore, authStore } from './store/authStore';
 import { useAppralStore, appralStore } from './store/appralStore';
 import { ToastProvider } from './components/ui/ToastProvider';
 
 // Existing pages
-import HeroSection from './components/copyHerosection';
+import HeroSection from './components/HeroSection';
 import FeaturedCollections from './components/FeaturedCollections';
 import BrandStorySection from './components/BrandStorySection';
-import ProductCategoryShowcase from './components/ProductCategoryShowcase';
-import FeatureSections from './components/newFeature';
+
 
 // NEW PAGES
 import ProductsListingPage from './pages/ProductsListingPage';
@@ -35,8 +34,8 @@ const HomePage = () => (
     <HeroSection />
     <FeaturedCollections />
     <BrandStorySection />
-    <ProductCategoryShowcase />
-    <FeatureSections />
+    {/* <ProductCategoryShowcase /> */}
+    {/* <FeatureSections /> */}
   </>
 );
 
@@ -107,7 +106,7 @@ const App: React.FC = () => {
           </Route>
         </Routes>
         
-        <Footer />
+     
       </div>
     </Router>
     </ToastProvider>
