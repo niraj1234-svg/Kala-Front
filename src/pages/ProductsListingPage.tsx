@@ -1,236 +1,305 @@
-import React, { useState} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { X, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
+import { useAppralStore, appralStore } from '../store/appralStore';
+import type { Category, ProductListItem } from '../store/appral';
 
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  category: string;
-  size: string[];
-  color: string;
-  image1: string;
-  image2: string;
-  badge?: string;
-  inStock: boolean;
+const FALLBACK_IMAGE = '/placeholder-product.png';
+
+type SortOption = 'featured' | 'price-low' | 'price-high' | 'name';
+
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'featured', label: 'Featured' },
+  { value: 'price-low', label: 'Price: Low to High' },
+  { value: 'price-high', label: 'Price: High to Low' },
+  { value: 'name', label: 'Name: A-Z' },
+];
+
+function formatCurrency(value: number): string {
+  if (!Number.isFinite(value)) {
+    return '₹0';
+  }
+  try {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: value % 1 === 0 ? 0 : 2,
+    }).format(value);
+  } catch {
+    return `₹${value.toFixed(0)}`;
+  }
+}
+
+function extractPrice(product: ProductListItem): number {
+  return Number.parseFloat(product.price ?? '0');
 }
 
 const ProductsListingPage: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const productsState = useAppralStore((state) => state.products);
+  const categoriesState = useAppralStore((state) => state.categories);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [activeProduct, setActiveProduct] = useState<number | null>(null);
-  const [sortBy, setSortBy] = useState('featured');
   const [isSortOpen, setIsSortOpen] = useState(false);
-  
-  // Filter states
-  const [priceRange, setPriceRange] = useState([0, 200]);
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [activeProduct, setActiveProduct] = useState<number | null>(null);
+  const [sortBy, setSortBy] = useState<SortOption>('featured');
   const [showInStockOnly, setShowInStockOnly] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
 
-  // All products data
-  const allProducts: Product[] = [
-    {
-      id: 1,
-      name: 'Classic White Tee',
-      price: 29,
-      category: 'T-Shirts',
-      size: ['S', 'M', 'L', 'XL'],
-      color: 'White',
-      image1: '3.jpeg',
-      image2: '4.jpeg',
-      badge: 'NEW',
-      inStock: true
-    },
-    {
-      id: 2,
-      name: 'Premium Hoodie',
-      price: 65,
-      category: 'Hoodies',
-      size: ['M', 'L', 'XL', 'XXL'],
-      color: 'Black',
-      image1: '8.jpeg',
-      image2: '9.jpeg',
-      inStock: true
-    },
-    {
-      id: 3,
-      name: 'Crew Neck Sweatshirt',
-      price: 55,
-      category: 'Sweatshirts',
-      size: ['S', 'M', 'L'],
-      color: 'Gray',
-      image1: '10.jpeg',
-      image2: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=80&w=600',
-      badge: 'SOLD OUT',
-      inStock: false
-    },
-    {
-      id: 4,
-      name: 'Comfort Sweatpants',
-      price: 45,
-      category: 'Pants',
-      size: ['M', 'L', 'XL'],
-      color: 'Blue',
-      image1: '12.jpeg',
-      image2: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=600',
-      inStock: true
-    },
-    {
-      id: 5,
-      name: 'Summer Shorts',
-      price: 35,
-      category: 'Shorts',
-      size: ['S', 'M', 'L', 'XL'],
-      color: 'Beige',
-      image1: '8.jpeg',
-      image2: '6.jpeg',
-      inStock: true
-    },
-    {
-      id: 6,
-      name: 'Urban Jacket',
-      price: 85,
-      category: 'Jackets',
-      size: ['M', 'L', 'XL'],
-      color: 'Black',
-      image1: '10.jpeg',
-      image2: '11.jpeg',
-      badge: 'NEW',
-      inStock: true
-    },
-    {
-      id: 7,
-      name: 'Slim Fit Jeans',
-      price: 75,
-      category: 'Jeans',
-      size: ['S', 'M', 'L', 'XL'],
-      color: 'Blue',
-      image1: '12.jpeg',
-      image2: 'https://images.unsplash.com/photo-1475178626620-a4d074967452?q=80&w=600',
-      inStock: true
-    },
-    {
-      id: 8,
-      name: 'Graphic Print Tee',
-      price: 32,
-      category: 'T-Shirts',
-      size: ['S', 'M', 'L'],
-      color: 'White',
-      image1: '1.jpeg',
-      image2: '3.jpeg',
-      inStock: true
+  useEffect(() => {
+    if (!productsState.loading && productsState.data.length === 0) {
+      appralStore.fetchProducts().catch((error) => {
+        console.error('Failed to load products', error);
+      });
     }
-  ];
+  }, [productsState.data.length, productsState.loading]);
 
-  const categories = ['All', 'T-Shirts', 'Hoodies', 'Sweatshirts', 'Jackets', 'Pants', 'Shorts', 'Jeans'];
-  const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-  const colors = ['Black', 'White', 'Gray', 'Blue', 'Beige'];
+  useEffect(() => {
+    if (!categoriesState.loading && categoriesState.data.length === 0) {
+      appralStore.fetchCategories().catch((error) => {
+        console.error('Failed to load categories', error);
+      });
+    }
+  }, [categoriesState.data.length, categoriesState.loading]);
 
-  // Filter and sort products
-  const getFilteredProducts = () => {
-    let filtered = allProducts;
+  const products = productsState.data;
 
-    // Category filter
-    if (activeCategory !== 'All') {
-      filtered = filtered.filter(p => p.category === activeCategory);
+  const priceBounds = useMemo(() => {
+    const prices = products
+      .map(extractPrice)
+      .filter((value) => Number.isFinite(value) && value >= 0);
+    if (prices.length === 0) {
+      return { min: 0, max: 0 };
+    }
+    return {
+      min: Math.min(...prices),
+      max: Math.max(...prices),
+    };
+  }, [products]);
+
+  useEffect(() => {
+    if (priceBounds.max === 0) {
+      setPriceRange([0, 0]);
+      return;
+    }
+    setPriceRange((prev) => {
+      if (prev[1] === 0 || prev[1] === prev[0]) {
+        return [priceBounds.min, priceBounds.max];
+      }
+      return [
+        Math.max(priceBounds.min, prev[0]),
+        Math.min(priceBounds.max, prev[1]),
+      ];
+    });
+  }, [priceBounds.max, priceBounds.min]);
+
+  const flattenedCategories = useMemo(() => {
+    const result: { name: string; slug: string }[] = [];
+    const traverse = (category: Category) => {
+      result.push({ name: category.name, slug: category.slug });
+      category.children?.forEach(traverse);
+    };
+    categoriesState.data.forEach(traverse);
+    return result;
+  }, [categoriesState.data]);
+
+  const categoryMap = useMemo(() => {
+    const map = new Map<string, string>();
+    flattenedCategories.forEach((entry) => map.set(entry.slug, entry.name));
+    return map;
+  }, [flattenedCategories]);
+
+  const activeCategory = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('category') ?? 'all';
+  }, [location.search]);
+
+  const categoryTabs = useMemo(
+    () => [{ name: 'All', slug: 'all' }, ...flattenedCategories],
+    [flattenedCategories],
+  );
+
+  const handleCategoryChange = (slug: string) => {
+    if (slug === 'all') {
+      navigate('/products');
+    } else {
+      navigate(`/products?category=${slug}`);
+    }
+  };
+
+  const effectivePriceRange: [number, number] = useMemo(() => {
+    if (priceRange[1] === 0 && priceBounds.max > 0) {
+      return [priceBounds.min, priceBounds.max];
+    }
+    return priceRange;
+  }, [priceBounds.max, priceBounds.min, priceRange]);
+
+  const filteredProducts = useMemo(() => {
+    const [minPrice, maxPrice] = effectivePriceRange;
+    let items: ProductListItem[] = [...products];
+
+    if (activeCategory !== 'all') {
+      items = items.filter((product) => product.category === activeCategory);
     }
 
-    // Price filter
-    filtered = filtered.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
+    items = items.filter((product) => {
+      const value = extractPrice(product);
+      if (!Number.isFinite(value)) {
+        return true;
+      }
+      return value >= minPrice && value <= maxPrice;
+    });
 
-    // Size filter
-    if (selectedSizes.length > 0) {
-      filtered = filtered.filter(p => p.size.some(s => selectedSizes.includes(s)));
-    }
-
-    // Color filter
-    if (selectedColors.length > 0) {
-      filtered = filtered.filter(p => selectedColors.includes(p.color));
-    }
-
-    // Stock filter
     if (showInStockOnly) {
-      filtered = filtered.filter(p => p.inStock);
+      items = items.filter((product) => product.in_stock);
     }
 
-    // Sorting
     switch (sortBy) {
       case 'price-low':
-        filtered.sort((a, b) => a.price - b.price);
+        items.sort((a, b) => extractPrice(a) - extractPrice(b));
         break;
       case 'price-high':
-        filtered.sort((a, b) => b.price - a.price);
+        items.sort((a, b) => extractPrice(b) - extractPrice(a));
         break;
       case 'name':
-        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        items.sort((a, b) => a.name.localeCompare(b.name));
         break;
       default:
         break;
     }
 
-    return filtered;
-  };
+    return items;
+  }, [activeCategory, effectivePriceRange, products, showInStockOnly, sortBy]);
 
-  const filteredProducts = getFilteredProducts();
+  const activeFiltersCount = useMemo(() => {
+    const [minPrice, maxPrice] = effectivePriceRange;
+    const priceFilterActive =
+      priceBounds.max > 0 &&
+      (minPrice > priceBounds.min || maxPrice < priceBounds.max);
+    return (
+      (activeCategory !== 'all' ? 1 : 0) +
+      (priceFilterActive ? 1 : 0) +
+      (showInStockOnly ? 1 : 0)
+    );
+  }, [activeCategory, effectivePriceRange, priceBounds.max, priceBounds.min, showInStockOnly]);
 
   const clearFilters = () => {
-    setPriceRange([0, 200]);
-    setSelectedSizes([]);
-    setSelectedColors([]);
     setShowInStockOnly(false);
+    setSortBy('featured');
+    setPriceRange([priceBounds.min, priceBounds.max]);
+    navigate('/products');
   };
 
-  const activeFiltersCount = 
-    (priceRange[1] !== 200 ? 1 : 0) +
-    selectedSizes.length +
-    selectedColors.length +
-    (showInStockOnly ? 1 : 0);
+  const renderProductCard = (product: ProductListItem, index: number) => {
+    const animationDelay = Math.min(index, 10) * 80;
+    const imageUrl = product.primary_image?.image_url ?? FALLBACK_IMAGE;
+    const priceLabel = formatCurrency(extractPrice(product));
+    const categoryLabel = categoryMap.get(product.category) ?? product.category;
+
+    return (
+      <Link
+        key={product.id}
+        to={`/products/${product.slug}`}
+        className="group block"
+        onMouseEnter={() => setActiveProduct(product.id)}
+        onMouseLeave={() => setActiveProduct(null)}
+        style={{
+          animation: 'fadeInUp 0.45s ease-out',
+          animationDelay: `${animationDelay}ms`,
+          animationFillMode: 'forwards',
+        }}
+      >
+        <div className="relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+          {product.badge && (
+            <div className="absolute top-2 left-2 z-20">
+              <span
+                className={`text-xs font-bold px-2 py-1 uppercase tracking-wider ${
+                  product.badge === 'SOLD OUT'
+                    ? 'bg-gray-900 text-white'
+                    : 'bg-white text-black'
+                }`}
+              >
+                {product.badge}
+              </span>
+            </div>
+          )}
+
+          <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+            <img
+              src={imageUrl}
+              alt={product.name}
+              className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ${
+                activeProduct === product.id ? 'scale-105' : 'scale-100'
+              }`}
+              loading="lazy"
+              onError={(event) => {
+                (event.target as HTMLImageElement).src = FALLBACK_IMAGE;
+              }}
+            />
+          </div>
+
+          <div className="p-3 sm:p-4 space-y-1">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-900 group-hover:text-gray-600 transition-colors line-clamp-2">
+              {product.name}
+            </h3>
+            <p className="text-sm sm:text-base font-semibold">{priceLabel}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider">
+              {categoryLabel}
+            </p>
+          </div>
+        </div>
+      </Link>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20 sm:pt-24">
-      
-      {/* Breadcrumb - Hidden on mobile, visible on tablet+ */}
       <div className="hidden sm:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="text-sm text-gray-500">
-          <a href="/" className="hover:text-black">Home</a>
+        <nav className="text-sm text-gray-500">
+          <Link to="/" className="hover:text-black">Home</Link>
           <span className="mx-2">/</span>
           <span className="text-black">Products</span>
-        </div>
+        </nav>
       </div>
 
-      {/* Page Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-b bg-white">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">SHOP ALL</h1>
-        <p className="text-sm sm:text-base text-gray-600">Showing {filteredProducts.length} products</p>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Shop All</h1>
+        <p className="text-sm sm:text-base text-gray-600">
+          {productsState.loading
+            ? 'Loading products...'
+            : `${filteredProducts.length} product${filteredProducts.length === 1 ? '' : 's'} available`}
+        </p>
+        {productsState.error && (
+          <p className="mt-2 text-sm text-red-600">
+            {productsState.error}
+          </p>
+        )}
       </div>
 
-      {/* Category Tabs - Fixed Position */}
       <div className="sticky top-0 bg-white z-30 border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="no-scrollbar flex overflow-x-auto py-3 sm:py-4">
             <div className="flex space-x-4 sm:space-x-8 flex-nowrap">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`whitespace-nowrap text-xs sm:text-sm font-medium uppercase tracking-wider pb-2 transition-all flex-shrink-0 ${
-                    activeCategory === cat
-                      ? 'text-black border-b-2 border-black'
-                      : 'text-gray-500 hover:text-black'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+              {categoryTabs.map(({ name, slug }) => {
+                const isActive = activeCategory === slug;
+                return (
+                  <button
+                    key={slug}
+                    onClick={() => handleCategoryChange(slug)}
+                    className={`whitespace-nowrap text-xs sm:text-sm font-medium uppercase tracking-wider pb-2 transition-all flex-shrink-0 ${
+                      isActive ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-black'
+                    }`}
+                  >
+                    {name}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        
-        {/* Mobile Filter/Sort Bar - Fixed Position Under Category Tabs */}
         <div className="lg:hidden sticky top-[53px] bg-white z-20 -mx-4 px-4 py-3 border-b shadow-sm mb-4 flex gap-2">
           <button
             onClick={() => setIsFilterOpen(true)}
@@ -244,9 +313,9 @@ const ProductsListingPage: React.FC = () => {
               </span>
             )}
           </button>
-          
+
           <button
-            onClick={() => setIsSortOpen(!isSortOpen)}
+            onClick={() => setIsSortOpen((prev) => !prev)}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium border border-gray-300 hover:border-black transition-colors"
           >
             Sort
@@ -254,15 +323,9 @@ const ProductsListingPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Mobile Sort Dropdown - Adjusted Position */}
         {isSortOpen && (
           <div className="lg:hidden fixed inset-x-4 top-[120px] bg-white border shadow-lg z-30 rounded-lg overflow-hidden">
-            {[
-              { value: 'featured', label: 'Featured' },
-              { value: 'price-low', label: 'Price: Low to High' },
-              { value: 'price-high', label: 'Price: High to Low' },
-              { value: 'name', label: 'Name: A-Z' }
-            ].map((option) => (
+            {SORT_OPTIONS.map((option) => (
               <button
                 key={option.value}
                 onClick={() => {
@@ -280,141 +343,84 @@ const ProductsListingPage: React.FC = () => {
         )}
 
         <div className="flex gap-8">
-          
-          {/* Desktop Sidebar - Filters */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-40 space-y-6">
-              
-              {/* Filter Header */}
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-bold uppercase tracking-wider">Filters</h3>
+                {activeFiltersCount > 0 && (
+                  <button
+                    onClick={clearFilters}
+                    className="text-xs font-medium text-gray-500 hover:text-black"
+                  >
+                    Clear
+                  </button>
+                )}
               </div>
 
-              {/* Price Range */}
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold uppercase tracking-wider">Price</h4>
                 <div className="space-y-2">
                   <input
                     type="range"
-                    min="0"
-                    max="200"
-                    value={priceRange[1]}
-                    onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
+                    min={Math.floor(priceBounds.min)}
+                    max={Math.max(Math.ceil(priceBounds.max), Math.floor(priceBounds.min) + 1)}
+                    value={Math.min(priceRange[1], Math.max(Math.ceil(priceBounds.max), Math.floor(priceBounds.min) + 1))}
+                    onChange={(event) => {
+                      const newMax = Number(event.target.value);
+                      setPriceRange([priceBounds.min, newMax]);
+                    }}
                     className="w-full"
+                    disabled={priceBounds.max === 0}
                   />
                   <div className="flex justify-between text-sm text-gray-600">
-                    <span>£{priceRange[0]}</span>
-                    <span>£{priceRange[1]}</span>
+                    <span>{formatCurrency(priceBounds.min)}</span>
+                    <span>{formatCurrency(priceRange[1])}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Size Filter */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold uppercase tracking-wider">Size</h4>
-                <div className="flex flex-wrap gap-2">
-                  {sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => {
-                        setSelectedSizes(prev =>
-                          prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
-                        );
-                      }}
-                      className={`px-4 py-2 text-sm font-medium transition-all ${
-                        selectedSizes.includes(size)
-                          ? 'bg-black text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Color Filter */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold uppercase tracking-wider">Color</h4>
-                <div className="flex flex-wrap gap-3">
-                  {colors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => {
-                        setSelectedColors(prev =>
-                          prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]
-                        );
-                      }}
-                      className={`w-10 h-10 rounded-full border-2 transition-all ${
-                        selectedColors.includes(color) ? 'border-black scale-110' : 'border-gray-300'
-                      }`}
-                      style={{
-                        backgroundColor: color.toLowerCase() === 'beige' ? '#F5F5DC' : color.toLowerCase()
-                      }}
-                      title={color}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Availability */}
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold uppercase tracking-wider">Availability</h4>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={showInStockOnly}
-                    onChange={(e) => setShowInStockOnly(e.target.checked)}
+                    onChange={(event) => setShowInStockOnly(event.target.checked)}
                     className="w-4 h-4"
                   />
-                  <span className="text-sm">In Stock Only</span>
+                  <span className="text-sm">In stock only</span>
                 </label>
               </div>
-
-              {/* Clear Filters */}
-              <button
-                onClick={clearFilters}
-                className="w-full py-2 text-sm font-medium text-gray-700 hover:text-black border border-gray-300 hover:border-black transition-all"
-              >
-                Clear All Filters
-              </button>
             </div>
           </aside>
 
-          {/* Products Grid */}
           <div className="flex-1">
-            
-            {/* Desktop Top Bar */}
             <div className="hidden lg:flex items-center justify-between mb-6">
               <div className="text-sm text-gray-600">
-                {filteredProducts.length} products found
+                {filteredProducts.length} product{filteredProducts.length === 1 ? '' : 's'} found
               </div>
 
-              {/* Desktop Sort Dropdown */}
               <div className="relative">
                 <button
-                  onClick={() => setIsSortOpen(!isSortOpen)}
+                  onClick={() => setIsSortOpen((prev) => !prev)}
                   className="flex items-center gap-2 px-4 py-2 text-sm font-medium hover:bg-gray-100 transition-colors"
                 >
-                  Sort By: {sortBy === 'featured' ? 'Featured' : sortBy === 'price-low' ? 'Price: Low' : sortBy === 'price-high' ? 'Price: High' : 'Name'}
+                  Sort by: {SORT_OPTIONS.find((option) => option.value === sortBy)?.label}
                   {isSortOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
 
                 {isSortOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white border shadow-lg z-40 rounded">
-                    {[
-                      { value: 'featured', label: 'Featured' },
-                      { value: 'price-low', label: 'Price: Low to High' },
-                      { value: 'price-high', label: 'Price: High to Low' },
-                      { value: 'name', label: 'Name: A-Z' }
-                    ].map((option) => (
+                    {SORT_OPTIONS.map((option) => (
                       <button
                         key={option.value}
                         onClick={() => {
                           setSortBy(option.value);
                           setIsSortOpen(false);
                         }}
-                        className="block w-full text-left px-4 py-3 text-sm hover:bg-gray-100 transition-colors"
+                        className={`block w-full text-left px-4 py-3 text-sm hover:bg-gray-100 transition-colors ${
+                          sortBy === option.value ? 'bg-gray-50 font-semibold' : ''
+                        }`}
                       >
                         {option.label}
                       </button>
@@ -424,83 +430,48 @@ const ProductsListingPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Products Grid - Responsive */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-              {filteredProducts.map((product, index) => {
-                const animationDelay = Math.min(index, 10) * 80;
-
-                return (
-                <a
-                  key={product.id}
-                  href={`/products/${product.id}`}
-                  className="group block"
-                  onMouseEnter={() => setActiveProduct(product.id)}
-                  onMouseLeave={() => setActiveProduct(null)}
-                  style={{
-                    animation: 'fadeInUp 0.45s ease-out',
-                    animationDelay: `${animationDelay}ms`,
-                    animationFillMode: 'forwards'
-                  }}
-                >
-                  <div className="relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                    {/* Badge */}
-                    {product.badge && (
-                      <div className="absolute top-2 left-2 z-20">
-                        <span className={`text-xs font-bold px-2 py-1 uppercase tracking-wider ${
-                          product.badge === 'SOLD OUT' ? 'bg-gray-900 text-white' : 'bg-white text-black'
-                        }`}>
-                          {product.badge}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Images */}
-                    <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
-                      <img
-                        src={product.image1}
-                        alt={product.name}
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-                          activeProduct === product.id ? 'opacity-0' : 'opacity-100'
-                        }`}
-                      />
-                      <img
-                        src={product.image2}
-                        alt={product.name}
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-                          activeProduct === product.id ? 'opacity-100' : 'opacity-0'
-                        }`}
-                      />
-                    </div>
-
-                    {/* Product Info */}
-                    <div className="p-3 sm:p-4 space-y-1">
-                      <h3 className="text-xs sm:text-sm font-medium text-gray-900 group-hover:text-gray-600 transition-colors line-clamp-2">
-                        {product.name}
-                      </h3>
-                      <p className="text-sm sm:text-base font-semibold">£{product.price}</p>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider">{product.category}</p>
+            {productsState.loading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <div key={index} className="animate-pulse bg-white rounded-lg overflow-hidden shadow-sm">
+                    <div className="aspect-[3/4] bg-gray-200" />
+                    <div className="p-4 space-y-2">
+                      <div className="h-4 bg-gray-200 rounded" />
+                      <div className="h-4 w-1/2 bg-gray-200 rounded" />
                     </div>
                   </div>
-                </a>
-              );
-              })}
-            </div>
+                ))}
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="border border-dashed border-gray-300 rounded-lg p-12 text-center">
+                <p className="text-lg font-semibold text-gray-700 mb-2">No products match your filters</p>
+                <p className="text-sm text-gray-500 mb-6">
+                  Try adjusting your filters or browse all products.
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="px-4 py-2 text-sm font-medium bg-black text-white rounded-md hover:bg-gray-900 transition"
+                >
+                  Clear filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                {filteredProducts.map((product, index) => renderProductCard(product, index))}
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Mobile Filter Sidebar/Modal */}
       {isFilterOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
-          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/50"
             onClick={() => setIsFilterOpen(false)}
-          ></div>
+          />
 
-          {/* Sidebar */}
           <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[85vh] overflow-y-auto">
-            {/* Header */}
             <div className="sticky top-0 bg-white border-b px-4 py-4 flex items-center justify-between">
               <h3 className="text-lg font-bold uppercase tracking-wider">Filters</h3>
               <button
@@ -511,103 +482,55 @@ const ProductsListingPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Filter Content */}
             <div className="p-4 space-y-6">
-              {/* Price Range */}
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold uppercase tracking-wider">Price</h4>
                 <div className="space-y-2">
                   <input
                     type="range"
-                    min="0"
-                    max="200"
-                    value={priceRange[1]}
-                    onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
+                    min={Math.floor(priceBounds.min)}
+                    max={Math.max(Math.ceil(priceBounds.max), Math.floor(priceBounds.min) + 1)}
+                    value={Math.min(priceRange[1], Math.max(Math.ceil(priceBounds.max), Math.floor(priceBounds.min) + 1))}
+                    onChange={(event) => {
+                      const newMax = Number(event.target.value);
+                      setPriceRange([priceBounds.min, newMax]);
+                    }}
                     className="w-full h-2"
+                    disabled={priceBounds.max === 0}
                   />
                   <div className="flex justify-between text-sm text-gray-600">
-                    <span>£{priceRange[0]}</span>
-                    <span>£{priceRange[1]}</span>
+                    <span>{formatCurrency(priceBounds.min)}</span>
+                    <span>{formatCurrency(priceRange[1])}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Size Filter */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold uppercase tracking-wider">Size</h4>
-                <div className="flex flex-wrap gap-2">
-                  {sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => {
-                        setSelectedSizes(prev =>
-                          prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
-                        );
-                      }}
-                      className={`px-4 py-2 text-sm font-medium transition-all ${
-                        selectedSizes.includes(size)
-                          ? 'bg-black text-white'
-                          : 'bg-gray-100 text-gray-700'
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Color Filter */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold uppercase tracking-wider">Color</h4>
-                <div className="flex flex-wrap gap-3">
-                  {colors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => {
-                        setSelectedColors(prev =>
-                          prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]
-                        );
-                      }}
-                      className={`w-12 h-12 rounded-full border-2 transition-all ${
-                        selectedColors.includes(color) ? 'border-black scale-110' : 'border-gray-300'
-                      }`}
-                      style={{
-                        backgroundColor: color.toLowerCase() === 'beige' ? '#F5F5DC' : color.toLowerCase()
-                      }}
-                      title={color}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Availability */}
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold uppercase tracking-wider">Availability</h4>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={showInStockOnly}
-                    onChange={(e) => setShowInStockOnly(e.target.checked)}
+                    onChange={(event) => setShowInStockOnly(event.target.checked)}
                     className="w-5 h-5"
                   />
-                  <span className="text-sm">In Stock Only</span>
+                  <span className="text-sm">In stock only</span>
                 </label>
               </div>
             </div>
 
-            {/* Footer Buttons */}
             <div className="sticky bottom-0 bg-white border-t p-4 flex gap-3">
               <button
                 onClick={clearFilters}
                 className="flex-1 py-3 text-sm font-medium text-gray-700 border border-gray-300 hover:border-black transition-all"
               >
-                Clear All
+                Clear all
               </button>
               <button
                 onClick={() => setIsFilterOpen(false)}
                 className="flex-1 py-3 text-sm font-medium bg-black text-white hover:bg-gray-900 transition-all"
               >
-                Show {filteredProducts.length} Products
+                Show {filteredProducts.length} product{filteredProducts.length === 1 ? '' : 's'}
               </button>
             </div>
           </div>
@@ -626,11 +549,11 @@ const ProductsListingPage: React.FC = () => {
           }
         }
         .no-scrollbar {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
         .no-scrollbar::-webkit-scrollbar {
-          display: none; /* Chrome, Safari, Opera */
+          display: none;
         }
       `}</style>
     </div>

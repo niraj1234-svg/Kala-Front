@@ -1,12 +1,19 @@
-import { useState, useEffect } from 'react';
-import { ChevronDown, Menu, Search, ShoppingBag, User, X} from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { ChevronDown, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from '../CartContext'; 
+import { useAppralStore } from '../store/appralStore';
+
 interface HeaderProps {
   isLoggedIn: boolean;
   userName: string;
   onLogout: () => void;
 }
+
+type MenuItem = {
+  label: string;
+  path: string;
+  children?: MenuItem[];
+};
 
 const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
   const navigate = useNavigate();
@@ -14,10 +21,46 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  
-  // Get cart state
-  const { getCartCount } = useCart();
-  const cartCount = getCartCount();
+  const categoriesState = useAppralStore((state) => state.categories);
+  const cartState = useAppralStore((state) => state.cart);
+  const dynamicMenuItems = useMemo<MenuItem[]>(
+    () =>
+      categoriesState.data.map((category) => ({
+        label: category.name,
+        path: `/products?category=${encodeURIComponent(category.slug)}`,
+        children: (category.children ?? []).map((child) => ({
+          label: child.name,
+          path: `/products?category=${encodeURIComponent(child.slug)}`,
+        })),
+      })),
+    [categoriesState.data],
+  );
+  const additionalMenuItems = useMemo<MenuItem[]>(
+    () => [
+      {
+        label: 'Customize',
+        path: '/customize',
+      },
+      {
+        label: 'Behind the Hype',
+        path: '/blog',
+      },
+      {
+        label: 'Street Wire — The Network',
+        path: '/network',
+      },
+    ],
+    [],
+  );
+  const mainMenu = useMemo<MenuItem[]>(
+    () => (dynamicMenuItems.length > 0 ? [...dynamicMenuItems, ...additionalMenuItems] : additionalMenuItems),
+    [additionalMenuItems, dynamicMenuItems],
+  );
+  const cartCount = cartState.data?.item_count ?? 0;
+  const firstMenuWithChildren = useMemo<string | null>(
+    () => mainMenu.find((item) => item.children && item.children.length > 0)?.label ?? null,
+    [mainMenu],
+  );
 
   const currencies = [
     { code: 'AUD', flag: 'au', name: 'Australian Dollar' },
@@ -28,6 +71,8 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
   ];
 
   const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
+
+  const [openMenu, setOpenMenu] = useState<string | null>(firstMenuWithChildren);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,39 +103,16 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isDropdownOpen, isUserMenuOpen]);
-
-  const mainMenu = [
-    {
-      label: 'Shop',
-      path: '/products',
-      children: [
-        { label: 'T-shirts', path: '/products?category=T-Shirts' },
-        { label: 'Sweatshirts', path: '/products?category=Sweatshirts' },
-        { label: 'Hoodies', path: '/products?category=Hoodies' },
-        { label: 'Outerwear', path: '/products?category=Jackets' },
-        { label: 'Accessories', path: '/products?category=Accessories' },
-      ],
-    },
-    {
-      label: 'Customize',
-      path: '/customize',
-    },
-    {
-      label: 'Behind the Hype',
-      path: '/blog',
-    },
-    {
-      label: 'Street Wire — The Network',
-      path: '/network',
-    },
-  ];
-
-  const [openMenu, setOpenMenu] = useState('Shop');
-
   const handleToggleMenu = (label: string, hasChildren?: boolean) => {
     if (!hasChildren) return;
     setOpenMenu(prev => (prev === label ? '' : label));
   };
+
+  useEffect(() => {
+    if (!openMenu && firstMenuWithChildren) {
+      setOpenMenu(firstMenuWithChildren);
+    }
+  }, [firstMenuWithChildren, openMenu]);
 
   // Handle user actions
   const handleUserIconClick = () => {
@@ -101,6 +123,11 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
       navigate('/login');
     }
   };
+
+  useEffect(() => {
+    // Close whichever user menu was open when header mode switches
+    setIsUserMenuOpen(false);
+  }, [isScrolled]);
 
   return (
     <>
@@ -191,7 +218,7 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
                 </button>
                 
                 {/* User Menu - Displayed when logged in */}
-                {isLoggedIn && isUserMenuOpen && (
+                {isLoggedIn && isUserMenuOpen && !isScrolled && (
                   <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-50">
                     <div className="px-4 py-3 border-b border-gray-200">
                       <div className="text-sm font-medium text-gray-900">Hello, {userName}</div>
@@ -313,7 +340,7 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
                 </button>
                 
                 {/* User Menu - Displayed when logged in */}
-                {isLoggedIn && isUserMenuOpen && (
+                {isLoggedIn && isUserMenuOpen && isScrolled && (
                   <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-50">
                     <div className="px-4 py-3 border-b border-gray-200">
                       <div className="text-sm font-medium text-gray-900">Hello, {userName}</div>

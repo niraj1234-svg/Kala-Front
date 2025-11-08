@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/footer';
 import ScrollToTop from './components/ScrollToTop';
-import { CartProvider } from './CartContext'; 
+import { useAuthStore, authStore } from './store/authStore';
+import { useAppralStore, appralStore } from './store/appralStore';
+import { ToastProvider } from './components/ui/ToastProvider';
 
 // Existing pages
 import HeroSection from './components/copyHerosection';
@@ -19,6 +21,15 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import CartPage from './pages/CartPage';
 
+// Admin pages
+import AdminLayout from './admin/AdminLayout';
+import DashboardOverviewPage from './admin/DashboardOverviewPage';
+import ProductsListPage from './admin/ProductsListPage';
+import ProductDetailConsolePage from './admin/ProductDetailConsolePage';
+import CategoriesPage from './admin/CategoriesPage';
+import UsersListPage from './admin/UsersListPage';
+import UserProfilePage from './admin/UserProfilePage';
+
 const HomePage = () => (
   <>
     <HeroSection />
@@ -30,62 +41,76 @@ const HomePage = () => (
 );
 
 const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState('');
-  const [_userEmail, setUserEmail] = useState('');
+  const authState = useAuthStore((state) => state);
+  const categoriesState = useAppralStore((state) => state.categories);
 
-  const handleLogin = (name: string, email: string) => {
-    setUserName(name);
-    setUserEmail(email);
-    setIsLoggedIn(true);
-  };
+  useEffect(() => {
+    if (!authState.isAuthenticated && authState.tokens?.access) {
+      authStore.fetchProfile().catch(() => {
+        // Ignore error; authStore already handles state reset on failure
+      });
+    }
+  }, [authState.isAuthenticated, authState.tokens?.access]);
 
-  const handleSignup = (name: string, email: string) => {
-    setUserName(name);
-    setUserEmail(email);
-    setIsLoggedIn(true);
-  };
+  useEffect(() => {
+    if (!categoriesState.loading && categoriesState.data.length === 0) {
+      appralStore.fetchCategories().catch((error) => {
+        console.error('Failed to load categories', error);
+      });
+    }
+  }, [categoriesState.data.length, categoriesState.loading]);
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUserName('');
-    setUserEmail('');
-  };
+  useEffect(() => {
+    if (authState.isAuthenticated) {
+      appralStore.fetchCart().catch((error) => {
+        console.error('Failed to load cart', error);
+      });
+    }
+  }, [authState.isAuthenticated]);
 
   return (
-    <Router>
-      {/* ScrollToTop component to reset scroll position on route change */}
-      <ScrollToTop />
-      
-      {/* Wrap everything with CartProvider */}
-      <CartProvider>
+    <ToastProvider>
+      <Router>
+        {/* ScrollToTop component to reset scroll position on route change */}
+        <ScrollToTop />
+        
         <div className="min-h-screen">
           <Header
-            isLoggedIn={isLoggedIn}
-            userName={userName}
-            onLogout={handleLogout}
+            isLoggedIn={authState.isAuthenticated}
+            userName={authState.user?.first_name ?? authState.user?.email ?? ''}
+            onLogout={() => authStore.logout()}
           />
             
           <Routes>
-            {/* Home Page */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
-            <Route path="/signup" element={<SignupPage onSignup={handleSignup} />} />
-            
-            {/* Products Listing Page */}
-            <Route path="/products" element={<ProductsListingPage />} />
-            
-            {/* Product Detail Page */}
-            <Route path="/products/:id" element={<ProductDetailPage />} />
-            
-            {/* Cart Page */}
-            <Route path="/cart" element={<CartPage />} />
-          </Routes>
+          {/* Home Page */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
           
-          <Footer />
-        </div>
-      </CartProvider>
+          {/* Products Listing Page */}
+          <Route path="/products" element={<ProductsListingPage />} />
+          
+          {/* Product Detail Page */}
+          <Route path="/products/:id" element={<ProductDetailPage />} />
+          
+          {/* Cart Page */}
+          <Route path="/cart" element={<CartPage />} />
+
+          {/* Admin */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<DashboardOverviewPage />} />
+            <Route path="products" element={<ProductsListPage />} />
+            <Route path="products/:slug" element={<ProductDetailConsolePage />} />
+            <Route path="categories" element={<CategoriesPage />} />
+            <Route path="users" element={<UsersListPage />} />
+            <Route path="users/:id" element={<UserProfilePage />} />
+          </Route>
+        </Routes>
+        
+        <Footer />
+      </div>
     </Router>
+    </ToastProvider>
   );
 };
 

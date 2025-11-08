@@ -1,30 +1,30 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { authStore, useAuthStore } from '../store/authStore';
 
-interface LoginPageProps {
-  onLogin: (name: string, email: string) => void;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
+  const authState = useAuthStore((state) => state);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [formError, setFormError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation
+
     if (!email || !password) {
-      setError('Please fill in all fields');
+      setFormError('Please fill in all fields');
       return;
     }
-    
-    // In a real app, you would call an API here
-    // For this example, we'll just simulate a successful login
-    const userName = email.split('@')[0]; // Extract name from email
-    onLogin(userName, email);
-    navigate('/');
+
+    setFormError('');
+    try {
+      await authStore.login({ email, password });
+      navigate('/');
+    } catch (error) {
+      // authStore already sets error state
+      console.error('Login failed', error);
+    }
   };
 
   return (
@@ -38,10 +38,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           <div className="mb-4 text-center text-gray-600">
             Don't have an account yet? <Link to="/signup" className="text-black font-medium">Create account</Link>
           </div>
-          
-          {error && (
+
+          {(formError || authState.error) && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              {error}
+              {formError || authState.error}
             </div>
           )}
           
@@ -78,9 +78,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             
             <button
               type="submit"
-              className="w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 transition duration-200"
+              className="w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 transition duration-200 disabled:opacity-60"
+              disabled={authState.loading}
             >
-              SIGN IN
+              {authState.loading ? 'Signing In...' : 'SIGN IN'}
             </button>
           </form>
           
