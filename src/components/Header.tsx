@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ChevronDown, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
+import { ChevronDown, LayoutGrid, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppralStore } from '../store/appralStore';
+import BottomBar from './BottomBar';
 
 interface HeaderProps {
   isLoggedIn: boolean;
   userName: string;
+  userRole?: string;
   onLogout: () => void;
 }
 
@@ -15,7 +17,7 @@ type MenuItem = {
   children?: MenuItem[];
 };
 
-const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
+const Header = ({ isLoggedIn, userName, userRole, onLogout }: HeaderProps) => {
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -57,6 +59,7 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
     [additionalMenuItems, dynamicMenuItems],
   );
   const cartCount = cartState.data?.item_count ?? 0;
+  const isAdmin = userRole?.toLowerCase() === 'admin';
   const firstMenuWithChildren = useMemo<string | null>(
     () => mainMenu.find((item) => item.children && item.children.length > 0)?.label ?? null,
     [mainMenu],
@@ -166,6 +169,15 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
 
             {/* Right Side - Icons */}
             <div className="flex items-center gap-2">
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="hidden sm:inline-flex items-center gap-2 bg-emerald-500/90 hover:bg-emerald-600 text-white text-sm font-medium tracking-wide py-2 px-3 rounded-md shadow"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                  Admin Panel
+                </Link>
+              )}
               <div className="relative currency-dropdown">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -382,50 +394,11 @@ const Header = ({ isLoggedIn, userName, onLogout }: HeaderProps) => {
         </div>
       </header>
 
-      {/* Mobile Fixed Bottom Nav */}
-      {/**
-       * Temporarily disabled bottom navigation per request
-       */}
-      {false && (
-        <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_5px_rgba(0,0,0,0.1)] z-50">
-          <div className="grid grid-cols-4 h-14">
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="flex flex-col items-center justify-center"
-            >
-              <Menu className="w-5 h-5" />
-              <span className="text-xs mt-1">Menu</span>
-            </button>
-            
-            <button className="flex flex-col items-center justify-center">
-              <Search className="w-5 h-5" />
-              <span className="text-xs mt-1">Search</span>
-            </button>
-            
-            {/* User Button - Mobile */}
-            <button 
-              onClick={handleUserIconClick}
-              className="flex flex-col items-center justify-center relative"
-            >
-              <User className="w-5 h-5" />
-              {isLoggedIn && (
-                <span className="absolute top-0 right-1/3 bg-green-500 rounded-full w-2 h-2"></span>
-              )}
-              <span className="text-xs mt-1">Account</span>
-            </button>
-            
-            <Link to="/cart" className="flex flex-col items-center justify-center relative">
-              <ShoppingBag className="w-5 h-5" />
-              {cartCount > 0 && (
-                <span className="absolute top-0 right-1/3 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
-                  {cartCount > 9 ? '9+' : cartCount}
-                </span>
-              )}
-              <span className="text-xs mt-1">Cart</span>
-            </Link>
-          </div>
-        </div>
-      )}
+      <BottomBar
+        cartCount={cartCount}
+        isAdmin={isAdmin}
+        onMenuToggle={() => setIsSidebarOpen(true)}
+      />
 
       {/* Sidebar Menu */}
       <div

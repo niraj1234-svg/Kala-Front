@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Loader2, Plus, RefreshCw, Search, Trash2, Edit3 } from 'lucide-react';
 import { adminStore, useAdminStore } from '../store/adminStore';
+import { getProductCategoryLabel } from '../store/admin';
 import { useToast } from '../components/ui/ToastProvider';
 import ProductFormModal from './ProductFormModal';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
@@ -32,12 +33,15 @@ const ProductsListPage: React.FC = () => {
       return data;
     }
     const term = search.trim().toLowerCase();
-    return data.filter((product) =>
-      [product.name, product.sku, product.category].some((value) =>
+    return data.filter((product) => {
+      const categoryLabel = getProductCategoryLabel(product.category);
+      return [product.name, product.sku, categoryLabel].some((value) =>
         value?.toLowerCase().includes(term),
-      ),
-    );
+      );
+    });
   }, [data, search]);
+
+  const renderCategory = (product: typeof data[number]): string => getProductCategoryLabel(product.category);
 
   const openCreateModal = () => {
     setModalState({ mode: 'create', open: true });
@@ -169,7 +173,7 @@ const ProductsListPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-5 py-4 text-slate-600">{product.sku}</td>
-                  <td className="px-5 py-4 text-slate-600">{product.category}</td>
+                  <td className="px-5 py-4 text-slate-600">{renderCategory(product)}</td>
                   <td className="px-5 py-4 text-right font-medium text-slate-800">₹{product.price}</td>
                   <td className="px-5 py-4 text-center">
                     <span

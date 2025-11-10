@@ -300,47 +300,49 @@ const ProductsListingPage: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        <div className="lg:hidden sticky top-[53px] bg-white z-20 -mx-4 px-4 py-3 border-b shadow-sm mb-4 flex gap-2">
+        <div className="lg:hidden sticky top-[53px] bg-white z-20 -mx-4 px-4 py-3 border-b shadow-sm mb-4 flex gap-3">
           <button
             onClick={() => setIsFilterOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium border border-gray-300 hover:border-black transition-colors relative"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium border border-gray-300 rounded-md hover:border-black transition-colors relative"
           >
             <SlidersHorizontal className="w-4 h-4" />
             Filters
             {activeFiltersCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-black text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+              <span className="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
                 {activeFiltersCount}
               </span>
             )}
           </button>
 
-          <button
-            onClick={() => setIsSortOpen((prev) => !prev)}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium border border-gray-300 hover:border-black transition-colors"
-          >
-            Sort
-            {isSortOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
-        </div>
+          <div className="flex-1 relative">
+            <button
+              onClick={() => setIsSortOpen((prev) => !prev)}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium border border-gray-300 rounded-md hover:border-black transition-colors"
+            >
+              Sort
+              {isSortOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
 
-        {isSortOpen && (
-          <div className="lg:hidden fixed inset-x-4 top-[120px] bg-white border shadow-lg z-30 rounded-lg overflow-hidden">
-            {SORT_OPTIONS.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => {
-                  setSortBy(option.value);
-                  setIsSortOpen(false);
-                }}
-                className={`block w-full text-left px-4 py-3 text-sm hover:bg-gray-100 transition-colors ${
-                  sortBy === option.value ? 'bg-gray-50 font-semibold' : ''
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
+            {isSortOpen && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border shadow-lg z-40 rounded-md overflow-hidden">
+                {SORT_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => {
+                      setSortBy(option.value);
+                      setIsSortOpen(false);
+                    }}
+                    className={`block w-full text-left px-4 py-3 text-sm hover:bg-gray-100 transition-colors ${
+                      sortBy === option.value ? 'bg-gray-50 font-semibold' : ''
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="flex gap-8">
           <aside className="hidden lg:block w-64 flex-shrink-0">
@@ -465,73 +467,75 @@ const ProductsListingPage: React.FC = () => {
       </div>
 
       {isFilterOpen && (
-        <div className="lg:hidden fixed inset-0 z-50">
+        <div className="lg:hidden fixed inset-0 z-50 flex">
           <div
-            className="absolute inset-0 bg-black/50"
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setIsFilterOpen(false)}
           />
 
-          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[85vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b px-4 py-4 flex items-center justify-between">
+          <div className="relative ml-auto h-full w-full max-w-sm bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b px-4 py-4">
               <h3 className="text-lg font-bold uppercase tracking-wider">Filters</h3>
               <button
                 onClick={() => setIsFilterOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-4 space-y-6">
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold uppercase tracking-wider">Price</h4>
-                <div className="space-y-2">
-                  <input
-                    type="range"
-                    min={Math.floor(priceBounds.min)}
-                    max={Math.max(Math.ceil(priceBounds.max), Math.floor(priceBounds.min) + 1)}
-                    value={Math.min(priceRange[1], Math.max(Math.ceil(priceBounds.max), Math.floor(priceBounds.min) + 1))}
-                    onChange={(event) => {
-                      const newMax = Number(event.target.value);
-                      setPriceRange([priceBounds.min, newMax]);
-                    }}
-                    className="w-full h-2"
-                    disabled={priceBounds.max === 0}
-                  />
-                  <div className="flex justify-between text-sm text-gray-600">
-                    <span>{formatCurrency(priceBounds.min)}</span>
-                    <span>{formatCurrency(priceRange[1])}</span>
+            <div className="flex h-[calc(100%-120px)] flex-col overflow-y-auto">
+              <div className="flex-1 space-y-6 px-4 py-6">
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-900">Price</h4>
+                  <div className="space-y-3">
+                    <input
+                      type="range"
+                      min={Math.floor(priceBounds.min)}
+                      max={Math.max(Math.ceil(priceBounds.max), Math.floor(priceBounds.min) + 1)}
+                      value={Math.min(priceRange[1], Math.max(Math.ceil(priceBounds.max), Math.floor(priceBounds.min) + 1))}
+                      onChange={(event) => {
+                        const newMax = Number(event.target.value);
+                        setPriceRange([priceBounds.min, newMax]);
+                      }}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      disabled={priceBounds.max === 0}
+                    />
+                    <div className="flex justify-between text-sm font-medium text-gray-600">
+                      <span>{formatCurrency(priceBounds.min)}</span>
+                      <span>{formatCurrency(priceRange[1])}</span>
+                    </div>
                   </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-900">Availability</h4>
+                  <label className="flex items-center gap-3 cursor-pointer p-2 hover:bg-gray-50 rounded-md transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={showInStockOnly}
+                      onChange={(event) => setShowInStockOnly(event.target.checked)}
+                      className="w-5 h-5 text-black border-gray-300 rounded focus:ring-black focus:ring-2"
+                    />
+                    <span className="text-sm font-medium">In stock only</span>
+                  </label>
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold uppercase tracking-wider">Availability</h4>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={showInStockOnly}
-                    onChange={(event) => setShowInStockOnly(event.target.checked)}
-                    className="w-5 h-5"
-                  />
-                  <span className="text-sm">In stock only</span>
-                </label>
+              <div className="border-t px-4 py-4 flex gap-3">
+                <button
+                  onClick={clearFilters}
+                  className="flex-1 py-3 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:border-black transition-all"
+                >
+                  Clear all
+                </button>
+                <button
+                  onClick={() => setIsFilterOpen(false)}
+                  className="flex-1 py-3 text-sm font-medium bg-black text-white rounded-md hover:bg-gray-900 transition-all"
+                >
+                  Show {filteredProducts.length} product{filteredProducts.length === 1 ? '' : 's'}
+                </button>
               </div>
-            </div>
-
-            <div className="sticky bottom-0 bg-white border-t p-4 flex gap-3">
-              <button
-                onClick={clearFilters}
-                className="flex-1 py-3 text-sm font-medium text-gray-700 border border-gray-300 hover:border-black transition-all"
-              >
-                Clear all
-              </button>
-              <button
-                onClick={() => setIsFilterOpen(false)}
-                className="flex-1 py-3 text-sm font-medium bg-black text-white hover:bg-gray-900 transition-all"
-              >
-                Show {filteredProducts.length} product{filteredProducts.length === 1 ? '' : 's'}
-              </button>
             </div>
           </div>
         </div>

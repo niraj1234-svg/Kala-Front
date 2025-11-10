@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 
 import ScrollToTop from './components/ScrollToTop';
@@ -39,9 +39,14 @@ const HomePage = () => (
   </>
 );
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
   const authState = useAuthStore((state) => state);
   const categoriesState = useAppralStore((state) => state.categories);
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  const containerClassName = isAdminRoute
+    ? 'min-h-screen'
+    : 'min-h-screen pb-[calc(7rem+env(safe-area-inset-bottom))] sm:pb-0';
 
   useEffect(() => {
     if (!authState.isAuthenticated && authState.tokens?.access) {
@@ -68,49 +73,53 @@ const App: React.FC = () => {
   }, [authState.isAuthenticated]);
 
   return (
-    <ToastProvider>
-      <Router>
-        {/* ScrollToTop component to reset scroll position on route change */}
-        <ScrollToTop />
-        
-        <div className="min-h-screen">
-          <Header
-            isLoggedIn={authState.isAuthenticated}
-            userName={authState.user?.first_name ?? authState.user?.email ?? ''}
-            onLogout={() => authStore.logout()}
-          />
-            
-          <Routes>
-          {/* Home Page */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          
-          {/* Products Listing Page */}
-          <Route path="/products" element={<ProductsListingPage />} />
-          
-          {/* Product Detail Page */}
-          <Route path="/products/:id" element={<ProductDetailPage />} />
-          
-          {/* Cart Page */}
-          <Route path="/cart" element={<CartPage />} />
+    <div className={containerClassName}>
+      {!isAdminRoute && (
+        <Header
+          isLoggedIn={authState.isAuthenticated}
+          userName={authState.user?.first_name ?? authState.user?.email ?? ''}
+          userRole={authState.user?.role}
+          onLogout={() => authStore.logout()}
+        />
+      )}
 
-          {/* Admin */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<DashboardOverviewPage />} />
-            <Route path="products" element={<ProductsListPage />} />
-            <Route path="products/:slug" element={<ProductDetailConsolePage />} />
-            <Route path="categories" element={<CategoriesPage />} />
-            <Route path="users" element={<UsersListPage />} />
-            <Route path="users/:id" element={<UserProfilePage />} />
-          </Route>
-        </Routes>
-        
-     
-      </div>
-    </Router>
-    </ToastProvider>
+      <Routes>
+        {/* Home Page */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+
+        {/* Products Listing Page */}
+        <Route path="/products" element={<ProductsListingPage />} />
+
+        {/* Product Detail Page */}
+        <Route path="/products/:id" element={<ProductDetailPage />} />
+
+        {/* Cart Page */}
+        <Route path="/cart" element={<CartPage />} />
+
+        {/* Admin */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<DashboardOverviewPage />} />
+          <Route path="products" element={<ProductsListPage />} />
+          <Route path="products/:slug" element={<ProductDetailConsolePage />} />
+          <Route path="categories" element={<CategoriesPage />} />
+          <Route path="users" element={<UsersListPage />} />
+          <Route path="users/:id" element={<UserProfilePage />} />
+        </Route>
+      </Routes>
+    </div>
   );
 };
+
+const App: React.FC = () => (
+  <ToastProvider>
+    <Router>
+      {/* ScrollToTop component to reset scroll position on route change */}
+      <ScrollToTop />
+      <AppContent />
+    </Router>
+  </ToastProvider>
+);
 
 export default App;

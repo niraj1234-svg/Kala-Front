@@ -224,14 +224,7 @@ const BrandStorySection: React.FC = () => {
               }`}
               style={{ transitionDelay: '1800ms' }}
             >
-              <div className="bg-white/95 backdrop-blur-md rounded-xl p-6 shadow-2xl border border-white/20 hover:shadow-white/10 hover:scale-105 transition-all duration-300">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Quality Guaranteed
-                </h3>
-                <p className="text-gray-700 text-sm leading-relaxed">
-                  Every product undergoes strict quality control to ensure you receive only the best.
-                </p>
-              </div>
+             
             </div>
           </div>
         </div>

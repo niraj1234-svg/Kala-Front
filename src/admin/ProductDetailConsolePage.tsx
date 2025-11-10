@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Loader2, RefreshCw, Plus, Pencil, Trash2 } from 'lucide-react';
 import { adminStore, useAdminStore } from '../store/adminStore';
+import { getProductCategoryLabel } from '../store/admin';
 import { useToast } from '../components/ui/ToastProvider';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import type { ProductVariant, ProductImage } from '../store/admin';
@@ -136,7 +137,7 @@ const ProductDetailConsolePage: React.FC = () => {
                 </div>
                 <div>
                   <dt className="text-xs uppercase tracking-wide text-slate-500">Category</dt>
-                  <dd className="mt-1">{product.category}</dd>
+                  <dd className="mt-1">{getProductCategoryLabel(product.category)}</dd>
                 </div>
                 <div>
                   <dt className="text-xs uppercase tracking-wide text-slate-500">Price</dt>
@@ -243,7 +244,7 @@ const ProductDetailConsolePage: React.FC = () => {
                   {images.map((image: ProductImage) => (
                     <li key={image.id} className="overflow-hidden rounded-md border border-slate-200">
                       <img
-                        src={image.image_url ?? ''}
+                        src={image.image_url ?? '/placeholder-product.png'}
                         alt={image.alt_text ?? product.name}
                         className="h-28 w-full object-cover"
                         onError={(event) => {

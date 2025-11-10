@@ -58,7 +58,7 @@ const ProductVariantModal: React.FC<ProductVariantModalProps> = ({ open, mode, s
       size: variant.size ?? '',
       colorName: variant.color_name ?? '',
       colorHex: variant.color_hex ?? '',
-      priceOverride: variant.price_override ?? '',
+      priceOverride: variant.price_override ? String(variant.price_override) : '',
       stock: String(variant.stock ?? 0),
       isActive: variant.is_active,
       additionalAttributes: variant.additional_attributes
@@ -114,17 +114,28 @@ const ProductVariantModal: React.FC<ProductVariantModalProps> = ({ open, mode, s
       }
     }
 
+    const priceOverride = values.priceOverride.trim() ? parseFloat(values.priceOverride.trim()) : null;
+    if (values.priceOverride.trim() && (isNaN(priceOverride!) || priceOverride! < 0)) {
+      addToast({
+        variant: 'error',
+        title: 'Invalid price',
+        description: 'Price override must be a valid positive number.',
+      });
+      return;
+    }
+
     const payload = {
       sku: values.sku.trim(),
-      size: values.size.trim() || null,
-      color_name: values.colorName.trim() || null,
-      color_hex: values.colorHex.trim() || null,
-      price_override: values.priceOverride.trim() || null,
+      size: values.size.trim() || '',
+      color_name: values.colorName.trim() || '',
+      color_hex: values.colorHex.trim() || '',
+      price_override: priceOverride,
       stock: stockNumber,
       is_active: values.isActive,
-      additional_attributes: parsedAttributes,
+      additional_attributes: parsedAttributes || {},
     };
 
+    console.log('Sending variant payload:', payload);
     setIsSubmitting(true);
     try {
       let saved: ProductVariant;

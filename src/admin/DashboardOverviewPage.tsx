@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { adminStore, useAdminStore } from '../store/adminStore';
+import { getProductCategoryLabel } from '../store/admin';
 import type { ProductListItem, AdminUser } from '../store/admin';
 
 type MetricKey = 'total_users' | 'total_products' | 'total_categories' | 'total_carts' | 'total_stock';
@@ -94,7 +95,9 @@ const DashboardOverviewPage: React.FC = () => {
                 {recentProducts.slice(0, 6).map((product) => (
                   <tr key={product.id} className="border-t border-slate-100">
                     <td className="px-4 py-3 font-medium text-slate-700">{product.name}</td>
-                    <td className="px-4 py-3 text-slate-500 hidden md:table-cell">{product.category}</td>
+                    <td className="px-4 py-3 text-slate-500 hidden md:table-cell">
+                      {getProductCategoryLabel(product.category)}
+                    </td>
                     <td className="px-4 py-3 text-right text-slate-700">₹{product.price}</td>
                   </tr>
                 ))}

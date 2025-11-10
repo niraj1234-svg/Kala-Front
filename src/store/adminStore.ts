@@ -188,11 +188,26 @@ export const adminStore = {
     startLoading('productDetail');
     try {
       const token = ensureToken();
-      const [product, variants, images] = await Promise.all([
-        adminApi.fetchProduct(token, slug),
-        adminApi.fetchProductVariants(token, slug),
-        adminApi.fetchProductImages(token, slug),
-      ]);
+      const product = await adminApi.fetchProduct(token, slug);
+      
+      // Try to get variants and images separately, but fall back to empty arrays if not supported
+      let variants: ProductVariant[] = [];
+      let images: ProductImage[] = [];
+      
+      try {
+        variants = await adminApi.fetchProductVariants(token, slug);
+      } catch (error) {
+        console.warn('Could not fetch variants separately, using product.variants');
+        variants = product.variants || [];
+      }
+      
+      try {
+        images = await adminApi.fetchProductImages(token, slug);
+      } catch (error) {
+        console.warn('Could not fetch images separately, using product.images');
+        images = product.images || [];
+      }
+      
       setState({
         productDetail: {
           loading: false,
@@ -254,7 +269,18 @@ export const adminStore = {
   async createVariant(slug: string, payload: Omit<ProductVariant, 'id' | 'product'>): Promise<ProductVariant> {
     startLoading('productDetail');
     try {
-      const variant = await adminApi.createProductVariant(ensureToken(), slug, payload);
+      const productId = state.productDetail.data?.id;
+      if (!productId) {
+        throw new Error('Product ID not found. Please ensure product data is loaded.');
+      }
+      
+      const payloadWithProduct = {
+        ...payload,
+        product: productId,
+      };
+      
+      console.log('Creating variant with payload:', payloadWithProduct);
+      const variant = await adminApi.createProductVariant(ensureToken(), slug, payloadWithProduct);
       const slice = state.productDetail;
       setState({
         productDetail: {
@@ -268,6 +294,7 @@ export const adminStore = {
       });
       return variant;
     } catch (error) {
+      console.error('Variant creation error:', error);
       handleError('productDetail', error);
       throw error;
     }

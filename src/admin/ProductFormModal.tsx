@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react';
 import { Modal } from '../components/ui/Modal';
 import { useToast } from '../components/ui/ToastProvider';
 import { adminStore, useAdminStore } from '../store/adminStore';
-import type { AdminProductPayload, Category, ProductDetail } from '../store/admin';
+import { ApiError, type AdminProductPayload, type Category, type ProductDetail } from '../store/admin';
 
 interface ProductFormValues {
   name: string;
@@ -191,20 +191,37 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({ mode, open, 
       }
     }
 
+    const slug = values.slug.trim();
+    const comparePrice = values.comparePrice.trim();
+    const badge = values.badge.trim();
+    const shortDescription = values.shortDescription.trim();
+    const description = values.description.trim();
+
     const payload: AdminProductPayload = {
       name: values.name.trim(),
-      slug: values.slug.trim() || undefined,
       sku: values.sku.trim(),
       category: primaryCategory,
       additional_categories: sanitizedAdditional,
       base_price: values.basePrice.trim(),
-      compare_at_price: values.comparePrice.trim() || null,
-      badge: values.badge.trim() || null,
-      short_description: values.shortDescription.trim() || undefined,
-      description: values.description.trim() || undefined,
+      compare_at_price: comparePrice ? comparePrice : null,
+      badge,
       is_active: values.isActive,
-      attributes: attributesInput ? attributesPayload : null,
     };
+
+    if (slug) {
+      payload.slug = slug;
+    }
+    if (shortDescription) {
+      payload.short_description = shortDescription;
+    }
+    if (description) {
+      payload.description = description;
+    }
+    if (attributesPayload) {
+      payload.attributes = attributesPayload;
+    } else if (mode === 'edit' && editingProduct?.attributes && !attributesInput) {
+      payload.attributes = {};
+    }
     setIsSubmitting(true);
     try {
       let product: ProductDetail;
@@ -229,10 +246,14 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({ mode, open, 
       onClose();
     } catch (error) {
       console.error('Failed to save product', error);
+      const description =
+        error instanceof ApiError && error.message
+          ? error.message
+          : 'We could not save the product. Please try again.';
       addToast({
         variant: 'error',
         title: 'Save failed',
-        description: 'We could not save the product. Please try again.',
+        description,
       });
     } finally {
       setIsSubmitting(false);

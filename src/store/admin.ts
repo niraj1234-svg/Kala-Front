@@ -25,8 +25,31 @@ export class ApiError extends Error {
     if (typeof data === 'string') {
       return data;
     }
-    if (typeof data === 'object' && 'detail' in data && typeof (data as ApiErrorPayload).detail === 'string') {
-      return (data as ApiErrorPayload).detail;
+    if (typeof data === 'object' && data !== null) {
+      if ('detail' in data && typeof (data as ApiErrorPayload).detail === 'string') {
+        return (data as ApiErrorPayload).detail;
+      }
+      return ApiError.pickFirstMessage(data as Record<string, unknown>);
+    }
+    return undefined;
+  }
+
+  private static pickFirstMessage(payload: Record<string, unknown>): string | undefined {
+    for (const value of Object.values(payload)) {
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          if (typeof item === 'string' && item.trim()) {
+            return item;
+          }
+        }
+      } else if (typeof value === 'string' && value.trim()) {
+        return value;
+      } else if (value && typeof value === 'object') {
+        const nested = ApiError.pickFirstMessage(value as Record<string, unknown>);
+        if (nested) {
+          return nested;
+        }
+      }
     }
     return undefined;
   }
@@ -58,18 +81,20 @@ export interface ProductVariant {
   size: string | null;
   color_name: string | null;
   color_hex: string | null;
-  price_override: string | null;
+  price_override: number | null;
   stock: number;
   is_active: boolean;
   additional_attributes: Record<string, unknown> | null;
 }
+
+export type ProductCategoryValue = string | Category;
 
 export interface ProductListItem {
   id: number;
   name: string;
   slug: string;
   sku: string;
-  category: string;
+  category: ProductCategoryValue;
   short_description: string | null;
   price: string;
   compare_at_price: string | null;
@@ -86,6 +111,16 @@ export interface ProductDetail extends ProductListItem {
   variants: ProductVariant[];
   created_at: string;
   updated_at: string;
+}
+
+export function getProductCategoryLabel(category: ProductCategoryValue): string {
+  if (!category) {
+    return '';
+  }
+  if (typeof category === 'string') {
+    return category;
+  }
+  return category.name ?? '';
 }
 
 export interface AdminDashboardSummary {
@@ -207,6 +242,12 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     : undefined;
 
   if (!response.ok) {
+    console.error('API Error Response:', {
+      status: response.status,
+      statusText: response.statusText,
+      url: response.url,
+      payload: payload
+    });
     throw new ApiError(response.status, payload);
   }
 
@@ -278,16 +319,10 @@ export async function deleteProduct(accessToken: string, slug: string): Promise<
   });
 }
 
-export async function fetchProductVariants(accessToken: string, slug: string): Promise<ProductVariant[]> {
-  return request<ProductVariant[]>(`/products/${slug}/variants/`, {
-    accessToken,
-  });
-}
-
 export async function createProductVariant(
   accessToken: string,
   slug: string,
-  payload: Omit<ProductVariant, 'id' | 'product'>,
+  payload: Omit<ProductVariant, 'id'>,
 ): Promise<ProductVariant> {
   return request<ProductVariant>(`/products/${slug}/variants/`, {
     method: 'POST',
@@ -351,12 +386,6 @@ function buildImageBody(payload: ProductImagePayload): FormData | Record<string,
     is_primary: payload.is_primary,
     display_order: payload.display_order,
   };
-}
-
-export async function fetchProductImages(accessToken: string, slug: string): Promise<ProductImage[]> {
-  return request<ProductImage[]>(`/products/${slug}/images/`, {
-    accessToken,
-  });
 }
 
 export async function createProductImage(
@@ -459,6 +488,18 @@ export async function updateUser(
     method: 'PATCH',
     accessToken,
     body: payload,
+  });
+}
+
+export async function fetchProductVariants(accessToken: string, slug: string): Promise<ProductVariant[]> {
+  return request<ProductVariant[]>(`/products/${slug}/variants/`, {
+    accessToken,
+  });
+}
+
+export async function fetchProductImages(accessToken: string, slug: string): Promise<ProductImage[]> {
+  return request<ProductImage[]>(`/products/${slug}/images/`, {
+    accessToken,
   });
 }
 
