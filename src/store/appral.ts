@@ -41,6 +41,7 @@ export interface ProductListItem {
   badge: string | null;
   in_stock: boolean;
   primary_image: ProductImage | null;
+  variants?: ProductVariant[];
 }
 
 export interface ProductDetail extends ProductListItem {

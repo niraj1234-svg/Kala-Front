@@ -2,9 +2,53 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { X, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAppralStore, appralStore } from '../store/appralStore';
-import type { Category, ProductListItem } from '../store/appral';
+import type { Category, ProductListItem, ProductVariant } from '../store/appral';
 
 const FALLBACK_IMAGE = '/placeholder-product.png';
+
+const MAX_VARIANT_SWATCHES = 6;
+
+interface VariantSwatch {
+  key: string;
+  color: string | null;
+  label: string | null;
+}
+
+function normalizeColorHex(value?: string | null): string | null {
+  if (!value) {
+    return null;
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+  const match = trimmed.match(/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
+  if (!match) {
+    return null;
+  }
+  const hex = match[1];
+  const expanded = hex.length === 3 ? hex.split('').map((char) => `${char}${char}`).join('') : hex;
+  return `#${expanded.toLowerCase()}`;
+}
+
+function buildVariantSwatches(variants?: ProductVariant[]): VariantSwatch[] {
+  if (!variants || variants.length === 0) {
+    return [];
+  }
+  const seen = new Set<string>();
+  const swatches: VariantSwatch[] = [];
+  variants.forEach((variant) => {
+    const color = normalizeColorHex(variant.color_hex);
+    const label = variant.color_name?.trim() || null;
+    const key = color ?? label;
+    if (!key || seen.has(key)) {
+      return;
+    }
+    seen.add(key);
+    swatches.push({ key, color, label });
+  });
+  return swatches;
+}
 
 type SortOption = 'featured' | 'price-low' | 'price-high' | 'name';
 
@@ -238,7 +282,7 @@ const ProductsListingPage: React.FC = () => {
             />
           </div>
 
-          <div className="p-3 sm:p-4 space-y-1">
+          <div className="p-3 sm:p-4 space-y-2">
             <h3 className="text-xs sm:text-sm font-medium text-gray-900 group-hover:text-gray-600 transition-colors line-clamp-2">
               {product.name}
             </h3>
@@ -246,6 +290,31 @@ const ProductsListingPage: React.FC = () => {
             <p className="text-xs text-gray-500 uppercase tracking-wider">
               {categoryLabel}
             </p>
+            {(() => {
+              const swatches = buildVariantSwatches(product.variants);
+              if (swatches.length === 0) {
+                return null;
+              }
+              const visibleSwatches = swatches.slice(0, MAX_VARIANT_SWATCHES);
+              const remainingCount = swatches.length - visibleSwatches.length;
+              return (
+                <div className="flex items-center gap-1.5 pt-1">
+                  {visibleSwatches.map((swatch) => (
+                    <span
+                      key={swatch.key}
+                      title={swatch.label ?? undefined}
+                      className="relative inline-flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full border border-gray-300 text-[9px] font-semibold uppercase text-gray-600"
+                      style={swatch.color ? { backgroundColor: swatch.color } : undefined}
+                    >
+                      {!swatch.color && swatch.label ? swatch.label.slice(0, 2) : null}
+                    </span>
+                  ))}
+                  {remainingCount > 0 && (
+                    <span className="text-[9px] font-medium text-gray-500">+{remainingCount}</span>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         </div>
       </Link>
