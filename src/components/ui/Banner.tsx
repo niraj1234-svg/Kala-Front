@@ -143,7 +143,7 @@ const Banner = () => {
               </motion.span>
             </div>
 
-            {/* Right Content - CTA & Icon */}
+            {/* Right Content - CTA & Icon
             <div className="flex items-center gap-3 flex-shrink-0">
               <motion.button
                 initial={{ opacity: 0, x: 10 }}
@@ -169,7 +169,7 @@ const Banner = () => {
               >
                 {banners[currentSlide].image}
               </motion.div>
-            </div>
+            </div> */}
           </div>
         </motion.div>
       </AnimatePresence>    
