@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { PiShirtFoldedDuotone } from "react-icons/pi";
+import { FaStar, FaMagic, FaPalette } from "react-icons/fa";
 
 type CollectionCard = {
   id: string;
@@ -21,38 +23,51 @@ const FeaturedCollections: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const collections: CollectionCard[] = useMemo(
-    () => [
+       () =>
+       [
       {
-        id: 'new-arrivals',
-        title: 'NEW ARRIVALS',
-        subtitle: 'Fresh Styles For The Season',
+        id: 'new-collection',
+        title: 'New Collection',
+        subtitle: 'Latest Arrivals',
+        caption: 'Discover our freshly curated pieces for the season ahead',
         image: '10.jpeg',
-        buttonText: 'SHOP NEW',
+        buttonText: 'Explore New',
         href: '/products?sort=new',
+        icon: <PiShirtFoldedDuotone className="text-xl" />,
+        theme: 'green'
       },
       {
-        id: 'best-sellers',
-        title: 'BEST SELLERS',
+        id: 'bestsellers',
+        title: 'Bestsellers',
         subtitle: 'Customer Favorites',
+        caption: 'The most loved pieces from our fashion community',
         image: '11.jpeg',
-        buttonText: 'SHOP NOW',
+        buttonText: 'Shop Bestsellers',
         href: '/products?sort=featured',
+        icon: <FaStar className="text-xl" />,
+        theme: 'green'
       },
       {
-        id: 'menswear',
-        title: 'Menswear Essentials',
-        caption: 'Tailored layers, built for the everyday hustle.',
+        id: 'combinations',
+        title: 'Perfect Combinations',
+        subtitle: 'Styling Ideas',
+        caption: 'Curated outfits and styling combinations you are looking for',
         image: '2.jpeg',
-        buttonText: 'SHOP ALL',
-        href: '/products?collection=menswear',
+        buttonText: 'Get Inspired',
+        href: '/combinations',
+        icon: <FaMagic className="text-xl" />,
+        theme: 'brown'
       },
       {
-        id: 'new-drops',
-        title: 'New Drops',
-        caption: 'Fresh arrivals and limited editions just released.',
+        id: 'customization',
+        title: 'Customization',
+        subtitle: 'Make It Yours',
+        caption: 'Personalize your style with our custom tailoring options',
         image: '3.jpeg',
-        buttonText: 'EXPLORE',
-        href: '/products?sort=new',
+        buttonText: 'Customize Now',
+        href: '/customization',
+        icon: <FaPalette className="text-xl" />,
+        theme: 'brown'
       },
     ],
     [],
@@ -177,7 +192,7 @@ const FeaturedCollections: React.FC = () => {
                         <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">
                           {collection.subtitle ?? 'Shop All'}
                         </p>
-                        <h3 className="text-3xl font-semibold sm:text-4xl">{collection.title}</h3>
+                        <h3 className="text-3xl text-[#523F31] font-semibold sm:text-4xl">{collection.title}</h3>
                         {collection.caption && (
                           <p className="text-sm text-white/80 sm:max-w-md">{collection.caption}</p>
                         )}

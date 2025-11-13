@@ -1,36 +1,42 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import Header from './components/Header';
+import React, { useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import Header from "./components/Header";
 
-import ScrollToTop from './components/ScrollToTop';
-import { useAuthStore, authStore } from './store/authStore';
-import { useAppralStore, appralStore } from './store/appralStore';
-import { ToastProvider } from './components/ui/ToastProvider';
+import ScrollToTop from "./components/ScrollToTop";
+import { useAuthStore, authStore } from "./store/authStore";
+import { useAppralStore, appralStore } from "./store/appralStore";
+import { ToastProvider } from "./components/ui/ToastProvider";
 
 // Existing pages
-import HeroSection from './components/HeroSection';
-import FeaturedCollections from './components/FeaturedCollections';
-import BrandStorySection from './components/BrandStorySection';
-
+import HeroSection from "./components/HeroSection";
+import FeaturedCollections from "./components/FeaturedCollections";
+import BrandStorySection from "./components/BrandStorySection";
 
 // NEW PAGES
-import ProductsListingPage from './pages/ProductsListingPage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
-import CartPage from './pages/CartPage';
+import ProductsListingPage from "./pages/ProductsListingPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import CartPage from "./pages/CartPage";
 
 // Admin pages
-import AdminLayout from './admin/AdminLayout';
-import DashboardOverviewPage from './admin/DashboardOverviewPage';
-import ProductsListPage from './admin/ProductsListPage';
-import ProductDetailConsolePage from './admin/ProductDetailConsolePage';
-import CategoriesPage from './admin/CategoriesPage';
-import UsersListPage from './admin/UsersListPage';
-import UserProfilePage from './admin/UserProfilePage';
+import AdminLayout from "./admin/AdminLayout";
+import DashboardOverviewPage from "./admin/DashboardOverviewPage";
+import ProductsListPage from "./admin/ProductsListPage";
+import ProductDetailConsolePage from "./admin/ProductDetailConsolePage";
+import CategoriesPage from "./admin/CategoriesPage";
+import UsersListPage from "./admin/UsersListPage";
+import UserProfilePage from "./admin/UserProfilePage";
+import Banner from "./components/ui/Banner";
 
 const HomePage = () => (
   <>
+    <Banner />
     <HeroSection />
     <FeaturedCollections />
     <BrandStorySection />
@@ -43,10 +49,10 @@ const AppContent: React.FC = () => {
   const authState = useAuthStore((state) => state);
   const categoriesState = useAppralStore((state) => state.categories);
   const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith('/admin');
+  const isAdminRoute = location.pathname.startsWith("/admin");
   const containerClassName = isAdminRoute
-    ? 'min-h-screen'
-    : 'min-h-screen pb-[calc(7rem+env(safe-area-inset-bottom))] sm:pb-0';
+    ? "min-h-screen"
+    : "min-h-screen pb-[calc(7rem+env(safe-area-inset-bottom))] sm:pb-0";
 
   useEffect(() => {
     if (!authState.isAuthenticated && authState.tokens?.access) {
@@ -59,7 +65,7 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     if (!categoriesState.loading && categoriesState.data.length === 0) {
       appralStore.fetchCategories().catch((error) => {
-        console.error('Failed to load categories', error);
+        console.error("Failed to load categories", error);
       });
     }
   }, [categoriesState.data.length, categoriesState.loading]);
@@ -67,7 +73,7 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     if (authState.isAuthenticated) {
       appralStore.fetchCart().catch((error) => {
-        console.error('Failed to load cart', error);
+        console.error("Failed to load cart", error);
       });
     }
   }, [authState.isAuthenticated]);
@@ -77,7 +83,7 @@ const AppContent: React.FC = () => {
       {!isAdminRoute && (
         <Header
           isLoggedIn={authState.isAuthenticated}
-          userName={authState.user?.first_name ?? authState.user?.email ?? ''}
+          userName={authState.user?.first_name ?? authState.user?.email ?? ""}
           userRole={authState.user?.role}
           onLogout={() => authStore.logout()}
         />

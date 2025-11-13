@@ -48,9 +48,9 @@ const HeroSection: React.FC = () => {
           >
             More Than A Dream
           </h1>
-          <button className="group relative px-8 sm:px-12 py-3 sm:py-4 border-2 border-white text-white text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-gray-900 transition-all duration-300 overflow-hidden">
+          <button className="group relative px-8 sm:px-12 py-3 sm:py-4 border-2 border-white text-white text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-gray-900 transition-all duration-900 overflow-hidden">
             <span className="relative z-10">SHOP NEW SEASON</span>
-            <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+            <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-900 origin-left"></div>
           </button>
         </div>
       </div>

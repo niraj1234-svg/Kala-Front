@@ -145,7 +145,7 @@ const Header = ({ isLoggedIn, userName, userRole, onLogout }: HeaderProps) => {
 
       {/* Main Transparent Header */}
       <header 
-        className={`fixed top-8 left-0 right-0 z-40 bg-transparent transition-all duration-300 ${
+        className={`fixed top-18 left-0 right-0 z-40 bg-transparent transition-all duration-300 ${
           isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
@@ -303,7 +303,7 @@ const Header = ({ isLoggedIn, userName, userRole, onLogout }: HeaderProps) => {
               <div className="relative currency-dropdown">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="hidden lg:flex items-center gap-1 text-gray-900 text-sm border border-gray-200 py-1 px-2 rounded-md"
+                  className=" lg:hidden flex items-center gap-1 text-gray-900 text-sm border border-gray-200 py-1 px-2 rounded-md"
                 >
                   <img 
                     src={`https://flagcdn.com/w20/${selectedCurrency.flag}.png`} 
@@ -313,7 +313,7 @@ const Header = ({ isLoggedIn, userName, userRole, onLogout }: HeaderProps) => {
                   <span>{selectedCurrency.code}</span>
                 </button>
 
-                {isDropdownOpen && (
+                {/* {isDropdownOpen && (
                   <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-50">
                     {currencies.map((currency) => (
                       <button
@@ -336,7 +336,7 @@ const Header = ({ isLoggedIn, userName, userRole, onLogout }: HeaderProps) => {
                       </button>
                     ))}
                   </div>
-                )}
+                )} */}
               </div>
               
               {/* User Button - Solid Header */}
