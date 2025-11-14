@@ -335,10 +335,10 @@ export async function updateProductVariant(
   accessToken: string,
   slug: string,
   variantId: number,
-  payload: Partial<Omit<ProductVariant, 'id' | 'product'>>,
+  payload: Partial<Omit<ProductVariant, 'id'>>,
 ): Promise<ProductVariant> {
   return request<ProductVariant>(`/products/${slug}/variants/${variantId}/`, {
-    method: 'PATCH',
+    method: 'PUT',
     accessToken,
     body: payload,
   });

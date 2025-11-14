@@ -307,7 +307,17 @@ export const adminStore = {
   ): Promise<ProductVariant> {
     startLoading('productDetail');
     try {
-      const variant = await adminApi.updateProductVariant(ensureToken(), slug, variantId, payload);
+      const productId = state.productDetail.data?.id;
+      if (!productId) {
+        throw new Error('Product ID not found. Please ensure product data is loaded.');
+      }
+
+      const payloadWithProduct = {
+        ...payload,
+        product: productId,
+      } as Omit<ProductVariant, 'id'>;
+
+      const variant = await adminApi.updateProductVariant(ensureToken(), slug, variantId, payloadWithProduct);
       const slice = state.productDetail;
       setState({
         productDetail: {
