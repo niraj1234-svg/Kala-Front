@@ -22,8 +22,8 @@ const ContactUs: React.FC<ContactUsProps> = ({ isOpen, onClose }) => {
       id: 'call',
       icon: <Phone className="w-8 h-8" />,
       label: 'Call Us',
-      value: '+91 98765 43210',
-      action: 'tel:+919876543210',
+      value: '+91 123456789',
+      action: 'tel:+9112345678',
       color: 'bg-blue-500 hover:bg-blue-600',
     },
     {
@@ -38,8 +38,8 @@ const ContactUs: React.FC<ContactUsProps> = ({ isOpen, onClose }) => {
       id: 'whatsapp',
       icon: <MessageCircle className="w-8 h-8" />,
       label: 'WhatsApp',
-      value: '+91 98765 43210',
-      action: 'https://wa.me/919876543210',
+      value: '+91 123456789',
+      action: 'https://wa.me/9112345678',
       color: 'bg-green-500 hover:bg-green-600',
     },
     {
