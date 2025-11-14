@@ -16,6 +16,9 @@ import { ToastProvider } from "./components/ui/ToastProvider";
 import HeroSection from "./components/HeroSection";
 import FeaturedCollections from "./components/FeaturedCollections";
 import BrandStorySection from "./components/BrandStorySection";
+import WhatsNewCooking from "./components/WhatsNewCooking";
+import Footer from "./components/Footer";
+
 
 // NEW PAGES
 import ProductsListingPage from "./pages/ProductsListingPage";
@@ -23,6 +26,7 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import CartPage from "./pages/CartPage";
+import AboutPage from "./pages/AboutPage";
 
 // Admin pages
 import AdminLayout from "./admin/AdminLayout";
@@ -33,6 +37,8 @@ import CategoriesPage from "./admin/CategoriesPage";
 import UsersListPage from "./admin/UsersListPage";
 import UserProfilePage from "./admin/UserProfilePage";
 import Banner from "./components/ui/Banner";
+import FloatingContactButton from "./components/FloatingContactButton";
+
 
 const HomePage = () => (
   <>
@@ -40,6 +46,9 @@ const HomePage = () => (
     <HeroSection />
     <FeaturedCollections />
     <BrandStorySection />
+    <WhatsNewCooking />
+    <Footer />
+  
     {/* <ProductCategoryShowcase /> */}
     {/* <FeatureSections /> */}
   </>
@@ -50,9 +59,7 @@ const AppContent: React.FC = () => {
   const categoriesState = useAppralStore((state) => state.categories);
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const containerClassName = isAdminRoute
-    ? "min-h-screen"
-    : "min-h-screen pb-[calc(7rem+env(safe-area-inset-bottom))] sm:pb-0";
+  const containerClassName = isAdminRoute ? "min-h-screen" : "min-h-screen pb-6 sm:pb-0";
 
   useEffect(() => {
     if (!authState.isAuthenticated && authState.tokens?.access) {
@@ -103,6 +110,7 @@ const AppContent: React.FC = () => {
 
         {/* Cart Page */}
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/about" element={<AboutPage />} />
 
         {/* Admin */}
         <Route path="/admin" element={<AdminLayout />}>
@@ -114,6 +122,8 @@ const AppContent: React.FC = () => {
           <Route path="users/:id" element={<UserProfilePage />} />
         </Route>
       </Routes>
+      
+      {!isAdminRoute && <FloatingContactButton />}
     </div>
   );
 };

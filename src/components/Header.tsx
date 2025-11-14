@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { ChevronDown, LayoutGrid, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppralStore } from '../store/appralStore';
-import BottomBar from './BottomBar';
+// import BottomBar from './BottomBar';
 
 interface HeaderProps {
   isLoggedIn: boolean;
@@ -39,6 +39,10 @@ const Header = ({ isLoggedIn, userName, userRole, onLogout }: HeaderProps) => {
   );
   const additionalMenuItems = useMemo<MenuItem[]>(
     () => [
+      {
+        label: 'About Us',
+        path: '/about',
+      },
       {
         label: 'Customize',
         path: '/customize',
@@ -394,11 +398,11 @@ const Header = ({ isLoggedIn, userName, userRole, onLogout }: HeaderProps) => {
         </div>
       </header>
 
-      <BottomBar
+      {/* <BottomBar
         cartCount={cartCount}
         isAdmin={isAdmin}
         onMenuToggle={() => setIsSidebarOpen(true)}
-      />
+      /> */}
 
       {/* Sidebar Menu */}
       <div
