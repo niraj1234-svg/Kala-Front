@@ -5,20 +5,25 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import Header from "./components/Header";
 
 import ScrollToTop from "./components/ScrollToTop";
 import { useAuthStore, authStore } from "./store/authStore";
 import { useAppralStore, appralStore } from "./store/appralStore";
 import { ToastProvider } from "./components/ui/ToastProvider";
 
-// Existing pages
-import HeroSection from "./components/HeroSection";
-import FeaturedCollections from "./components/FeaturedCollections";
-import BrandStorySection from "./components/BrandStorySection";
-import WhatsNewCooking from "./components/WhatsNewCooking";
-import Footer from "./components/Footer";
-
+// Hustle Hour Rebuild Components
+import Navbar from "./components/hustle-hour/Navbar";
+import CustomCursor from "./components/hustle-hour/CustomCursor";
+import Hero from "./sections/hustle-hour/Hero";
+import Marquee from "./components/hustle-hour/Marquee";
+import Chronicle from "./sections/hustle-hour/Chronicle";
+import Collections from "./sections/hustle-hour/Collections";
+import Campaign from "./sections/hustle-hour/Campaign";
+import BrandStory from "./sections/hustle-hour/BrandStory";
+import Vancouver from "./sections/hustle-hour/Vancouver";
+import FeaturedLooks from "./sections/hustle-hour/FeaturedLooks";
+import HustleHourFooter from "./components/hustle-hour/Footer";
+import { useScrollReveal } from "./hooks/useScrollReveal";
 
 // NEW PAGES
 import ProductsListingPage from "./pages/ProductsListingPage";
@@ -36,32 +41,49 @@ import ProductDetailConsolePage from "./admin/ProductDetailConsolePage";
 import CategoriesPage from "./admin/CategoriesPage";
 import UsersListPage from "./admin/UsersListPage";
 import UserProfilePage from "./admin/UserProfilePage";
-import Banner from "./components/ui/Banner";
 import FloatingContactButton from "./components/FloatingContactButton";
 
+const HomePage = () => {
+  useScrollReveal();
 
-const HomePage = () => (
-  <>
-    <Banner />
-    <HeroSection />
-    <FeaturedCollections />
-    <BrandStorySection />
-    <WhatsNewCooking />
-    <Footer />
-  
-    {/* <ProductCategoryShowcase /> */}
-    {/* <FeatureSections /> */}
-  </>
-);
+  return (
+    <>
+      <main>
+        <Hero />
+        <Marquee />
+        <div className="reveal">
+          <Chronicle />
+        </div>
+        <div className="reveal">
+          <Collections />
+        </div>
+        <Marquee light />
+        <div className="reveal">
+          <Campaign />
+        </div>
+        <div className="reveal">
+          <BrandStory />
+        </div>
+        <div className="reveal">
+          <Vancouver />
+        </div>
+        <div className="reveal">
+          <FeaturedLooks />
+        </div>
+      </main>
+
+      <HustleHourFooter />
+    </>
+  );
+};
 
 const AppContent: React.FC = () => {
   const authState = useAuthStore((state) => state);
   const categoriesState = useAppralStore((state) => state.categories);
   const location = useLocation();
+  const isHomePage = location.pathname === "/";
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const containerClassName = isAdminRoute
-    ? "min-h-screen bg-[#d8b098]"
-    : "min-h-screen bg-[#d8b098] pb-6 sm:pb-0";
+  const containerClassName = "min-h-screen bg-background selection:bg-accent selection:text-foreground";
 
   useEffect(() => {
     if (!authState.isAuthenticated && authState.tokens?.access) {
@@ -90,12 +112,10 @@ const AppContent: React.FC = () => {
   return (
     <div className={containerClassName}>
       {!isAdminRoute && (
-        <Header
-          isLoggedIn={authState.isAuthenticated}
-          userName={authState.user?.first_name ?? authState.user?.email ?? ""}
-          userRole={authState.user?.role}
-          onLogout={() => authStore.logout()}
-        />
+        <>
+          <CustomCursor />
+          <Navbar />
+        </>
       )}
 
       <Routes>
@@ -124,8 +144,8 @@ const AppContent: React.FC = () => {
           <Route path="users/:id" element={<UserProfilePage />} />
         </Route>
       </Routes>
-      
-      {!isAdminRoute && <FloatingContactButton />}
+
+      {!isAdminRoute && !isHomePage && <FloatingContactButton />}
     </div>
   );
 };
