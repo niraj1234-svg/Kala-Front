@@ -16,7 +16,7 @@ const HeroSection: React.FC = () => {
   const scale = Math.max(1 - scrollY / 2000, 0.95);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-rose-100 via-amber-50 to-stone-200">
+    <section className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-[#2d1e17] via-[#7f6254] to-[#d8b098]">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center transition-transform duration-100"
@@ -27,7 +27,7 @@ const HeroSection: React.FC = () => {
           opacity: opacity,
         }}
       >
-        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60"></div>
       </div>
 
       {/* Content */}
@@ -40,7 +40,7 @@ const HeroSection: React.FC = () => {
           }}
         >
           <h1
-            className="font-serif text-5xl sm:text-7xl lg:text-8xl text-white mb-8 tracking-wide"
+            className="font-serif text-5xl sm:text-7xl lg:text-8xl text-[#f3d8b6] mb-8 tracking-wide"
             style={{
               textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
               fontFamily: "'Playfair Display', serif",
@@ -48,9 +48,9 @@ const HeroSection: React.FC = () => {
           >
             More Than A Dream
           </h1>
-          <button className="group relative px-8 sm:px-12 py-3 sm:py-4 border-2 border-white text-white text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-gray-900 transition-all duration-900 overflow-hidden">
-            <span className="relative z-10">SHOP NEW SEASON</span>
-            <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-900 origin-left"></div>
+          <button className="group relative px-8 sm:px-12 py-3 sm:py-4 border-2 border-[#f3d8b6] text-[#f3d8b6] text-sm sm:text-base font-medium tracking-wider transition-all duration-700 overflow-hidden">
+            <span className="relative z-10 group-hover:text-[#2d1e17] transition-colors duration-700">SHOP NEW SEASON</span>
+            <div className="absolute inset-0 bg-[#f3d8b6] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
           </button>
         </div>
       </div>
@@ -60,8 +60,8 @@ const HeroSection: React.FC = () => {
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 transition-opacity duration-300"
         style={{ opacity: opacity }}
       >
-        <div className="w-6 h-10 border-2 border-white rounded-full flex items-start justify-center p-2">
-          <div className="w-1 h-3 bg-white rounded-full animate-bounce"></div>
+        <div className="w-6 h-10 border-2 border-[#f3d8b6] rounded-full flex items-start justify-center p-2">
+          <div className="w-1 h-3 bg-[#f3d8b6] rounded-full animate-bounce"></div>
         </div>
       </div>
     </section>

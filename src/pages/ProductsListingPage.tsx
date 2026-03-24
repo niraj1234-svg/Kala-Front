@@ -322,7 +322,7 @@ const ProductsListingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 sm:pt-24">
+    <div className="min-h-screen bg-gray-50 pt-28 sm:pt-32">
       <div className="hidden sm:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <nav className="text-sm text-gray-500">
           <Link to="/" className="hover:text-black">Home</Link>

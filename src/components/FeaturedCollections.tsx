@@ -134,19 +134,22 @@ const FeaturedCollections: React.FC = () => {
   const translatePixels = slideStepPx * currentIndex;
 
   return (
-    <section ref={sectionRef} className="bg-white px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+    <section
+      ref={sectionRef}
+      className="bg-[#d8b098] text-[#2d1e17] px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20"
+    >
       <div className="mx-auto max-w-7xl">
         <header className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">Featured</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Collections on rotation</h2>
+            <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#523f31]">Featured</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#2d1e17]">Collections on rotation</h2>
           </div>
           <div className="hidden gap-3 lg:flex">
             <button
               type="button"
               onClick={() => canPrev && setCurrentIndex((prev) => prev - 1)}
-              className={`rounded-full border border-gray-200 p-2 transition ${
-                canPrev ? 'hover:bg-gray-100' : 'opacity-40 cursor-not-allowed'
+              className={`rounded-full border border-[#9b8a7c]/40 p-2 transition ${
+                canPrev ? 'hover:bg-[#f3d8b6]/40' : 'opacity-40 cursor-not-allowed'
               }`}
               disabled={!canPrev}
             >
@@ -155,8 +158,8 @@ const FeaturedCollections: React.FC = () => {
             <button
               type="button"
               onClick={() => canNext && setCurrentIndex((prev) => prev + 1)}
-              className={`rounded-full border border-gray-200 p-2 transition ${
-                canNext ? 'hover:bg-gray-100' : 'opacity-40 cursor-not-allowed'
+              className={`rounded-full border border-[#9b8a7c]/40 p-2 transition ${
+                canNext ? 'hover:bg-[#f3d8b6]/40' : 'opacity-40 cursor-not-allowed'
               }`}
               disabled={!canNext}
             >
@@ -174,7 +177,7 @@ const FeaturedCollections: React.FC = () => {
             >
               {collections.map((collection, index) => {
                 const delay = isVisible ? `${index * 120}ms` : '0ms';
-                const cardClassName = `group relative flex-shrink-0 basis-full lg:basis-1/2 overflow-hidden rounded-xl bg-black text-white shadow-lg transition-all duration-700 ${
+                const cardClassName = `group relative flex-shrink-0 basis-full lg:basis-1/2 overflow-hidden rounded-xl bg-[#2d1e17] text-[#f3d8b6] shadow-lg transition-all duration-700 ${
                   isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                 }`;
 
@@ -186,19 +189,19 @@ const FeaturedCollections: React.FC = () => {
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
                     <div className="relative flex h-[420px] flex-col justify-end gap-5 px-6 py-10 sm:h-[500px] sm:px-10">
                       <div className="space-y-2">
-                        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">
+                        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#f3d8b6]/80">
                           {collection.subtitle ?? 'Shop All'}
                         </p>
-                        <h3 className="text-3xl text-[#523F31] font-semibold sm:text-4xl">{collection.title}</h3>
+                        <h3 className="text-3xl text-[#f3d8b6] font-semibold sm:text-4xl drop-shadow-lg">{collection.title}</h3>
                         {collection.caption && (
-                          <p className="text-sm text-white/80 sm:max-w-md">{collection.caption}</p>
+                          <p className="text-sm text-[#f3d8b6]/90 sm:max-w-md">{collection.caption}</p>
                         )}
                       </div>
                       {collection.buttonText && (
-                        <span className="inline-flex items-center gap-3 text-sm font-medium uppercase tracking-widest">
+                        <span className="inline-flex items-center gap-3 text-sm font-medium uppercase tracking-widest text-[#f3d8b6]">
                           {collection.buttonText}
                           <ArrowRight className="h-4 w-4" />
                         </span>
@@ -233,8 +236,8 @@ const FeaturedCollections: React.FC = () => {
             <button
               type="button"
               onClick={() => canPrev && setCurrentIndex((prev) => prev - 1)}
-              className={`rounded-full border border-gray-200 p-2 transition ${
-                canPrev ? 'hover:bg-gray-100' : 'opacity-40 cursor-not-allowed'
+              className={`rounded-full border border-[#786c3b]/40 p-2 transition ${
+                canPrev ? 'hover:bg-[#f5f5dc]/40' : 'opacity-40 cursor-not-allowed'
               }`}
               disabled={!canPrev}
             >
@@ -243,8 +246,8 @@ const FeaturedCollections: React.FC = () => {
             <button
               type="button"
               onClick={() => canNext && setCurrentIndex((prev) => prev + 1)}
-              className={`rounded-full border border-gray-200 p-2 transition ${
-                canNext ? 'hover:bg-gray-100' : 'opacity-40 cursor-not-allowed'
+              className={`rounded-full border border-[#786c3b]/40 p-2 transition ${
+                canNext ? 'hover:bg-[#f5f5dc]/40' : 'opacity-40 cursor-not-allowed'
               }`}
               disabled={!canNext}
             >

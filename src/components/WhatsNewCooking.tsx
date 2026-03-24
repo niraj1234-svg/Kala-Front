@@ -101,12 +101,15 @@ const WhatsNewCooking: React.FC = () => {
   };
 
   return (
-    <section ref={sectionRef} className="bg-[#fefaf6] px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+    <section
+      ref={sectionRef}
+      className="bg-[#d8b098] px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 text-[#2d1e17]"
+    >
       <div className="mx-auto max-w-7xl">
         <header className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">Behind the Scenes</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">What's New Cooking</h2>
-          <p className="mt-2 text-sm text-gray-600">Ongoing and upcoming creations from our design studio</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#523f31]">Behind the Scenes</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-[#2d1e17]">What's New Cooking</h2>
+          <p className="mt-2 text-sm text-[#523f31]">Ongoing and upcoming creations from our design studio</p>
         </header>
 
         <div className="relative">

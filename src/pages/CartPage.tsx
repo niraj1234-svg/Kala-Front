@@ -6,6 +6,19 @@ import { useAuthStore } from '../store/authStore';
 
 const FALLBACK_IMAGE = '/placeholder-product.png';
 
+const resolveImageUrl = (source?: string | null): string => {
+  if (!source) {
+    return FALLBACK_IMAGE;
+  }
+  if (source.startsWith('http://') || source.startsWith('https://')) {
+    return source;
+  }
+  if (source.startsWith('/')) {
+    return source;
+  }
+  return `/${source.replace(/^\/+/, '')}`;
+};
+
 const formatCurrency = (value: number | string | null | undefined): string => {
   const numeric = typeof value === 'number' ? value : Number.parseFloat(value ?? '0');
   if (!Number.isFinite(numeric)) {
@@ -85,7 +98,7 @@ const CartPage: React.FC = () => {
 
   if (!authState.isAuthenticated) {
     return (
-      <div className="min-h-screen pt-24 pb-20 flex items-center justify-center">
+      <div className="min-h-screen pt-32 sm:pt-36 pb-20 flex items-center justify-center">
         <div className="text-center space-y-4">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Access your cart</h1>
           <p className="text-gray-600">Sign in to view the items you’ve added to your cart.</p>
@@ -102,7 +115,7 @@ const CartPage: React.FC = () => {
 
   if (cartState.loading && !cart) {
     return (
-      <div className="min-h-screen pt-24 pb-20">
+      <div className="min-h-screen pt-32 sm:pt-36 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Your Cart</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -121,7 +134,7 @@ const CartPage: React.FC = () => {
 
   if (!cart || cartItems.length === 0) {
     return (
-      <div className="min-h-screen pt-24 pb-20">
+      <div className="min-h-screen pt-32 sm:pt-36 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Your Cart</h1>
         </div>
@@ -139,7 +152,7 @@ const CartPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-20">
+    <div className="min-h-screen pt-32 sm:pt-36 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Your Cart</h1>
       </div>
@@ -169,7 +182,7 @@ const CartPage: React.FC = () => {
                 <div key={item.id} className="p-4 sm:p-6 flex flex-col sm:flex-row gap-4">
                   <div className="w-24 h-24 flex-shrink-0 bg-gray-100 rounded">
                     <img
-                      src={item.product.primary_image?.image_url ?? FALLBACK_IMAGE}
+                      src={resolveImageUrl(item.product.primary_image?.image_url)}
                       alt={item.product.name}
                       className="w-full h-full object-cover"
                       onError={(event) => {

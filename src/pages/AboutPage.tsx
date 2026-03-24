@@ -112,14 +112,14 @@ const viewportConfig = { once: true, amount: 0.25 };
 
 const AboutPage: React.FC = () => {
   return (
-    <main className="bg-[#fefaf6] text-slate-900">
+    <main className="bg-[#d8b098] text-[#2d1e17]">
       {/* Hero Section */}
       <motion.section
         variants={fadeIn}
         initial="hidden"
         whileInView="visible"
         viewport={viewportConfig}
-        className="relative overflow-hidden bg-gradient-to-br from-[#fefaf6] via-[#fbf4ec] to-white"
+        className="relative overflow-hidden bg-gradient-to-br from-[#d8b098] via-[#f3d8b6] to-[#9b8a7c]"
       >
         <motion.div
           className="absolute inset-0 opacity-40"
@@ -187,16 +187,16 @@ const AboutPage: React.FC = () => {
         initial="hidden"
         whileInView="visible"
         viewport={viewportConfig}
-        className="border-y border-[#f4e8d8] bg-white/80"
+        className="border-y border-[#9b8a7c]/30 bg-[#d8b098]/40"
       >
         <motion.div
-          className="mx-auto grid max-w-5xl grid-cols-2 divide-x divide-[#f4e8d8] px-6 py-12 text-center sm:grid-cols-4"
+          className="mx-auto grid max-w-5xl grid-cols-2 divide-x divide-[#9b8a7c]/30 px-6 py-12 text-center sm:grid-cols-4"
           variants={stagger}
         >
           {[{ label: "Artisans", value: "24" }, { label: "Cities Served", value: "18" }, { label: "Pieces Crafted", value: "12K" }, { label: "Upcycled", value: "3.5K" }].map((item) => (
             <motion.div key={item.label} className="space-y-1" variants={fadeUp}>
-              <p className="text-3xl font-semibold text-[#5c4734]">{item.value}</p>
-              <p className="text-xs uppercase tracking-[0.35em] text-slate-500">{item.label}</p>
+              <p className="text-3xl font-semibold text-[#2d1e17]">{item.value}</p>
+              <p className="text-xs uppercase tracking-[0.35em] text-[#523f31]">{item.label}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -211,9 +211,9 @@ const AboutPage: React.FC = () => {
         viewport={viewportConfig}
       >
         <motion.div className="mb-12 max-w-3xl space-y-4" variants={stagger}>
-          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">Why we create</p>
-          <h2 className="text-3xl font-semibold text-[#5c4734] sm:text-4xl">Our manifesto is stitched into every seam.</h2>
-          <p className="text-sm text-slate-600 sm:text-base">
+          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#2d1e17]/80">Why we create</p>
+          <h2 className="text-3xl font-semibold text-[#2d1e17] sm:text-4xl">Our manifesto is stitched into every seam.</h2>
+          <p className="text-sm text-[#523f31] sm:text-base">
             We believe luxury can be lived in, not just looked at. Our process honors both the craftsperson and the modern dresser looking for ease, flair, and longevity.
           </p>
         </motion.div>
@@ -221,16 +221,16 @@ const AboutPage: React.FC = () => {
           {coreValues.map((item) => (
             <motion.article
               key={item.title}
-              className="rounded-3xl border border-[#f4e8d8] bg-white/90 p-8 shadow-sm shadow-[#f4e8d8]/30"
+              className="rounded-3xl border border-[#9b8a7c]/30 bg-[#f3d8b6]/80 p-8 shadow-sm shadow-[#9b8a7c]/20"
               variants={fadeUp}
               whileHover={{ y: -6 }}
               transition={{ type: "spring", stiffness: 200, damping: 18 }}
             >
-              <div className="mb-6 inline-flex items-center justify-center rounded-full bg-[#fbf4ec] p-3">
+              <div className="mb-6 inline-flex items-center justify-center rounded-full bg-[#d8b098]/40 p-3">
                 {item.icon}
               </div>
-              <h3 className="text-lg font-semibold text-[#5c4734]">{item.title}</h3>
-              <p className="mt-3 text-sm text-slate-600">{item.description}</p>
+              <h3 className="text-lg font-semibold text-[#2d1e17]">{item.title}</h3>
+              <p className="mt-3 text-sm text-[#523f31]">{item.description}</p>
             </motion.article>
           ))}
         </motion.div>
@@ -238,7 +238,7 @@ const AboutPage: React.FC = () => {
 
       {/* Craftsmanship Journey */}
       <motion.section
-        className="border-y border-[#f4e8d8] bg-white/70"
+        className="border-y border-[#9b8a7c]/30 bg-[#d8b098]/50"
         variants={fadeIn}
         initial="hidden"
         whileInView="visible"
@@ -247,13 +247,13 @@ const AboutPage: React.FC = () => {
         <div className="mx-auto max-w-6xl px-6 py-20 sm:px-10">
           <motion.div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between" variants={stagger}>
             <div className="space-y-3 lg:max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">Crafted in stages</p>
-              <h2 className="text-3xl font-semibold text-[#5c4734] sm:text-4xl">From inspiration to the final press.</h2>
-              <p className="text-sm text-slate-600 sm:text-base">
+              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#2d1e17]/80">Crafted in stages</p>
+              <h2 className="text-3xl font-semibold text-[#2d1e17] sm:text-4xl">From inspiration to the final press.</h2>
+              <p className="text-sm text-[#523f31] sm:text-base">
                 Each garment travels through a mindful journey of experimentation, tailoring, and final touches.
               </p>
             </div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#d4b896]/60 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#9c7d5e]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#2d1e17]/40 bg-[#9b8a7c]/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#2d1e17]">
               <Ruler className="h-4 w-4" /> Slow-made fashion
             </div>
           </motion.div>
@@ -261,13 +261,13 @@ const AboutPage: React.FC = () => {
             {craftsmanshipSteps.map((stage, index) => (
               <motion.div
                 key={stage.step}
-                className="rounded-3xl border border-[#f4e8d8] bg-white/90 p-8 shadow-sm"
+                className="rounded-3xl border border-[#9b8a7c]/40 bg-[#f3d8b6]/80 p-8 shadow-sm"
                 variants={fadeUp}
                 whileHover={{ y: -4 }}
               >
-                <span className="text-xs font-semibold uppercase tracking-[0.35em] text-[#d4b896]">Step {index + 1}</span>
-                <h3 className="mt-3 text-xl font-semibold text-[#5c4734]">{stage.step}</h3>
-                <p className="mt-3 text-sm text-slate-600">{stage.detail}</p>
+                <span className="text-xs font-semibold uppercase tracking-[0.35em] text-[#2d1e17]/80">Step {index + 1}</span>
+                <h3 className="mt-3 text-xl font-semibold text-[#2d1e17]">{stage.step}</h3>
+                <p className="mt-3 text-sm text-[#523f31]">{stage.detail}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -283,20 +283,20 @@ const AboutPage: React.FC = () => {
         viewport={viewportConfig}
       >
         <motion.div className="mb-12 space-y-4" variants={stagger}>
-          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">Milestones</p>
-          <h2 className="text-3xl font-semibold text-[#5c4734] sm:text-4xl">Moments that shaped Appral.</h2>
+          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#2d1e17]/80">Milestones</p>
+          <h2 className="text-3xl font-semibold text-[#2d1e17] sm:text-4xl">Moments that shaped Appral.</h2>
         </motion.div>
-        <motion.div className="relative border-l border-[#d4b896]/40 pl-8" variants={stagger}>
+        <motion.div className="relative border-l border-[#523f31]/30 pl-8" variants={stagger}>
           {timeline.map((item, index) => (
             <motion.div key={item.year} className="relative mb-10 last:mb-0" variants={fadeUp}>
-              <span className="absolute -left-[11px] inline-flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-[#d4b896]" aria-hidden />
-              <div className="rounded-3xl border border-[#f4e8d8] bg-white/90 p-8 shadow-sm shadow-[#f4e8d8]/30">
-                <span className="text-xs font-semibold uppercase tracking-[0.35em] text-[#b89a7a]">{item.year}</span>
-                <h3 className="mt-3 text-lg font-semibold text-[#5c4734]">{item.title}</h3>
-                <p className="mt-3 text-sm text-slate-600">{item.description}</p>
+              <span className="absolute -left-[11px] inline-flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#f3d8b6] bg-[#2d1e17]" aria-hidden />
+              <div className="rounded-3xl border border-[#9b8a7c]/30 bg-[#f3d8b6]/80 p-8 shadow-sm shadow-[#9b8a7c]/20">
+                <span className="text-xs font-semibold uppercase tracking-[0.35em] text-[#2d1e17]/70">{item.year}</span>
+                <h3 className="mt-3 text-lg font-semibold text-[#2d1e17]">{item.title}</h3>
+                <p className="mt-3 text-sm text-[#523f31]">{item.description}</p>
               </div>
               {index !== timeline.length - 1 && (
-                <div className="absolute left-[-1px] top-5 h-full border-l border-dashed border-[#d4b896]/40" aria-hidden />
+                <div className="absolute left-[-1px] top-5 h-full border-l border-dashed border-[#523f31]/30" aria-hidden />
               )}
             </motion.div>
           ))}
@@ -305,7 +305,7 @@ const AboutPage: React.FC = () => {
 
       {/* Team */}
       <motion.section
-        className="border-y border-[#f4e8d8] bg-white/70"
+        className="border-y border-[#9b8a7c]/30 bg-[#d8b098]/40"
         variants={fadeIn}
         initial="hidden"
         whileInView="visible"
@@ -314,10 +314,10 @@ const AboutPage: React.FC = () => {
         <div className="mx-auto max-w-6xl px-6 py-20 sm:px-10">
           <motion.div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between" variants={stagger}>
             <div className="space-y-3 lg:max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-slate-500">People of Appral</p>
-              <h2 className="text-3xl font-semibold text-[#5c4734] sm:text-4xl">Meet the minds building your wardrobe experiences.</h2>
+              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#2d1e17]/80">People of Appral</p>
+              <h2 className="text-3xl font-semibold text-[#2d1e17] sm:text-4xl">Meet the minds building your wardrobe experiences.</h2>
             </div>
-            <p className="max-w-md text-sm text-slate-600 sm:text-base">
+            <p className="max-w-md text-sm text-[#523f31] sm:text-base">
               We are stylists, pattern makers, storytellers, and innovators—bound by the belief that clothing can empower daily rituals.
             </p>
           </motion.div>
@@ -325,15 +325,15 @@ const AboutPage: React.FC = () => {
             {team.map((member) => (
               <motion.article
                 key={member.name}
-                className="rounded-3xl border border-[#f4e8d8] bg-white/90 p-8 text-center shadow-sm"
+                className="rounded-3xl border border-[#9b8a7c]/30 bg-[#f3d8b6]/80 p-8 text-center shadow-sm"
                 variants={fadeUp}
                 whileHover={{ y: -6 }}
                 transition={{ type: "spring", stiffness: 220, damping: 20 }}
               >
-                <div className="mx-auto mb-4 h-20 w-20 rounded-full bg-[#fbf4ec]" aria-hidden />
-                <h3 className="text-lg font-semibold text-[#5c4734]">{member.name}</h3>
-                <p className="text-xs uppercase tracking-[0.3em] text-[#b89a7a]">{member.role}</p>
-                <p className="mt-3 text-sm text-slate-600">{member.blurb}</p>
+                <div className="mx-auto mb-4 h-20 w-20 rounded-full bg-[#d8b098]/50" aria-hidden />
+                <h3 className="text-lg font-semibold text-[#2d1e17]">{member.name}</h3>
+                <p className="text-xs uppercase tracking-[0.3em] text-[#523f31]">{member.role}</p>
+                <p className="mt-3 text-sm text-[#523f31]">{member.blurb}</p>
               </motion.article>
             ))}
           </motion.div>

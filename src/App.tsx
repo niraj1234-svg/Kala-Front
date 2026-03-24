@@ -59,7 +59,9 @@ const AppContent: React.FC = () => {
   const categoriesState = useAppralStore((state) => state.categories);
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const containerClassName = isAdminRoute ? "min-h-screen" : "min-h-screen pb-6 sm:pb-0";
+  const containerClassName = isAdminRoute
+    ? "min-h-screen bg-[#d8b098]"
+    : "min-h-screen bg-[#d8b098] pb-6 sm:pb-0";
 
   useEffect(() => {
     if (!authState.isAuthenticated && authState.tokens?.access) {
