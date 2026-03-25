@@ -1,173 +1,114 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Facebook, Instagram, Send } from 'lucide-react';
 
-type FooterSection = {
-  title: string;
-  links: { label: string; href: string }[];
-};
+const PinterestIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.965 1.406-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12.017 24c6.621 0 11.988-5.367 11.988-11.987C24.005 5.367 18.639 0 12.017 0z" />
+  </svg>
+);
 
 const Footer: React.FC = () => {
-  const [openSections, setOpenSections] = useState<Set<string>>(new Set());
-
-  const toggleSection = (title: string) => {
-    setOpenSections((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(title)) {
-        newSet.delete(title);
-      } else {
-        newSet.add(title);
-      }
-      return newSet;
-    });
-  };
-
-  const footerSections: FooterSection[] = [
-    {
-      title: 'Policies',
-      links: [
-        { label: 'Privacy Policy', href: '/privacy-policy' },
-        { label: 'Shipping Policy', href: '/shipping-policy' },
-        { label: 'Terms & Conditions', href: '/terms-conditions' },
-        { label: 'Return & Exchange', href: '/return-exchange' },
-      ],
-    },
-    {
-      title: 'Services',
-      links: [
-        { label: 'Express Delivery', href: '/express-delivery' },
-        { label: 'Custom Tailoring', href: '/customization' },
-        { label: 'Gift Cards', href: '/gift-cards' },
-        { label: 'Track Order', href: '/track-order' },
-      ],
-    },
-    {
-      title: 'Content',
-      links: [
-        { label: 'Newsletter', href: '/newsletter' },
-        { label: 'Blog', href: '/blog' },
-        { label: 'Vlog', href: '/vlog' },
-        { label: 'Photoshoot Gallery', href: '/photoshoot' },
-      ],
-    },
-    {
-      title: 'Company',
-      links: [
-        { label: 'About Us', href: '/about' },
-        { label: 'Careers', href: '/careers' },
-        { label: 'Press Kit', href: '/press' },
-        { label: 'Sustainability', href: '/sustainability' },
-      ],
-    },
-  ];
-
   return (
-    <footer className="bg-[#5c4734] text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        {/* Top Section - Brand */}
-        <div className="mb-12 text-center lg:text-left">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-3">Appral</h2>
-          <p className="text-sm text-white/80 max-w-md mx-auto lg:mx-0">
-            Crafting timeless fashion with attention to detail and sustainable practices.
-          </p>
+    <footer className="bg-[#fdf1f0] text-[#555] py-16 px-6 font-serif">
+      <div className="max-w-7xl mx-auto flex flex-col items-center">
+
+        {/* Logo Section */}
+        <div className="relative mb-12 flex flex-col items-center justify-center">
+          <div className="w-32 h-32 border border-[#888] rounded-full flex flex-col items-center justify-center p-4">
+            <span className="text-xl font-light italic leading-tight text-[#888]">Laugh.</span>
+            <span className="text-3xl font-serif italic -mt-1 -mb-1 lowercase text-[#888]">Cry.</span>
+            <span className="text-xl font-light italic leading-tight text-[#888]">Toast.</span>
+          </div>
         </div>
 
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {footerSections.map((section) => (
-            <div key={section.title} className="border-b border-white/10 pb-4 lg:border-b-0 lg:pb-0">
-              {/* Mobile Accordion Header */}
-              <button
-                onClick={() => toggleSection(section.title)}
-                className="flex items-center justify-between w-full text-left lg:cursor-default"
-              >
-                <h3 className="text-sm font-semibold uppercase tracking-wider mb-2 lg:mb-4">
-                  {section.title}
-                </h3>
-                <span className="lg:hidden">
-                  {openSections.has(section.title) ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
-                </span>
-              </button>
+        {/* Top Navigation */}
+        <div className="w-full border-t border-b border-[#ddd] py-4 mb-12">
+          <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8 text-[11px] tracking-[0.2em] uppercase font-light">
+            <a href="/about" className="hover:text-black transition-colors">About Us</a>
+            <div className="w-[1px] h-4 bg-[#ddd] hidden sm:block"></div>
+            <a href="/events" className="hover:text-black transition-colors">Events</a>
+            <div className="w-[1px] h-4 bg-[#ddd] hidden sm:block"></div>
+            <a href="/consultations" className="hover:text-black transition-colors">Consultations</a>
+            <div className="w-[1px] h-4 bg-[#ddd] hidden sm:block"></div>
+            <a href="/family" className="hover:text-black transition-colors">Our Joy Family</a>
+            <div className="w-[1px] h-4 bg-[#ddd] hidden sm:block"></div>
+            <a href="/faq" className="hover:text-black transition-colors">FAQ</a>
+          </div>
+        </div>
 
-              {/* Links - Collapsible on mobile, always visible on desktop */}
-              <ul
-                className={`space-y-2 transition-all duration-300 overflow-hidden ${
-                  openSections.has(section.title) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 lg:max-h-96 lg:opacity-100'
-                }`}
-              >
-                {section.links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      to={link.href}
-                      className="text-sm text-white/70 hover:text-white transition-colors inline-block"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+        {/* Info Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 w-full text-center md:text-left mb-16 px-4">
+
+          {/* Contact Column */}
+          <div className="flex flex-col items-center md:items-start md:border-r border-[#ddd] md:pr-12">
+            <h4 className="text-[12px] tracking-[0.2em] uppercase font-medium mb-6">Contact</h4>
+            <div className="space-y-3 text-[13px] font-light leading-relaxed">
+              <p>248.876.0833</p>
+              <p>info@joyabendmode.com</p>
+              <p className="mt-4">
+                506 S. Washington Avenue<br />
+                Royal Oak, Michigan 48067
+              </p>
             </div>
-          ))}
+          </div>
+
+          {/* Hours Column */}
+          <div className="flex flex-col items-center md:items-start md:border-r border-[#ddd] md:px-12">
+            <h4 className="text-[12px] tracking-[0.2em] uppercase font-medium mb-6">Hours</h4>
+            <div className="space-y-3 text-[13px] font-light leading-relaxed text-center md:text-left">
+              <p className="italic font-normal">*by appointment only</p>
+              <p>Tues, Thurs, & Fri | 11AM–5PM</p>
+              <p>Wed & Sat | 11AM–7PM</p>
+              <p className="uppercase tracking-wide mt-2">Closed Sunday & Monday</p>
+            </div>
+          </div>
+
+          {/* Information Column */}
+          <div className="flex flex-col items-center md:items-start md:pl-12">
+            <h4 className="text-[12px] tracking-[0.2em] uppercase font-medium mb-6">Information</h4>
+            <div className="flex flex-col space-y-3 text-[13px] font-light">
+              <a href="/contact" className="hover:underline">Contact Us</a>
+              <a href="/collections" className="hover:underline">Browse Collections</a>
+              <a href="/terms" className="hover:underline">Terms & Conditions</a>
+              <a href="/privacy" className="hover:underline">Privacy Policy</a>
+            </div>
+          </div>
         </div>
 
-        {/* Newsletter Section */}
-        <div className="border-t border-white/10 pt-8 mb-8">
-          <div className="max-w-md mx-auto lg:mx-0">
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-3">Stay Updated</h3>
-            <p className="text-sm text-white/70 mb-4">
-              Subscribe to our newsletter for exclusive offers and style tips.
-            </p>
-            <form className="flex gap-2">
+        {/* Social & Newsletter */}
+        <div className="w-full border-t border-[#ddd] py-12 flex flex-col md:flex-row items-center justify-between gap-12">
+
+          {/* Socials */}
+          <div className="flex items-center gap-6">
+            <span className="text-2xl font-serif italic text-gray-500 mr-2">Let's connect</span>
+            <div className="flex gap-4">
+              <a href="#" className="p-2 hover:bg-black/5 rounded-full transition-colors"><Facebook size={20} strokeWidth={1.5} /></a>
+              <a href="#" className="p-2 hover:bg-black/5 rounded-full transition-colors"><Instagram size={20} strokeWidth={1.5} /></a>
+              <a href="#" className="p-2 hover:bg-black/5 rounded-full transition-colors"><PinterestIcon /></a>
+            </div>
+          </div>
+
+          {/* Newsletter */}
+          <div className="flex flex-col md:items-start items-center gap-4 w-full max-w-sm">
+            <h4 className="text-[10px] tracking-[0.2em] uppercase font-light">Stay in the know with Joy Abendmode:</h4>
+            <div className="relative w-full border-b border-gray-400">
               <input
                 type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:border-white/40 transition-colors text-sm"
+                placeholder=""
+                className="w-full bg-transparent py-2 focus:outline-none text-sm placeholder:italic"
               />
-              <button
-                type="submit"
-                className="px-6 py-2 rounded-lg bg-[#d4b896] hover:bg-[#b89a7a] text-white font-medium transition-colors text-sm"
-              >
-                Subscribe
+              <button className="absolute right-0 bottom-2 text-gray-400 hover:text-black transition-colors">
+                <Send size={18} strokeWidth={1} />
               </button>
-            </form>
+            </div>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/60">
-            © {new Date().getFullYear()} Appral. All rights reserved.
+        {/* Copyright */}
+        <div className="w-full pt-8 text-center border-t border-[#ddd]">
+          <p className="text-[9px] tracking-[0.2em] uppercase text-gray-400 font-light">
+            © {new Date().getFullYear()} Joy Abendmode Bridal Boutique
           </p>
-          <div className="flex items-center gap-6">
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/60 hover:text-white transition-colors text-xs uppercase tracking-wider"
-            >
-              Instagram
-            </a>
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/60 hover:text-white transition-colors text-xs uppercase tracking-wider"
-            >
-              Facebook
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/60 hover:text-white transition-colors text-xs uppercase tracking-wider"
-            >
-              Twitter
-            </a>
-          </div>
         </div>
       </div>
     </footer>
