@@ -42,4 +42,5 @@ const BrandStory: React.FC = () => {
     );
 };
 
+
 export default BrandStory;
