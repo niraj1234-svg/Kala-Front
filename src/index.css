@@ -2,12 +2,12 @@
 @config "../tailwind.config.js";
 
 :root {
-  --background: #fdfcf9;
-  --foreground: #080808;
-  --cream: #f4f1ea;
-  --mid: #7a7a7a;
-  --accent: #b09e7a;
-  --glass: rgba(255, 255, 255, 0.7);
+  --background: #f5f3ef;
+  --foreground: #1c1a17;
+  --cream: #efe8de;
+  --mid: #7c7770;
+  --accent: #8a4f35;
+  --glass: rgba(245, 243, 239, 0.7);
 }
 
 @layer base {

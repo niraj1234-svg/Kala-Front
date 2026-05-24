@@ -1,78 +1,86 @@
-import React, { useState } from 'react';
-import { IMAGES } from '../../constants/images';
-import OptimizedImage from "../../components/hustle-hour/OptimizedImage";
+import React from 'react';
 
 const Collections: React.FC = () => {
-    const [activeItem, setActiveItem] = useState<number | null>(null);
-
     return (
-        <section id="collections" className="bg-background py-32 px-9 relative">
-            <div className="max-w-[1400px] mx-auto">
-                <div className="flex flex-col md:flex-row items-baseline justify-between mb-16 gap-6">
-                    <div className="reveal">
-                        <h2 className="font-display text-[clamp(40px,5vw,72px)] tracking-tight uppercase mb-2">
-                            Curated <span className="text-accent italic font-serif lowercase tracking-normal">Collections</span>
-                        </h2>
-                    </div>
-                    <div className="reveal hidden md:flex gap-12 border-l border-black/5 pl-12">
-                        <div className="flex flex-col gap-1">
-                            <span className="font-body text-[9px] tracking-[0.3em] uppercase text-mid">Season</span>
-                            <span className="font-display text-sm tracking-[0.1em]">FW26 / 4.10</span>
+        <section 
+            id="collections" 
+            className="relative w-full bg-background py-16 md:py-20 overflow-hidden select-none"
+        >
+            {/* Subtle Grain Overlay */}
+            <div className="absolute inset-0 z-[1] hero-grain opacity-[0.08] pointer-events-none" />
+
+            {/* Layout Wrapper: Centers and sizes the grid cleanly */}
+            <div className="relative w-full max-w-[1550px] mx-auto z-10 px-6 md:px-12 lg:px-16 xl:px-20">
+                
+                {/* 4-Column Asymmetric Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 xl:gap-10 w-full mx-auto relative items-start">
+                    
+                    {/* Column 1: Stacked Images (Red Crumpled Paper + Streetwear Yellow Chair Model) */}
+                    {/* Combined height exactly matches the other columns (620px on desktop) */}
+                    <div className="w-full flex flex-col gap-6 h-auto lg:h-[620px]">
+                        {/* Top: Red Crumpled Paper Poster */}
+                        <div className="w-full flex-1 relative overflow-hidden rounded-[1px] aspect-[3/4.2] lg:aspect-auto">
+                            <img 
+                                src="/3rdSection/c70c0b46-01f3-47aa-9853-02df36ce3831.png" 
+                                alt="Age of Rage Crumpled Poster" 
+                                className="w-full h-full object-cover transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.015]"
+                            />
                         </div>
-                        <div className="flex flex-col gap-1">
-                            <span className="font-body text-[9px] tracking-[0.3em] uppercase text-mid">Scope</span>
-                            <span className="font-display text-sm tracking-[0.1em]">Tech Editorial</span>
+
+                        {/* Bottom: Streetwear model sitting in yellow chair */}
+                        <div className="w-full flex-1 relative overflow-hidden rounded-[1px] aspect-[3/4.2] lg:aspect-auto">
+                            <img 
+                                src="/3rdSection/9d586e2e-a806-48d5-aa34-df9e7dd679dc.png" 
+                                alt="IDC Teens Streetwear Model" 
+                                className="w-full h-full object-cover transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.015]"
+                            />
                         </div>
                     </div>
-                </div>
 
-                <div className="reveal relative">
-                    <div className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-10">
-                        {IMAGES.collections.map((img, i) => (
-                            <div
-                                key={i}
-                                className={`flex-none h-[540px] relative overflow-hidden cursor-pointer transition-all duration-700 ease-in-out group shadow-xl ${activeItem === i ? 'w-[450px]' : 'w-[280px]'
-                                    }`}
-                                onMouseEnter={() => setActiveItem(i)}
-                                onMouseLeave={() => setActiveItem(null)}
-                            >
-                                <OptimizedImage
-                                    src={img}
-                                    alt={`Collection ${i + 1}`}
-                                    className={`w-full h-full object-cover transition-all duration-1000 ${activeItem === i ? 'scale-105 grayscale-0' : 'grayscale-[40%] opacity-80'
-                                        }`}
-                                />
+                    {/* Column 2: Red Bodysuit Model + Paragraph Text Block */}
+                    {/* Restricting total height to 620px on desktop so the text is perfectly adjusted inside and aligns at the bottom */}
+                    <div className="w-full flex flex-col justify-between h-auto lg:h-[620px]">
+                        {/* Red Bodysuit Model (Drop Amore) - Fills the remaining space dynamically */}
+                        <div className="w-full flex-1 relative overflow-hidden rounded-[1px] aspect-[3/4.4] lg:aspect-auto mb-5">
+                            <img 
+                                src="/3rdSection/3a78ec58-fc3d-433f-8796-a53524c789e9.png" 
+                                alt="Drop Amore Model" 
+                                className="w-full h-full object-cover transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.015]"
+                            />
+                        </div>
 
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-
-                                <span className="absolute top-6 right-6 font-display text-[84px] text-white/5 leading-none pointer-events-none transition-all duration-500 group-hover:text-white/10 group-hover:scale-110">
-                                    {String(i + 1).padStart(2, '0')}
-                                </span>
-
-                                <div className={`absolute bottom-8 left-8 right-8 transition-all duration-500 ${activeItem === i ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-                                    }`}>
-                                    <span className="font-body text-[9px] tracking-[0.4em] uppercase text-accent mb-2 block">Premium Line</span>
-                                    <h3 className="font-display text-3xl tracking-wide text-white mb-4 uppercase">Urban Anthology</h3>
-                                    <span className="inline-block border-b border-white/40 pb-1 font-body text-[10px] tracking-[0.3em] uppercase text-white/80 hover:text-white hover:border-white transition-all">
-                                        View Lookbook
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
+                        {/* Paragraph editorial block underneath the model - Aligned inside the 620px bounds */}
+                        <div className="flex-none select-text">
+                            <p className="font-body text-[12px] md:text-[12.5px] lg:text-[13px] text-foreground/80 leading-[1.75] tracking-wide text-justify pr-2">
+                                Step into the new season with streetwear that speaks louder than words. Spring 2026 is redefining urban fashion perfect mix of comfort, confidence, and creativity. Whether you're hitting the streets or curating your everydaylook, this season
+                            </p>
+                        </div>
                     </div>
+
+                    {/* Column 3: B&W Blurred walking models (Resilience) */}
+                    <div className="flex flex-col w-full h-auto lg:h-[620px]">
+                        <div className="w-full h-full relative overflow-hidden rounded-[1px]">
+                            <img 
+                                src="/3rdSection/acc81a50-7e57-462e-93d9-940f4ff63ea2 (1).png" 
+                                alt="Julius Resilience Motion Blur Silhouettes" 
+                                className="w-full h-full object-cover transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.015]"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Column 4: Green Puffer Coat Model (Human & Nature / Summer Capsule '26 built-in) */}
+                    <div className="flex flex-col w-full h-auto lg:h-[620px]">
+                        <div className="w-full h-full relative overflow-hidden rounded-[1px]">
+                            <img 
+                                src="/3rdSection/4289a6a2-b13d-4aab-9aaa-ca3920c045ef.png" 
+                                alt="Summer Capsule Puffer Model" 
+                                className="w-full h-full object-cover transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.015]"
+                            />
+                        </div>
+                    </div>
+
                 </div>
 
-                <div className="reveal flex gap-6 mt-4 items-center justify-center">
-                    <button className="w-12 h-12 rounded-full border border-black/10 flex items-center justify-center transition-all hover:bg-foreground hover:text-background hover:border-foreground group">
-                        <span className="text-xl group-hover:-translate-x-1 transition-transform">←</span>
-                    </button>
-                    <div className="h-[1px] w-24 bg-black/10 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-accent w-1/3 animate-[marquee_5s_linear_infinite]" />
-                    </div>
-                    <button className="w-12 h-12 rounded-full border border-black/10 flex items-center justify-center transition-all hover:bg-foreground hover:text-background hover:border-foreground group">
-                        <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
-                    </button>
-                </div>
             </div>
         </section>
     );

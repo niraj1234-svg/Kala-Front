@@ -1,94 +1,153 @@
 import React from 'react';
-import { useClock } from '../../hooks/useClock';
-import { IMAGES } from '../../constants/images';
-import OptimizedImage from '../../components/hustle-hour/OptimizedImage';
+import { Link } from 'react-router-dom';
+import { Search } from 'lucide-react';
 
 const Chronicle: React.FC = () => {
-    const { hours, minutes, seconds } = useClock();
-
     return (
-        <section id="chronicle" className="bg-background py-32 px-9 border-t border-black/5">
-            <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-20">
-                {/* LEFT: text */}
-                <div className="reveal flex flex-col justify-center items-start text-left">
-                    <p className="font-body text-[10px] tracking-[0.5em] uppercase text-mid mb-8">
-                        The Chronicle / 4.10
-                    </p>
-                    <h2 className="font-display text-[clamp(50px,8vw,100px)] leading-[0.85] tracking-tight text-foreground mb-12 uppercase">
-                        CHRONICLE<br />
-                        <span className="text-accent italic font-serif lowercase tracking-normal">of the</span><br />
-                        HUSTLE
+        <section 
+            id="chronicle" 
+            className="relative w-full bg-background py-24 md:py-28 overflow-hidden select-none"
+        >
+            {/* Subtle Grain Overlay */}
+            <div className="absolute inset-0 z-[1] hero-grain opacity-[0.08] pointer-events-none" />
+
+            {/* Layout Wrapper: Spans and centers with precise spacing */}
+            <div className="relative w-full max-w-[1550px] mx-auto z-10 px-6 md:px-16 lg:px-24 xl:px-32 flex flex-col items-center">
+                
+                {/* Horizontal Left-Right Margin Sidebars (Desktop only) */}
+                
+                {/* Left Margin Sidebar */}
+                <div className="absolute left-6 lg:left-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-start gap-40 z-20">
+                    {/* shop now hollow rectangle button */}
+                    <Link 
+                        to="/products"
+                        className="border border-foreground/45 text-foreground py-2.5 px-6 font-body text-[9.5px] tracking-[0.25em] hover:bg-foreground hover:text-background transition-all duration-300 font-extrabold uppercase whitespace-nowrap rounded-[1px] shadow-sm"
+                    >
+                        Shop Now
+                    </Link>
+                    {/* vertical bottom label */}
+                    <div className="font-body text-[9.5px] tracking-[0.45em] font-black uppercase -rotate-90 origin-left text-foreground/40 select-none whitespace-nowrap pl-4 pt-12">
+                        Streetwear
+                    </div>
+                </div>
+
+                {/* Right Margin Sidebar (CORNER Text stack) */}
+                <div className="absolute right-6 lg:right-10 top-[40%] -translate-y-1/2 hidden xl:flex flex-col items-center justify-center font-serif font-black italic text-[60px] lg:text-[76px] xl:text-[88px] text-foreground tracking-[0.1em] leading-[0.95] uppercase z-10 select-none pl-6 border-l border-foreground/5">
+                    <span>C</span>
+                    <span>O</span>
+                    <span>R</span>
+                    <span>N</span>
+                    <span>E</span>
+                    <span>R</span>
+                </div>
+
+                {/* Micro Right-Side Arrow */}
+                <div className="absolute right-[8%] top-[55%] -translate-y-1/2 hidden xl:flex text-foreground/40 hover:text-foreground text-2xl transition-all cursor-pointer hover:translate-x-1.5 duration-300 z-20">
+                    →
+                </div>
+
+                {/* 1. Large Top Styled Title: "SPRING IS AROUND THE" */}
+                <div className="w-full text-center mb-10 select-none">
+                    <h2 className="font-serif font-black italic tracking-normal uppercase text-foreground leading-[1.05] text-[34px] md:text-[54px] lg:text-[76px] xl:text-[88px]">
+                        Spring is around the
                     </h2>
-                    <div className="flex flex-col gap-6 border-l-2 border-accent/30 pl-8 ml-2">
-                        <strong className="font-display text-2xl tracking-[0.1em] uppercase">Jung Wook Jun</strong>
-                        <p className="font-light text-[15px] text-foreground/60 leading-[1.8] max-w-[400px]">
-                            Brilliance is often found in the unobserved hour. Our philosophy defines the ingenious moment where calculation meets intuition, creating a legacy of ambition redefined.
-                        </p>
-                    </div>
                 </div>
 
-                {/* RIGHT: Grid Layout */}
-                <div className="reveal grid grid-cols-1 md:grid-cols-2 gap-10">
-                    {/* Banner Illustration */}
-                    <div className="relative aspect-[4/5] overflow-hidden group shadow-xl">
-                        <div className="absolute top-0 left-0 right-0 h-1 bg-accent z-[2]" />
-                        <OptimizedImage
-                            src={IMAGES.chronicle.banner}
-                            alt="Chronicle Banner"
-                            className="absolute inset-0 w-full h-full object-cover grayscale-[20%] transition-transform duration-1000 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-[1]" />
-                        <div className="absolute bottom-8 left-8 z-[2]">
-                            <span className="font-body text-[9px] tracking-[0.4em] uppercase text-accent mb-3 block">Perspective</span>
-                            <p className="font-display text-4xl tracking-tight text-white leading-none uppercase">
-                                Ambition<br />Meets<br />Execution
-                            </p>
-                        </div>
-                    </div>
+                {/* 2. Spaced Out Category Navigation Tabs */}
+                <div className="flex gap-8 md:gap-12 justify-center mb-14 select-none border-b border-foreground/5 pb-4 w-full max-w-[650px] mx-auto font-body text-[10px] tracking-[0.2em] font-extrabold text-foreground/45">
+                    {['CLOTHING', 'BAGS', 'SHOES', 'ACCESSORIES'].map((tab, idx) => (
+                        <span 
+                            key={tab} 
+                            className={`cursor-pointer transition-all duration-300 uppercase pb-1.5 ${
+                                idx === 0 
+                                    ? 'text-foreground border-b-2 border-foreground' 
+                                    : 'hover:text-foreground/80'
+                            }`}
+                        >
+                            {tab}
+                        </span>
+                    ))}
+                </div>
 
-                    <div className="flex flex-col gap-10">
-                        {/* Clock Component */}
-                        <div className="flex flex-col items-center justify-center bg-cream aspect-square p-10 shadow-lg relative group overflow-hidden">
-                            <div className="absolute inset-0 hero-grain opacity-10 grain-animate" />
-                            <div className="w-[180px] h-[180px] rounded-full border border-foreground/10 relative bg-white shadow-2xl flex items-center justify-center">
-                                {/* Clock Center */}
-                                <div className="absolute w-2 h-2 bg-foreground rounded-full z-10 shadow-sm" />
-
-                                <div className="absolute top-6 font-display text-[12px] tracking-[0.2em] text-foreground/30">XII</div>
-                                <div className="absolute bottom-6 font-display text-[14px] tracking-[0.3em] text-accent">4.10</div>
-
-                                {/* Hands */}
-                                <div
-                                    className="absolute bottom-1/2 left-1/2 w-[3px] h-12 bg-foreground origin-bottom -translate-x-1/2 rounded-full transition-transform duration-500 ease-out"
-                                    style={{ transform: `translateX(-50%) rotate(${hours}deg)` }}
-                                />
-                                <div
-                                    className="absolute bottom-1/2 left-1/2 w-[2px] h-16 bg-foreground/60 origin-bottom -translate-x-1/2 rounded-full transition-transform duration-500 ease-out"
-                                    style={{ transform: `translateX(-50%) rotate(${minutes}deg)` }}
-                                />
-                                <div
-                                    className="absolute bottom-1/2 left-1/2 w-[1px] h-[72px] bg-accent origin-bottom -translate-x-1/2"
-                                    style={{ transform: `translateX(-50%) rotate(${seconds}deg)` }}
-                                />
-                            </div>
-                            <span className="font-display text-3xl tracking-[0.3em] uppercase mt-8 text-foreground/40 group-hover:text-foreground transition-colors duration-500">Hustle</span>
-                        </div>
-
-                        {/* Portrait */}
-                        <div className="relative aspect-square overflow-hidden group shadow-lg">
-                            <OptimizedImage
-                                src={IMAGES.chronicle.portrait}
-                                alt="Portrait"
-                                className="w-full h-full object-cover grayscale-[30%] transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105"
+                {/* 3. Three Columns Fashion Card Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 xl:gap-12 w-full max-w-[1080px] mx-auto z-10 relative">
+                    
+                    {/* Card 1: STRATEAS CARLUCCI */}
+                    <div className="flex flex-col items-center group cursor-pointer">
+                        <div className="relative aspect-[3/4.4] w-full overflow-hidden bg-transparent rounded-[1px]">
+                            <img 
+                                src="/corner/corner1.png" 
+                                alt="STRATEAS CARLUCCI Surgical Coat" 
+                                className="w-full h-full object-cover grayscale-[10%] group-hover:grayscale-0 group-hover:scale-[1.03] transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-                            <div className="absolute bottom-6 left-6 z-[2]">
-                                <span className="font-body text-[9px] tracking-[0.4em] uppercase text-accent">Editorial</span>
-                                <p className="font-display text-xl tracking-[0.1em] text-white mt-1 uppercase">The Architect</p>
-                            </div>
                         </div>
+                        <span className="font-body text-[11.5px] font-bold tracking-[0.18em] text-foreground uppercase mt-5 text-center transition-colors group-hover:text-accent duration-300">
+                            Strateas Carlucci
+                        </span>
+                        <span className="font-body text-[10px] text-foreground/50 tracking-wide mt-1.5 text-center">
+                            Plated Surgical Coat
+                        </span>
+                        <span className="font-body text-[10px] text-foreground/35 line-through mt-2 text-center">
+                            $1,200.00
+                        </span>
+                        <span className="font-body text-[11.5px] font-extrabold text-foreground tracking-wider mt-0.5 text-center">
+                            $899.00
+                        </span>
+                    </div>
+
+                    {/* Card 2: SYSTEM HOMME */}
+                    <div className="flex flex-col items-center group cursor-pointer">
+                        <div className="relative aspect-[3/4.4] w-full overflow-hidden bg-transparent rounded-[1px]">
+                            <img 
+                                src="/corner/corner2.png" 
+                                alt="SYSTEM HOMME Cropped Coat" 
+                                className="w-full h-full object-cover grayscale-[10%] group-hover:grayscale-0 group-hover:scale-[1.03] transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                            />
+                        </div>
+                        <span className="font-body text-[11.5px] font-bold tracking-[0.18em] text-foreground uppercase mt-5 text-center transition-colors group-hover:text-accent duration-300">
+                            System Homme
+                        </span>
+                        <span className="font-body text-[10px] text-foreground/50 tracking-wide mt-1.5 text-center">
+                            Cropped Coat
+                        </span>
+                        <span className="font-body text-[10px] text-foreground/35 line-through mt-2 text-center">
+                            $920.00
+                        </span>
+                        <span className="font-body text-[11.5px] font-extrabold text-foreground tracking-wider mt-0.5 text-center">
+                            $649.00
+                        </span>
+                    </div>
+
+                    {/* Card 3: GRAVER */}
+                    <div className="flex flex-col items-center group cursor-pointer">
+                        <div className="relative aspect-[3/4.4] w-full overflow-hidden bg-transparent rounded-[1px]">
+                            <img 
+                                src="/corner/corner3.png" 
+                                alt="GRAVER Gray Coat Spring" 
+                                className="w-full h-full object-cover grayscale-[10%] group-hover:grayscale-0 group-hover:scale-[1.03] transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                            />
+                        </div>
+                        <span className="font-body text-[11.5px] font-bold tracking-[0.18em] text-foreground uppercase mt-5 text-center transition-colors group-hover:text-accent duration-300">
+                            Graver
+                        </span>
+                        <span className="font-body text-[10px] text-foreground/50 tracking-wide mt-1.5 text-center">
+                            Gray Coat Spring
+                        </span>
+                        <span className="font-body text-[10px] text-foreground/35 line-through mt-2 text-center">
+                            $680.00
+                        </span>
+                        <span className="font-body text-[11.5px] font-extrabold text-foreground tracking-wider mt-0.5 text-center">
+                            $499.00
+                        </span>
                     </div>
                 </div>
+
+                {/* 4. Bottom Right Search / Sparkle Circular Badge */}
+                <div className="absolute right-6 lg:right-10 bottom-6 w-11 h-11 rounded-full border border-foreground/10 flex items-center justify-center cursor-pointer hover:bg-foreground hover:text-background transition-all duration-500 shadow-sm bg-cream/30 z-20 group">
+                    <Search className="w-3.5 h-3.5 text-foreground group-hover:text-background transition-colors" />
+                    <span className="absolute -top-0.5 -right-0.5 bg-accent text-[#f5f3ef] text-[7px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center scale-90">✦</span>
+                </div>
+
             </div>
         </section>
     );

@@ -50,7 +50,6 @@ const HomePage = () => {
     <>
       <main>
         <Hero />
-        <Marquee />
         <div className="reveal">
           <Chronicle />
         </div>

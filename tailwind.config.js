@@ -7,15 +7,15 @@ export default {
     theme: {
         extend: {
             colors: {
-                background: "#f5f3ef", // --white
-                foreground: "#0a0a0a", // --black
-                cream: "#ede9e1", // --cream
-                mid: "#888888", // --mid
-                accent: "#c8b89a", // --accent
+                background: "#f5f3ef", // warm sand/egret background
+                foreground: "#1c1a17", // rich espresso/java charcoal
+                cream: "#efe8de", // egret cream
+                mid: "#7c7770", // earthy mid grey
+                accent: "#8a4f35", // gingerbread rust
             },
             fontFamily: {
                 display: ["'Bebas Neue'", "sans-serif"],
-                serif: ["'Playfair Display'", "serif"],
+                serif: ["'Bodoni Moda'", "'Playfair Display'", "serif"],
                 body: ["'DM Sans'", "sans-serif"],
                 light: ["'Cormorant Garamond'", "serif"],
             },
