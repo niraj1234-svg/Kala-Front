@@ -60,7 +60,7 @@ const timeline = [
     description: "Our first international pop-up in Dubai introduced Appral to a wider audience."
   },
   {
-    year: "2024",
+    year: "2026",
     title: "Sustainable Pivot",
     description: "We launched Rewear, our upcycling program, to extend life cycles of signature pieces."
   }

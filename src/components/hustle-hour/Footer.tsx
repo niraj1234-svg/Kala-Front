@@ -1,114 +1,106 @@
 import React from 'react';
-import { Facebook, Instagram, Send } from 'lucide-react';
 
-const PinterestIcon = () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-        <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.965 1.406-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12.017 24c6.621 0 11.988-5.367 11.988-11.987C24.005 5.367 18.639 0 12.017 0z" />
+const IconTarget = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="12" r="3" />
+    </svg>
+);
+
+const IconZap = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+);
+
+const IconSpiral = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+        <circle cx="12" cy="12" r="7" />
+        <path d="M12 3a9 9 0 1 0 9 9" />
+    </svg>
+);
+
+const IconSearch = () => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
 );
 
 const Footer: React.FC = () => {
     return (
-        <footer className="bg-[#fdf1f0] text-[#555] py-16 px-6 font-serif">
-            <div className="max-w-7xl mx-auto flex flex-col items-center">
+        <footer className="relative w-full bg-[#0a0a0a] text-[#a0a0a0] py-20 px-6 md:px-12 lg:px-16 xl:px-20 overflow-hidden font-sans border-t border-neutral-900 select-none">
+            {/* Subtle Grain Overlay */}
+            <div className="absolute inset-0 z-[1] hero-grain opacity-[0.05] pointer-events-none" />
 
-                {/* Logo Section */}
-                <div className="relative mb-12 flex flex-col items-center justify-center">
-                    <div className="w-32 h-32 border border-[#888] rounded-full flex flex-col items-center justify-center p-4">
-                        <span className="text-xl font-light italic leading-tight text-[#888]">Laugh.</span>
-                        <span className="text-3xl font-serif italic -mt-1 -mb-1 lowercase text-[#888]">Cry.</span>
-                        <span className="text-xl font-light italic leading-tight text-[#888]">Toast.</span>
+            <div className="relative w-full max-w-[1550px] mx-auto z-10">
+                {/* 3-Column Info Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 items-start text-center md:text-left justify-between w-full mb-16 px-4">
+                    
+                    {/* Left Column: Menu links */}
+                    <div className="flex flex-col items-center md:items-start space-y-2.5">
+                        <a href="/" className="text-white hover:text-accent font-medium text-[13px] tracking-widest uppercase transition-colors">Home</a>
+                        <a href="/works" className="text-[#a0a0a0] hover:text-white text-[13px] tracking-widest uppercase transition-colors">Works</a>
+                        <a href="/services" className="text-[#a0a0a0] hover:text-white text-[13px] tracking-widest uppercase transition-colors">Services</a>
+                        <a href="/about" className="text-[#a0a0a0] hover:text-white text-[13px] tracking-widest uppercase transition-colors">About</a>
+                        <a href="/pricing" className="text-[#a0a0a0] hover:text-white text-[13px] tracking-widest uppercase transition-colors">Pricing</a>
+                        <a href="/contact" className="text-[#a0a0a0] hover:text-white text-[13px] tracking-widest uppercase transition-colors">Contact us</a>
                     </div>
-                </div>
 
-                {/* Top Navigation */}
-                <div className="w-full border-t border-b border-[#ddd] py-4 mb-12">
-                    <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8 text-[11px] tracking-[0.2em] uppercase font-light">
-                        <a href="/about" className="hover:text-black transition-colors">About Us</a>
-                        <div className="w-[1px] h-4 bg-[#ddd] hidden sm:block"></div>
-                        <a href="/events" className="hover:text-black transition-colors">Events</a>
-                        <div className="w-[1px] h-4 bg-[#ddd] hidden sm:block"></div>
-                        <a href="/consultations" className="hover:text-black transition-colors">Consultations</a>
-                        <div className="w-[1px] h-4 bg-[#ddd] hidden sm:block"></div>
-                        <a href="/family" className="hover:text-black transition-colors">Our Joy Family</a>
-                        <div className="w-[1px] h-4 bg-[#ddd] hidden sm:block"></div>
-                        <a href="/faq" className="hover:text-black transition-colors">FAQ</a>
-                    </div>
-                </div>
+                    {/* Center Column: Follow us, Contact Info, Badges */}
+                    <div className="flex flex-col items-center space-y-5">
+                        <h4 className="text-[13px] tracking-[0.2em] uppercase font-semibold text-white/90">Follow us</h4>
+                        
+                        <div className="flex flex-col items-center space-y-1.5 text-[13px] text-white/70">
+                            <p className="hover:text-white transition-colors cursor-pointer">mail@studio.com</p>
+                            <p className="hover:text-white transition-colors cursor-pointer">+91 0123456789</p>
+                        </div>
 
-                {/* Info Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 w-full text-center md:text-left mb-16 px-4">
-
-                    {/* Contact Column */}
-                    <div className="flex flex-col items-center md:items-start md:border-r border-[#ddd] md:pr-12">
-                        <h4 className="text-[12px] tracking-[0.2em] uppercase font-medium mb-6">Contact</h4>
-                        <div className="space-y-3 text-[13px] font-light leading-relaxed">
-                            <p>248.876.0833</p>
-                            <p>info@joyabendmode.com</p>
-                            <p className="mt-4">
-                                506 S. Washington Avenue<br />
-                                Royal Oak, Michigan 48067
-                            </p>
+                        {/* Social Square Badges */}
+                        <div className="flex items-center gap-4 mt-2">
+                            <a href="#" className="w-11 h-11 rounded-lg bg-[#141414] border border-neutral-900 flex items-center justify-center text-white/80 hover:text-white hover:bg-neutral-800 hover:scale-105 hover:border-neutral-700 transition-all duration-300 shadow-md">
+                                <IconTarget />
+                            </a>
+                            <a href="#" className="w-11 h-11 rounded-lg bg-[#141414] border border-neutral-900 flex items-center justify-center text-white/80 hover:text-white hover:bg-neutral-800 hover:scale-105 hover:border-neutral-700 transition-all duration-300 shadow-md">
+                                <IconZap />
+                            </a>
+                            <a href="#" className="w-11 h-11 rounded-lg bg-[#141414] border border-neutral-900 flex items-center justify-center text-white/80 hover:text-white hover:bg-neutral-800 hover:scale-105 hover:border-neutral-700 transition-all duration-300 shadow-md">
+                                <IconSpiral />
+                            </a>
+                            <a href="#" className="w-11 h-11 rounded-lg bg-[#141414] border border-neutral-900 flex items-center justify-center text-white/80 hover:text-white hover:bg-[#1f1f1f] hover:scale-105 hover:border-neutral-700 transition-all duration-300 shadow-md">
+                                <IconSearch />
+                            </a>
                         </div>
                     </div>
 
-                    {/* Hours Column */}
-                    <div className="flex flex-col items-center md:items-start md:border-r border-[#ddd] md:px-12">
-                        <h4 className="text-[12px] tracking-[0.2em] uppercase font-medium mb-6">Hours</h4>
-                        <div className="space-y-3 text-[13px] font-light leading-relaxed text-center md:text-left">
-                            <p className="italic font-normal">*by appointment only</p>
-                            <p>Tues, Thurs, & Fri | 11AM–5PM</p>
-                            <p>Wed & Sat | 11AM–7PM</p>
-                            <p className="uppercase tracking-wide mt-2">Closed Sunday & Monday</p>
-                        </div>
-                    </div>
-
-                    {/* Information Column */}
-                    <div className="flex flex-col items-center md:items-start md:pl-12">
-                        <h4 className="text-[12px] tracking-[0.2em] uppercase font-medium mb-6">Information</h4>
-                        <div className="flex flex-col space-y-3 text-[13px] font-light">
-                            <a href="/contact" className="hover:underline">Contact Us</a>
-                            <a href="/collections" className="hover:underline">Browse Collections</a>
-                            <a href="/terms" className="hover:underline">Terms & Conditions</a>
-                            <a href="/privacy" className="hover:underline">Privacy Policy</a>
+                    {/* Right Column: Address */}
+                    <div className="flex flex-col items-center md:items-end space-y-4">
+                        <h4 className="text-[13px] tracking-[0.2em] uppercase font-semibold text-white/90">Address</h4>
+                        <div className="space-y-1.5 text-[13px] text-white/70 text-center md:text-right leading-relaxed font-light">
+                            <p>#21, North Street,</p>
+                            <p>Velachery,</p>
+                            <p>Chennai.</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Social & Newsletter */}
-                <div className="w-full border-t border-[#ddd] py-12 flex flex-col md:flex-row items-center justify-between gap-12">
-
-                    {/* Socials */}
-                    <div className="flex items-center gap-6">
-                        <span className="text-2xl font-serif italic text-gray-500 mr-2">Let's connect</span>
-                        <div className="flex gap-4">
-                            <a href="#" className="p-2 hover:bg-black/5 rounded-full transition-colors"><Facebook size={20} strokeWidth={1.5} /></a>
-                            <a href="#" className="p-2 hover:bg-black/5 rounded-full transition-colors"><Instagram size={20} strokeWidth={1.5} /></a>
-                            <a href="#" className="p-2 hover:bg-black/5 rounded-full transition-colors"><PinterestIcon /></a>
-                        </div>
-                    </div>
-
-                    {/* Newsletter */}
-                    <div className="flex flex-col md:items-start items-center gap-4 w-full max-w-sm">
-                        <h4 className="text-[10px] tracking-[0.2em] uppercase font-light">Stay in the know with Joy Abendmode:</h4>
-                        <div className="relative w-full border-b border-gray-400">
-                            <input
-                                type="email"
-                                placeholder=""
-                                className="w-full bg-transparent py-2 focus:outline-none text-sm placeholder:italic"
-                            />
-                            <button className="absolute right-0 bottom-2 text-gray-400 hover:text-black transition-colors">
-                                <Send size={18} strokeWidth={1} />
-                            </button>
-                        </div>
+                {/* Bottom Legal / Copyright Row */}
+                <div className="w-full pt-8 border-t border-neutral-900/80 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] tracking-wider font-light text-white/40">
+                    <p>© 2026 Studio. All Rights Reserved.</p>
+                    <div className="flex gap-6">
+                        <a href="/terms" className="hover:text-white transition-colors">Terms & Conditions</a>
+                        <a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a>
                     </div>
                 </div>
 
-                {/* Copyright */}
-                <div className="w-full pt-8 text-center border-t border-[#ddd]">
-                    <p className="text-[9px] tracking-[0.2em] uppercase text-gray-400 font-light">
-                        © {new Date().getFullYear()} Joy Abendmode Bridal Boutique
-                    </p>
+                {/* Giant Typography Background Overlay */}
+                <div className="w-full mt-16 md:mt-24 pt-8 flex flex-col items-center justify-center select-none pointer-events-none relative overflow-hidden">
+                    <span className="font-serif font-black text-[clamp(45px,7.5vw,115px)] text-[#181818] uppercase tracking-[0.18em] leading-none text-center whitespace-nowrap">
+                        THE HUSTLE HOUR
+                    </span>
+                    <span className="font-serif font-black text-[clamp(85px,18vw,290px)] text-[#444444] tracking-tighter leading-none text-center whitespace-nowrap mt-[-10px] md:mt-[-35px] lg:mt-[-45px]">
+                        4.10
+                    </span>
                 </div>
             </div>
         </footer>

@@ -19,9 +19,8 @@ import Marquee from "./components/hustle-hour/Marquee";
 import Chronicle from "./sections/hustle-hour/Chronicle";
 import Collections from "./sections/hustle-hour/Collections";
 import Campaign from "./sections/hustle-hour/Campaign";
-import BrandStory from "./sections/hustle-hour/BrandStory";
 import Vancouver from "./sections/hustle-hour/Vancouver";
-import FeaturedLooks from "./sections/hustle-hour/FeaturedLooks";
+import AboutUs from "./sections/hustle-hour/AboutUs";
 import HustleHourFooter from "./components/hustle-hour/Footer";
 import { useScrollReveal } from "./hooks/useScrollReveal";
 
@@ -61,13 +60,10 @@ const HomePage = () => {
           <Campaign />
         </div>
         <div className="reveal">
-          <BrandStory />
-        </div>
-        <div className="reveal">
           <Vancouver />
         </div>
         <div className="reveal">
-          <FeaturedLooks />
+          <AboutUs />
         </div>
       </main>
 
