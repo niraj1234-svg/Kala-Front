@@ -44,7 +44,7 @@ export default {
                 },
                 figureRise: {
                     'from': { transform: 'translateY(100%)', opacity: '0' },
-                    'to': { opacity: '0.8', transform: 'none' },
+                    'to': { opacity: '1', transform: 'none' },
                 },
                 heroSlide: {
                     'from': { transform: 'translateY(40px)', opacity: '0' },
