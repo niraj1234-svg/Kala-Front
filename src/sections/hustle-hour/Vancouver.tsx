@@ -60,16 +60,16 @@ const Vancouver: React.FC = () => {
 
             {/* Giant Typography Background Overlay (Aligned perfectly behind the models with screen-fitted font sizes) */}
             <div className="absolute left-0 right-0 bottom-[140px] md:bottom-[180px] lg:bottom-[205px] flex flex-col items-center pointer-events-none select-none z-0 overflow-hidden px-4">
-                <span className="font-sans font-[900] text-[clamp(40px,7.5vw,135px)] text-black tracking-[0.03em] uppercase leading-none text-center whitespace-nowrap">
+                <span className="font-sans font-[900] text-[clamp(40px,7.5vw,135px)] text-foreground tracking-[0.03em] uppercase leading-none text-center whitespace-nowrap opacity-[0.08]">
                     ACHROMATIC COLOR
                 </span>
-                <span className="font-sans font-medium text-[clamp(8px,0.8vw,11px)] text-black/70 tracking-[0.5em] uppercase mt-3.5 whitespace-nowrap">
+                <span className="font-sans font-medium text-[clamp(8px,0.8vw,11px)] text-foreground/50 tracking-[0.5em] uppercase mt-3.5 whitespace-nowrap">
                     W W W . J Y C E - S H O P . C O M
                 </span>
             </div>
-
+ 
             {/* Vertical Fashion Caption (Center, between Col 3 and Col 4) */}
-            <div className="absolute left-1/2 top-[32%] -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none select-none hidden lg:flex flex-col items-center gap-1.5 text-[9px] font-sans font-medium tracking-[0.1em] text-black/70 bg-background/90 px-1.5 py-3 rounded-[1px] shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
+            <div className="absolute left-1/2 top-[32%] -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none select-none hidden lg:flex flex-col items-center gap-1.5 text-[9px] font-sans font-medium tracking-[0.1em] text-foreground/70 bg-background/90 px-1.5 py-3 rounded-[1px] shadow-[0_1px_4px_rgba(0,0,0,0.02)] border border-foreground/5">
                 <span>時</span>
                 <span>尚</span>
                 <span>無</span>

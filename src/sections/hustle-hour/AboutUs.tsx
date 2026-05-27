@@ -60,7 +60,9 @@ const AboutUs: React.FC = () => {
                                 <img 
                                     src={card.image} 
                                     alt={card.alt} 
-                                    className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-105"
+                                    className={`w-full h-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-105 ${
+                                        card.isTextCard ? 'dark:invert' : ''
+                                    }`}
                                     loading="lazy"
                                 />
                             </div>

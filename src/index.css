@@ -10,9 +10,18 @@
   --glass: rgba(245, 243, 239, 0.7);
 }
 
+.dark {
+  --background: #12110f;
+  --foreground: #efe8de;
+  --cream: #22201d;
+  --mid: #a0998f;
+  --accent: #d28c6e;
+  --glass: rgba(18, 17, 15, 0.7);
+}
+
 @layer base {
   body {
-    @apply bg-background text-foreground selection:bg-accent selection:text-white;
+    @apply bg-background text-foreground selection:bg-accent selection:text-white transition-colors duration-500 ease-in-out;
     font-family: 'DM Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;

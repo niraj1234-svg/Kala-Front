@@ -7,11 +7,11 @@ export default {
     theme: {
         extend: {
             colors: {
-                background: "#f5f3ef", // warm sand/egret background
-                foreground: "#1c1a17", // rich espresso/java charcoal
-                cream: "#efe8de", // egret cream
-                mid: "#7c7770", // earthy mid grey
-                accent: "#8a4f35", // gingerbread rust
+                background: "var(--background)",
+                foreground: "var(--foreground)",
+                cream: "var(--cream)",
+                mid: "var(--mid)",
+                accent: "var(--accent)",
             },
             fontFamily: {
                 display: ["'Bebas Neue'", "sans-serif"],
