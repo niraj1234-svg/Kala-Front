@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 
 const coreValues = [
   {
-    icon: <Sparkles className="h-6 w-6 text-[#d4b896]" />,
+    icon: <Sparkles className="h-6 w-6 text-[#d4b896]" />, 
     title: "Design-led Craft",
     description:
       "Every silhouette starts with a sketch that balances modern lines with timeless appeal."

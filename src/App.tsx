@@ -15,7 +15,6 @@ import { ToastProvider } from "./components/ui/ToastProvider";
 import Navbar from "./components/hustle-hour/Navbar";
 import CustomCursor from "./components/hustle-hour/CustomCursor";
 import Hero from "./sections/hustle-hour/Hero";
-import Marquee from "./components/hustle-hour/Marquee";
 import Chronicle from "./sections/hustle-hour/Chronicle";
 import Collections from "./sections/hustle-hour/Collections";
 import Campaign from "./sections/hustle-hour/Campaign";
@@ -55,7 +54,6 @@ const HomePage = () => {
         <div className="reveal">
           <Collections />
         </div>
-        <Marquee light />
         <div className="reveal">
           <Campaign />
         </div>
