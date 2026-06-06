@@ -53,15 +53,15 @@ const AboutUs: React.FC = () => {
                         >
                             {/* Inner Card Container (Handles border, shadow, and scaling interaction independently) */}
                             <div 
-                                className={`w-full relative overflow-hidden bg-background shadow-[0_6px_30px_rgba(0,0,0,0.04)] rounded-[2px] border border-foreground/5 transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.035] hover:shadow-[0_20px_50px_rgba(0,0,0,0.09)] hover:-translate-y-1.5 cursor-pointer ${
-                                    card.isTextCard ? 'aspect-[3/2]' : 'aspect-[4/5]'
+                                className={`w-full relative overflow-hidden shadow-[0_6px_30px_rgba(0,0,0,0.04)] rounded-[2px] transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.035] hover:shadow-[0_20px_50px_rgba(0,0,0,0.09)] hover:-translate-y-1.5 cursor-pointer ${
+                                    card.isTextCard ? 'aspect-[3/2] bg-[#FDFBF7] border-none' : 'aspect-[4/5] bg-transparent border border-foreground/5 mix-blend-multiply'
                                 }`}
                             >
                                 <img 
                                     src={card.image} 
                                     alt={card.alt} 
                                     className={`w-full h-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-105 ${
-                                        card.isTextCard ? 'dark:invert' : ''
+                                        card.isTextCard ? 'invert mix-blend-multiply opacity-90' : ''
                                     }`}
                                     loading="lazy"
                                 />
