@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://api.dddgroup.in/api/store';
+import { mockDb } from './mockDb';
 
 export interface Category {
   id: number;
@@ -101,100 +101,15 @@ export interface ApiErrorPayload {
 
 export class ApiError extends Error {
   public readonly status: number;
-
   public readonly data: unknown;
 
   constructor(status: number, data: unknown) {
-    const message = ApiError.extractMessage(data) ?? `Request failed with status ${status}`;
+    const message = typeof data === 'string' ? data : `Local Error ${status}`;
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.data = data;
   }
-
-  private static extractMessage(data: unknown): string | undefined {
-    if (!data) {
-      return undefined;
-    }
-    if (typeof data === 'string') {
-      return data;
-    }
-    if (typeof data === 'object' && 'detail' in data && typeof (data as ApiErrorPayload).detail === 'string') {
-      return (data as ApiErrorPayload).detail;
-    }
-    return undefined;
-  }
-}
-
-interface RequestOptions {
-  method?: string;
-  body?: unknown;
-  accessToken?: string;
-  headers?: Record<string, string>;
-  query?: Record<string, string | number | boolean | string[] | undefined>;
-}
-
-function buildQuery(query?: RequestOptions['query']): string {
-  if (!query) {
-    return '';
-  }
-  const params = new URLSearchParams();
-  Object.entries(query).forEach(([key, value]) => {
-    if (value === undefined || value === null) {
-      return;
-    }
-    if (Array.isArray(value)) {
-      value.forEach((item) => {
-        params.append(key, String(item));
-      });
-    } else {
-      params.append(key, String(value));
-    }
-  });
-  const serialized = params.toString();
-  return serialized ? `?${serialized}` : '';
-}
-
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, accessToken, headers, query } = options;
-  const queryString = buildQuery(query);
-  const url = `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}${queryString}`;
-
-  const finalHeaders: Record<string, string> = {
-    Accept: 'application/json',
-    ...headers,
-  };
-
-  let serializedBody: string | undefined;
-  if (body !== undefined) {
-    finalHeaders['Content-Type'] = 'application/json';
-    serializedBody = JSON.stringify(body);
-  }
-
-  if (accessToken) {
-    finalHeaders.Authorization = `Bearer ${accessToken}`;
-  }
-
-  const response = await fetch(url, {
-    method,
-    headers: finalHeaders,
-    body: serializedBody,
-  });
-
-  const contentType = response.headers.get('content-type');
-  const isJson = contentType?.includes('application/json') ?? false;
-  const hasBody = response.status !== 204 && response.status !== 205;
-  const payload = hasBody
-    ? isJson
-      ? await response.json()
-      : await response.text()
-    : undefined;
-
-  if (!response.ok) {
-    throw new ApiError(response.status, payload);
-  }
-
-  return (isJson ? payload : undefined) as T;
 }
 
 export interface ProductListQuery {
@@ -209,36 +124,107 @@ export interface ProductListQuery {
 }
 
 export async function fetchCategories(): Promise<Category[]> {
-  return request<Category[]>('/categories/');
+  return Promise.resolve(mockDb.getCategories());
 }
 
 export async function fetchProducts(query?: ProductListQuery): Promise<ProductListItem[]> {
-  return request<ProductListItem[]>('/products/', {
-    query: {
-      category: query?.category,
-      price_min: query?.price_min,
-      price_max: query?.price_max,
-      in_stock: query?.in_stock ? 'true' : undefined,
-      q: query?.q,
-      ordering: query?.ordering,
-      size: query?.size,
-      color: query?.color,
-    },
-  });
+  let products = mockDb.getProducts();
+
+  if (query?.category) {
+    const categoryLower = query.category.toLowerCase().trim();
+    products = products.filter(
+      (p) =>
+        p.category.toLowerCase() === categoryLower ||
+        p.category.toLowerCase().replace(/\s+/g, '-') === categoryLower ||
+        p.category.toLowerCase().replace(/[^a-z0-9]/g, '') === categoryLower.replace(/[^a-z0-9]/g, '')
+    );
+  }
+
+  if (query?.q) {
+    const term = query.q.toLowerCase().trim();
+    products = products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(term) ||
+        (p.short_description && p.short_description.toLowerCase().includes(term)) ||
+        p.sku.toLowerCase().includes(term)
+    );
+  }
+
+  if (query?.in_stock !== undefined) {
+    products = products.filter((p) => p.in_stock === query.in_stock);
+  }
+
+  if (query?.price_min !== undefined) {
+    products = products.filter((p) => Number.parseFloat(p.price) >= (query.price_min ?? 0));
+  }
+
+  if (query?.price_max !== undefined) {
+    products = products.filter((p) => Number.parseFloat(p.price) <= (query.price_max ?? 0));
+  }
+
+  if (query?.size && query.size.length > 0) {
+    products = products.filter((p) =>
+      p.variants?.some((v) => v.size && query.size?.includes(v.size))
+    );
+  }
+
+  if (query?.color && query.color.length > 0) {
+    products = products.filter((p) =>
+      p.variants?.some((v) => v.color_name && query.color?.includes(v.color_name))
+    );
+  }
+
+  if (query?.ordering) {
+    if (query.ordering === 'price_low') {
+      products = [...products].sort((a, b) => Number.parseFloat(a.price) - Number.parseFloat(b.price));
+    } else if (query.ordering === 'price_high') {
+      products = [...products].sort((a, b) => Number.parseFloat(b.price) - Number.parseFloat(a.price));
+    } else if (query.ordering === 'name') {
+      products = [...products].sort((a, b) => a.name.localeCompare(b.name));
+    }
+  }
+
+  const listItems: ProductListItem[] = products.map((p) => ({
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    sku: p.sku,
+    category: p.category,
+    short_description: p.short_description,
+    price: p.price,
+    compare_at_price: p.compare_at_price,
+    badge: p.badge,
+    in_stock: p.in_stock,
+    primary_image: p.primary_image,
+    variants: p.variants,
+  }));
+
+  return Promise.resolve(listItems);
 }
 
 export async function fetchProductDetail(slug: string): Promise<ProductDetail> {
-  return request<ProductDetail>(`/products/${slug}/`);
+  const products = mockDb.getProducts();
+  const product = products.find(
+    (p) => p.slug === slug || String(p.id) === slug
+  );
+
+  if (!product) {
+    // Fallback to first product or create detail
+    const first = products[0];
+    if (first) return Promise.resolve(first);
+    throw new ApiError(404, 'Product not found');
+  }
+
+  return Promise.resolve(product);
 }
 
 export async function fetchProductVariants(slug: string): Promise<ProductVariant[]> {
-  return request<ProductVariant[]>(`/products/${slug}/variants/`);
+  const product = await fetchProductDetail(slug);
+  return Promise.resolve(product.variants || []);
 }
 
-export async function fetchWishlist(accessToken: string): Promise<WishlistItem[]> {
-  return request<WishlistItem[]>('/wishlist/', {
-    accessToken,
-  });
+export async function fetchWishlist(_accessToken?: string): Promise<WishlistItem[]> {
+  return Promise.resolve(mockDb.getWishlist());
 }
 
 export interface WishlistMutationPayload {
@@ -246,25 +232,63 @@ export interface WishlistMutationPayload {
   variant_id?: number | null;
 }
 
-export async function addToWishlist(accessToken: string, payload: WishlistMutationPayload): Promise<WishlistItem> {
-  return request<WishlistItem>('/wishlist/', {
-    method: 'POST',
-    accessToken,
-    body: payload,
-  });
+export async function addToWishlist(_accessToken: string, payload: WishlistMutationPayload): Promise<WishlistItem> {
+  const wishlist = mockDb.getWishlist();
+  const products = mockDb.getProducts();
+  const product = products.find((p) => p.id === payload.product_id);
+
+  if (!product) {
+    throw new ApiError(404, 'Product not found');
+  }
+
+  const variant = payload.variant_id
+    ? product.variants?.find((v) => v.id === payload.variant_id) ?? null
+    : null;
+
+  const existing = wishlist.find(
+    (item) => item.product.id === payload.product_id && item.variant?.id === payload.variant_id
+  );
+
+  if (existing) {
+    return Promise.resolve(existing);
+  }
+
+  const newItem: WishlistItem = {
+    id: Date.now(),
+    product: {
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      sku: product.sku,
+      category: product.category,
+      short_description: product.short_description,
+      price: product.price,
+      compare_at_price: product.compare_at_price,
+      badge: product.badge,
+      in_stock: product.in_stock,
+      primary_image: product.primary_image,
+      variants: product.variants,
+    },
+    variant,
+    product_id: product.id,
+    variant_id: variant?.id,
+    created_at: new Date().toISOString(),
+  };
+
+  const updated = [...wishlist, newItem];
+  mockDb.saveWishlist(updated);
+  return Promise.resolve(newItem);
 }
 
-export async function removeFromWishlist(accessToken: string, id: number): Promise<void> {
-  await request<void>(`/wishlist/${id}/`, {
-    method: 'DELETE',
-    accessToken,
-  });
+export async function removeFromWishlist(_accessToken: string, id: number): Promise<void> {
+  const wishlist = mockDb.getWishlist();
+  const updated = wishlist.filter((item) => item.id !== id && item.product.id !== id);
+  mockDb.saveWishlist(updated);
+  return Promise.resolve();
 }
 
-export async function fetchCart(accessToken: string): Promise<Cart> {
-  return request<Cart>('/cart/', {
-    accessToken,
-  });
+export async function fetchCart(_accessToken?: string): Promise<Cart> {
+  return Promise.resolve(mockDb.getCart());
 }
 
 export interface CartAddItemPayload {
@@ -273,37 +297,129 @@ export interface CartAddItemPayload {
   quantity?: number;
 }
 
-export async function addCartItem(accessToken: string, payload: CartAddItemPayload): Promise<Cart> {
-  return request<Cart>('/cart/items/', {
-    method: 'POST',
-    accessToken,
-    body: payload,
-  });
+export async function addCartItem(_accessToken: string, payload: CartAddItemPayload): Promise<Cart> {
+  const cart = mockDb.getCart();
+  const products = mockDb.getProducts();
+  const product = products.find((p) => p.id === payload.product_id);
+
+  if (!product) {
+    throw new ApiError(404, 'Product not found');
+  }
+
+  const quantity = Math.max(payload.quantity ?? 1, 1);
+  const variant = payload.variant_id
+    ? product.variants?.find((v) => v.id === payload.variant_id) ?? null
+    : null;
+
+  const unitPrice = variant?.price_override ?? product.price;
+
+  const existingIndex = cart.items.findIndex(
+    (item) =>
+      item.product.id === payload.product_id &&
+      (payload.variant_id ? item.variant?.id === payload.variant_id : true)
+  );
+
+  let updatedItems: CartItem[];
+
+  if (existingIndex > -1) {
+    updatedItems = [...cart.items];
+    const existing = updatedItems[existingIndex];
+    const newQty = existing.quantity + quantity;
+    const lineTotal = (Number.parseFloat(unitPrice) * newQty).toFixed(2);
+    updatedItems[existingIndex] = {
+      ...existing,
+      quantity: newQty,
+      line_total: lineTotal,
+      updated_at: new Date().toISOString(),
+    };
+  } else {
+    const lineTotal = (Number.parseFloat(unitPrice) * quantity).toFixed(2);
+    const newItem: CartItem = {
+      id: Date.now(),
+      product: {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        sku: product.sku,
+        category: product.category,
+        short_description: product.short_description,
+        price: product.price,
+        compare_at_price: product.compare_at_price,
+        badge: product.badge,
+        in_stock: product.in_stock,
+        primary_image: product.primary_image,
+        variants: product.variants,
+      },
+      variant,
+      product_id: product.id,
+      variant_id: variant?.id,
+      quantity,
+      unit_price: unitPrice,
+      line_total: lineTotal,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    updatedItems = [...cart.items, newItem];
+  }
+
+  const updatedCart: Cart = {
+    ...cart,
+    items: updatedItems,
+  };
+
+  mockDb.saveCart(updatedCart);
+  return Promise.resolve(mockDb.getCart());
 }
 
 export interface CartUpdateItemPayload {
   quantity: number;
 }
 
-export async function updateCartItem(accessToken: string, itemId: number, payload: CartUpdateItemPayload): Promise<Cart> {
-  return request<Cart>(`/cart/items/${itemId}/`, {
-    method: 'PATCH',
-    accessToken,
-    body: payload,
+export async function updateCartItem(
+  _accessToken: string,
+  itemId: number,
+  payload: CartUpdateItemPayload
+): Promise<Cart> {
+  const cart = mockDb.getCart();
+  const quantity = Math.max(payload.quantity, 1);
+
+  const updatedItems = cart.items.map((item) => {
+    if (item.id === itemId) {
+      const lineTotal = (Number.parseFloat(item.unit_price) * quantity).toFixed(2);
+      return {
+        ...item,
+        quantity,
+        line_total: lineTotal,
+        updated_at: new Date().toISOString(),
+      };
+    }
+    return item;
   });
+
+  const updatedCart: Cart = {
+    ...cart,
+    items: updatedItems,
+  };
+
+  mockDb.saveCart(updatedCart);
+  return Promise.resolve(mockDb.getCart());
 }
 
-export async function removeCartItem(accessToken: string, itemId: number): Promise<Cart> {
-  return request<Cart>(`/cart/items/${itemId}/`, {
-    method: 'DELETE',
-    accessToken,
-  });
+export async function removeCartItem(_accessToken: string, itemId: number): Promise<Cart> {
+  const cart = mockDb.getCart();
+  const updatedItems = cart.items.filter((item) => item.id !== itemId);
+
+  const updatedCart: Cart = {
+    ...cart,
+    items: updatedItems,
+  };
+
+  mockDb.saveCart(updatedCart);
+  return Promise.resolve(mockDb.getCart());
 }
 
-export async function fetchRecentlyViewed(accessToken: string): Promise<RecentlyViewedItem[]> {
-  return request<RecentlyViewedItem[]>('/recently-viewed/', {
-    accessToken,
-  });
+export async function fetchRecentlyViewed(_accessToken?: string): Promise<RecentlyViewedItem[]> {
+  return Promise.resolve(mockDb.getRecentlyViewed());
 }
 
 export const appralApi = {

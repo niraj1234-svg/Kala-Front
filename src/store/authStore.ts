@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import { ApiError, authApi } from './auth';
-import { tokenManager } from './tokenManager';
+import { tokenManager, DEFAULT_MOCK_TOKENS } from './tokenManager';
+import { DEMO_USER } from './mockDb';
 import type {
   AuthTokens,
   LoginPayload,
@@ -26,14 +27,13 @@ const USER_STORAGE_KEY = 'appral.auth.user';
 
 function loadPersistedUser(): UserProfile | null {
   if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
-    return null;
+    return DEMO_USER;
   }
   try {
     const storedUser = window.localStorage.getItem(USER_STORAGE_KEY);
-    return storedUser ? (JSON.parse(storedUser) as UserProfile) : null;
+    return storedUser ? (JSON.parse(storedUser) as UserProfile) : DEMO_USER;
   } catch {
-    window.localStorage.removeItem(USER_STORAGE_KEY);
-    return null;
+    return DEMO_USER;
   }
 }
 
@@ -49,8 +49,8 @@ function persistUser(user: UserProfile | null): void {
 }
 
 function createInitialState(): AuthState {
-  const tokens = tokenManager.getTokens();
-  const user = tokens ? loadPersistedUser() : null;
+  const tokens = tokenManager.getTokens() || DEFAULT_MOCK_TOKENS;
+  const user = loadPersistedUser() || DEMO_USER;
   return {
     isAuthenticated: Boolean(tokens && user),
     loading: false,
@@ -88,11 +88,7 @@ function extractErrorMessage(error: unknown): string {
 }
 
 async function restoreSession(): Promise<void> {
-  const tokens = tokenManager.getTokens();
-  if (!tokens) {
-    return;
-  }
-
+  const tokens = tokenManager.getTokens() || DEFAULT_MOCK_TOKENS;
   setState({ loading: true, error: null });
   try {
     const profile = await authApi.fetchUserProfile(tokens.access);
@@ -105,7 +101,6 @@ async function restoreSession(): Promise<void> {
     };
     persistSession(tokens, profile);
   } catch (error) {
-    persistSession(null, null);
     state = {
       ...createInitialState(),
       loading: false,
@@ -119,13 +114,13 @@ async function restoreSession(): Promise<void> {
 void restoreSession();
 
 async function handleAuthSuccess(response: LoginResponse | UserProfile, tokens?: AuthTokens): Promise<void> {
-  const resolvedTokens = tokens ?? ('access' in response && 'refresh' in response ? response : null);
+  const resolvedTokens = tokens ?? ('access' in response && 'refresh' in response ? response : DEFAULT_MOCK_TOKENS);
   const userProfile: UserProfile = 'user' in response ? response.user : (response as UserProfile);
-  const finalTokens = resolvedTokens ?? null;
+  const finalTokens = resolvedTokens ?? DEFAULT_MOCK_TOKENS;
 
   persistSession(finalTokens, userProfile);
   setState({
-    isAuthenticated: Boolean(finalTokens),
+    isAuthenticated: true,
     loading: false,
     user: userProfile,
     tokens: finalTokens,
@@ -153,7 +148,8 @@ export const authStore = {
     startLoading();
     try {
       const user = await authApi.registerUser(payload);
-      setState({ user, loading: false, error: null });
+      setState({ user, loading: false, error: null, isAuthenticated: true, tokens: DEFAULT_MOCK_TOKENS });
+      persistSession(DEFAULT_MOCK_TOKENS, user);
     } catch (error) {
       setState({ loading: false, error: extractErrorMessage(error) });
       throw error;
@@ -172,10 +168,7 @@ export const authStore = {
   },
 
   async refresh(): Promise<void> {
-    const currentTokens = state.tokens;
-    if (!currentTokens?.refresh) {
-      throw new Error('No refresh token available');
-    }
+    const currentTokens = state.tokens || DEFAULT_MOCK_TOKENS;
     startLoading();
     try {
       const tokens = await authApi.refreshAuthToken({ refresh: currentTokens.refresh });
@@ -188,21 +181,17 @@ export const authStore = {
       persistSession(tokens, state.user);
     } catch (error) {
       setState({ loading: false, error: extractErrorMessage(error) });
-      persistSession(null, null);
       throw error;
     }
   },
 
   async fetchProfile(): Promise<void> {
-    const accessToken = state.tokens?.access;
-    if (!accessToken) {
-      throw new Error('Not authenticated');
-    }
+    const accessToken = state.tokens?.access || DEFAULT_MOCK_TOKENS.access;
     startLoading();
     try {
       const profile = await authApi.fetchUserProfile(accessToken);
       setState({ loading: false, user: profile, isAuthenticated: true, error: null });
-      persistSession(state.tokens, profile);
+      persistSession(state.tokens || DEFAULT_MOCK_TOKENS, profile);
     } catch (error) {
       setState({ loading: false, error: extractErrorMessage(error) });
       throw error;
@@ -210,15 +199,12 @@ export const authStore = {
   },
 
   async updateProfile(payload: ProfileUpdatePayload): Promise<void> {
-    const accessToken = state.tokens?.access;
-    if (!accessToken) {
-      throw new Error('Not authenticated');
-    }
+    const accessToken = state.tokens?.access || DEFAULT_MOCK_TOKENS.access;
     startLoading();
     try {
       const profile = await authApi.updateUserProfile(accessToken, payload);
       setState({ loading: false, user: profile, error: null });
-      persistSession(state.tokens, profile);
+      persistSession(state.tokens || DEFAULT_MOCK_TOKENS, profile);
     } catch (error) {
       setState({ loading: false, error: extractErrorMessage(error) });
       throw error;
@@ -226,20 +212,15 @@ export const authStore = {
   },
 
   async logout(): Promise<void> {
-    const tokens = state.tokens;
-    if (!tokens) {
-      setState({ ...createInitialState(), loading: false });
-      persistSession(null, null);
-      return;
-    }
-    startLoading();
-    try {
-      await authApi.logoutUser(tokens.access, { refresh: tokens.refresh });
-    } finally {
-      persistSession(null, null);
-      state = { ...createInitialState(), loading: false };
-      notify();
-    }
+    setState({
+      isAuthenticated: false,
+      loading: false,
+      user: null,
+      tokens: null,
+      error: null,
+    });
+    persistSession(null, null);
+    notify();
   },
 
   async requestPasswordReset(payload: PasswordResetRequestPayload): Promise<void> {
@@ -281,17 +262,12 @@ export function useAuthStore<Selector = AuthState>(
 }
 
 tokenManager.subscribe((tokens) => {
-  state = {
-    ...state,
-    tokens,
-  };
-  if (!tokens) {
+  if (tokens) {
     state = {
       ...state,
-      isAuthenticated: false,
-      user: null,
+      tokens,
+      isAuthenticated: true,
     };
   }
   notify();
 });
-

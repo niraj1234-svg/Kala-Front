@@ -9,15 +9,28 @@ export default {
             colors: {
                 background: "var(--background)",
                 foreground: "var(--foreground)",
+                card: "var(--card)",
                 cream: "var(--cream)",
                 mid: "var(--mid)",
                 accent: "var(--accent)",
+                border: "var(--border)",
+                kala: {
+                    emerald: "#c15927",
+                    primary: "#c15927",
+                    terracotta: "#c15927",
+                    earth: "#9e4419",
+                    brown: "#6e432a",
+                    dark: "#1c1a17",
+                    cream: "#f5f3ef",
+                    accent: "#d97443"
+                }
             },
             fontFamily: {
-                display: ["'Bebas Neue'", "sans-serif"],
-                serif: ["'Bodoni Moda'", "'Playfair Display'", "serif"],
-                body: ["'DM Sans'", "sans-serif"],
-                light: ["'Cormorant Garamond'", "serif"],
+                display: ["'Bahnschrift'", "'Myriad Pro'", "'Myriad'", "'Barlow Semi Condensed'", "sans-serif"],
+                serif: ["'Bahnschrift'", "'Myriad Pro'", "'Myriad'", "sans-serif"],
+                body: ["'Myriad Pro'", "'Myriad'", "'Bahnschrift'", "'Barlow'", "'DM Sans'", "sans-serif"],
+                sans: ["'Myriad Pro'", "'Myriad'", "'Bahnschrift'", "'Barlow'", "sans-serif"],
+                heading: ["'Bahnschrift'", "'Myriad Pro'", "'Myriad'", "sans-serif"],
             },
             animation: {
                 'hzoom': 'hzoom 12s ease-out forwards',

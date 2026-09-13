@@ -1,279 +1,229 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { X, Plus, Minus, ArrowRight, ShoppingBag, ArrowLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { appralStore, useAppralStore } from '../store/appralStore';
-import { useAuthStore } from '../store/authStore';
-import OptimizedImage from '../components/hustle-hour/OptimizedImage';
+import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, ShieldCheck, Heart } from 'lucide-react';
+import { useCart } from '../CartContext';
+import { useWishlist } from '../WishlistContext';
+import { KALA_CONFIG } from '../constants/config';
+import { getProductBySlugOrId } from '../constants/products';
 
-const FALLBACK_IMAGE = '/placeholder-product.png';
-
-const resolveImageUrl = (source?: string | null): string => {
-  if (!source || source.includes('placeholder')) return FALLBACK_IMAGE;
-  if (source.startsWith('http://') || source.startsWith('https://')) return source;
-  return source.startsWith('/') ? source : `/${source}`;
-};
-
-const formatCurrency = (value: number | string | null | undefined): string => {
-  const numeric = typeof value === 'number' ? value : Number.parseFloat(value ?? '0');
-  if (!Number.isFinite(numeric)) return '₹0';
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    minimumFractionDigits: numeric % 1 === 0 ? 0 : 2,
-  }).format(numeric);
-};
-
-const describeVariant = (variant?: { size: string | null; color_name: string | null; sku: string }): string | null => {
-  if (!variant) return null;
-  const parts = [variant.size, variant.color_name].filter(Boolean) as string[];
-  return (parts.length > 0 ? parts.join(' • ') : variant.sku) ?? null;
-};
-
-const CartPage: React.FC = () => {
+export const CartPage: React.FC = () => {
   const navigate = useNavigate();
-  const authState = useAuthStore((state) => state);
-  const cartState = useAppralStore((state) => state.cart);
-  const [updatingLineId, setUpdatingLineId] = useState<number | null>(null);
+  const { cartItems, removeFromCart, updateQuantity, clearCart, getCartTotal, getCartCount } = useCart();
+  const { addToWishlist } = useWishlist();
 
-  useEffect(() => {
-    if (!authState.isAuthenticated) return;
-    if (!cartState.loading && !cartState.data) {
-      appralStore.fetchCart().catch(e => console.error('Cart fetch failed', e));
+  const subtotal = getCartTotal();
+  const count = getCartCount();
+  const shippingFee = subtotal >= KALA_CONFIG.shipping.freeShippingThreshold ? 0 : (subtotal > 0 ? KALA_CONFIG.shipping.standardShippingFee : 0);
+  const total = subtotal + shippingFee;
+
+  const handleMoveToWishlist = (item: any) => {
+    const prod = getProductBySlugOrId(item.id);
+    if (prod) {
+      addToWishlist(prod);
+    } else {
+      addToWishlist({
+        id: item.id,
+        name: item.name,
+        slug: item.slug || item.id,
+        category: item.category || 'Apparel',
+        subCategory: item.subCategory || 'T-Shirts',
+        description: '',
+        price: item.price,
+        image: item.image,
+        inStock: true,
+        isSoldOut: false,
+        isFeatured: false,
+        isCustomizable: true,
+        createdAt: new Date().toISOString()
+      });
     }
-  }, [authState.isAuthenticated, cartState.data, cartState.loading]);
-
-  const cart = cartState.data;
-  const cartItems = cart?.items ?? [];
-  const subtotal = useMemo(() => cart ? Number.parseFloat(cart.subtotal ?? '0') : 0, [cart]);
-  const freeShippingThreshold = 1100;
-  const amountToFreeShipping = Math.max(freeShippingThreshold - subtotal, 0);
-
-  const handleUpdateQuantity = async (itemId: number, nextQuantity: number) => {
-    if (nextQuantity < 1) return;
-    setUpdatingLineId(itemId);
-    try {
-      await appralStore.updateCartItem(itemId, { quantity: nextQuantity });
-    } catch (e) {
-    } finally {
-      setUpdatingLineId(null);
-    }
+    removeFromCart(item.cartItemId);
   };
-
-  const handleRemoveItem = async (itemId: number) => {
-    setUpdatingLineId(itemId);
-    try {
-      await appralStore.removeCartItem(itemId);
-    } catch (e) {
-    } finally {
-      setUpdatingLineId(null);
-    }
-  };
-
-  if (!authState.isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <div className="text-center space-y-8 max-w-sm">
-          <div className="flex justify-center mb-8">
-            <ShoppingBag className="w-12 h-12 text-accent/40" />
-          </div>
-          <h1 className="font-display text-4xl uppercase tracking-tight">Access Restricted</h1>
-          <p className="font-body text-[11px] tracking-[0.2em] uppercase text-foreground/40 leading-relaxed">
-            Please authenticate to view your curated collection and proceed with the acquisition.
-          </p>
-          <button
-            onClick={() => navigate('/login', { state: { from: '/cart' } })}
-            className="w-full h-14 bg-foreground text-background font-body text-[10px] tracking-[0.4em] uppercase hover:bg-accent hover:text-foreground transition-all"
-          >
-            Authenticate Access
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (cartState.loading && !cart) {
-    return (
-      <div className="min-h-screen bg-background pt-32 p-6 flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-        <p className="font-body text-[10px] tracking-[0.4em] uppercase text-foreground/40 text-center">Synchronizing Collection...</p>
-      </div>
-    );
-  }
-
-  if (!cart || cartItems.length === 0) {
-    return (
-      <div className="min-h-screen bg-background pt-32 p-6">
-        <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20">
-          <h1 className="font-display text-7xl md:text-9xl uppercase tracking-tighter mb-20 drop-shadow-sm">Your Bag</h1>
-          <div className="py-20 border-t border-foreground/5 text-center space-y-12">
-            <p className="font-body text-xs tracking-[0.3em] uppercase text-foreground/40">Your collection is currently void of artifacts.</p>
-            <Link
-              to="/products"
-              className="inline-flex items-center gap-3 font-body text-[10px] tracking-[0.4em] uppercase text-accent hover:text-foreground transition-all"
-            >
-              <ArrowLeft className="w-4 h-4" /> Return to Archive
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-20 pt-24 lg:pt-32 relative overflow-x-hidden">
-      {/* Grain Effect */}
-      <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+    <div className="min-h-screen bg-background text-foreground pt-32 sm:pt-40 pb-24">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-border">
+          <div>
+            <h1 className="font-serif text-3xl sm:text-5xl font-black uppercase text-foreground">
+              Shopping Cart ({count})
+            </h1>
+            <p className="text-xs text-mid mt-1">
+              Review your customized apparel and merchandise before proceeding to checkout.
+            </p>
+          </div>
 
-      <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 mb-16 lg:mb-24">
-          <motion.h1
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="font-display text-7xl md:text-9xl uppercase tracking-tighter leading-none"
-          >
-            Your<br />Bag
-          </motion.h1>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex flex-col items-end gap-2"
-          >
-            <div className="flex items-baseline gap-2">
-              <span className="font-display text-5xl text-accent">{cartItems.length}</span>
-              <span className="font-body text-[9px] tracking-[0.3em] uppercase opacity-40">Artifacts Ready</span>
-            </div>
-            {amountToFreeShipping > 0 && (
-              <p className="font-body text-[8px] tracking-[0.2em] uppercase text-accent/60">
-                {formatCurrency(amountToFreeShipping)} more for global shipping
-              </p>
-            )}
-          </motion.div>
+          {cartItems.length > 0 && (
+            <button
+              onClick={clearCart}
+              className="text-xs text-red-500 hover:text-red-700 underline self-start sm:self-auto font-mono"
+            >
+              Clear Cart
+            </button>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
-          {/* Cart Items */}
-          <div className="lg:col-span-8 space-y-12">
-            <div className="border-t border-foreground/5">
-              {cartItems.map((item, i) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="py-10 border-b border-foreground/5 flex flex-col md:flex-row gap-8 lg:gap-12 relative group"
+        {cartItems.length === 0 ? (
+          /* Empty Cart State (Rule 49) */
+          <div className="bg-card border border-border rounded-3xl p-12 text-center space-y-4 max-w-lg mx-auto shadow-xs">
+            <div className="w-16 h-16 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center mx-auto text-mid">
+              <ShoppingBag className="w-8 h-8" />
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold uppercase text-foreground">
+              Your cart is waiting for something KALA.
+            </h2>
+            <p className="text-xs sm:text-sm text-mid leading-relaxed">
+              Explore our custom drop-shoulder streetwear, gaming jerseys, or gym wear collections.
+            </p>
+            <div className="pt-2">
+              <Link
+                to="/shop"
+                className="inline-flex items-center gap-2 px-8 py-3.5 bg-kala-emerald hover:bg-kala-emerald/90 text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-md transition-transform hover:-translate-y-0.5"
+              >
+                <span>Continue Shopping</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Cart Items List */}
+            <div className="lg:col-span-8 space-y-4">
+              {cartItems.map((item) => (
+                <div
+                  key={item.cartItemId}
+                  className="bg-card border border-border rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-2xs transition-shadow hover:shadow-md"
                 >
-                  <div className="w-32 aspect-[3/4] bg-foreground/5 overflow-hidden border border-foreground/5">
-                    <OptimizedImage
-                      src={resolveImageUrl(item.product.primary_image?.image_url)}
-                      alt={item.product.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-contain bg-[#faf8f5] dark:bg-[#181614] p-2 border border-border shrink-0"
                     />
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-mid block">
+                        {item.category || 'Apparel'}
+                      </span>
+                      <h3 className="font-serif text-base sm:text-lg font-bold text-foreground">
+                        <Link to={`/product/${item.id}`} className="hover:text-kala-emerald transition-colors">
+                          {item.name}
+                        </Link>
+                      </h3>
+                      <div className="flex items-center gap-3 text-xs text-mid font-mono">
+                        <span>Size: <strong className="text-foreground">{item.size}</strong></span>
+                        <span>&bull;</span>
+                        <span>Color: <strong className="text-foreground">{item.color}</strong></span>
+                      </div>
+                      <p className="font-bold text-kala-emerald text-sm sm:text-base pt-0.5">
+                        ₹{item.price}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="flex-1 flex flex-col justify-between py-2">
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-3">
-                        <span className="font-body text-[8px] tracking-[0.4em] uppercase text-accent font-bold">Artifact-0{item.product.id}</span>
-                        <h3 className="font-display text-2xl lg:text-3xl uppercase tracking-tight">{item.product.name}</h3>
-                        {item.variant && (
-                          <p className="font-body text-[9px] tracking-[0.2em] uppercase text-foreground/40">
-                            {describeVariant(item.variant)}
-                          </p>
-                        )}
-                      </div>
+                  {/* Quantity and Actions */}
+                  <div className="flex items-center justify-between w-full sm:w-auto sm:justify-end gap-5 pt-3 sm:pt-0 border-t sm:border-t-0 border-border">
+                    {/* Quantity Controls */}
+                    <div className="flex items-center border border-border rounded-xl bg-background shadow-2xs">
                       <button
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="p-2 text-foreground/20 hover:text-accent transition-colors"
-                        disabled={updatingLineId === item.id}
+                        onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
+                        className="px-3 py-1.5 text-xs text-mid hover:text-foreground"
+                        aria-label="Decrease quantity"
                       >
-                        <X size={16} />
+                        <Minus className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="px-3 py-1.5 text-xs font-mono font-bold text-foreground">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
+                        className="px-3 py-1.5 text-xs text-mid hover:text-foreground"
+                        aria-label="Increase quantity"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
                       </button>
                     </div>
 
-                    <div className="flex items-end justify-between mt-8">
-                      <div className="flex items-center gap-8 border-b border-foreground/5 pb-2 w-fit">
-                        <button
-                          onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                          className="text-foreground/30 hover:text-foreground transition-colors disabled:opacity-20"
-                          disabled={item.quantity <= 1 || updatingLineId === item.id}
-                        >
-                          <Minus size={14} />
-                        </button>
-                        <span className="font-display text-xl w-6 text-center">{item.quantity}</span>
-                        <button
-                          onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                          className="text-foreground/30 hover:text-foreground transition-colors disabled:opacity-20"
-                          disabled={updatingLineId === item.id}
-                        >
-                          <Plus size={14} />
-                        </button>
-                      </div>
-                      <div className="font-display text-3xl">{formatCurrency(item.line_total)}</div>
-                    </div>
+                    <span className="font-mono font-bold text-base text-foreground min-w-[65px] text-right">
+                      ₹{item.price * item.quantity}
+                    </span>
+
+                    {/* Move to Wishlist */}
+                    <button
+                      onClick={() => handleMoveToWishlist(item)}
+                      className="p-2 text-mid hover:text-kala-emerald hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-colors"
+                      title="Move to Wishlist"
+                    >
+                      <Heart className="w-4 h-4" />
+                    </button>
+
+                    {/* Remove */}
+                    <button
+                      onClick={() => removeFromCart(item.cartItemId)}
+                      className="p-2 text-mid hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-colors"
+                      title="Remove from Cart"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
 
-            <Link
-              to="/products"
-              className="inline-flex items-center gap-4 py-8 group"
-            >
-              <div className="w-8 h-[1px] bg-foreground/20 group-hover:w-12 group-hover:bg-accent transition-all" />
-              <span className="font-body text-[10px] tracking-[0.4em] uppercase text-foreground/40 group-hover:text-foreground transition-colors">
-                Explore More Artifacts
-              </span>
-            </Link>
-          </div>
+            {/* Order Summary Sidebar */}
+            <div className="lg:col-span-4 bg-card border border-border rounded-3xl p-6 sm:p-8 space-y-6 sticky top-28 shadow-sm">
+              <h2 className="font-serif text-xl font-bold uppercase text-foreground">
+                Order Summary
+              </h2>
 
-          {/* Order Summary */}
-          <aside className="lg:col-span-4 lg:sticky lg:top-32 h-fit">
-            <div className="bg-foreground/5 p-8 lg:p-12 space-y-12 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-
-              <h2 className="font-display text-4xl uppercase tracking-tighter">Summary</h2>
-
-              <div className="space-y-6">
-                <div className="flex justify-between items-baseline border-b border-foreground/5 pb-4">
-                  <span className="font-body text-[10px] tracking-[0.2em] uppercase text-foreground/40">Subtotal</span>
-                  <span className="font-display text-2xl">{formatCurrency(cart.subtotal)}</span>
+              <div className="space-y-3 text-xs text-mid border-b border-border pb-4">
+                <div className="flex items-center justify-between">
+                  <span>Subtotal:</span>
+                  <span className="font-mono font-bold text-foreground text-sm">₹{subtotal}</span>
                 </div>
-                <div className="flex justify-between items-baseline border-b border-foreground/5 pb-4">
-                  <span className="font-body text-[10px] tracking-[0.2em] uppercase text-foreground/40">Entities</span>
-                  <span className="font-display text-2xl">{cart.item_count}</span>
+                <div className="flex items-center justify-between">
+                  <span>Estimated Delivery:</span>
+                  {shippingFee === 0 ? (
+                    <span className="text-emerald-600 font-bold uppercase font-mono">FREE (Above ₹999)</span>
+                  ) : (
+                    <span className="font-mono font-bold text-foreground">₹{shippingFee}</span>
+                  )}
                 </div>
-                <div className="flex justify-between items-baseline border-b border-foreground/10 pb-4 pt-4">
-                  <span className="font-body text-[11px] tracking-[0.3em] uppercase font-bold">Aggregate</span>
-                  <span className="font-display text-4xl text-accent">{formatCurrency(cart.subtotal)}</span>
+                <div className="flex items-center justify-between">
+                  <span>Quality Assurance:</span>
+                  <span className="text-emerald-600 font-bold uppercase">Included Free</span>
                 </div>
-                <p className="font-body text-[8px] tracking-[0.1em] uppercase text-foreground/30 text-right italic">
-                  Shipping and levies calculated at acquisition
-                </p>
               </div>
 
+              <div className="flex items-baseline justify-between font-bold text-foreground">
+                <span className="font-serif text-lg uppercase">Total:</span>
+                <span className="font-serif text-2xl text-kala-emerald font-black">₹{total}</span>
+              </div>
+
+              {/* Native Checkout CTA */}
               <button
                 onClick={() => navigate('/checkout')}
-                className="w-full h-16 bg-foreground text-background font-body text-[11px] tracking-[0.4em] uppercase hover:bg-accent hover:text-foreground transition-all flex items-center justify-center gap-3 group"
+                className="w-full py-4 bg-kala-emerald hover:bg-kala-emerald/90 text-white rounded-xl text-xs font-bold uppercase tracking-widest shadow-md flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5"
               >
-                Checkout Access
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <span>Proceed to Checkout</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
 
-              <div className="space-y-6 pt-12 border-t border-foreground/5">
-                <h4 className="font-body text-[8px] tracking-[0.4em] uppercase text-foreground/30 font-bold">Secure Protocols</h4>
-                <div className="flex justify-between opacity-20 grayscale hover:grayscale-0 transition-all cursor-default">
-                  {['VISA', 'MC', 'AMEX', 'UPI'].map(pay => (
-                    <span key={pay} className="font-display text-xs tracking-widest">{pay}</span>
-                  ))}
-                </div>
+              <Link
+                to="/shop"
+                className="block text-center text-xs text-mid hover:text-foreground font-semibold uppercase tracking-wider"
+              >
+                &larr; Continue Shopping
+              </Link>
+
+              {/* Assurance note */}
+              <div className="bg-background border border-border rounded-xl p-3 text-[11px] text-mid leading-relaxed flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-kala-emerald shrink-0" />
+                <span>Pan-India Doorstep Dispatch with Free Return on Defective Prints</span>
               </div>
             </div>
-          </aside>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

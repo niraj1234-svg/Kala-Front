@@ -1,6 +1,7 @@
 import React from 'react';
 import { Phone, Mail, MessageCircle, Instagram, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { KALA_CONFIG } from '../constants/config';
 
 type ContactMethod = {
   id: string;
@@ -22,32 +23,32 @@ const ContactUs: React.FC<ContactUsProps> = ({ isOpen, onClose }) => {
       id: 'call',
       icon: <Phone className="w-8 h-8" />,
       label: 'Call Us',
-      value: '+91 123456789',
-      action: 'tel:+9112345678',
-      color: 'bg-blue-500 hover:bg-blue-600',
+      value: KALA_CONFIG.phone,
+      action: `tel:${KALA_CONFIG.whatsapp}`,
+      color: 'bg-emerald-600 hover:bg-emerald-700',
     },
     {
       id: 'email',
       icon: <Mail className="w-8 h-8" />,
       label: 'Email',
-      value: 'hello@appral.com',
-      action: 'mailto:hello@appral.com',
-      color: 'bg-red-500 hover:bg-red-600',
+      value: KALA_CONFIG.email,
+      action: `mailto:${KALA_CONFIG.email}`,
+      color: 'bg-[#8a4f35] hover:bg-[#723f2a]',
     },
     {
       id: 'whatsapp',
       icon: <MessageCircle className="w-8 h-8" />,
       label: 'WhatsApp',
-      value: '+91 123456789',
-      action: 'https://wa.me/9112345678',
-      color: 'bg-green-500 hover:bg-green-600',
+      value: KALA_CONFIG.phone,
+      action: `https://wa.me/${KALA_CONFIG.whatsapp}`,
+      color: 'bg-green-600 hover:bg-green-700',
     },
     {
       id: 'instagram',
       icon: <Instagram className="w-8 h-8" />,
       label: 'Instagram',
-      value: '@appral',
-      action: 'https://instagram.com/appral',
+      value: '@kala_originals',
+      action: KALA_CONFIG.social.instagram,
       color: 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 hover:opacity-90',
     },
   ];
@@ -123,7 +124,7 @@ const ContactUs: React.FC<ContactUsProps> = ({ isOpen, onClose }) => {
               {/* Additional Info */}
               <div className="mt-6 pt-6 border-t border-gray-200 text-center">
                 <p className="text-xs text-gray-500">
-                  We typically respond within 24 hours
+                  Quick response within 1–2 hours
                 </p>
               </div>
             </div>

@@ -1,4 +1,5 @@
-const API_BASE_URL = 'https://api.dddgroup.in/api/admin';
+import { mockDb } from './mockDb';
+import type { ProductDetail as AppralProductDetail } from './appral';
 
 export interface ApiErrorPayload {
   detail?: string;
@@ -7,51 +8,14 @@ export interface ApiErrorPayload {
 
 export class ApiError extends Error {
   public readonly status: number;
-
   public readonly data: unknown;
 
   constructor(status: number, data: unknown) {
-    const message = ApiError.extractMessage(data) ?? `Request failed with status ${status}`;
+    const message = typeof data === 'string' ? data : `Admin Error (${status})`;
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.data = data;
-  }
-
-  private static extractMessage(data: unknown): string | undefined {
-    if (!data) {
-      return undefined;
-    }
-    if (typeof data === 'string') {
-      return data;
-    }
-    if (typeof data === 'object' && data !== null) {
-      if ('detail' in data && typeof (data as ApiErrorPayload).detail === 'string') {
-        return (data as ApiErrorPayload).detail;
-      }
-      return ApiError.pickFirstMessage(data as Record<string, unknown>);
-    }
-    return undefined;
-  }
-
-  private static pickFirstMessage(payload: Record<string, unknown>): string | undefined {
-    for (const value of Object.values(payload)) {
-      if (Array.isArray(value)) {
-        for (const item of value) {
-          if (typeof item === 'string' && item.trim()) {
-            return item;
-          }
-        }
-      } else if (typeof value === 'string' && value.trim()) {
-        return value;
-      } else if (value && typeof value === 'object') {
-        const nested = ApiError.pickFirstMessage(value as Record<string, unknown>);
-        if (nested) {
-          return nested;
-        }
-      }
-    }
-    return undefined;
   }
 }
 
@@ -176,331 +140,609 @@ export interface AdminProductQuery {
   page_size?: number;
 }
 
-interface RequestOptions {
-  method?: string;
-  body?: unknown;
-  accessToken?: string;
-  headers?: Record<string, string>;
-  query?: Record<string, string | number | boolean | string[] | undefined>;
-}
-
-function buildQuery(query?: RequestOptions['query']): string {
-  if (!query) {
-    return '';
-  }
-  const params = new URLSearchParams();
-  Object.entries(query).forEach(([key, value]) => {
-    if (value === undefined || value === null) {
-      return;
-    }
-    if (Array.isArray(value)) {
-      value.forEach((item) => params.append(key, String(item)));
-    } else {
-      params.append(key, String(value));
-    }
-  });
-  const serialized = params.toString();
-  return serialized ? `?${serialized}` : '';
-}
-
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, accessToken, headers, query } = options;
-  const queryString = buildQuery(query);
-  const url = `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}${queryString}`;
-
-  const finalHeaders: Record<string, string> = {
-    Accept: 'application/json',
-    ...headers,
-  };
-
-  let bodyToSend: BodyInit | undefined;
-  if (body instanceof FormData) {
-    bodyToSend = body;
-    delete finalHeaders['Content-Type'];
-  } else if (body !== undefined) {
-    finalHeaders['Content-Type'] = 'application/json';
-    bodyToSend = JSON.stringify(body);
-  }
-
-  if (accessToken) {
-    finalHeaders.Authorization = `Bearer ${accessToken}`;
-  }
-
-  const response = await fetch(url, {
-    method,
-    headers: finalHeaders,
-    body: bodyToSend,
-  });
-
-  const contentType = response.headers.get('content-type');
-  const isJson = contentType?.includes('application/json') ?? false;
-  const hasBody = response.status !== 204 && response.status !== 205;
-  const payload = hasBody
-    ? isJson
-      ? await response.json()
-      : await response.text()
-    : undefined;
-
-  if (!response.ok) {
-    console.error('API Error Response:', {
-      status: response.status,
-      statusText: response.statusText,
-      url: response.url,
-      payload: payload
-    });
-    throw new ApiError(response.status, payload);
-  }
-
-  return (isJson ? payload : undefined) as T;
-}
-
-export async function fetchDashboard(accessToken: string): Promise<AdminDashboardSummary> {
-  return request<AdminDashboardSummary>('/dashboard/', {
-    accessToken,
-  });
-}
-
-export async function fetchProducts(accessToken: string, query?: AdminProductQuery): Promise<ProductListItem[]> {
-  return request<ProductListItem[]>('/products/', {
-    accessToken,
-    query: {
-      search: query?.search,
-      ordering: query?.ordering,
-      page: query?.page,
-      page_size: query?.page_size,
-    },
-  });
-}
-
-export async function fetchRecentProducts(accessToken: string): Promise<ProductListItem[]> {
-  return request<ProductListItem[]>('/products/recent/', {
-    accessToken,
-  });
-}
-
-export async function fetchProduct(accessToken: string, slug: string): Promise<ProductDetail> {
-  return request<ProductDetail>(`/products/${slug}/`, {
-    accessToken,
-  });
-}
-
-export async function createProduct(accessToken: string, payload: AdminProductPayload): Promise<ProductDetail> {
-  return request<ProductDetail>('/products/', {
-    method: 'POST',
-    accessToken,
-    body: payload,
-  });
-}
-
-export async function updateProduct(accessToken: string, slug: string, payload: AdminProductPayload): Promise<ProductDetail> {
-  return request<ProductDetail>(`/products/${slug}/`, {
-    method: 'PUT',
-    accessToken,
-    body: payload,
-  });
-}
-
-export async function partialUpdateProduct(
-  accessToken: string,
-  slug: string,
-  payload: Partial<AdminProductPayload>,
-): Promise<ProductDetail> {
-  return request<ProductDetail>(`/products/${slug}/`, {
-    method: 'PATCH',
-    accessToken,
-    body: payload,
-  });
-}
-
-export async function deleteProduct(accessToken: string, slug: string): Promise<void> {
-  await request<void>(`/products/${slug}/`, {
-    method: 'DELETE',
-    accessToken,
-  });
-}
-
-export async function createProductVariant(
-  accessToken: string,
-  slug: string,
-  payload: Omit<ProductVariant, 'id'>,
-): Promise<ProductVariant> {
-  return request<ProductVariant>(`/products/${slug}/variants/`, {
-    method: 'POST',
-    accessToken,
-    body: payload,
-  });
-}
-
-export async function updateProductVariant(
-  accessToken: string,
-  slug: string,
-  variantId: number,
-  payload: Partial<Omit<ProductVariant, 'id'>>,
-): Promise<ProductVariant> {
-  return request<ProductVariant>(`/products/${slug}/variants/${variantId}/`, {
-    method: 'PUT',
-    accessToken,
-    body: payload,
-  });
-}
-
-export async function deleteProductVariant(accessToken: string, slug: string, variantId: number): Promise<void> {
-  await request<void>(`/products/${slug}/variants/${variantId}/`, {
-    method: 'DELETE',
-    accessToken,
-  });
+export interface ProductVariantPayload {
+  sku: string;
+  size?: string | null;
+  color_name?: string | null;
+  color_hex?: string | null;
+  price_override?: number | null;
+  stock: number;
+  is_active: boolean;
+  additional_attributes?: Record<string, unknown> | null;
 }
 
 export interface ProductImagePayload {
-  image?: File | Blob | null;
+  image?: File | Blob | string | null;
   image_url?: string | null;
   alt_text?: string | null;
   is_primary?: boolean;
   display_order?: number | null;
 }
 
-function buildImageBody(payload: ProductImagePayload): FormData | Record<string, unknown> {
-  if (payload.image instanceof File || payload.image instanceof Blob) {
-    const formData = new FormData();
-    if (payload.image) {
-      formData.append('image', payload.image);
-    }
-    if (payload.image_url !== undefined) {
-      formData.append('image_url', payload.image_url ?? '');
-    }
-    if (payload.alt_text !== undefined) {
-      formData.append('alt_text', payload.alt_text ?? '');
-    }
-    if (payload.is_primary !== undefined) {
-      formData.append('is_primary', String(payload.is_primary));
-    }
-    if (payload.display_order !== undefined && payload.display_order !== null) {
-      formData.append('display_order', String(payload.display_order));
-    }
-    return formData;
-  }
+function mapToAdminProduct(p: AppralProductDetail): ProductDetail {
+  const images: ProductImage[] = (p.images || []).map((img) => ({
+    id: img.id,
+    product: p.id,
+    image: null,
+    image_url: img.image_url,
+    alt_text: img.alt_text,
+    is_primary: img.is_primary,
+    display_order: img.display_order,
+  }));
+
+  const primaryImage: ProductImage | null = p.primary_image
+    ? {
+        id: p.primary_image.id,
+        product: p.id,
+        image: null,
+        image_url: p.primary_image.image_url,
+        alt_text: p.primary_image.alt_text,
+        is_primary: p.primary_image.is_primary,
+        display_order: p.primary_image.display_order,
+      }
+    : images[0] || null;
+
+  const variants: ProductVariant[] = (p.variants || []).map((v) => ({
+    id: v.id,
+    product: p.id,
+    sku: v.sku,
+    size: v.size,
+    color_name: v.color_name,
+    color_hex: v.color_hex,
+    price_override: v.price_override ? Number.parseFloat(v.price_override) : null,
+    stock: v.stock,
+    is_active: v.is_active,
+    additional_attributes: v.additional_attributes,
+  }));
 
   return {
-    image_url: payload.image_url ?? null,
-    alt_text: payload.alt_text ?? null,
-    is_primary: payload.is_primary,
-    display_order: payload.display_order,
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    sku: p.sku,
+    category: p.category,
+    short_description: p.short_description,
+    price: p.price,
+    compare_at_price: p.compare_at_price,
+    badge: p.badge,
+    in_stock: p.in_stock,
+    primary_image: primaryImage,
+    description: p.description,
+    attributes: p.attributes,
+    additional_categories: (p.additional_categories || []).map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      parent: null,
+      description: c.description,
+      is_active: c.is_active,
+    })),
+    images,
+    variants,
+    created_at: p.created_at,
+    updated_at: p.updated_at,
   };
 }
 
-export async function createProductImage(
-  accessToken: string,
+export async function fetchDashboard(_accessToken: string): Promise<AdminDashboardSummary> {
+  const products = mockDb.getProducts();
+  const categories = mockDb.getCategories();
+  const users = mockDb.getUsers();
+  const cart = mockDb.getCart();
+
+  const totalStock = products.reduce((acc, p) => acc + (p.total_stock || 0), 0);
+
+  const categoryCounts: Record<string, number> = {};
+  products.forEach((p) => {
+    categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1;
+  });
+
+  const productsPerCategory = Object.entries(categoryCounts).map(([name, count]) => ({
+    name,
+    count,
+  }));
+
+  const recentProducts: ProductListItem[] = products.slice(0, 5).map(mapToAdminProduct);
+
+  return Promise.resolve({
+    total_users: users.length,
+    total_products: products.length,
+    total_categories: categories.length,
+    total_carts: cart.items.length > 0 ? 1 : 0,
+    total_stock: totalStock,
+    recent_products: recentProducts,
+    recent_users: users.slice(0, 5),
+    products_per_category: productsPerCategory,
+  });
+}
+
+export async function fetchProducts(_accessToken: string, query?: AdminProductQuery): Promise<ProductListItem[]> {
+  let products = mockDb.getProducts();
+
+  if (query?.search) {
+    const q = query.search.toLowerCase();
+    products = products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.sku.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q)
+    );
+  }
+
+  return Promise.resolve(products.map(mapToAdminProduct));
+}
+
+export async function fetchRecentProducts(_accessToken: string): Promise<ProductListItem[]> {
+  const products = mockDb.getProducts();
+  return Promise.resolve(products.slice(0, 5).map(mapToAdminProduct));
+}
+
+export async function fetchProduct(_accessToken: string, slug: string): Promise<ProductDetail> {
+  const products = mockDb.getProducts();
+  const p = products.find((prod) => prod.slug === slug || String(prod.id) === slug);
+  if (!p) {
+    throw new ApiError(404, 'Product not found');
+  }
+  return Promise.resolve(mapToAdminProduct(p));
+}
+
+export async function createProduct(_accessToken: string, payload: AdminProductPayload): Promise<ProductDetail> {
+  const products = mockDb.getProducts();
+  const categories = mockDb.getCategories();
+  const categoryObj = categories.find((c) => c.id === payload.category);
+  const categoryName = categoryObj ? categoryObj.name : 'Uncategorized';
+
+  const newId = Date.now();
+  const slug = payload.slug || payload.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+  const newProduct: AppralProductDetail = {
+    id: newId,
+    name: payload.name,
+    slug,
+    sku: payload.sku,
+    category: categoryName,
+    short_description: payload.short_description || null,
+    description: payload.description || '',
+    price: payload.base_price,
+    compare_at_price: payload.compare_at_price || null,
+    badge: payload.badge || null,
+    in_stock: payload.is_active,
+    total_stock: 50,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    attributes: payload.attributes || null,
+    additional_categories: [],
+    primary_image: {
+      id: newId + 1,
+      image_url: '/1.jpeg',
+      alt_text: payload.name,
+      is_primary: true,
+      display_order: 1,
+    },
+    images: [
+      {
+        id: newId + 1,
+        image_url: '/1.jpeg',
+        alt_text: payload.name,
+        is_primary: true,
+        display_order: 1,
+      },
+    ],
+    variants: [
+      {
+        id: newId + 10,
+        sku: `${payload.sku}-M`,
+        size: 'M',
+        color_name: 'Black',
+        color_hex: '#000000',
+        price_override: null,
+        stock: 50,
+        is_active: true,
+        additional_attributes: null,
+      },
+    ],
+    related_products: [],
+  };
+
+  mockDb.saveProducts([newProduct, ...products]);
+  return Promise.resolve(mapToAdminProduct(newProduct));
+}
+
+export async function updateProduct(
+  _accessToken: string,
   slug: string,
-  payload: ProductImagePayload,
+  payload: AdminProductPayload
+): Promise<ProductDetail> {
+  const products = mockDb.getProducts();
+  const index = products.findIndex((p) => p.slug === slug || String(p.id) === slug);
+  if (index === -1) {
+    throw new ApiError(404, 'Product not found');
+  }
+
+  const existing = products[index];
+  const categories = mockDb.getCategories();
+  const categoryObj = categories.find((c) => c.id === payload.category);
+  const categoryName = categoryObj ? categoryObj.name : existing.category;
+
+  const updated: AppralProductDetail = {
+    ...existing,
+    name: payload.name,
+    sku: payload.sku,
+    category: categoryName,
+    short_description: payload.short_description || existing.short_description,
+    description: payload.description || existing.description,
+    price: payload.base_price,
+    compare_at_price: payload.compare_at_price ?? existing.compare_at_price,
+    badge: payload.badge ?? existing.badge,
+    in_stock: payload.is_active,
+    attributes: payload.attributes ?? existing.attributes,
+    updated_at: new Date().toISOString(),
+  };
+
+  products[index] = updated;
+  mockDb.saveProducts(products);
+  return Promise.resolve(mapToAdminProduct(updated));
+}
+
+export async function partialUpdateProduct(
+  _accessToken: string,
+  slug: string,
+  payload: Partial<AdminProductPayload>
+): Promise<ProductDetail> {
+  const products = mockDb.getProducts();
+  const index = products.findIndex((p) => p.slug === slug || String(p.id) === slug);
+  if (index === -1) {
+    throw new ApiError(404, 'Product not found');
+  }
+
+  const existing = products[index];
+  const updated: AppralProductDetail = {
+    ...existing,
+    ...(payload.name ? { name: payload.name } : {}),
+    ...(payload.sku ? { sku: payload.sku } : {}),
+    ...(payload.base_price ? { price: payload.base_price } : {}),
+    ...(payload.compare_at_price !== undefined ? { compare_at_price: payload.compare_at_price } : {}),
+    ...(payload.badge !== undefined ? { badge: payload.badge } : {}),
+    ...(payload.is_active !== undefined ? { in_stock: payload.is_active } : {}),
+    updated_at: new Date().toISOString(),
+  };
+
+  products[index] = updated;
+  mockDb.saveProducts(products);
+  return Promise.resolve(mapToAdminProduct(updated));
+}
+
+export async function deleteProduct(_accessToken: string, slug: string): Promise<void> {
+  const products = mockDb.getProducts();
+  const filtered = products.filter((p) => p.slug !== slug && String(p.id) !== slug);
+  mockDb.saveProducts(filtered);
+  return Promise.resolve();
+}
+
+export async function fetchProductVariants(_accessToken: string, slug: string): Promise<ProductVariant[]> {
+  const product = await fetchProduct(_accessToken, slug);
+  return Promise.resolve(product.variants);
+}
+
+export async function createProductVariant(
+  _accessToken: string,
+  slug: string,
+  payload: ProductVariantPayload
+): Promise<ProductVariant> {
+  const products = mockDb.getProducts();
+  const index = products.findIndex((p) => p.slug === slug || String(p.id) === slug);
+  if (index === -1) throw new ApiError(404, 'Product not found');
+
+  const prod = products[index];
+  const newVariantId = Date.now();
+  const newVariant = {
+    id: newVariantId,
+    sku: payload.sku,
+    size: payload.size ?? null,
+    color_name: payload.color_name ?? null,
+    color_hex: payload.color_hex ?? null,
+    price_override: payload.price_override ? String(payload.price_override) : null,
+    stock: payload.stock,
+    is_active: payload.is_active,
+    additional_attributes: payload.additional_attributes ?? null,
+  };
+
+  prod.variants = [...(prod.variants || []), newVariant];
+  prod.total_stock = (prod.total_stock || 0) + payload.stock;
+  mockDb.saveProducts(products);
+
+  return Promise.resolve({
+    id: newVariant.id,
+    product: prod.id,
+    sku: newVariant.sku,
+    size: newVariant.size,
+    color_name: newVariant.color_name,
+    color_hex: newVariant.color_hex,
+    price_override: payload.price_override ?? null,
+    stock: newVariant.stock,
+    is_active: newVariant.is_active,
+    additional_attributes: newVariant.additional_attributes,
+  });
+}
+
+export async function updateProductVariant(
+  _accessToken: string,
+  slug: string,
+  variantId: number,
+  payload: Partial<ProductVariantPayload>
+): Promise<ProductVariant> {
+  const products = mockDb.getProducts();
+  const prodIndex = products.findIndex((p) => p.slug === slug || String(p.id) === slug);
+  if (prodIndex === -1) throw new ApiError(404, 'Product not found');
+
+  const prod = products[prodIndex];
+  const varIndex = prod.variants?.findIndex((v) => v.id === variantId) ?? -1;
+  if (varIndex === -1) throw new ApiError(404, 'Variant not found');
+
+  const current = prod.variants![varIndex];
+  const updated = {
+    ...current,
+    ...(payload.sku ? { sku: payload.sku } : {}),
+    ...(payload.size !== undefined ? { size: payload.size } : {}),
+    ...(payload.color_name !== undefined ? { color_name: payload.color_name } : {}),
+    ...(payload.color_hex !== undefined ? { color_hex: payload.color_hex } : {}),
+    ...(payload.price_override !== undefined
+      ? { price_override: payload.price_override ? String(payload.price_override) : null }
+      : {}),
+    ...(payload.stock !== undefined ? { stock: payload.stock } : {}),
+    ...(payload.is_active !== undefined ? { is_active: payload.is_active } : {}),
+  };
+
+  prod.variants![varIndex] = updated;
+  mockDb.saveProducts(products);
+
+  return Promise.resolve({
+    id: updated.id,
+    product: prod.id,
+    sku: updated.sku,
+    size: updated.size,
+    color_name: updated.color_name,
+    color_hex: updated.color_hex,
+    price_override: updated.price_override ? Number.parseFloat(updated.price_override) : null,
+    stock: updated.stock,
+    is_active: updated.is_active,
+    additional_attributes: updated.additional_attributes,
+  });
+}
+
+export async function deleteProductVariant(_accessToken: string, slug: string, variantId: number): Promise<void> {
+  const products = mockDb.getProducts();
+  const prodIndex = products.findIndex((p) => p.slug === slug || String(p.id) === slug);
+  if (prodIndex !== -1) {
+    products[prodIndex].variants = products[prodIndex].variants?.filter((v) => v.id !== variantId);
+    mockDb.saveProducts(products);
+  }
+  return Promise.resolve();
+}
+
+export async function fetchProductImages(_accessToken: string, slug: string): Promise<ProductImage[]> {
+  const product = await fetchProduct(_accessToken, slug);
+  return Promise.resolve(product.images);
+}
+
+export async function createProductImage(
+  _accessToken: string,
+  slug: string,
+  payload: ProductImagePayload
 ): Promise<ProductImage> {
-  return request<ProductImage>(`/products/${slug}/images/`, {
-    method: 'POST',
-    accessToken,
-    body: buildImageBody(payload),
+  const products = mockDb.getProducts();
+  const prodIndex = products.findIndex((p) => p.slug === slug || String(p.id) === slug);
+  if (prodIndex === -1) throw new ApiError(404, 'Product not found');
+
+  const prod = products[prodIndex];
+  const newImgId = Date.now();
+  const newImg = {
+    id: newImgId,
+    image_url: typeof payload.image === 'string' ? payload.image : '/1.jpeg',
+    alt_text: payload.alt_text ?? prod.name,
+    is_primary: Boolean(payload.is_primary),
+    display_order: payload.display_order ?? (prod.images?.length || 0) + 1,
+  };
+
+  if (newImg.is_primary) {
+    prod.images?.forEach((img) => {
+      img.is_primary = false;
+    });
+    prod.primary_image = newImg;
+  }
+
+  prod.images = [...(prod.images || []), newImg];
+  mockDb.saveProducts(products);
+
+  return Promise.resolve({
+    id: newImg.id,
+    product: prod.id,
+    image: null,
+    image_url: newImg.image_url,
+    alt_text: newImg.alt_text,
+    is_primary: newImg.is_primary,
+    display_order: newImg.display_order,
   });
 }
 
 export async function updateProductImage(
-  accessToken: string,
+  _accessToken: string,
   slug: string,
   imageId: number,
-  payload: ProductImagePayload,
+  payload: ProductImagePayload
 ): Promise<ProductImage> {
-  return request<ProductImage>(`/products/${slug}/images/${imageId}/`, {
-    method: 'PATCH',
-    accessToken,
-    body: buildImageBody(payload),
+  const products = mockDb.getProducts();
+  const prodIndex = products.findIndex((p) => p.slug === slug || String(p.id) === slug);
+  if (prodIndex === -1) throw new ApiError(404, 'Product not found');
+
+  const prod = products[prodIndex];
+  const imgIndex = prod.images?.findIndex((i) => i.id === imageId) ?? -1;
+  if (imgIndex === -1) throw new ApiError(404, 'Image not found');
+
+  const current = prod.images![imgIndex];
+  const updated = {
+    ...current,
+    ...(payload.alt_text !== undefined ? { alt_text: payload.alt_text } : {}),
+    ...(payload.is_primary !== undefined ? { is_primary: payload.is_primary } : {}),
+    ...(payload.display_order !== undefined ? { display_order: payload.display_order ?? current.display_order } : {}),
+  };
+
+  if (updated.is_primary) {
+    prod.images?.forEach((img) => {
+      if (img.id !== imageId) img.is_primary = false;
+    });
+    prod.primary_image = updated;
+  }
+
+  prod.images![imgIndex] = updated;
+  mockDb.saveProducts(products);
+
+  return Promise.resolve({
+    id: updated.id,
+    product: prod.id,
+    image: null,
+    image_url: updated.image_url,
+    alt_text: updated.alt_text,
+    is_primary: updated.is_primary,
+    display_order: updated.display_order,
   });
 }
 
-export async function deleteProductImage(accessToken: string, slug: string, imageId: number): Promise<void> {
-  await request<void>(`/products/${slug}/images/${imageId}/`, {
-    method: 'DELETE',
-    accessToken,
+export async function deleteProductImage(_accessToken: string, slug: string, imageId: number): Promise<void> {
+  const products = mockDb.getProducts();
+  const prodIndex = products.findIndex((p) => p.slug === slug || String(p.id) === slug);
+  if (prodIndex !== -1) {
+    products[prodIndex].images = products[prodIndex].images?.filter((img) => img.id !== imageId);
+    if (products[prodIndex].primary_image?.id === imageId) {
+      products[prodIndex].primary_image = products[prodIndex].images?.[0] ?? null;
+    }
+    mockDb.saveProducts(products);
+  }
+  return Promise.resolve();
+}
+
+export async function fetchCategories(_accessToken: string): Promise<Category[]> {
+  const cats = mockDb.getCategories();
+  return Promise.resolve(
+    cats.map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      parent: null,
+      description: c.description,
+      is_active: c.is_active,
+    }))
+  );
+}
+
+export async function fetchCategory(_accessToken: string, id: number): Promise<Category> {
+  const cats = mockDb.getCategories();
+  const c = cats.find((cat) => cat.id === id);
+  if (!c) throw new ApiError(404, 'Category not found');
+  return Promise.resolve({
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+    parent: null,
+    description: c.description,
+    is_active: c.is_active,
   });
 }
 
-export async function fetchCategories(accessToken: string): Promise<Category[]> {
-  return request<Category[]>('/categories/', {
-    accessToken,
+export async function createCategory(_accessToken: string, payload: AdminCategoryPayload): Promise<Category> {
+  const cats = mockDb.getCategories();
+  const newCat = {
+    id: Date.now(),
+    name: payload.name,
+    slug: payload.slug || payload.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    description: payload.description || null,
+    is_active: payload.is_active,
+    children: [],
+  };
+
+  mockDb.saveCategories([...cats, newCat]);
+  return Promise.resolve({
+    id: newCat.id,
+    name: newCat.name,
+    slug: newCat.slug,
+    parent: null,
+    description: newCat.description,
+    is_active: newCat.is_active,
   });
 }
 
-export async function fetchCategory(accessToken: string, id: number): Promise<Category> {
-  return request<Category>(`/categories/${id}/`, {
-    accessToken,
-  });
-}
+export async function updateCategory(
+  _accessToken: string,
+  id: number,
+  payload: AdminCategoryPayload
+): Promise<Category> {
+  const cats = mockDb.getCategories();
+  const index = cats.findIndex((c) => c.id === id);
+  if (index === -1) throw new ApiError(404, 'Category not found');
 
-export async function createCategory(accessToken: string, payload: AdminCategoryPayload): Promise<Category> {
-  return request<Category>('/categories/', {
-    method: 'POST',
-    accessToken,
-    body: payload,
-  });
-}
+  const updated = {
+    ...cats[index],
+    name: payload.name,
+    slug: payload.slug || cats[index].slug,
+    description: payload.description ?? cats[index].description,
+    is_active: payload.is_active,
+  };
 
-export async function updateCategory(accessToken: string, id: number, payload: AdminCategoryPayload): Promise<Category> {
-  return request<Category>(`/categories/${id}/`, {
-    method: 'PUT',
-    accessToken,
-    body: payload,
+  cats[index] = updated;
+  mockDb.saveCategories(cats);
+
+  return Promise.resolve({
+    id: updated.id,
+    name: updated.name,
+    slug: updated.slug,
+    parent: null,
+    description: updated.description,
+    is_active: updated.is_active,
   });
 }
 
 export async function partialUpdateCategory(
-  accessToken: string,
+  _accessToken: string,
   id: number,
-  payload: Partial<AdminCategoryPayload>,
+  payload: Partial<AdminCategoryPayload>
 ): Promise<Category> {
-  return request<Category>(`/categories/${id}/`, {
-    method: 'PATCH',
-    accessToken,
-    body: payload,
-  });
+  return updateCategory(_accessToken, id, payload as AdminCategoryPayload);
 }
 
-export async function deleteCategory(accessToken: string, id: number): Promise<void> {
-  await request<void>(`/categories/${id}/`, {
-    method: 'DELETE',
-    accessToken,
-  });
+export async function deleteCategory(_accessToken: string, id: number): Promise<void> {
+  const cats = mockDb.getCategories();
+  mockDb.saveCategories(cats.filter((c) => c.id !== id));
+  return Promise.resolve();
 }
 
-export async function fetchUsers(accessToken: string): Promise<AdminUser[]> {
-  return request<AdminUser[]>('/users/', {
-    accessToken,
-  });
+export async function fetchUsers(_accessToken: string): Promise<AdminUser[]> {
+  return Promise.resolve(mockDb.getUsers());
 }
 
-export async function fetchUser(accessToken: string, id: number): Promise<AdminUser> {
-  return request<AdminUser>(`/users/${id}/`, {
-    accessToken,
-  });
+export async function fetchUser(_accessToken: string, id: number): Promise<AdminUser> {
+  const users = mockDb.getUsers();
+  const u = users.find((usr) => usr.id === id);
+  if (!u) throw new ApiError(404, 'User not found');
+  return Promise.resolve(u);
 }
 
 export async function updateUser(
-  accessToken: string,
+  _accessToken: string,
   id: number,
-  payload: Partial<Pick<AdminUser, 'first_name' | 'last_name' | 'role' | 'is_active' | 'is_staff'>>,
+  payload: Partial<Pick<AdminUser, 'first_name' | 'last_name' | 'role' | 'is_active' | 'is_staff'>>
 ): Promise<AdminUser> {
-  return request<AdminUser>(`/users/${id}/`, {
-    method: 'PATCH',
-    accessToken,
-    body: payload,
-  });
-}
+  const users = mockDb.getUsers();
+  const index = users.findIndex((u) => u.id === id);
+  if (index === -1) throw new ApiError(404, 'User not found');
 
-export async function fetchProductVariants(accessToken: string, slug: string): Promise<ProductVariant[]> {
-  return request<ProductVariant[]>(`/products/${slug}/variants/`, {
-    accessToken,
-  });
-}
+  const updated = {
+    ...users[index],
+    ...payload,
+  };
 
-export async function fetchProductImages(accessToken: string, slug: string): Promise<ProductImage[]> {
-  return request<ProductImage[]>(`/products/${slug}/images/`, {
-    accessToken,
-  });
+  users[index] = updated;
+  mockDb.saveUsers(users);
+  return Promise.resolve(updated);
 }
 
 export const adminApi = {

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://api.dddgroup.in/api/auth';
+import { mockDb, DEMO_USER, DEMO_TOKENS } from './mockDb';
 
 export interface UserProfile {
   id: number;
@@ -57,135 +57,126 @@ export interface ApiErrorPayload {
 
 export class ApiError extends Error {
   public readonly status: number;
-
   public readonly data: unknown;
 
   constructor(status: number, data: unknown) {
-    const message = ApiError.extractMessage(data) ?? `Request failed with status ${status}`;
+    const message = typeof data === 'string' ? data : `Authentication error (${status})`;
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.data = data;
   }
-
-  private static extractMessage(data: unknown): string | undefined {
-    if (!data) {
-      return undefined;
-    }
-    if (typeof data === 'string') {
-      return data;
-    }
-    if (typeof data === 'object' && 'detail' in data && typeof (data as ApiErrorPayload).detail === 'string') {
-      return (data as ApiErrorPayload).detail;
-    }
-    return undefined;
-  }
-}
-
-interface RequestOptions {
-  method?: string;
-  body?: unknown;
-  accessToken?: string;
-  headers?: Record<string, string>;
-}
-
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, accessToken, headers } = options;
-  const url = `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
-
-  const finalHeaders: Record<string, string> = {
-    Accept: 'application/json',
-    ...headers,
-  };
-
-  let serializedBody: string | undefined;
-  if (body !== undefined) {
-    finalHeaders['Content-Type'] = 'application/json';
-    serializedBody = JSON.stringify(body);
-  }
-
-  if (accessToken) {
-    finalHeaders.Authorization = `Bearer ${accessToken}`;
-  }
-
-  const response = await fetch(url, {
-    method,
-    headers: finalHeaders,
-    body: serializedBody,
-  });
-
-  const contentType = response.headers.get('content-type');
-  const isJson = contentType?.includes('application/json') ?? false;
-  const hasBody = response.status !== 204 && response.status !== 205;
-  const payload = hasBody
-    ? isJson
-      ? await response.json()
-      : await response.text()
-    : undefined;
-
-  if (!response.ok) {
-    throw new ApiError(response.status, payload);
-  }
-
-  return (isJson ? payload : undefined) as T;
 }
 
 export async function registerUser(payload: RegisterPayload): Promise<UserProfile> {
-  return request<UserProfile>('/register/', {
-    method: 'POST',
-    body: payload,
-  });
+  const users = mockDb.getUsers();
+  const existing = users.find((u) => u.email.toLowerCase() === payload.email.toLowerCase());
+
+  if (existing) {
+    const profile: UserProfile = {
+      id: existing.id,
+      email: existing.email,
+      first_name: existing.first_name,
+      last_name: existing.last_name,
+      role: existing.role,
+      is_active: existing.is_active,
+      date_joined: existing.date_joined,
+      updated_at: new Date().toISOString(),
+    };
+    mockDb.saveCurrentUser(profile);
+    return Promise.resolve(profile);
+  }
+
+  const newUser: UserProfile = {
+    id: Date.now(),
+    email: payload.email,
+    first_name: payload.first_name || 'Client',
+    last_name: payload.last_name || 'Member',
+    role: 'customer',
+    is_active: true,
+    date_joined: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  mockDb.saveUsers([
+    ...users,
+    {
+      ...newUser,
+      is_staff: false,
+      last_login: new Date().toISOString(),
+    },
+  ]);
+  mockDb.saveCurrentUser(newUser);
+
+  return Promise.resolve(newUser);
 }
 
 export async function loginUser(payload: LoginPayload): Promise<LoginResponse> {
-  return request<LoginResponse>('/login/', {
-    method: 'POST',
-    body: payload,
+  const users = mockDb.getUsers();
+  const user = users.find((u) => u.email.toLowerCase() === payload.email.toLowerCase());
+
+  const userProfile: UserProfile = user
+    ? {
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        role: user.role,
+        is_active: user.is_active,
+        date_joined: user.date_joined,
+        updated_at: new Date().toISOString(),
+      }
+    : {
+        id: Date.now(),
+        email: payload.email,
+        first_name: payload.email.split('@')[0] || 'Client',
+        last_name: 'Member',
+        role: 'customer',
+        is_active: true,
+        date_joined: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+  mockDb.saveCurrentUser(userProfile);
+
+  return Promise.resolve({
+    access: DEMO_TOKENS.access,
+    refresh: DEMO_TOKENS.refresh,
+    user: userProfile,
   });
 }
 
-export async function refreshAuthToken(payload: RefreshTokenPayload): Promise<AuthTokens> {
-  return request<AuthTokens>('/token/refresh/', {
-    method: 'POST',
-    body: payload,
-  });
+export async function refreshAuthToken(_payload: RefreshTokenPayload): Promise<AuthTokens> {
+  return Promise.resolve(DEMO_TOKENS);
 }
 
-export async function fetchUserProfile(accessToken: string): Promise<UserProfile> {
-  return request<UserProfile>('/profile/', {
-    method: 'GET',
-    accessToken,
-  });
+export async function fetchUserProfile(_accessToken: string): Promise<UserProfile> {
+  const current = mockDb.getCurrentUser();
+  return Promise.resolve(current || DEMO_USER);
 }
 
-export async function updateUserProfile(accessToken: string, payload: ProfileUpdatePayload): Promise<UserProfile> {
-  return request<UserProfile>('/profile/', {
-    method: 'PUT',
-    accessToken,
-    body: payload,
-  });
+export async function updateUserProfile(_accessToken: string, payload: ProfileUpdatePayload): Promise<UserProfile> {
+  const current = mockDb.getCurrentUser() || DEMO_USER;
+  const updated: UserProfile = {
+    ...current,
+    ...payload,
+    updated_at: new Date().toISOString(),
+  };
+  mockDb.saveCurrentUser(updated);
+  return Promise.resolve(updated);
 }
 
-export async function logoutUser(accessToken: string, payload: RefreshTokenPayload): Promise<void> {
-  await request<void>('/logout/', {
-    method: 'POST',
-    accessToken,
-    body: payload,
-  });
+export async function logoutUser(_accessToken: string, _payload: RefreshTokenPayload): Promise<void> {
+  mockDb.saveCurrentUser(null);
+  return Promise.resolve();
 }
 
-export async function requestPasswordReset(payload: PasswordResetRequestPayload): Promise<{ detail: string }> {
-  return request<{ detail: string }>('/password-reset/', {
-    method: 'POST',
-    body: payload,
-  });
+export async function requestPasswordReset(_payload: PasswordResetRequestPayload): Promise<{ detail: string }> {
+  return Promise.resolve({ detail: 'Password reset link sent to email (Local Demo).' });
 }
 
-export async function confirmPasswordReset(payload: PasswordResetConfirmPayload): Promise<{ detail: string }> {
-  return request<{ detail: string }>('/password-reset/confirm/', {
-    method: 'POST',
-    body: payload,
-  });
+export async function confirmPasswordReset(_payload: PasswordResetConfirmPayload): Promise<{ detail: string }> {
+  return Promise.resolve({ detail: 'Password has been reset successfully.' });
 }
 
 export const authApi = {

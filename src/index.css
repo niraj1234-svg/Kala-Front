@@ -2,27 +2,31 @@
 @config "../tailwind.config.js";
 
 :root {
-  --background: #f5f3ef;
+  --background: #f7f5f0;
   --foreground: #1c1a17;
+  --card: #ffffff;
   --cream: #efe8de;
-  --mid: #7c7770;
-  --accent: #8a4f35;
-  --glass: rgba(245, 243, 239, 0.7);
+  --mid: #6b665f;
+  --accent: #c15927;
+  --border: rgba(28, 26, 23, 0.12);
+  --glass: rgba(247, 245, 240, 0.85);
 }
 
 .dark {
-  --background: #12110f;
-  --foreground: #efe8de;
+  --background: #100f0d;
+  --foreground: #f3ede4;
+  --card: #181614;
   --cream: #22201d;
   --mid: #a0998f;
-  --accent: #d28c6e;
-  --glass: rgba(18, 17, 15, 0.7);
+  --accent: #d97443;
+  --border: rgba(243, 237, 228, 0.12);
+  --glass: rgba(16, 15, 13, 0.85);
 }
 
 @layer base {
   body {
     @apply bg-background text-foreground selection:bg-accent selection:text-white transition-colors duration-500 ease-in-out;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Myriad Pro', 'Myriad', 'Bahnschrift', 'Barlow', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -33,7 +37,8 @@
   h4,
   h5,
   h6 {
-    @apply font-display tracking-[0.05em] leading-[0.95];
+    font-family: 'Bahnschrift', 'Myriad Pro', 'Myriad', 'Barlow Semi Condensed', sans-serif;
+    @apply tracking-[0.02em] leading-[0.95];
   }
 }
 

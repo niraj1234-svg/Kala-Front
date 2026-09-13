@@ -4,20 +4,24 @@ type TokenListener = (tokens: AuthTokens | null) => void;
 
 const TOKEN_STORAGE_KEY = 'appral.auth.tokens';
 
+export const DEFAULT_MOCK_TOKENS: AuthTokens = {
+  access: 'mock_local_jwt_access_token_appral',
+  refresh: 'mock_local_jwt_refresh_token_appral',
+};
+
 function isBrowser(): boolean {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 }
 
 function readTokensFromStorage(): AuthTokens | null {
   if (!isBrowser()) {
-    return null;
+    return DEFAULT_MOCK_TOKENS;
   }
   try {
     const raw = window.localStorage.getItem(TOKEN_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as AuthTokens) : null;
+    return raw ? (JSON.parse(raw) as AuthTokens) : DEFAULT_MOCK_TOKENS;
   } catch {
-    window.localStorage.removeItem(TOKEN_STORAGE_KEY);
-    return null;
+    return DEFAULT_MOCK_TOKENS;
   }
 }
 
@@ -41,15 +45,15 @@ function notify(): void {
 
 export const tokenManager = {
   getTokens(): AuthTokens | null {
-    return currentTokens;
+    return currentTokens || DEFAULT_MOCK_TOKENS;
   },
 
   getAccessToken(): string | null {
-    return currentTokens?.access ?? null;
+    return (currentTokens?.access ?? DEFAULT_MOCK_TOKENS.access);
   },
 
   getRefreshToken(): string | null {
-    return currentTokens?.refresh ?? null;
+    return (currentTokens?.refresh ?? DEFAULT_MOCK_TOKENS.refresh);
   },
 
   setTokens(tokens: AuthTokens | null): void {

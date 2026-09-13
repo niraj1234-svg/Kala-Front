@@ -1,347 +1,131 @@
-import React from "react";
-import { Sparkles, Leaf, Award, Ruler } from "lucide-react";
-import { motion, type Variants } from "framer-motion";
-import Footer from "../components/Footer";
+import React from 'react';
+import { Sparkles, Shirt, Building2, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const coreValues = [
-  {
-    icon: <Sparkles className="h-6 w-6 text-[#d4b896]" />, 
-    title: "Design-led Craft",
-    description:
-      "Every silhouette starts with a sketch that balances modern lines with timeless appeal."
-  },
-  {
-    icon: <Leaf className="h-6 w-6 text-[#d4b896]" />,
-    title: "Thoughtful Materials",
-    description:
-      "We source breathable natural fabrics and innovative blends that respect the planet."
-  },
-  {
-    icon: <Award className="h-6 w-6 text-[#d4b896]" />,
-    title: "Uncompromised Quality",
-    description:
-      "Pieces are finished by seasoned artisans who ensure impeccable fall, stitch, and feel."
-  }
-];
-
-const craftsmanshipSteps = [
-  {
-    step: "Research & Moodboarding",
-    detail: "Our design studio studies global culture, art, and street influence to build unique narratives."
-  },
-  {
-    step: "Pattern Architecture",
-    detail: "Tailoring experts translate concepts into precision patterns that flatter diverse bodies."
-  },
-  {
-    step: "Hand Cut & Crafted",
-    detail: "Small-batch production means each piece is hand cut, stitched, and finished with care."
-  },
-  {
-    step: "Fit & Feel Refinement",
-    detail: "Every garment passes through multiple fit rounds and fabric treatments for ease of movement."
-  }
-];
-
-const timeline = [
-  {
-    year: "2018",
-    title: "The Spark",
-    description: "Appral begins in a Jaipur studio, blending couture craftsmanship with urban energy."
-  },
-  {
-    year: "2020",
-    title: "The Atelier",
-    description: "We scaled our atelier, collaborating with 20+ artisans across India."
-  },
-  {
-    year: "2022",
-    title: "Going Global",
-    description: "Our first international pop-up in Dubai introduced Appral to a wider audience."
-  },
-  {
-    year: "2026",
-    title: "Sustainable Pivot",
-    description: "We launched Rewear, our upcycling program, to extend life cycles of signature pieces."
-  }
-];
-
-const team = [
-  {
-    name: "Aparna Sharma",
-    role: "Creative Director",
-    blurb: "Obsessed with building stories through contrasting textures and spontaneous movement."
-  },
-  {
-    name: "Rahul",
-    role: "Head of Craft",
-    blurb: "A third-generation tailor who ensures every seam holds to couture standards."
-  },
-  {
-    name: "Lisa Fernandes",
-    role: "Community & Culture",
-    blurb: "Curates collaborations and residencies with artists, photographers, and storytellers."
-  }
-];
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: "easeOut" }
-  }
-};
-
-const fadeIn: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: 0.8, ease: "easeOut" }
-  }
-};
-
-const stagger: Variants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.15 }
-  }
-};
-
-const viewportConfig = { once: true, amount: 0.25 };
-
-const AboutPage: React.FC = () => {
+export const AboutPage: React.FC = () => {
   return (
-    <main className="bg-[#d8b098] text-[#2d1e17]">
-      {/* Hero Section */}
-      <motion.section
-        variants={fadeIn}
-        initial="hidden"
-        whileInView="visible"
-        viewport={viewportConfig}
-        className="relative overflow-hidden bg-gradient-to-br from-[#d8b098] via-[#f3d8b6] to-[#9b8a7c]"
-      >
-        <motion.div
-          className="absolute inset-0 opacity-40"
-          aria-hidden
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.4 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-        >
-          <div className="bg-[url('/10.jpeg')] bg-cover bg-center blur-3xl h-full w-full" />
-        </motion.div>
-        <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-10 px-6 pt-32 pb-24 sm:px-10 sm:pt-36 sm:pb-28 lg:flex-row lg:items-center lg:pt-40 lg:pb-32">
-          <motion.div
-            className="flex-1 space-y-6"
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportConfig}
-          >
-            <motion.span variants={fadeUp} className="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-[#9c7d5e]">
-              Our Story
-            </motion.span>
-            <motion.h1 variants={fadeUp} className="text-4xl font-semibold text-[#5c4734] sm:text-5xl lg:text-[54px] lg:leading-tight">
-              Crafting couture energy for everyday roamers.
-            </motion.h1>
-            <motion.p variants={fadeUp} className="max-w-xl text-base text-slate-600 sm:text-lg">
-              Appral is a studio-style fashion label raised on curiosity, collaboration, and the love of effortless movement. From our atelier to the street, each drop is rooted in storytelling, mindful construction, and the joy of getting dressed.
-            </motion.p>
-            <motion.div variants={fadeUp} className="flex flex-wrap gap-4 text-sm sm:text-base">
-              <div className="rounded-full border border-[#d4b896]/60 bg-white/60 px-4 py-2 text-[#5c4734]">
-                Founded in Jaipur, built for the world
-              </div>
-              <div className="rounded-full border border-[#d4b896]/60 bg-white/60 px-4 py-2 text-[#5c4734]">
-                Female-led, artisan-powered
-              </div>
-            </motion.div>
-          </motion.div>
-          <motion.div
-            className="flex-1"
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportConfig}
-          >
-            <div className="grid grid-cols-2 gap-4">{
-              ["4.jpeg", "7.jpeg", "5.jpeg", "8.jpeg"].map((src, index) => (
-                <motion.div
-                  key={src}
-                  className={`aspect-[3/4] overflow-hidden rounded-3xl border border-white/70 shadow-lg shadow-[#d4b896]/20 ${
-                    index % 2 === 0 ? "translate-y-6" : "-translate-y-6"
-                  }`}
-                  whileHover={{ scale: 1.04 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                >
-                  <img src={src} alt="Appral mood" className="h-full w-full object-cover" loading="lazy" />
-                </motion.div>
-              ))
-            }</div>
-          </motion.div>
-        </div>
-      </motion.section>
+    <div className="min-h-screen bg-background text-foreground pt-32 sm:pt-40 pb-24">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+        {/* Hero */}
+        <div className="text-center max-w-3xl mx-auto space-y-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-kala-emerald/10 border border-kala-emerald/20 text-kala-emerald dark:text-emerald-400 text-xs font-bold uppercase tracking-widest">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>ABOUT KALA</span>
+          </div>
 
-      {/* Stats */}
-      <motion.section
-        variants={fadeIn}
-        initial="hidden"
-        whileInView="visible"
-        viewport={viewportConfig}
-        className="border-y border-[#9b8a7c]/30 bg-[#d8b098]/40"
-      >
-        <motion.div
-          className="mx-auto grid max-w-5xl grid-cols-2 divide-x divide-[#9b8a7c]/30 px-6 py-12 text-center sm:grid-cols-4"
-          variants={stagger}
-        >
-          {[{ label: "Artisans", value: "24" }, { label: "Cities Served", value: "18" }, { label: "Pieces Crafted", value: "12K" }, { label: "Upcycled", value: "3.5K" }].map((item) => (
-            <motion.div key={item.label} className="space-y-1" variants={fadeUp}>
-              <p className="text-3xl font-semibold text-[#2d1e17]">{item.value}</p>
-              <p className="text-xs uppercase tracking-[0.35em] text-[#523f31]">{item.label}</p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </motion.section>
+          <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight text-foreground leading-[1]">
+            More than printing.
+          </h1>
 
-      {/* Core values */}
-      <motion.section
-        className="mx-auto max-w-6xl px-6 py-20 sm:px-10"
-        variants={fadeIn}
-        initial="hidden"
-        whileInView="visible"
-        viewport={viewportConfig}
-      >
-        <motion.div className="mb-12 max-w-3xl space-y-4" variants={stagger}>
-          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#2d1e17]/80">Why we create</p>
-          <h2 className="text-3xl font-semibold text-[#2d1e17] sm:text-4xl">Our manifesto is stitched into every seam.</h2>
-          <p className="text-sm text-[#523f31] sm:text-base">
-            We believe luxury can be lived in, not just looked at. Our process honors both the craftsperson and the modern dresser looking for ease, flair, and longevity.
+          <p className="font-serif text-2xl sm:text-3xl italic text-foreground/80 font-normal">
+            "Turning ideas into things people can see, wear and remember."
           </p>
-        </motion.div>
-        <motion.div className="grid gap-6 sm:grid-cols-3" variants={stagger}>
-          {coreValues.map((item) => (
-            <motion.article
-              key={item.title}
-              className="rounded-3xl border border-[#9b8a7c]/30 bg-[#f3d8b6]/80 p-8 shadow-sm shadow-[#9b8a7c]/20"
-              variants={fadeUp}
-              whileHover={{ y: -6 }}
-              transition={{ type: "spring", stiffness: 200, damping: 18 }}
-            >
-              <div className="mb-6 inline-flex items-center justify-center rounded-full bg-[#d8b098]/40 p-3">
-                {item.icon}
-              </div>
-              <h3 className="text-lg font-semibold text-[#2d1e17]">{item.title}</h3>
-              <p className="mt-3 text-sm text-[#523f31]">{item.description}</p>
-            </motion.article>
-          ))}
-        </motion.div>
-      </motion.section>
 
-      {/* Craftsmanship Journey */}
-      <motion.section
-        className="border-y border-[#9b8a7c]/30 bg-[#d8b098]/50"
-        variants={fadeIn}
-        initial="hidden"
-        whileInView="visible"
-        viewport={viewportConfig}
-      >
-        <div className="mx-auto max-w-6xl px-6 py-20 sm:px-10">
-          <motion.div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between" variants={stagger}>
-            <div className="space-y-3 lg:max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#2d1e17]/80">Crafted in stages</p>
-              <h2 className="text-3xl font-semibold text-[#2d1e17] sm:text-4xl">From inspiration to the final press.</h2>
-              <p className="text-sm text-[#523f31] sm:text-base">
-                Each garment travels through a mindful journey of experimentation, tailoring, and final touches.
+          <p className="text-sm sm:text-base text-mid leading-relaxed max-w-2xl mx-auto pt-2">
+            We combine design, high-grade printing, and production to turn creative ideas into physical products — with no minimum order barriers.
+          </p>
+        </div>
+
+        {/* Philosophy & Two Pillars */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-card border border-border rounded-3xl p-8 sm:p-10 space-y-4 shadow-sm">
+            <div className="w-12 h-12 rounded-xl bg-kala-emerald/10 text-kala-emerald dark:text-emerald-400 flex items-center justify-center">
+              <Shirt className="w-6 h-6" />
+            </div>
+            <h3 className="font-serif text-2xl font-bold uppercase text-foreground">
+              Custom Apparel for People & Teams
+            </h3>
+            <p className="text-xs sm:text-sm text-mid leading-relaxed">
+              High-GSM streetwear, team jerseys, and activewear engineered to order from a single piece.
+            </p>
+          </div>
+
+          <div className="bg-card border border-border rounded-3xl p-8 sm:p-10 space-y-4 shadow-sm">
+            <div className="w-12 h-12 rounded-xl bg-[#8a4f35]/10 text-[#8a4f35] dark:text-[#d28c6e] flex items-center justify-center">
+              <Building2 className="w-6 h-6" />
+            </div>
+            <h3 className="font-serif text-2xl font-bold uppercase text-foreground">
+              Branding for Growing Businesses
+            </h3>
+            <p className="text-xs sm:text-sm text-mid leading-relaxed">
+              Custom carry bags, staff uniforms, and packaging systems that elevate local shops into memorable brands.
+            </p>
+          </div>
+        </div>
+
+        {/* WHY KALA (Rule 58) */}
+        <div className="bg-card border border-border rounded-3xl p-8 sm:p-12 space-y-8">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs font-bold tracking-[0.25em] uppercase text-kala-emerald dark:text-emerald-400">
+              OUR PILLARS
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold uppercase text-foreground">
+              Why KALA
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="space-y-2">
+              <div className="font-mono text-sm font-bold text-kala-emerald">01</div>
+              <h4 className="font-serif text-lg font-bold text-foreground">Designed around you</h4>
+              <p className="text-xs text-mid leading-relaxed">
+                Tailored to your aesthetic, brand voice, and specifications.
               </p>
             </div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#2d1e17]/40 bg-[#9b8a7c]/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-[#2d1e17]">
-              <Ruler className="h-4 w-4" /> Slow-made fashion
+
+            <div className="space-y-2">
+              <div className="font-mono text-sm font-bold text-kala-emerald">02</div>
+              <h4 className="font-serif text-lg font-bold text-foreground">Flexible ordering</h4>
+              <p className="text-xs text-mid leading-relaxed">
+                Order single pieces or bulk with zero minimum barriers.
+              </p>
             </div>
-          </motion.div>
-          <motion.div className="grid gap-6 md:grid-cols-2" variants={stagger}>
-            {craftsmanshipSteps.map((stage, index) => (
-              <motion.div
-                key={stage.step}
-                className="rounded-3xl border border-[#9b8a7c]/40 bg-[#f3d8b6]/80 p-8 shadow-sm"
-                variants={fadeUp}
-                whileHover={{ y: -4 }}
-              >
-                <span className="text-xs font-semibold uppercase tracking-[0.35em] text-[#2d1e17]/80">Step {index + 1}</span>
-                <h3 className="mt-3 text-xl font-semibold text-[#2d1e17]">{stage.step}</h3>
-                <p className="mt-3 text-sm text-[#523f31]">{stage.detail}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </motion.section>
 
-      {/* Timeline */}
-      <motion.section
-        className="mx-auto max-w-6xl px-6 py-20 sm:px-10"
-        variants={fadeIn}
-        initial="hidden"
-        whileInView="visible"
-        viewport={viewportConfig}
-      >
-        <motion.div className="mb-12 space-y-4" variants={stagger}>
-          <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#2d1e17]/80">Milestones</p>
-          <h2 className="text-3xl font-semibold text-[#2d1e17] sm:text-4xl">Moments that shaped Appral.</h2>
-        </motion.div>
-        <motion.div className="relative border-l border-[#523f31]/30 pl-8" variants={stagger}>
-          {timeline.map((item, index) => (
-            <motion.div key={item.year} className="relative mb-10 last:mb-0" variants={fadeUp}>
-              <span className="absolute -left-[11px] inline-flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#f3d8b6] bg-[#2d1e17]" aria-hidden />
-              <div className="rounded-3xl border border-[#9b8a7c]/30 bg-[#f3d8b6]/80 p-8 shadow-sm shadow-[#9b8a7c]/20">
-                <span className="text-xs font-semibold uppercase tracking-[0.35em] text-[#2d1e17]/70">{item.year}</span>
-                <h3 className="mt-3 text-lg font-semibold text-[#2d1e17]">{item.title}</h3>
-                <p className="mt-3 text-sm text-[#523f31]">{item.description}</p>
-              </div>
-              {index !== timeline.length - 1 && (
-                <div className="absolute left-[-1px] top-5 h-full border-l border-dashed border-[#523f31]/30" aria-hidden />
-              )}
-            </motion.div>
-          ))}
-        </motion.div>
-      </motion.section>
-
-      {/* Team */}
-      <motion.section
-        className="border-y border-[#9b8a7c]/30 bg-[#d8b098]/40"
-        variants={fadeIn}
-        initial="hidden"
-        whileInView="visible"
-        viewport={viewportConfig}
-      >
-        <div className="mx-auto max-w-6xl px-6 py-20 sm:px-10">
-          <motion.div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between" variants={stagger}>
-            <div className="space-y-3 lg:max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-[#2d1e17]/80">People of Appral</p>
-              <h2 className="text-3xl font-semibold text-[#2d1e17] sm:text-4xl">Meet the minds building your wardrobe experiences.</h2>
+            <div className="space-y-2">
+              <div className="font-mono text-sm font-bold text-kala-emerald">03</div>
+              <h4 className="font-serif text-lg font-bold text-foreground">Idea to product</h4>
+              <p className="text-xs text-mid leading-relaxed">
+                Design, material sourcing, and printing in one unified studio.
+              </p>
             </div>
-            <p className="max-w-md text-sm text-[#523f31] sm:text-base">
-              We are stylists, pattern makers, storytellers, and innovators—bound by the belief that clothing can empower daily rituals.
-            </p>
-          </motion.div>
-          <motion.div className="grid gap-6 sm:grid-cols-3" variants={stagger}>
-            {team.map((member) => (
-              <motion.article
-                key={member.name}
-                className="rounded-3xl border border-[#9b8a7c]/30 bg-[#f3d8b6]/80 p-8 text-center shadow-sm"
-                variants={fadeUp}
-                whileHover={{ y: -6 }}
-                transition={{ type: "spring", stiffness: 220, damping: 20 }}
-              >
-                <div className="mx-auto mb-4 h-20 w-20 rounded-full bg-[#d8b098]/50" aria-hidden />
-                <h3 className="text-lg font-semibold text-[#2d1e17]">{member.name}</h3>
-                <p className="text-xs uppercase tracking-[0.3em] text-[#523f31]">{member.role}</p>
-                <p className="mt-3 text-sm text-[#523f31]">{member.blurb}</p>
-              </motion.article>
-            ))}
-          </motion.div>
-        </div>
-      </motion.section>
 
-      <Footer />
-    </main>
+            <div className="space-y-2">
+              <div className="font-mono text-sm font-bold text-kala-emerald">04</div>
+              <h4 className="font-serif text-lg font-bold text-foreground">Individuals &amp; businesses</h4>
+              <p className="text-xs text-mid leading-relaxed">
+                From personal streetwear to complete commercial merchandise lines.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom CTA Banner */}
+        <div className="text-center bg-[#853816] text-white rounded-3xl p-10 sm:p-16 space-y-6">
+          <h2 className="font-serif text-3xl sm:text-5xl font-black uppercase text-white">
+            Start Your KALA Project Today
+          </h2>
+          <p className="text-xs sm:text-sm text-white/80 max-w-md mx-auto leading-relaxed">
+            Have a concept in mind? Let's discuss fabrics, prints, and turnaround times.
+          </p>
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/custom-apparel"
+              className="px-8 py-3.5 bg-white text-[#853816] hover:bg-amber-50 rounded-xl text-xs font-bold uppercase tracking-widest shadow-md flex items-center justify-center gap-2"
+            >
+              <span>Create Custom Apparel</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              to="/book-meeting"
+              className="px-8 py-3.5 border border-white/20 hover:bg-white/10 text-white rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+            >
+              <span>Book Consultation</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

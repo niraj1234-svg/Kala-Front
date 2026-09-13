@@ -1,32 +1,36 @@
-import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
-// Define our cart item interface
 export interface CartItem {
-  id: string;
+  id: string; // product id
+  cartItemId: string; // unique `${id}-${size}-${color}`
   name: string;
+  slug?: string;
   price: number;
+  salePrice?: number | null;
   size: string;
   color: string;
   image: string;
   quantity: number;
   category?: string;
+  subCategory?: string;
 }
 
-// Define context interface
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (item: CartItem) => void;
-  removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
+  addToCart: (item: Omit<CartItem, 'cartItemId'>, showDrawer?: boolean) => void;
+  removeFromCart: (cartItemId: string) => void;
+  updateQuantity: (cartItemId: string, quantity: number) => void;
   clearCart: () => void;
   getCartTotal: () => number;
   getCartCount: () => number;
+  isDrawerOpen: boolean;
+  openDrawer: () => void;
+  closeDrawer: () => void;
+  lastAddedItem: CartItem | null;
 }
 
-// Create the context
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// Create a custom hook for using the cart context
 export const useCart = (): CartContextType => {
   const context = useContext(CartContext);
   if (!context) {
@@ -35,79 +39,104 @@ export const useCart = (): CartContextType => {
   return context;
 };
 
-// Create the cart provider
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    // Initialize from localStorage if available
-    const savedCart = localStorage.getItem('cart');
-    return savedCart ? JSON.parse(savedCart) : [];
+    if (typeof window === 'undefined') return [];
+    try {
+      const saved = localStorage.getItem('kala_cart') || localStorage.getItem('cart');
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      // Ensure each item has a cartItemId
+      return parsed.map((it: any) => ({
+        ...it,
+        cartItemId: it.cartItemId || `${it.id}-${it.size || 'M'}-${it.color || 'Standard'}`,
+      }));
+    } catch {
+      return [];
+    }
   });
 
-  // Save cart to localStorage whenever it changes
-  React.useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cartItems));
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [lastAddedItem, setLastAddedItem] = useState<CartItem | null>(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('kala_cart', JSON.stringify(cartItems));
+    } catch (e) {
+      console.error('Failed saving cart to localStorage', e);
+    }
   }, [cartItems]);
 
-  // Add item to cart
-  const addToCart = (item: CartItem) => {
-    setCartItems(prevItems => {
-      // Check if item already exists in cart
-      const existingItemIndex = prevItems.findIndex(
-        cartItem => cartItem.id === item.id && cartItem.size === item.size && cartItem.color === item.color
-      );
+  const addToCart = (item: Omit<CartItem, 'cartItemId'>, showDrawer = true) => {
+    const size = item.size || 'Standard';
+    const color = item.color || 'Standard';
+    const cartItemId = `${item.id}-${size}-${color}`;
+    const fullItem: CartItem = { ...item, size, color, cartItemId };
 
-      if (existingItemIndex !== -1) {
-        // If item exists, increase quantity
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex].quantity += item.quantity;
-        return updatedItems;
-      } else {
-        // Add new item to cart
-        return [...prevItems, item];
+    setCartItems(prev => {
+      const existingIdx = prev.findIndex(ci => ci.cartItemId === cartItemId);
+      if (existingIdx !== -1) {
+        const updated = [...prev];
+        updated[existingIdx].quantity += (item.quantity || 1);
+        return updated;
       }
+      return [...prev, fullItem];
     });
+
+    setLastAddedItem(fullItem);
+    if (showDrawer) {
+      setIsDrawerOpen(true);
+    }
   };
 
-  // Remove item from cart
-  const removeFromCart = (id: string) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+  const removeFromCart = (cartItemId: string) => {
+    setCartItems(prev => prev.filter(ci => ci.cartItemId !== cartItemId));
   };
 
-  // Update item quantity
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity < 1) return;
-    
-    setCartItems(prevItems => 
-      prevItems.map(item => 
-        item.id === id ? { ...item, quantity } : item
-      )
+  const updateQuantity = (cartItemId: string, quantity: number) => {
+    if (quantity < 1) {
+      removeFromCart(cartItemId);
+      return;
+    }
+    setCartItems(prev =>
+      prev.map(ci => (ci.cartItemId === cartItemId ? { ...ci, quantity } : ci))
     );
   };
 
-  // Clear cart
   const clearCart = () => {
     setCartItems([]);
   };
 
-  // Get cart total price
   const getCartTotal = (): number => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cartItems.reduce((acc, it) => acc + it.price * it.quantity, 0);
   };
 
-  // Get total item count
   const getCartCount = (): number => {
-    return cartItems.reduce((count, item) => count + item.quantity, 0);
+    return cartItems.reduce((acc, it) => acc + it.quantity, 0);
   };
 
-  const value: CartContextType = {
-    cartItems,
-    addToCart,
-    removeFromCart,
-    updateQuantity,
-    clearCart,
-    getCartTotal,
-    getCartCount
-  };
+  const openDrawer = () => setIsDrawerOpen(true);
+  const closeDrawer = () => setIsDrawerOpen(false);
 
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+  return (
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        getCartTotal,
+        getCartCount,
+        isDrawerOpen,
+        openDrawer,
+        closeDrawer,
+        lastAddedItem,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 };
+
+export default CartProvider;

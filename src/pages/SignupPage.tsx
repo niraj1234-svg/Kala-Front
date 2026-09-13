@@ -1,155 +1,142 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { authStore, useAuthStore } from '../store/authStore';
+import { ArrowLeft } from 'lucide-react';
+import { api } from '../lib/api';
 
-const SignupPage: React.FC = () => {
+export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
-  const authState = useAuthStore((state) => state);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [formError, setFormError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      setFormError('Please fill in all fields');
-      return;
-    }
-    if (password !== confirmPassword) {
-      setFormError('Passwords do not match');
+    if (!name || !email || !password) {
+      setFormError('Please fill in all required fields.');
       return;
     }
     setFormError('');
+    setIsLoading(true);
+
     try {
-      await authStore.register({
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        password,
-      });
-      await authStore.login({ email, password });
-      navigate('/');
-    } catch (error) {
+      await api.register({ name, email, password, phone });
+      navigate('/account');
+    } catch (err: any) {
+      setFormError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col justify-center items-center px-6 py-20 relative overflow-hidden text-foreground">
-      {/* Grain Effect */}
-      <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-
+    <div className="min-h-screen bg-background flex flex-col justify-center items-center px-6 py-28 relative overflow-hidden text-foreground">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg"
+        className="w-full max-w-md"
       >
-        <div className="space-y-12">
-          <div className="space-y-4 text-center">
-            <h1 className="font-display text-7xl md:text-8xl uppercase tracking-tighter">Register</h1>
-            <p className="font-body text-[10px] tracking-[0.3em] uppercase text-foreground/40">
-              Initialize your curated profile
+        <div className="space-y-8">
+          <div className="space-y-2 text-center">
+            <Link to="/" className="inline-block mb-3">
+              <span className="font-serif text-3xl font-black tracking-[0.2em] text-foreground">
+                KALA
+              </span>
+            </Link>
+            <h1 className="font-serif text-3xl sm:text-4xl font-black uppercase tracking-tight">
+              Create Account
+            </h1>
+            <p className="font-body text-xs tracking-wider uppercase text-mid">
+              Join KALA Originals Studio
             </p>
           </div>
 
-          <div className="bg-foreground/5 p-8 md:p-12 border border-foreground/5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-
-            {(formError || authState.error) && (
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="bg-accent/10 border-l-2 border-accent text-accent px-4 py-3 mb-8 font-body text-[10px] tracking-wider uppercase"
-              >
-                {formError || authState.error}
-              </motion.div>
+          <div className="bg-card p-8 border border-border rounded-3xl shadow-xl space-y-6">
+            {formError && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 p-3 rounded-xl text-xs font-semibold">
+                {formError}
+              </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-1">
-                  <label className="font-body text-[8px] tracking-[0.4em] uppercase text-foreground/40 font-bold ml-1">First ID</label>
-                  <input
-                    type="text"
-                    placeholder="Alpha"
-                    className="w-full h-14 bg-transparent border-b border-foreground/10 text-foreground font-body text-xs tracking-widest focus:outline-none focus:border-accent transition-colors px-1"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="font-body text-[8px] tracking-[0.4em] uppercase text-foreground/40 font-bold ml-1">Last ID</label>
-                  <input
-                    type="text"
-                    placeholder="Beta"
-                    className="w-full h-14 bg-transparent border-b border-foreground/10 text-foreground font-body text-xs tracking-widest focus:outline-none focus:border-accent transition-colors px-1"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                  />
-                </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="font-body text-xs font-bold uppercase tracking-wider text-foreground">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Aarav Sharma"
+                  className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-kala-emerald"
+                />
               </div>
 
-              <div className="space-y-1">
-                <label className="font-body text-[8px] tracking-[0.4em] uppercase text-foreground/40 font-bold ml-1">Email Connection</label>
+              <div className="space-y-1.5">
+                <label className="font-body text-xs font-bold uppercase tracking-wider text-foreground">
+                  Email Address
+                </label>
                 <input
                   type="email"
-                  placeholder="identity@archived.com"
-                  className="w-full h-14 bg-transparent border-b border-foreground/10 text-foreground font-body text-xs tracking-widest focus:outline-none focus:border-accent transition-colors px-1"
+                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
+                  className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-kala-emerald"
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="font-body text-[8px] tracking-[0.4em] uppercase text-foreground/40 font-bold ml-1">Secure Key</label>
+              <div className="space-y-1.5">
+                <label className="font-body text-xs font-bold uppercase tracking-wider text-foreground">
+                  WhatsApp / Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="e.g. 9406030116"
+                  className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-kala-emerald"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-body text-xs font-bold uppercase tracking-wider text-foreground">
+                  Password
+                </label>
                 <input
                   type="password"
-                  placeholder="••••••••"
-                  className="w-full h-14 bg-transparent border-b border-foreground/10 text-foreground font-body text-xs tracking-widest focus:outline-none focus:border-accent transition-colors px-1"
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-body text-[8px] tracking-[0.4em] uppercase text-foreground/40 font-bold ml-1">Verify Key</label>
-                <input
-                  type="password"
                   placeholder="••••••••"
-                  className="w-full h-14 bg-transparent border-b border-foreground/10 text-foreground font-body text-xs tracking-widest focus:outline-none focus:border-accent transition-colors px-1"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-kala-emerald"
                 />
               </div>
 
-              <div className="pt-6">
-                <button
-                  type="submit"
-                  className="w-full h-16 bg-foreground text-background font-body text-[11px] tracking-[0.4em] uppercase hover:bg-accent hover:text-foreground transition-all flex items-center justify-center gap-3 group disabled:opacity-50"
-                  disabled={authState.loading}
-                >
-                  {authState.loading ? 'Initializing...' : (
-                    <>
-                      Create Profile
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </>
-                  )}
-                </button>
-              </div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3.5 bg-kala-emerald hover:bg-kala-emerald/90 text-white rounded-xl text-xs font-bold uppercase tracking-widest shadow-md transition-transform hover:-translate-y-0.5 disabled:opacity-50 mt-2"
+              >
+                {isLoading ? 'Creating Account...' : 'Create Account'}
+              </button>
             </form>
+          </div>
 
-            <div className="mt-12 pt-8 border-t border-foreground/5 flex flex-col md:flex-row items-center justify-between gap-6">
-              <p className="font-body text-[9px] tracking-[0.2em] uppercase text-foreground/40">
-                Existing entity? <Link to="/login" className="text-foreground font-bold hover:text-accent transition-colors">Sign In</Link>
-              </p>
-              <Link to="/products" className="flex items-center gap-3 font-body text-[9px] tracking-[0.2em] uppercase text-foreground/40 hover:text-foreground transition-all group text-foreground font-bold">
-                <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> Back to Archive
+          <div className="flex items-center justify-between text-xs text-mid">
+            <Link to="/" className="hover:text-foreground flex items-center gap-1">
+              <ArrowLeft className="w-3.5 h-3.5" /> Back to store
+            </Link>
+            <p>
+              Already have an account?{' '}
+              <Link to="/login" className="text-kala-emerald dark:text-emerald-400 font-bold hover:underline">
+                Sign In
               </Link>
-            </div>
+            </p>
           </div>
         </div>
       </motion.div>
