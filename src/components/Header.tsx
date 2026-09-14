@@ -1,0 +1,545 @@
+import { useState, useEffect, useMemo } from 'react';
+import { ChevronDown, LayoutGrid, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAppralStore } from '../store/appralStore';
+// import BottomBar from './BottomBar';
+
+interface HeaderProps {
+  isLoggedIn: boolean;
+  userName: string;
+  userRole?: string;
+  onLogout: () => void;
+}
+
+type MenuItem = {
+  label: string;
+  path: string;
+  children?: MenuItem[];
+};
+
+const Header = ({ isLoggedIn, userName, userRole, onLogout }: HeaderProps) => {
+  const navigate = useNavigate();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const categoriesState = useAppralStore((state) => state.categories);
+  const cartState = useAppralStore((state) => state.cart);
+  const dynamicMenuItems = useMemo<MenuItem[]>(
+    () =>
+      categoriesState.data.map((category) => ({
+        label: category.name,
+        path: `/products?category=${encodeURIComponent(category.slug)}`,
+        children: (category.children ?? []).map((child) => ({
+          label: child.name,
+          path: `/products?category=${encodeURIComponent(child.slug)}`,
+        })),
+      })),
+    [categoriesState.data],
+  );
+  const additionalMenuItems = useMemo<MenuItem[]>(
+    () => [
+      {
+        label: 'About Us',
+        path: '/about',
+      },
+      {
+        label: 'Customize',
+        path: '/customize',
+      },
+      {
+        label: 'Behind the Hype',
+        path: '/blog',
+      },
+      {
+        label: 'Street Wire — The Network',
+        path: '/network',
+      },
+    ],
+    [],
+  );
+  const mainMenu = useMemo<MenuItem[]>(
+    () => (dynamicMenuItems.length > 0 ? [...dynamicMenuItems, ...additionalMenuItems] : additionalMenuItems),
+    [additionalMenuItems, dynamicMenuItems],
+  );
+  const cartCount = cartState.data?.item_count ?? 0;
+  const isAdmin = userRole?.toLowerCase() === 'admin';
+  const firstMenuWithChildren = useMemo<string | null>(
+    () => mainMenu.find((item) => item.children && item.children.length > 0)?.label ?? null,
+    [mainMenu],
+  );
+
+  const currencies = [
+    { code: 'AUD', flag: 'au', name: 'Australian Dollar' },
+    { code: 'USD', flag: 'us', name: 'US Dollar' },
+    { code: 'EUR', flag: 'eu', name: 'Euro' },
+    { code: 'GBP', flag: 'gb', name: 'British Pound' },
+    { code: 'INR', flag: 'in', name: 'Indian Rupee' },
+  ];
+
+  const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
+
+  const [openMenu, setOpenMenu] = useState<string | null>(firstMenuWithChildren);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 100);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.currency-dropdown')) {
+        setIsDropdownOpen(false);
+      }
+      if (!target.closest('.user-menu-dropdown')) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    if (isDropdownOpen || isUserMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen, isUserMenuOpen]);
+  const handleToggleMenu = (label: string, hasChildren?: boolean) => {
+    if (!hasChildren) return;
+    setOpenMenu(prev => (prev === label ? '' : label));
+  };
+
+  useEffect(() => {
+    if (!openMenu && firstMenuWithChildren) {
+      setOpenMenu(firstMenuWithChildren);
+    }
+  }, [firstMenuWithChildren, openMenu]);
+
+  // Handle user actions
+  const handleUserIconClick = () => {
+    if (isLoggedIn) {
+      setIsUserMenuOpen(!isUserMenuOpen);
+    } else {
+      // Navigate to login page
+      navigate('/login');
+    }
+  };
+
+  useEffect(() => {
+    // Close whichever user menu was open when header mode switches
+    setIsUserMenuOpen(false);
+  }, [isScrolled]);
+
+  return (
+    <>
+      {/* Top Banner */}
+      <div className="fixed top-0 left-0 right-0 bg-black text-white text-xs sm:text-sm py-2 px-4 text-center z-50">
+        <div className="flex items-center justify-center">
+          <span className="font-medium tracking-wide">
+            FREE SHIPPING AVAILABLE WORLDWIDE
+          </span>
+        </div>
+      </div>
+
+      {/* Main Transparent Header */}
+      <header 
+        className={`fixed top-18 left-0 right-0 z-40 bg-transparent transition-all duration-300 ${
+          isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Left Side - Menu Button */}
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="flex items-center gap-2 p-2 rounded-md bg-black/40 text-white hover:bg-black/60"
+            >
+              <Menu className="w-5 h-5" />
+              <span className="hidden sm:inline text-sm font-medium tracking-wider">MENU</span>
+            </button>
+
+            {/* Center - Logo */}
+            <div className="flex flex-col items-center">
+              <Link to="/" className="text-xl font-bold tracking-wider text-white">
+                <img src="/lo.png" alt="Logo" className="h-10 w-auto" />
+              </Link>
+            </div>
+
+            {/* Right Side - Icons */}
+            <div className="flex items-center gap-2">
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="hidden sm:inline-flex items-center gap-2 bg-emerald-500/90 hover:bg-emerald-600 text-white text-sm font-medium tracking-wide py-2 px-3 rounded-md shadow"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                  Admin Panel
+                </Link>
+              )}
+              <div className="relative currency-dropdown">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="hidden lg:flex items-center gap-1 text-white text-sm bg-black/40 py-1 px-2 rounded-md"
+                >
+                  <img 
+                    src={`https://flagcdn.com/w20/${selectedCurrency.flag}.png`} 
+                    alt={selectedCurrency.code} 
+                    className="w-5 h-3" 
+                  />
+                  <span>{selectedCurrency.code}</span>
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-50">
+                    {currencies.map((currency) => (
+                      <button
+                        key={currency.code}
+                        onClick={() => {
+                          setSelectedCurrency(currency);
+                          setIsDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 text-left"
+                      >
+                        <img 
+                          src={`https://flagcdn.com/w20/${currency.flag}.png`} 
+                          alt={currency.code} 
+                          className="w-5 h-3" 
+                        />
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-gray-900">{currency.code}</div>
+                          <div className="text-xs text-gray-500">{currency.name}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              {/* User Button - Connect with Login */}
+              <div className="relative user-menu-dropdown">
+                <button
+                  onClick={handleUserIconClick}
+                  className="p-2 rounded-full bg-black/40 text-white hover:bg-black/60 relative"
+                >
+                  <User className="w-5 h-5" />
+                  {isLoggedIn && (
+                    <span className="absolute -top-1 -right-1 bg-green-500 rounded-full w-2 h-2"></span>
+                  )}
+                </button>
+                
+                {/* User Menu - Displayed when logged in */}
+                {isLoggedIn && isUserMenuOpen && !isScrolled && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-50">
+                    <div className="px-4 py-3 border-b border-gray-200">
+                      <div className="text-sm font-medium text-gray-900">Hello, {userName}</div>
+                      <div className="text-xs text-gray-500">Manage your account</div>
+                    </div>
+                    <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Profile
+                    </Link>
+                    <Link to="/orders" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Orders
+                    </Link>
+                    <button
+                      onClick={() => {
+                        onLogout();
+                        setIsUserMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+              <button className="p-2 rounded-full bg-black/40 text-white hover:bg-black/60">
+                <Search className="w-5 h-5" />
+              </button>
+              
+              <Link to="/cart" className="p-2 rounded-full bg-black/40 text-white hover:bg-black/60 relative">
+                <ShoppingBag className="w-5 h-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Solid Header - Shows on Scroll */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? 'bg-white shadow-md translate-y-0'
+            : 'bg-transparent -translate-y-full pointer-events-none'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Left Side - Menu Button */}
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-md"
+            >
+              <Menu className="w-5 h-5" />
+              <span className="hidden sm:inline text-sm font-medium tracking-wider">MENU</span>
+            </button>
+
+            {/* Center - Logo */}
+            <div className="flex flex-col items-center">
+              <Link to="/" className="text-xl font-bold tracking-wider text-white">
+                <img src="/lo.png" alt="Logo" className="h-10 w-auto" />
+              </Link>
+            </div>
+
+            {/* Right Side - Icons */}
+            <div className="flex items-center gap-2">
+              <div className="relative currency-dropdown">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className=" lg:hidden flex items-center gap-1 text-gray-900 text-sm border border-gray-200 py-1 px-2 rounded-md"
+                >
+                  <img 
+                    src={`https://flagcdn.com/w20/${selectedCurrency.flag}.png`} 
+                    alt={selectedCurrency.code} 
+                    className="w-5 h-3" 
+                  />
+                  <span>{selectedCurrency.code}</span>
+                </button>
+
+                {/* {isDropdownOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-50">
+                    {currencies.map((currency) => (
+                      <button
+                        key={currency.code}
+                        onClick={() => {
+                          setSelectedCurrency(currency);
+                          setIsDropdownOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-100 text-left"
+                      >
+                        <img 
+                          src={`https://flagcdn.com/w20/${currency.flag}.png`} 
+                          alt={currency.code} 
+                          className="w-5 h-3" 
+                        />
+                        <div className="flex-1">
+                          <div className="text-sm font-medium text-gray-900">{currency.code}</div>
+                          <div className="text-xs text-gray-500">{currency.name}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )} */}
+              </div>
+              
+              {/* User Button - Solid Header */}
+              <div className="relative user-menu-dropdown">
+                <button
+                  onClick={handleUserIconClick}
+                  className="p-2 hover:bg-gray-100 rounded-full relative"
+                >
+                  <User className="w-5 h-5" />
+                  {isLoggedIn && (
+                    <span className="absolute -top-1 -right-1 bg-green-500 rounded-full w-2 h-2"></span>
+                  )}
+                </button>
+                
+                {/* User Menu - Displayed when logged in */}
+                {isLoggedIn && isUserMenuOpen && isScrolled && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-50">
+                    <div className="px-4 py-3 border-b border-gray-200">
+                      <div className="text-sm font-medium text-gray-900">Hello, {userName}</div>
+                      <div className="text-xs text-gray-500">Manage your account</div>
+                    </div>
+                    <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Profile
+                    </Link>
+                    <Link to="/orders" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Orders
+                    </Link>
+                    <button
+                      onClick={() => {
+                        onLogout();
+                        setIsUserMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+              <button className="p-2 hover:bg-gray-100 rounded-full">
+                <Search className="w-5 h-5" />
+              </button>
+              
+              <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-full relative">
+                <ShoppingBag className="w-5 h-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* <BottomBar
+        cartCount={cartCount}
+        isAdmin={isAdmin}
+        onMenuToggle={() => setIsSidebarOpen(true)}
+      /> */}
+
+      {/* Sidebar Menu */}
+      <div
+        className={`fixed inset-0 z-[60] transition-opacity duration-300 ${
+          isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/50"
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
+
+        {/* Sidebar */}
+        <div
+          className={`absolute left-0 top-0 bottom-0 w-full sm:w-80 bg-white transition-transform duration-300 overflow-y-auto ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          {/* Sidebar Header */}
+          <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+            <div>
+              <div className="text-lg font-bold">
+                <img src="/lo.png" alt="Logo" className="h-8 w-auto" />
+              </div>
+            </div>
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="p-2 rounded-full hover:bg-gray-100"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Sidebar Content */}
+          <div className="p-4">
+            {/* User Login Section */}
+            {!isLoggedIn ? (
+              <div className="mb-6 pb-6 border-b border-gray-200">
+                <Link 
+                  to="/login" 
+                  onClick={() => setIsSidebarOpen(false)} 
+                  className="w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 transition mb-2 inline-block text-center"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup" 
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="w-full block text-center border border-black py-2 px-4 rounded-md hover:bg-gray-100 transition"
+                >
+                  Create Account
+                </Link>
+              </div>
+            ) : (
+              <div className="mb-6 pb-6 border-b border-gray-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="bg-gray-200 rounded-full w-10 h-10 flex items-center justify-center">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="font-medium">{userName}</div>
+                    <div className="text-xs text-gray-500">Member</div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2 mt-3">
+                  <Link to="/profile" className="text-sm text-gray-700 hover:text-black">Profile</Link>
+                  <Link to="/orders" className="text-sm text-gray-700 hover:text-black">Orders</Link>
+                  <Link to="/wishlist" className="text-sm text-gray-700 hover:text-black">Wishlist</Link>
+                  <button 
+                    onClick={() => {
+                      onLogout();
+                      setIsSidebarOpen(false);
+                    }}
+                    className="text-sm text-gray-700 hover:text-black text-left"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {mainMenu.map((item) => {
+              const hasChildren = Boolean(item.children?.length);
+              const isOpen = openMenu === item.label;
+
+              return (
+                <div key={item.label} className="mb-6">
+                  <div className="flex items-center justify-between gap-3">
+                    <Link
+                      to={item.path}
+                      onClick={() => setIsSidebarOpen(false)}
+                      className="text-lg font-semibold tracking-wide text-gray-900 hover:text-black"
+                    >
+                      {item.label}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleMenu(item.label, hasChildren)}
+                      disabled={!hasChildren}
+                      className={`rounded-full p-1 transition-all ${
+                        hasChildren ? 'hover:bg-gray-100' : 'opacity-50'
+                      }`}
+                      aria-label={`Toggle ${item.label}`}
+                      aria-expanded={hasChildren ? isOpen : false}
+                    >
+                      <ChevronDown
+                        className={`h-4 w-4 text-gray-700 transition-transform ${
+                          hasChildren && isOpen ? 'rotate-180' : 'rotate-0'
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  {hasChildren && isOpen && (
+                    <ul className="mt-3 space-y-2 border-l border-gray-200 pl-4 text-sm">
+                      {item.children!.map((child) => (
+                        <li key={child.label}>
+                          <Link
+                            to={child.path}
+                            onClick={() => setIsSidebarOpen(false)}
+                            className="block text-gray-600 hover:text-black"
+                          >
+                            {child.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Header;

@@ -1,0 +1,769 @@
+{
+  "users": [
+    {
+      "id": "kala-user-admin-01",
+      "name": "KALA Administrator",
+      "email": "admin@kala.com",
+      "passwordHash": "$2b$10$XTs6FLnU.GBztV6PpR1LQOun1wAVd0zbpMIROpWlcSu1/7eFZRcEW",
+      "phone": "9406030116",
+      "avatar": "",
+      "role": "ADMIN",
+      "authProvider": "LOCAL",
+      "createdAt": "2026-09-13T12:23:42.452Z",
+      "lastLogin": "2026-09-13T12:25:46.030Z"
+    }
+  ],
+  "products": [
+    {
+      "id": "kala-prod-1",
+      "name": "KALA \"Xyris\" Butterfly Oversized Graphic Tee",
+      "slug": "kala-xyris-butterfly-oversized-tee",
+      "category": "Apparel",
+      "subCategory": "Oversized T-Shirts",
+      "designCategory": "Streetwear",
+      "description": "Heavyweight 260 GSM French terry cotton featuring KALA's signature Xyris butterfly front chest artwork with high-density screen print. Cut in a modern boxy silhouette with drop shoulders.",
+      "price": 999,
+      "salePrice": 849,
+      "badge": "BESTSELLER",
+      "image": "/images/Streetwear 01.png",
+      "additionalImages": [
+        "/images/Streetwear 01.png",
+        "/images/Streetwear -02.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "availableColors": [
+        "Vintage Black",
+        "Oatmeal White",
+        "Slate Gray"
+      ],
+      "isFeatured": true,
+      "isCustomizable": true,
+      "createdAt": "2026-01-15T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-2",
+      "name": "KALA Neo-Noir Street Heavyweight Tee",
+      "slug": "kala-neo-noir-street-tee",
+      "category": "Apparel",
+      "subCategory": "T-Shirts",
+      "designCategory": "Streetwear",
+      "description": "Precision printed graphic streetwear piece crafted from 100% combed ring-spun organic cotton. Features custom collar ribbing and dual side-stitched seams for lasting shape.",
+      "price": 899,
+      "salePrice": null,
+      "badge": "NEW",
+      "image": "/images/Streetwear -02.png",
+      "additionalImages": [
+        "/images/Streetwear -02.png",
+        "/images/Streetwear 03.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "availableColors": [
+        "Charcoal Black",
+        "Off-White",
+        "Olive Forest"
+      ],
+      "isFeatured": true,
+      "isCustomizable": true,
+      "createdAt": "2026-02-01T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-3",
+      "name": "KALA Cyber-Drift Acid Wash Graphic Tee",
+      "slug": "kala-cyber-drift-acid-wash-tee",
+      "category": "Apparel",
+      "subCategory": "Oversized T-Shirts",
+      "designCategory": "Streetwear",
+      "description": "Limited edition acid wash treatment paired with cyberpunk aesthetic chest graphics. Silkscreen cured at 180°C for zero cracking and fade-resistant durability.",
+      "price": 1199,
+      "salePrice": 999,
+      "badge": "LIMITED",
+      "image": "/images/Streetwear 03.png",
+      "additionalImages": [
+        "/images/Streetwear 03.png",
+        "/images/Streetwear 04.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "availableColors": [
+        "Acid Wash Black",
+        "Washed Indigo"
+      ],
+      "isFeatured": false,
+      "isCustomizable": true,
+      "createdAt": "2026-02-10T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-4",
+      "name": "KALA Raw Edge Typography Drop-Shoulder Tee",
+      "slug": "kala-raw-edge-typography-tee",
+      "category": "Apparel",
+      "subCategory": "T-Shirts",
+      "designCategory": "Minimal",
+      "description": "Architectural minimalism engineered with raw cut hems, relaxed neck opening, and refined micro-typography print. Perfect everyday elevated staple.",
+      "price": 799,
+      "salePrice": null,
+      "badge": null,
+      "image": "/images/Streetwear 04.png",
+      "additionalImages": [
+        "/images/Streetwear 04.png",
+        "/images/Streetwear 05.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "availableColors": [
+        "Bone White",
+        "Pure Black",
+        "Sand Dune"
+      ],
+      "isFeatured": false,
+      "isCustomizable": true,
+      "createdAt": "2026-02-12T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-5",
+      "name": "KALA Metamorphosis Signature Boxy Tee",
+      "slug": "kala-metamorphosis-signature-tee",
+      "category": "Apparel",
+      "subCategory": "Oversized T-Shirts",
+      "designCategory": "Custom Art",
+      "description": "Editorial screen-printed visual concept exploring organic transformation. Printed with non-toxic water-based inks that blend into the cotton fabric.",
+      "price": 949,
+      "salePrice": 799,
+      "badge": "POPULAR",
+      "image": "/images/Streetwear 05.png",
+      "additionalImages": [
+        "/images/Streetwear 05.png",
+        "/images/Streetwear 06.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "availableColors": [
+        "Deep Pitch Black",
+        "Vintage Cream"
+      ],
+      "isFeatured": true,
+      "isCustomizable": true,
+      "createdAt": "2026-02-15T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-6",
+      "name": "KALA Distortion Monochrome Graphic Tee",
+      "slug": "kala-distortion-monochrome-tee",
+      "category": "Apparel",
+      "subCategory": "T-Shirts",
+      "designCategory": "Streetwear",
+      "description": "Experimental typography distortion piece on heavy pre-shrunk cotton jersey. Front and back print placements with custom brand neck label.",
+      "price": 899,
+      "salePrice": null,
+      "badge": "SOLD OUT ARCHIVE",
+      "image": "/images/Streetwear 06.png",
+      "additionalImages": [
+        "/images/Streetwear 06.png"
+      ],
+      "inStock": false,
+      "isSoldOut": true,
+      "availableSizes": [
+        "M",
+        "L"
+      ],
+      "availableColors": [
+        "Washed Black"
+      ],
+      "isFeatured": false,
+      "isCustomizable": false,
+      "createdAt": "2026-01-05T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-7",
+      "name": "KALA Combat Gothic Training Tee & Jogger Set",
+      "slug": "kala-combat-gothic-training-set",
+      "category": "Apparel",
+      "subCategory": "T-Shirts",
+      "designCategory": "Gym",
+      "description": "High-octane gothic typography print on 4-way stretch moisture-wicking blend. Reinforced flatlock stitching prevents chafing during intense training sessions.",
+      "price": 1899,
+      "salePrice": 1599,
+      "badge": "TRENDING",
+      "image": "/images/Gymwear-05.png",
+      "additionalImages": [
+        "/images/Gymwear-05.png",
+        "/images/Gymwear04.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "availableColors": [
+        "Arctic White",
+        "Pitch Black"
+      ],
+      "isFeatured": true,
+      "isCustomizable": true,
+      "createdAt": "2026-02-18T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-8",
+      "name": "KALA Iron-Pulse Athletic Performance Set",
+      "slug": "kala-iron-pulse-athletic-set",
+      "category": "Apparel",
+      "subCategory": "T-Shirts",
+      "designCategory": "Gym",
+      "description": "Ultra-breathable honeycomb athletic mesh with thermal sublimation graphics. Engineered for maximum range of motion in squats, deadlifts, and cardio.",
+      "price": 1799,
+      "salePrice": 1499,
+      "badge": "HOT",
+      "image": "/images/Gymwear04.png",
+      "additionalImages": [
+        "/images/Gymwear04.png",
+        "/images/Gymwear06.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "availableColors": [
+        "Midnight Black",
+        "Smoke Grey"
+      ],
+      "isFeatured": true,
+      "isCustomizable": true,
+      "createdAt": "2026-02-20T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-9",
+      "name": "KALA Heavy-Duty Compression Fit Track Set",
+      "slug": "kala-heavy-duty-compression-set",
+      "category": "Apparel",
+      "subCategory": "T-Shirts",
+      "designCategory": "Gym",
+      "description": "Second-skin compression tee and taper jogger with targeted ventilation zones and reflective KALA insignia.",
+      "price": 1999,
+      "salePrice": null,
+      "badge": null,
+      "image": "/images/Gymwear06.png",
+      "additionalImages": [
+        "/images/Gymwear06.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "availableColors": [
+        "Carbon Black",
+        "Steel Blue"
+      ],
+      "isFeatured": false,
+      "isCustomizable": true,
+      "createdAt": "2026-02-22T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-10",
+      "name": "KALA Shadow-Lift Muscle Fit Training Tee",
+      "slug": "kala-shadow-lift-muscle-tee",
+      "category": "Apparel",
+      "subCategory": "T-Shirts",
+      "designCategory": "Gym",
+      "description": "Tapered muscle-fit silhouette with curved hem and custom chest crest print. High-recovery spandex blend keeps shape wash after wash.",
+      "price": 849,
+      "salePrice": 699,
+      "badge": null,
+      "image": "/images/Gymwear07.png",
+      "additionalImages": [
+        "/images/Gymwear07.png",
+        "/images/Gymwear08.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "availableColors": [
+        "Black",
+        "Graphite",
+        "Forest Green"
+      ],
+      "isFeatured": false,
+      "isCustomizable": true,
+      "createdAt": "2026-02-24T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-11",
+      "name": "KALA Headshot Crimson Esports Team Jersey",
+      "slug": "kala-headshot-crimson-jersey",
+      "category": "Apparel",
+      "subCategory": "Jerseys",
+      "designCategory": "Gaming",
+      "description": "Full sublimated esports tournament jersey with dynamic crimson splash and crest. Add your gamertag, team sponsor logos, and custom squad numbers.",
+      "price": 1099,
+      "salePrice": 949,
+      "badge": "ESPORTS GRADE",
+      "image": "/images/gaming 01.png",
+      "additionalImages": [
+        "/images/gaming 01.png",
+        "/images/gaming 02.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL",
+        "3XL"
+      ],
+      "availableColors": [
+        "Crimson Red / White",
+        "Obsidian Black / Red"
+      ],
+      "isFeatured": true,
+      "isCustomizable": true,
+      "createdAt": "2026-02-25T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-12",
+      "name": "KALA Neon-Striker Tournament Jersey",
+      "slug": "kala-neon-striker-tournament-jersey",
+      "category": "Apparel",
+      "subCategory": "Jerseys",
+      "designCategory": "Gaming",
+      "description": "Pro gaming jersey with breathable anti-sweat micro-poly fabric. Custom collar with reinforced stitching and fade-proof digital sublimation.",
+      "price": 1099,
+      "salePrice": null,
+      "badge": null,
+      "image": "/images/gaming 02.png",
+      "additionalImages": [
+        "/images/gaming 02.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "availableColors": [
+        "Cyber Cyan / Black",
+        "Neon Lime / Charcoal"
+      ],
+      "isFeatured": false,
+      "isCustomizable": true,
+      "createdAt": "2026-02-26T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-13",
+      "name": "KALA Ghost-Sniper Community Gaming Tee",
+      "slug": "kala-ghost-sniper-gaming-tee",
+      "category": "Apparel",
+      "subCategory": "T-Shirts",
+      "designCategory": "Gaming",
+      "description": "Custom community merch design for gaming clans and LAN tournaments. Soft cotton hand feel with vivid rubberized chest graphic.",
+      "price": 899,
+      "salePrice": 749,
+      "badge": null,
+      "image": "/images/gaming 03.png",
+      "additionalImages": [
+        "/images/gaming 03.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "availableColors": [
+        "Black",
+        "White"
+      ],
+      "isFeatured": false,
+      "isCustomizable": true,
+      "createdAt": "2026-02-28T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-14",
+      "name": "KALA Cyber-Valkyrie Sublimated Esports Jersey",
+      "slug": "kala-cyber-valkyrie-esports-jersey",
+      "category": "Apparel",
+      "subCategory": "Jerseys",
+      "designCategory": "Gaming",
+      "description": "Championship edition team jersey featuring all-over geometric print and breathable raglan cut sleeves for unrestricted gaming mouse movement.",
+      "price": 1149,
+      "salePrice": null,
+      "badge": "SOLD OUT",
+      "image": "/images/gaming 04.png",
+      "additionalImages": [
+        "/images/gaming 04.png"
+      ],
+      "inStock": false,
+      "isSoldOut": true,
+      "availableSizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "availableColors": [
+        "Valkyrie Purple / Dark Grey"
+      ],
+      "isFeatured": false,
+      "isCustomizable": false,
+      "createdAt": "2026-01-20T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-15",
+      "name": "KALA Custom Kraft Paper Carry Bags (Set of 100)",
+      "slug": "kala-custom-kraft-carry-bags",
+      "category": "Business Branding",
+      "subCategory": "Carry Bags",
+      "designCategory": "Community",
+      "description": "Eco-friendly 180 GSM natural brown and white kraft paper retail carry bags with twisted paper handles. Custom screen or foil printed with your business identity and store contact.",
+      "price": 1499,
+      "salePrice": 1299,
+      "badge": "RETAIL ESSENTIAL",
+      "image": "/PRODUCT/girls1.png",
+      "additionalImages": [
+        "/PRODUCT/girls1.png",
+        "/about/about1.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "Small (8x10\")",
+        "Medium (10x14\")",
+        "Large (14x18\")"
+      ],
+      "availableColors": [
+        "Natural Brown Kraft",
+        "Bleached White Kraft",
+        "Matte Black"
+      ],
+      "isFeatured": true,
+      "isCustomizable": true,
+      "createdAt": "2026-03-01T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-16",
+      "name": "KALA Custom Die-Cut Vinyl Stickers (Pack of 50)",
+      "slug": "kala-custom-die-cut-stickers",
+      "category": "Business Branding",
+      "subCategory": "Stickers",
+      "designCategory": "Minimal",
+      "description": "Weatherproof, waterproof, scratch-resistant vinyl stickers with UV lamination. Die-cut precisely to the exact shape of your brand logo, cafe mascot, or illustrations.",
+      "price": 499,
+      "salePrice": 399,
+      "badge": "POPULAR",
+      "image": "/SHOP/collection1.png",
+      "additionalImages": [
+        "/SHOP/collection1.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "2 inch",
+        "3 inch",
+        "4 inch"
+      ],
+      "availableColors": [
+        "Gloss Finish",
+        "Matte Finish",
+        "Holographic"
+      ],
+      "isFeatured": true,
+      "isCustomizable": true,
+      "createdAt": "2026-03-02T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-17",
+      "name": "KALA Premium Thank-You Cards & Notes (Pack of 100)",
+      "slug": "kala-premium-thank-you-cards",
+      "category": "Business Branding",
+      "subCategory": "Thank-you Cards",
+      "designCategory": "Minimal",
+      "description": "350 GSM premium cotton textured cardstock with gold foil or debossed accent. Perfect for tucking into e-commerce delivery boxes and bakery packages.",
+      "price": 699,
+      "salePrice": 599,
+      "badge": null,
+      "image": "/PRODUCT/girls2.png",
+      "additionalImages": [
+        "/PRODUCT/girls2.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "A6 (4x6\")",
+        "Square (4x4\")"
+      ],
+      "availableColors": [
+        "Warm Cream",
+        "Pure White",
+        "Soft Sage"
+      ],
+      "isFeatured": false,
+      "isCustomizable": true,
+      "createdAt": "2026-03-03T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-18",
+      "name": "KALA Staff Uniform Pique Polo T-Shirts",
+      "slug": "kala-staff-uniform-polo-tshirts",
+      "category": "Business Branding",
+      "subCategory": "Polo T-Shirts",
+      "designCategory": "Teams",
+      "description": "240 GSM heavy combed cotton honeycomb pique polo with anti-pilling collar. Features left chest high-definition embroidery or heat transfer print of your brand logo.",
+      "price": 649,
+      "salePrice": 549,
+      "badge": "BUSINESS CHOICE",
+      "image": "/PRODUCT/girls3.png",
+      "additionalImages": [
+        "/PRODUCT/girls3.png",
+        "/PRODUCT/girls4.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "availableColors": [
+        "Navy Blue",
+        "Jet Black",
+        "Forest Green",
+        "Royal White"
+      ],
+      "isFeatured": true,
+      "isCustomizable": true,
+      "createdAt": "2026-03-04T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-19",
+      "name": "KALA Heavy Canvas Screen-Printed Tote Bags",
+      "slug": "kala-heavy-canvas-tote-bags",
+      "category": "Merchandise",
+      "subCategory": "Tote Bags",
+      "designCategory": "College",
+      "description": "100% heavy 380 GSM natural cotton canvas tote with reinforced cross-stitched handles and bottom gusset. Printed with water-based durable inks for college fests and brands.",
+      "price": 399,
+      "salePrice": 329,
+      "badge": "COLLEGE FAVORITE",
+      "image": "/PRODUCT/girls4.png",
+      "additionalImages": [
+        "/PRODUCT/girls4.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "Standard (15x16x4\")"
+      ],
+      "availableColors": [
+        "Natural Ecru",
+        "Midnight Black"
+      ],
+      "isFeatured": true,
+      "isCustomizable": true,
+      "createdAt": "2026-03-05T10:00:00Z"
+    },
+    {
+      "id": "kala-prod-20",
+      "name": "KALA Embroidered Structured Baseball Caps",
+      "slug": "kala-embroidered-structured-caps",
+      "category": "Merchandise",
+      "subCategory": "Caps",
+      "designCategory": "Sports",
+      "description": "6-panel structured cotton twill cap with pre-curved visor and adjustable brass buckle. 3D puff or flat embroidery available for your team, club, or company crest.",
+      "price": 499,
+      "salePrice": null,
+      "badge": null,
+      "image": "/PRODUCT/girls5.png",
+      "additionalImages": [
+        "/PRODUCT/girls5.png"
+      ],
+      "inStock": true,
+      "isSoldOut": false,
+      "availableSizes": [
+        "One Size Fits All (Adjustable)"
+      ],
+      "availableColors": [
+        "Black",
+        "Forest Green",
+        "Navy",
+        "Maroon"
+      ],
+      "isFeatured": false,
+      "isCustomizable": true,
+      "createdAt": "2026-03-06T10:00:00Z"
+    }
+  ],
+  "meetings": [
+    {
+      "customerName": "Aarav Sharma",
+      "customerEmail": "aarav@example.com",
+      "phone": "9876543210",
+      "companyName": "Studio Vertex",
+      "purpose": "Custom Apparel / Club Merchandise",
+      "date": "2026-09-15",
+      "time": "11:00 AM",
+      "message": "Looking for 60 custom oversized hoodies for our design club.",
+      "id": "kala-meet-1789302345917",
+      "status": "CONFIRMED",
+      "adminNotes": "Confirmed. Google Meet link will be sent.",
+      "createdAt": "2026-09-13T12:25:45.917Z",
+      "updatedAt": "2026-09-13T12:25:46.043Z"
+    }
+  ],
+  "orders": [
+    {
+      "userId": null,
+      "customerName": "NIraj Dhore",
+      "customerEmail": "dhoreniraj83@gmail.com",
+      "phone": "07666863904",
+      "items": [
+        {
+          "productId": "kala-prod-2",
+          "name": "KALA Neo-Noir Street Heavyweight Tee",
+          "price": 899,
+          "quantity": 1,
+          "size": "S",
+          "color": "Charcoal Black",
+          "image": "/images/Streetwear -02.png"
+        }
+      ],
+      "subtotal": 899,
+      "shippingAddress": {
+        "fullName": "NIraj Dhore",
+        "phone": "07666863904",
+        "email": "dhoreniraj83@gmail.com",
+        "building": "tantya bhil boys hostel",
+        "street": "GGV Koni Bilaspur Chattisgarh",
+        "landmark": "",
+        "city": "Bilaspur",
+        "state": "Chhattisgarh",
+        "pincode": "495009",
+        "country": "India"
+      },
+      "notes": "",
+      "id": "KALA-2026-934935",
+      "paymentMethod": "cod",
+      "paymentStatus": "PENDING",
+      "status": "CONFIRMED",
+      "createdAt": "2026-09-13T14:14:30.519Z",
+      "updatedAt": "2026-09-13T14:14:30.519Z"
+    },
+    {
+      "userId": null,
+      "customerName": "Rohan Verma",
+      "customerEmail": "rohan@kala.com",
+      "phone": "9876543210",
+      "items": [
+        {
+          "productId": "app-street-01",
+          "name": "KALA Noir Heavyweight Oversized Tee",
+          "price": 999,
+          "quantity": 1,
+          "size": "L",
+          "color": "Obsidian Black",
+          "image": "/images/Streetwear 01.png"
+        }
+      ],
+      "subtotal": 999,
+      "shippingAddress": {
+        "addressLine": "12 Arera Colony",
+        "city": "Bhopal",
+        "state": "Madhya Pradesh",
+        "pincode": "462001"
+      },
+      "notes": "",
+      "id": "KALA-2026-639057",
+      "paymentMethod": "cod",
+      "paymentStatus": "PENDING",
+      "status": "CONFIRMED",
+      "createdAt": "2026-09-13T14:11:05.517Z",
+      "updatedAt": "2026-09-13T14:11:05.517Z"
+    },
+    {
+      "userId": null,
+      "customerName": "Rohan Verma",
+      "customerEmail": "rohan@kala.com",
+      "phone": "9876543210",
+      "items": [
+        {
+          "productId": "app-street-01",
+          "name": "KALA Noir Heavyweight Oversized Tee",
+          "price": 999,
+          "quantity": 1,
+          "size": "L",
+          "color": "Obsidian Black",
+          "image": "/images/Streetwear 01.png"
+        }
+      ],
+      "subtotal": 999,
+      "shippingAddress": {
+        "addressLine": "12 Arera Colony",
+        "city": "Bhopal",
+        "state": "Madhya Pradesh",
+        "pincode": "462001"
+      },
+      "notes": "",
+      "id": "kala-ord-1789308591441",
+      "status": "PENDING",
+      "createdAt": "2026-09-13T14:09:51.441Z",
+      "updatedAt": "2026-09-13T14:09:51.441Z"
+    }
+  ],
+  "contactRequests": [],
+  "faq": []
+}

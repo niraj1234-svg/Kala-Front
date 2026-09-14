@@ -1,0 +1,225 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+:root {
+  --background: #f7f5f0;
+  --foreground: #1c1a17;
+  --card: #ffffff;
+  --cream: #efe8de;
+  --mid: #6b665f;
+  --accent: #c15927;
+  --border: rgba(28, 26, 23, 0.12);
+  --glass: rgba(247, 245, 240, 0.85);
+}
+
+.dark {
+  --background: #100f0d;
+  --foreground: #f3ede4;
+  --card: #181614;
+  --cream: #22201d;
+  --mid: #a0998f;
+  --accent: #d97443;
+  --border: rgba(243, 237, 228, 0.12);
+  --glass: rgba(16, 15, 13, 0.85);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground selection:bg-accent selection:text-white transition-colors duration-500 ease-in-out;
+    font-family: 'Myriad Pro', 'Myriad', 'Bahnschrift', 'Barlow', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Bahnschrift', 'Myriad Pro', 'Myriad', 'Barlow Semi Condensed', sans-serif;
+    @apply tracking-[0.02em] leading-[0.95];
+  }
+}
+
+@layer components {
+  .hero-grain {
+    @apply absolute inset-0 z-[5] pointer-events-none;
+    background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+    opacity: 0.15;
+    mix-blend-mode: overlay;
+  }
+
+  .grain-animate {
+    animation: grain 8s steps(10) infinite;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .glass-nav {
+    @apply bg-white/70 backdrop-blur-xl border-b border-black/5;
+  }
+}
+
+@keyframes grain {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  10% {
+    transform: translate(-2%, -2%);
+  }
+
+  20% {
+    transform: translate(-4%, 2%);
+  }
+
+  30% {
+    transform: translate(2%, -4%);
+  }
+
+  40% {
+    transform: translate(-2%, 4%);
+  }
+
+  50% {
+    transform: translate(-4%, 2%);
+  }
+
+  60% {
+    transform: translate(4%, 0);
+  }
+
+  70% {
+    transform: translate(0, 4%);
+  }
+
+  80% {
+    transform: translate(2%, 6%);
+  }
+
+  90% {
+    transform: translate(-2%, 2%);
+  }
+}
+
+/* Custom scrollbar - minimalistic */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-foreground/10 rounded-full transition-colors;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-foreground/30;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Link underline effect */
+.link-underline {
+  @apply relative inline-block;
+}
+
+.link-underline::after {
+  content: '';
+  @apply absolute bottom-[-2px] left-0 w-full h-[1px] bg-current scale-x-0 origin-right transition-transform duration-500;
+}
+
+.link-underline:hover::after {
+  @apply scale-x-100 origin-left;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.grain-animate {
+  animation: grain 8s steps(10) infinite;
+}
+
+@keyframes grain {
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  10% {
+    transform: translate(-5%, -10%);
+  }
+
+  20% {
+    transform: translate(-15%, 5%);
+  }
+
+  30% {
+    transform: translate(7%, -25%);
+  }
+
+  40% {
+    transform: translate(-5%, 25%);
+  }
+
+  50% {
+    transform: translate(-15%, 10%);
+  }
+
+  60% {
+    transform: translate(15%, 0%);
+  }
+
+  70% {
+    transform: translate(0%, 15%);
+  }
+
+  80% {
+    transform: translate(3%, 35%);
+  }
+
+  90% {
+    transform: translate(-10%, 10%);
+  }
+}
+
+/* Base Reveal Animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  filter: blur(10px);
+  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
