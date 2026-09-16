@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { PRODUCTS } from '../data/products'
+import type { Product } from '../data/products'
+import { fetchProducts } from '../services/productApi'
 import ProductCard from '../components/ProductCard'
 import '../styles/Shop.css'
 
@@ -8,14 +10,39 @@ type CategoryFilter = 'All' | 'Streetwear' | 'Gaming' | 'Gymwear'
 const CATEGORIES: CategoryFilter[] = ['All', 'Streetwear', 'Gaming', 'Gymwear']
 
 export const Shop: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>(PRODUCTS)
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All')
   const [searchQuery, setSearchQuery] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  // Fetch live products from MongoDB Atlas via Express API on mount
+  useEffect(() => {
+    let isMounted = true
+    setIsLoading(true)
+
+    fetchProducts()
+      .then((data) => {
+        if (isMounted && data && data.length > 0) {
+          setProducts(data)
+        }
+      })
+      .catch((err) => {
+        console.warn('[Shop] Error loading products from API:', err)
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   // Filter products based on active category and search query
   const filteredProducts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
 
-    return PRODUCTS.filter((product) => {
+    return products.filter((product) => {
       // Category match
       const matchesCategory =
         selectedCategory === 'All' || product.category === selectedCategory
@@ -31,7 +58,7 @@ export const Shop: React.FC = () => {
 
       return nameMatch || categoryMatch || descriptionMatch
     })
-  }, [selectedCategory, searchQuery])
+  }, [products, selectedCategory, searchQuery])
 
   const handleResetFilters = () => {
     setSelectedCategory('All')
@@ -111,6 +138,7 @@ export const Shop: React.FC = () => {
       <div className="kala-shop-meta-row">
         <p className="kala-product-count">
           Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+          {isLoading && <span style={{ marginLeft: '0.75rem', opacity: 0.6 }}>• Syncing with Atlas...</span>}
         </p>
       </div>
 

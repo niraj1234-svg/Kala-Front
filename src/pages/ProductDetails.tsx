@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { PRODUCTS } from '../data/products'
+import type { Product } from '../data/products'
+import { fetchProductById } from '../services/productApi'
 import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext'
 import '../styles/ProductDetails.css'
@@ -12,7 +14,24 @@ export const ProductDetails: React.FC = () => {
   const { addToCart } = useCart()
   const { isInWishlist, toggleWishlist } = useWishlist()
 
-  const product = PRODUCTS.find((p) => p.id === id)
+  const [product, setProduct] = useState<Product | null>(() => {
+    return PRODUCTS.find((p) => p.id === id) || null
+  })
+
+  useEffect(() => {
+    if (!id) return
+    let isMounted = true
+
+    fetchProductById(id).then((liveProduct) => {
+      if (isMounted && liveProduct) {
+        setProduct(liveProduct)
+      }
+    })
+
+    return () => {
+      isMounted = false
+    }
+  }, [id])
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [quantity, setQuantity] = useState<number>(1)
