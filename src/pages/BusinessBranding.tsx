@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { PRODUCTS } from '../data/products'
-import { saveBusinessRequest, generateBusinessRequestId } from '../types/requests'
-import type { BusinessQuoteRequest } from '../types/requests'
+import { saveBusinessRequest } from '../types/requests'
+import {
+  createBusinessRequest,
+  type BackendBusinessRequest,
+} from '../services/businessRequestApi'
 import '../styles/BusinessBranding.css'
 
 export const BusinessBranding: React.FC = () => {
@@ -23,7 +26,8 @@ export const BusinessBranding: React.FC = () => {
 
   // Validation & Submission State
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [submittedQuote, setSubmittedQuote] = useState<BusinessQuoteRequest | null>(null)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [submittedQuote, setSubmittedQuote] = useState<BackendBusinessRequest | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const formRef = useRef<HTMLDivElement>(null)
@@ -73,8 +77,9 @@ export const BusinessBranding: React.FC = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitError(null)
 
     if (!validateForm()) {
       return
@@ -82,30 +87,59 @@ export const BusinessBranding: React.FC = () => {
 
     setIsSubmitting(true)
 
-    const newQuote: BusinessQuoteRequest = {
-      id: generateBusinessRequestId(),
-      createdAt: new Date().toISOString(),
-      name: name.trim(),
-      organization: organization.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-      organizationType,
-      apparelRequired,
-      quantity,
-      requiredBy,
-      brandingRequirements,
-      details: details.trim() || undefined,
-      status: 'Quote Requested',
+    try {
+      const response = await createBusinessRequest({
+        name: name.trim(),
+        organization: organization.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        organizationType,
+        apparelRequired,
+        quantity,
+        requiredBy,
+        brandingRequirements,
+        details: details.trim() || undefined,
+      })
+
+      if (response && response.success && response.requestId) {
+        setSubmittedQuote(response.request)
+
+        // Compatibility cache in localStorage
+        try {
+          saveBusinessRequest({
+            id: response.requestId,
+            createdAt: response.request.createdAt,
+            name: response.request.name,
+            organization: response.request.organization,
+            email: response.request.email,
+            phone: response.request.phone,
+            organizationType: response.request.organizationType,
+            apparelRequired: response.request.apparelRequired,
+            quantity: response.request.quantity,
+            requiredBy: response.request.requiredBy,
+            brandingRequirements: response.request.brandingRequirements,
+            details: response.request.details,
+            status: 'Quote Requested',
+          })
+        } catch {
+          // localStorage failure shouldn't block successful UI presentation
+        }
+
+        // Scroll to success card
+        setTimeout(() => {
+          formRef.current?.scrollIntoView({ behavior: 'smooth' })
+        }, 50)
+      } else {
+        throw new Error(response?.message || 'Failed to submit quote request.')
+      }
+    } catch (err: any) {
+      console.error('[BusinessBranding] Submission error:', err)
+      setSubmitError(
+        err.message || 'Unable to submit your quote request right now. Please try again.'
+      )
+    } finally {
+      setIsSubmitting(false)
     }
-
-    saveBusinessRequest(newQuote)
-    setSubmittedQuote(newQuote)
-    setIsSubmitting(false)
-
-    // Scroll to success card
-    setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, 50)
   }
 
   const handleResetForm = () => {
@@ -120,6 +154,7 @@ export const BusinessBranding: React.FC = () => {
     setBrandingRequirements('Logo')
     setDetails('')
     setErrors({})
+    setSubmitError(null)
     setSubmittedQuote(null)
   }
 
@@ -326,7 +361,7 @@ export const BusinessBranding: React.FC = () => {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem', borderBottom: '1px solid var(--kala-border)', paddingBottom: '0.5rem' }}>
                 <span className="kala-label">REFERENCE:</span>
-                <span style={{ fontWeight: 700, color: 'var(--kala-orange)' }}>{submittedQuote.id}</span>
+                <span style={{ fontWeight: 700, color: 'var(--kala-orange)' }}>{submittedQuote.requestId}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
                 <span style={{ color: 'var(--kala-text-secondary)' }}>Organization:</span>
@@ -350,7 +385,7 @@ export const BusinessBranding: React.FC = () => {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
                 <span style={{ color: 'var(--kala-text-secondary)' }}>Status:</span>
-                <span style={{ fontWeight: 700, color: 'var(--kala-black)' }}>{submittedQuote.status}</span>
+                <span style={{ fontWeight: 700, color: 'var(--kala-black)' }}>{submittedQuote.status.toUpperCase()}</span>
               </div>
             </div>
 
@@ -560,6 +595,27 @@ export const BusinessBranding: React.FC = () => {
                 />
               </div>
 
+              {submitError && (
+                <div
+                  className="kala-form-error-banner"
+                  style={{
+                    color: '#b91c1c',
+                    backgroundColor: '#fef2f2',
+                    border: '1px solid #fecaca',
+                    padding: '0.85rem',
+                    marginBottom: '1.25rem',
+                    fontSize: '0.875rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                  role="alert"
+                >
+                  <span style={{ fontWeight: 700 }}>✕</span>
+                  <span>{submitError}</span>
+                </div>
+              )}
+
               {/* Submit Button */}
               <button
                 type="submit"
@@ -567,7 +623,7 @@ export const BusinessBranding: React.FC = () => {
                 style={{ width: '100%', padding: '1rem' }}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'SUBMITTING...' : 'REQUEST B2B QUOTE'}
+                {isSubmitting ? 'SUBMITTING REQUEST...' : 'REQUEST B2B QUOTE'}
               </button>
             </form>
           </div>
