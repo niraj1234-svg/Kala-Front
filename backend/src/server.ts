@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import { connectDB } from './config/db'
 import { seedProducts } from './config/seed'
 import productRouter from './routes/productRoutes'
+import orderRouter from './routes/orderRoutes'
 
 // Load environment variables
 dotenv.config()
@@ -32,6 +33,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
 
 // API Routes
 app.use('/api/products', productRouter)
+app.use('/api/orders', orderRouter)
 
 // Start Server
 app.listen(PORT, async () => {
@@ -40,6 +42,7 @@ app.listen(PORT, async () => {
   console.log(`[KALA Backend] Server running on port ${PORT}`)
   console.log(`[KALA Backend] Health check: http://localhost:${PORT}/api/health`)
   console.log(`[KALA Backend] Products API: http://localhost:${PORT}/api/products`)
+  console.log(`[KALA Backend] Orders API:   http://localhost:${PORT}/api/orders`)
 })
 
 export default app
