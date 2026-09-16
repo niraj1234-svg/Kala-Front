@@ -1,0 +1,385 @@
+/* ==========================================================================
+   KALA GLOBAL NAVBAR STYLES
+   Premium, Minimal, Modern Fashion/E-Commerce Navigation
+   ========================================================================== */
+
+.kala-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--kala-bg-warm);
+  border-bottom: 1px solid var(--kala-border);
+  z-index: 1000;
+  transition: background-color var(--kala-transition-fast), border-color var(--kala-transition-fast);
+}
+
+.kala-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 80px;
+  padding: 0 clamp(1.25rem, 3.5vw, 3.25rem);
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   1. BRAND LOGO (LEFT)
+   -------------------------------------------------------------------------- */
+.kala-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  color: var(--kala-black);
+  user-select: none;
+  padding: 0.5rem 0;
+}
+
+.kala-logo-mark {
+  color: var(--kala-orange);
+  font-family: var(--kala-font-primary);
+  font-weight: 900;
+  font-size: 1.45rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.kala-logo-text {
+  color: var(--kala-black);
+  font-family: var(--kala-font-primary);
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: 0.16em;
+  line-height: 1;
+}
+
+.kala-logo-accent {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: var(--kala-orange);
+  transform: rotate(45deg);
+  margin-left: 0.15rem;
+  margin-bottom: 0.15rem;
+}
+
+/* --------------------------------------------------------------------------
+   2. DESKTOP CENTER NAVIGATION
+   -------------------------------------------------------------------------- */
+.kala-nav-links {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: clamp(1.5rem, 2.5vw, 2.75rem);
+}
+
+.kala-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.kala-nav-link {
+  position: relative;
+  font-family: var(--kala-font-primary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--kala-black);
+  text-decoration: none;
+  padding: 0.75rem 0;
+  transition: color var(--kala-transition-fast);
+}
+
+.kala-nav-link:hover {
+  color: var(--kala-orange);
+}
+
+/* Active State with KALA Orange Underline */
+.kala-nav-link.active {
+  color: var(--kala-black);
+}
+
+.kala-nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--kala-orange);
+}
+
+/* --------------------------------------------------------------------------
+   3. RIGHT SIDE CONTROLS
+   -------------------------------------------------------------------------- */
+.kala-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 1.5vw, 1.5rem);
+}
+
+.kala-nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.kala-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--kala-black);
+  cursor: pointer;
+  position: relative;
+  transition: color var(--kala-transition-fast), background-color var(--kala-transition-fast);
+}
+
+.kala-icon-btn:hover {
+  color: var(--kala-orange);
+  background-color: rgba(17, 17, 17, 0.04);
+}
+
+.kala-icon-btn:focus-visible {
+  outline: 2px solid var(--kala-orange);
+  outline-offset: 2px;
+}
+
+/* Cart Badge */
+.kala-cart-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  background-color: var(--kala-orange);
+  color: var(--kala-white);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 17px;
+  text-align: center;
+  border-radius: 999px;
+}
+
+/* 3.1 "CREATE YOURS" CTA BUTTON */
+.kala-create-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--kala-orange);
+  color: var(--kala-white);
+  font-family: var(--kala-font-primary);
+  font-size: 0.785rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.75rem 1.4rem;
+  border: 1px solid var(--kala-orange);
+  border-radius: 0; /* Clean rectangular shape */
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--kala-transition-fast),
+              border-color var(--kala-transition-fast),
+              box-shadow var(--kala-transition-fast);
+}
+
+.kala-create-btn:hover {
+  background-color: var(--kala-orange-hover);
+  border-color: var(--kala-orange-hover);
+}
+
+.kala-create-btn:focus-visible {
+  outline: 2px solid var(--kala-black);
+  outline-offset: 2px;
+}
+
+.kala-sparkle-icon {
+  display: inline-block;
+  line-height: 1;
+  color: var(--kala-white);
+}
+
+/* --------------------------------------------------------------------------
+   4. HAMBURGER TOGGLE (MOBILE)
+   -------------------------------------------------------------------------- */
+.kala-hamburger-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: transparent;
+  border: none;
+  color: var(--kala-black);
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.25rem;
+}
+
+.kala-hamburger-btn:hover {
+  color: var(--kala-orange);
+}
+
+.kala-hamburger-btn:focus-visible {
+  outline: 2px solid var(--kala-orange);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   5. MOBILE NAVIGATION DRAWER / PANEL
+   -------------------------------------------------------------------------- */
+.kala-mobile-backdrop {
+  display: none;
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(17, 17, 17, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity var(--kala-transition-fast);
+}
+
+.kala-mobile-backdrop.open {
+  display: block;
+  opacity: 1;
+}
+
+.kala-mobile-drawer {
+  display: none;
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  background-color: var(--kala-bg-warm);
+  border-bottom: 1px solid var(--kala-border);
+  padding: 1.75rem clamp(1.25rem, 5vw, 2.5rem) 2.25rem;
+  z-index: 999;
+  box-shadow: 0 16px 32px rgba(17, 17, 17, 0.08);
+  transform: translateY(-10px);
+  opacity: 0;
+  transition: transform var(--kala-transition-fast), opacity var(--kala-transition-fast);
+}
+
+.kala-mobile-drawer.open {
+  display: flex;
+  flex-direction: column;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.kala-mobile-links {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.5rem;
+}
+
+.kala-mobile-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--kala-font-primary);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--kala-black);
+  text-decoration: none;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(229, 226, 221, 0.6);
+  transition: color var(--kala-transition-fast);
+}
+
+.kala-mobile-link:hover,
+.kala-mobile-link.active {
+  color: var(--kala-orange);
+}
+
+.kala-mobile-link.active .kala-mobile-active-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--kala-orange);
+  transform: rotate(45deg);
+}
+
+.kala-mobile-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.kala-mobile-create-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 0.875rem;
+}
+
+.kala-mobile-icons-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--kala-border);
+}
+
+/* --------------------------------------------------------------------------
+   6. RESPONSIVE BREAKPOINTS
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .kala-nav-links {
+    display: none;
+  }
+
+  .kala-hamburger-btn {
+    display: inline-flex;
+  }
+
+  .kala-create-btn {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .kala-navbar {
+    height: 72px;
+  }
+
+  .kala-mobile-backdrop,
+  .kala-mobile-drawer {
+    top: 72px;
+  }
+
+  /* Keep essential icons on mobile header */
+  .kala-icon-btn.desktop-only {
+    display: none;
+  }
+
+  .kala-logo-mark {
+    font-size: 1.35rem;
+  }
+
+  .kala-logo-text {
+    font-size: 1.15rem;
+    letter-spacing: 0.12em;
+  }
+}

@@ -1,0 +1,175 @@
+/* ==========================================================================
+   KALA WISHLIST PAGE STYLES
+   ========================================================================== */
+
+.kala-wishlist-page {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.kala-wishlist-header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--kala-border);
+  padding-bottom: 1.25rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.kala-wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+@media (max-width: 480px) {
+  .kala-wishlist-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+.kala-wishlist-card {
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--kala-transition-fast), box-shadow var(--kala-transition-fast), border-color var(--kala-transition-fast);
+}
+
+.kala-wishlist-card:hover {
+  border-color: var(--kala-black);
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.06);
+}
+
+.kala-wishlist-img-wrap {
+  position: relative;
+  width: 100%;
+  padding-top: 125%; /* 4:5 aspect ratio */
+  background-color: #f2f0ec;
+  overflow: hidden;
+}
+
+.kala-wishlist-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kala-wishlist-remove-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--kala-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--kala-black);
+  cursor: pointer;
+  z-index: 2;
+  transition: all var(--kala-transition-fast);
+}
+
+.kala-wishlist-remove-btn:hover {
+  background-color: #ffffff;
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.kala-wishlist-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.kala-wishlist-category {
+  font-size: 0.725rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--kala-orange);
+  margin-bottom: 0.35rem;
+}
+
+.kala-wishlist-title {
+  font-size: 0.975rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--kala-black);
+  margin-bottom: 0.5rem;
+}
+
+.kala-wishlist-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--kala-black);
+  margin-bottom: 0.5rem;
+}
+
+.kala-wishlist-stock {
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+.kala-wishlist-stock.in-stock {
+  color: #15803d;
+}
+
+.kala-wishlist-stock.out-of-stock {
+  color: #b91c1c;
+}
+
+.kala-wishlist-card-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(229, 226, 221, 0.6);
+}
+
+.kala-wishlist-action-btn {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* Empty State */
+.kala-wishlist-empty {
+  text-align: center;
+  padding: 5rem 1.5rem;
+  background-color: var(--kala-white);
+  border: 1px dashed var(--kala-border);
+}
+
+.kala-wishlist-empty-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  color: var(--kala-black);
+}
+
+.kala-wishlist-empty-desc {
+  color: var(--kala-text-secondary);
+  margin-bottom: 2rem;
+  max-width: 450px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}

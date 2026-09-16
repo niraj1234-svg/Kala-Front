@@ -1,0 +1,221 @@
+/* ==========================================================================
+   KALA CART PAGE STYLES
+   ========================================================================== */
+
+.kala-cart-page {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.kala-cart-header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--kala-border);
+  padding-bottom: 1.25rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.kala-cart-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .kala-cart-layout {
+    grid-template-columns: 1.8fr 1fr;
+  }
+}
+
+/* Cart Items List */
+.kala-cart-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.kala-cart-item {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  position: relative;
+}
+
+.kala-cart-item-img-wrap {
+  width: 96px;
+  min-width: 96px;
+  height: 120px;
+  background-color: #f2f0ec;
+  border: 1px solid var(--kala-border);
+  overflow: hidden;
+}
+
+.kala-cart-item-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kala-cart-item-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-cart-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.35rem;
+}
+
+.kala-cart-item-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--kala-black);
+  text-decoration: none;
+  line-height: 1.35;
+  margin-right: 0.5rem;
+}
+
+.kala-cart-item-title:hover {
+  color: var(--kala-orange);
+}
+
+.kala-cart-item-remove-btn {
+  background: transparent;
+  border: none;
+  color: var(--kala-text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color var(--kala-transition-fast);
+}
+
+.kala-cart-item-remove-btn:hover {
+  color: #dc2626;
+}
+
+.kala-cart-item-size {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--kala-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.kala-cart-item-price {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--kala-black);
+  margin-bottom: 0.85rem;
+}
+
+.kala-cart-item-bottom {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.kala-cart-subtotal-cell {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--kala-black);
+}
+
+/* Order Summary Box */
+.kala-cart-summary {
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  padding: 1.75rem;
+}
+
+.kala-summary-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--kala-border);
+}
+
+.kala-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.925rem;
+  margin-bottom: 0.85rem;
+  color: var(--kala-text-secondary);
+}
+
+.kala-summary-row.total {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--kala-black);
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--kala-border);
+}
+
+.kala-checkout-btn {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.kala-continue-link {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kala-text-secondary);
+  text-decoration: underline;
+}
+
+.kala-continue-link:hover {
+  color: var(--kala-orange);
+}
+
+/* Empty Cart View */
+.kala-cart-empty {
+  text-align: center;
+  padding: 5rem 1.5rem;
+  background-color: var(--kala-white);
+  border: 1px dashed var(--kala-border);
+}
+
+.kala-cart-empty-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  color: var(--kala-black);
+}
+
+.kala-cart-empty-desc {
+  color: var(--kala-text-secondary);
+  margin-bottom: 2rem;
+  max-width: 450px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}

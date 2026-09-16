@@ -1,0 +1,284 @@
+/* ==========================================================================
+   KALA PRODUCT DETAILS PAGE STYLES
+   ========================================================================== */
+
+.kala-details-page {
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.kala-details-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kala-text-secondary);
+  text-decoration: none;
+  margin-bottom: 2rem;
+  transition: color var(--kala-transition-fast);
+}
+
+.kala-details-back-link:hover {
+  color: var(--kala-orange);
+}
+
+.kala-details-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: start;
+}
+
+@media (min-width: 860px) {
+  .kala-details-grid {
+    grid-template-columns: 1.1fr 1fr;
+  }
+}
+
+/* Image Container */
+.kala-details-image-card {
+  position: relative;
+  width: 100%;
+  background-color: #f2f0ec;
+  border: 1px solid var(--kala-border);
+  overflow: hidden;
+}
+
+.kala-details-image-card img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display: block;
+}
+
+/* Product Info */
+.kala-details-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-details-category {
+  color: var(--kala-orange);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.kala-details-title {
+  font-size: clamp(1.6rem, 2.5vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--kala-black);
+  margin-bottom: 0.75rem;
+}
+
+.kala-details-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--kala-black);
+  margin-bottom: 1.25rem;
+}
+
+.kala-details-stock-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.kala-details-stock-status.in-stock {
+  color: #15803d;
+}
+
+.kala-details-stock-status.out-of-stock {
+  color: #b91c1c;
+}
+
+.kala-details-description {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--kala-text-secondary);
+  margin-bottom: 2rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--kala-border);
+}
+
+/* Size Selector Section */
+.kala-size-section {
+  margin-bottom: 1.75rem;
+}
+
+.kala-section-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+.kala-section-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kala-black);
+}
+
+.kala-size-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.kala-size-btn {
+  width: 48px;
+  height: 48px;
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  color: var(--kala-black);
+  font-family: var(--kala-font-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  transition: all var(--kala-transition-fast);
+}
+
+.kala-size-btn:hover {
+  border-color: var(--kala-black);
+}
+
+.kala-size-btn.active {
+  background-color: var(--kala-black);
+  color: var(--kala-white);
+  border-color: var(--kala-black);
+}
+
+.kala-size-error {
+  color: #dc2626;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+/* Quantity Selector Section */
+.kala-qty-section {
+  margin-bottom: 2rem;
+}
+
+.kala-qty-controls {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--kala-border);
+  background-color: var(--kala-white);
+}
+
+.kala-qty-btn {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--kala-black);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--kala-transition-fast);
+}
+
+.kala-qty-btn:hover:not(:disabled) {
+  background-color: rgba(17, 17, 17, 0.05);
+}
+
+.kala-qty-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.kala-qty-value {
+  width: 44px;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--kala-black);
+  user-select: none;
+}
+
+/* Action Buttons (Add to Cart + Wishlist) */
+.kala-details-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.kala-add-to-cart-btn {
+  flex: 1;
+  padding: 1rem 2rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.kala-details-wishlist-btn {
+  width: 52px;
+  height: 52px;
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  color: var(--kala-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 0;
+  transition: all var(--kala-transition-fast);
+}
+
+.kala-details-wishlist-btn:hover {
+  border-color: var(--kala-orange);
+  color: var(--kala-orange);
+}
+
+.kala-details-wishlist-btn.active {
+  background-color: var(--kala-white);
+  border-color: var(--kala-orange);
+  color: var(--kala-orange);
+}
+
+/* Added feedback badge */
+.kala-added-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  background-color: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.kala-view-cart-link {
+  color: var(--kala-orange);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* Product Not Found */
+.kala-not-found-box {
+  padding: 5rem 1.5rem;
+  text-align: center;
+}

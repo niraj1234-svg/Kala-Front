@@ -1,0 +1,281 @@
+/* ==========================================================================
+   KALA DESIGN SYSTEM — GLOBAL STYLES
+   Minimal, Premium, Modern Indian Streetwear / Custom Apparel Aesthetic
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS & CSS VARIABLES
+   -------------------------------------------------------------------------- */
+:root {
+  /* Brand Color System */
+  --kala-orange: #D94700;
+  --kala-orange-hover: #BF3E00;
+  --kala-black: #111111;
+  --kala-bg-warm: #FAF9F6;
+  --kala-white: #FFFFFF;
+  --kala-border: #E5E2DD;
+  --kala-text-secondary: #5F6368;
+
+  /* Semantic Color Aliases */
+  --color-primary: var(--kala-black);
+  --color-accent: var(--kala-orange);
+  --color-bg: var(--kala-bg-warm);
+  --color-surface: var(--kala-white);
+  --color-border: var(--kala-border);
+  --color-text: var(--kala-black);
+  --color-text-secondary: var(--kala-text-secondary);
+
+  /* Typography System */
+  --kala-font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --kala-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Font Sizes (Responsive clamp scale) */
+  --kala-fs-display: clamp(2.5rem, 5vw + 1rem, 4.5rem);       /* Hero / Display */
+  --kala-fs-h1: clamp(2rem, 3.5vw + 0.5rem, 3rem);            /* H1 Section Titles */
+  --kala-fs-h2: clamp(1.5rem, 2.2vw + 0.25rem, 2.25rem);      /* H2 Feature Titles */
+  --kala-fs-h3: clamp(1.2rem, 1.4vw + 0.2rem, 1.5rem);        /* H3 Card / Sub-headings */
+  --kala-fs-body: 1rem;                                        /* Standard Paragraph */
+  --kala-fs-small: 0.875rem;                                   /* Small / Caption */
+  --kala-fs-label: 0.75rem;                                    /* Uppercase Badge / Meta */
+
+  /* Line Heights */
+  --kala-lh-display: 1.08;
+  --kala-lh-heading: 1.22;
+  --kala-lh-body: 1.62;
+  --kala-lh-tight: 1.15;
+
+  /* Letter Spacing */
+  --kala-ls-tight: -0.025em;
+  --kala-ls-normal: -0.005em;
+  --kala-ls-wide: 0.04em;
+  --kala-ls-label: 0.12em;
+
+  /* Layout Foundation */
+  --kala-max-width: 1400px;
+  --kala-page-padding: clamp(1.25rem, 4vw, 3.5rem);
+  --kala-section-spacing: clamp(3.5rem, 7vw, 6.5rem);
+
+  /* Spacing Scale */
+  --kala-space-xs: 0.25rem;   /* 4px */
+  --kala-space-sm: 0.5rem;    /* 8px */
+  --kala-space-md: 1rem;      /* 16px */
+  --kala-space-lg: 2rem;      /* 32px */
+  --kala-space-xl: 3.5rem;    /* 56px */
+  --kala-space-2xl: 5rem;     /* 80px */
+
+  /* Transitions & Motion */
+  --kala-transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --kala-transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   2. GLOBAL RESETS & BASE STYLES
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--kala-bg-warm);
+  color: var(--kala-black);
+  font-family: var(--kala-font-primary);
+  font-size: var(--kala-fs-body);
+  line-height: var(--kala-lh-body);
+  letter-spacing: var(--kala-ls-normal);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Text Selection */
+::selection {
+  background-color: var(--kala-orange);
+  color: var(--kala-white);
+}
+
+/* Images & Media */
+img, picture, video, canvas, svg {
+  max-width: 100%;
+  display: block;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--kala-font-primary);
+  font-weight: 700;
+  color: var(--kala-black);
+  line-height: var(--kala-lh-heading);
+  letter-spacing: var(--kala-ls-tight);
+}
+
+h1 {
+  font-size: var(--kala-fs-h1);
+}
+
+h2 {
+  font-size: var(--kala-fs-h2);
+}
+
+h3 {
+  font-size: var(--kala-fs-h3);
+  font-weight: 600;
+}
+
+/* Paragraphs */
+p {
+  line-height: var(--kala-lh-body);
+  color: var(--kala-black);
+  margin-bottom: var(--kala-space-md);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* Links */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--kala-transition-fast), opacity var(--kala-transition-fast);
+}
+
+/* --------------------------------------------------------------------------
+   3. TYPOGRAPHY LEVELS & UTILITIES
+   -------------------------------------------------------------------------- */
+.kala-display {
+  font-size: var(--kala-fs-display);
+  font-weight: 800;
+  line-height: var(--kala-lh-display);
+  letter-spacing: -0.035em;
+}
+
+.kala-h1 {
+  font-size: var(--kala-fs-h1);
+  font-weight: 700;
+  line-height: var(--kala-lh-heading);
+  letter-spacing: var(--kala-ls-tight);
+}
+
+.kala-h2 {
+  font-size: var(--kala-fs-h2);
+  font-weight: 700;
+  line-height: var(--kala-lh-heading);
+  letter-spacing: var(--kala-ls-tight);
+}
+
+.kala-h3 {
+  font-size: var(--kala-fs-h3);
+  font-weight: 600;
+  line-height: var(--kala-lh-heading);
+  letter-spacing: -0.015em;
+}
+
+.kala-body {
+  font-size: var(--kala-fs-body);
+  line-height: var(--kala-lh-body);
+}
+
+.kala-text-secondary {
+  color: var(--kala-text-secondary);
+}
+
+.kala-small {
+  font-size: var(--kala-fs-small);
+  line-height: 1.45;
+}
+
+.kala-label {
+  font-size: var(--kala-fs-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--kala-ls-label);
+}
+
+/* --------------------------------------------------------------------------
+   4. BUTTON FOUNDATION
+   -------------------------------------------------------------------------- */
+.kala-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--kala-space-sm);
+  font-family: var(--kala-font-primary);
+  font-size: var(--kala-fs-small);
+  font-weight: 600;
+  letter-spacing: var(--kala-ls-wide);
+  padding: 0.85rem 1.85rem;
+  border-radius: 0; /* Clean, bold rectangular shape */
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  line-height: 1;
+  transition: background-color var(--kala-transition-fast),
+              color var(--kala-transition-fast),
+              border-color var(--kala-transition-fast),
+              box-shadow var(--kala-transition-fast),
+              transform var(--kala-transition-fast);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.kala-btn:active {
+  transform: translateY(1px);
+}
+
+.kala-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* 4.1 Primary KALA Button */
+.kala-btn-primary {
+  background-color: var(--kala-orange);
+  color: var(--kala-white);
+  border-color: var(--kala-orange);
+}
+
+.kala-btn-primary:hover:not(:disabled) {
+  background-color: var(--kala-orange-hover);
+  border-color: var(--kala-orange-hover);
+}
+
+/* 4.2 Secondary Button */
+.kala-btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--kala-black);
+  color: var(--kala-black);
+}
+
+.kala-btn-secondary:hover:not(:disabled) {
+  background-color: var(--kala-black);
+  color: var(--kala-white);
+}
+
+/* --------------------------------------------------------------------------
+   5. LAYOUT & CONTAINER FOUNDATION
+   -------------------------------------------------------------------------- */
+.kala-container {
+  width: 100%;
+  max-width: var(--kala-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--kala-page-padding);
+  padding-right: var(--kala-page-padding);
+}
+
+.kala-section {
+  padding-top: var(--kala-section-spacing);
+  padding-bottom: var(--kala-section-spacing);
+}

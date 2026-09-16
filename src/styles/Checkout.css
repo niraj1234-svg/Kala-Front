@@ -1,0 +1,233 @@
+/* ==========================================================================
+   KALA CHECKOUT PAGE STYLES
+   ========================================================================== */
+
+.kala-checkout-page {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.kala-checkout-header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--kala-border);
+  padding-bottom: 1.25rem;
+}
+
+.kala-checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .kala-checkout-layout {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+
+/* Form Styling */
+.kala-checkout-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.kala-checkout-section {
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  padding: 1.75rem;
+}
+
+.kala-checkout-section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  color: var(--kala-black);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--kala-border);
+}
+
+.kala-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 550px) {
+  .kala-form-grid.two-col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.kala-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-form-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--kala-black);
+  margin-bottom: 0.4rem;
+}
+
+.kala-form-label .optional {
+  font-weight: 400;
+  color: var(--kala-text-secondary);
+}
+
+.kala-form-input {
+  width: 100%;
+  font-family: var(--kala-font-primary);
+  font-size: 0.875rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--kala-border);
+  border-radius: 0;
+  background-color: var(--kala-white);
+  color: var(--kala-black);
+  outline: none;
+  transition: border-color var(--kala-transition-fast);
+}
+
+.kala-form-input:focus {
+  border-color: var(--kala-orange);
+}
+
+.kala-form-input.error {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+}
+
+.kala-form-error {
+  font-size: 0.75rem;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 0.35rem;
+}
+
+/* Order Summary Box */
+.kala-checkout-summary {
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  padding: 1.75rem;
+}
+
+.kala-checkout-summary-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--kala-border);
+}
+
+.kala-checkout-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.kala-checkout-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(229, 226, 221, 0.6);
+}
+
+.kala-checkout-item-img {
+  width: 56px;
+  height: 70px;
+  object-fit: cover;
+  background-color: #f2f0ec;
+  border: 1px solid var(--kala-border);
+  flex-shrink: 0;
+}
+
+.kala-checkout-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.kala-checkout-item-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--kala-black);
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kala-checkout-item-meta {
+  font-size: 0.75rem;
+  color: var(--kala-text-secondary);
+}
+
+.kala-checkout-item-total {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--kala-black);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.kala-checkout-pricing {
+  border-top: 1px solid var(--kala-border);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.kala-checkout-pricing-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--kala-text-secondary);
+}
+
+.kala-checkout-pricing-row.total {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--kala-black);
+  padding-top: 0.85rem;
+  margin-top: 0.5rem;
+  border-top: 2px solid var(--kala-border);
+}
+
+.kala-place-order-btn {
+  width: 100%;
+  margin-top: 1.75rem;
+  padding: 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.kala-back-to-cart-link {
+  display: block;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kala-text-secondary);
+  text-decoration: underline;
+}
+
+.kala-back-to-cart-link:hover {
+  color: var(--kala-orange);
+}

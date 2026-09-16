@@ -1,0 +1,336 @@
+/* ==========================================================================
+   KALA CUSTOM APPAREL PAGE STYLES
+   ========================================================================== */
+
+.kala-custom-page {
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+}
+
+/* --------------------------------------------------------------------------
+   1. HERO SECTION
+   -------------------------------------------------------------------------- */
+.kala-custom-hero {
+  padding: clamp(3rem, 6vw, 5.5rem) 0;
+  border-bottom: 1px solid var(--kala-border);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .kala-custom-hero {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+.kala-custom-hero-badge {
+  color: var(--kala-orange);
+  margin-bottom: 0.75rem;
+}
+
+.kala-custom-hero-title {
+  font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--kala-black);
+  margin-bottom: 1.25rem;
+}
+
+.kala-custom-hero-desc {
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--kala-text-secondary);
+  max-width: 540px;
+  margin-bottom: 2rem;
+}
+
+.kala-custom-hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.kala-custom-hero-visual {
+  position: relative;
+  background-color: #f2f0ec;
+  border: 1px solid var(--kala-border);
+  overflow: hidden;
+}
+
+.kala-custom-hero-visual img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   2. CATEGORIES SECTION ("WHAT CAN YOU CREATE?")
+   -------------------------------------------------------------------------- */
+.kala-custom-section {
+  padding: clamp(3.5rem, 7vw, 6rem) 0;
+  border-bottom: 1px solid var(--kala-border);
+}
+
+.kala-section-header {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.kala-section-header.center {
+  text-align: center;
+}
+
+.kala-section-title {
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--kala-black);
+  margin-bottom: 0.5rem;
+}
+
+.kala-section-subtitle {
+  color: var(--kala-text-secondary);
+  font-size: 1rem;
+  max-width: 600px;
+}
+
+.kala-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: clamp(1.5rem, 2.5vw, 2.25rem);
+}
+
+.kala-category-card {
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--kala-transition-fast), box-shadow var(--kala-transition-fast), border-color var(--kala-transition-fast);
+}
+
+.kala-category-card:hover {
+  border-color: var(--kala-black);
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.06);
+}
+
+.kala-category-card-img-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-color: #f2f0ec;
+  overflow: hidden;
+}
+
+.kala-category-card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.kala-category-card:hover .kala-category-card-img-wrap img {
+  transform: scale(1.03);
+}
+
+.kala-category-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.kala-category-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--kala-black);
+  margin-bottom: 0.5rem;
+}
+
+.kala-category-card-desc {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--kala-text-secondary);
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.kala-category-card-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.785rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   3. HOW IT WORKS SECTION (4 STEPS)
+   -------------------------------------------------------------------------- */
+.kala-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.kala-step-card {
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  padding: 2rem 1.5rem;
+  position: relative;
+}
+
+.kala-step-num {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--kala-orange);
+  line-height: 1;
+  margin-bottom: 1rem;
+  letter-spacing: -0.04em;
+}
+
+.kala-step-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kala-black);
+  margin-bottom: 0.5rem;
+}
+
+.kala-step-desc {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--kala-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   4. DESIGN WITH KALA SECTION
+   -------------------------------------------------------------------------- */
+.kala-design-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.kala-design-feature-pill {
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--kala-black);
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   5. CUSTOM ORDER FORM
+   -------------------------------------------------------------------------- */
+.kala-custom-form-container {
+  max-width: 780px;
+  margin: 0 auto;
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  padding: clamp(1.75rem, 4vw, 3rem);
+}
+
+.kala-form-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 600px) {
+  .kala-form-row.two-col {
+    grid-template-columns: 1fr 1fr;
+  }
+  .kala-form-row.three-col {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.kala-form-select {
+  width: 100%;
+  font-family: var(--kala-font-primary);
+  font-size: 0.875rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--kala-border);
+  border-radius: 0;
+  background-color: var(--kala-white);
+  color: var(--kala-black);
+  outline: none;
+  cursor: pointer;
+}
+
+.kala-form-select:focus {
+  border-color: var(--kala-orange);
+}
+
+.kala-form-textarea {
+  width: 100%;
+  min-height: 110px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.875rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--kala-border);
+  border-radius: 0;
+  background-color: var(--kala-white);
+  color: var(--kala-black);
+  outline: none;
+  resize: vertical;
+}
+
+.kala-form-textarea:focus {
+  border-color: var(--kala-orange);
+}
+
+.kala-file-upload-box {
+  border: 1px dashed var(--kala-border);
+  padding: 1.25rem;
+  text-align: center;
+  background-color: var(--kala-bg-warm);
+  cursor: pointer;
+  margin-top: 0.25rem;
+}
+
+.kala-file-upload-box:hover {
+  border-color: var(--kala-orange);
+}
+
+.kala-file-name-preview {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--kala-orange);
+}
+
+/* Success Card */
+.kala-request-success-card {
+  text-align: center;
+  padding: clamp(2rem, 5vw, 3.5rem) 1.5rem;
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.kala-request-success-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #ecfdf5;
+  color: #059669;
+  font-size: 1.75rem;
+  margin-bottom: 1.25rem;
+}
