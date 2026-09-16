@@ -1,11 +1,122 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getOrderById } from '../types/order'
+import { fetchOrderById } from '../services/orderApi'
+import type { BackendOrder } from '../services/orderApi'
+import { getOrderById as getLocalOrderById } from '../types/order'
+import { getProductImage } from '../data/products'
 import '../styles/OrderConfirmation.css'
 
 export const OrderConfirmation: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>()
-  const order = orderId ? getOrderById(orderId) : undefined
+  const [order, setOrder] = useState<BackendOrder | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    if (!orderId) {
+      setIsLoading(false)
+      return
+    }
+
+    let isMounted = true
+
+    // 1. Fetch from live Express / MongoDB Atlas API
+    fetchOrderById(orderId)
+      .then((liveOrder) => {
+        if (!isMounted) return
+        if (liveOrder) {
+          setOrder(liveOrder)
+        } else {
+          // 2. Fallback to local cache for backward compatibility
+          const local = getLocalOrderById(orderId)
+          if (local) {
+            setOrder({
+              orderId: local.orderId,
+              customer: local.customer,
+              shippingAddress: {
+                address: [local.shippingAddress.addressLine1, local.shippingAddress.addressLine2].filter(Boolean).join(', '),
+                city: local.shippingAddress.city,
+                state: local.shippingAddress.state,
+                pincode: local.shippingAddress.pinCode,
+              },
+              items: local.items.map((i) => ({
+                productId: i.productId,
+                name: i.name,
+                image: i.image,
+                size: i.size,
+                quantity: i.quantity,
+                price: i.price,
+              })),
+              pricing: {
+                subtotal: local.subtotal,
+                shipping: local.shipping,
+                total: local.total,
+              },
+              status: local.status,
+              createdAt: local.createdAt,
+            })
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn('[OrderConfirmation] API fetch error, checking local storage:', err)
+        if (isMounted) {
+          const local = getLocalOrderById(orderId)
+          if (local) {
+            setOrder({
+              orderId: local.orderId,
+              customer: local.customer,
+              shippingAddress: {
+                address: [local.shippingAddress.addressLine1, local.shippingAddress.addressLine2].filter(Boolean).join(', '),
+                city: local.shippingAddress.city,
+                state: local.shippingAddress.state,
+                pincode: local.shippingAddress.pinCode,
+              },
+              items: local.items.map((i) => ({
+                productId: i.productId,
+                name: i.name,
+                image: i.image,
+                size: i.size,
+                quantity: i.quantity,
+                price: i.price,
+              })),
+              pricing: {
+                subtotal: local.subtotal,
+                shipping: local.shipping,
+                total: local.total,
+              },
+              status: local.status,
+              createdAt: local.createdAt,
+            })
+          }
+        }
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [orderId])
+
+  // Loading State
+  if (isLoading) {
+    return (
+      <main className="kala-container kala-confirmation-page">
+        <div className="kala-confirmation-card" style={{ textAlign: 'center', padding: '4rem 1.5rem' }}>
+          <p className="kala-label" style={{ color: 'var(--kala-orange)', marginBottom: '1rem' }}>
+            VERIFYING ORDER WITH MONGODB...
+          </p>
+          <h1 className="kala-h2" style={{ marginBottom: '1rem' }}>
+            LOADING YOUR ORDER
+          </h1>
+          <p className="kala-body" style={{ color: 'var(--kala-text-secondary)' }}>
+            Please wait while we retrieve your order confirmation details.
+          </p>
+        </div>
+      </main>
+    )
+  }
 
   // 1. ORDER NOT FOUND STATE
   if (!order) {
@@ -19,7 +130,7 @@ export const OrderConfirmation: React.FC = () => {
             ORDER NOT FOUND
           </h1>
           <p className="kala-body" style={{ color: 'var(--kala-text-secondary)', marginBottom: '2rem' }}>
-            The order you are looking for does not exist or has expired.
+            The order you are looking for does not exist in our system.
           </p>
           <Link to="/shop" className="kala-btn kala-btn-primary">
             RETURN TO SHOP
@@ -34,6 +145,19 @@ export const OrderConfirmation: React.FC = () => {
     month: 'long',
     day: 'numeric',
   })
+
+  // Normalize image paths for display
+  const resolveItemImage = (img: string) => {
+    let clean = img || ''
+    if (clean.startsWith('/images/')) {
+      clean = clean.replace('/images/', '')
+    }
+    return getProductImage(clean)
+  }
+
+  const subtotal = order.pricing?.subtotal ?? 0
+  const shipping = order.pricing?.shipping ?? 0
+  const total = order.pricing?.total ?? 0
 
   return (
     <main className="kala-container kala-confirmation-page">
@@ -52,7 +176,10 @@ export const OrderConfirmation: React.FC = () => {
             ORDER ID: <strong>{order.orderId}</strong>
           </div>
           <div style={{ marginTop: '0.5rem', fontSize: '0.8125rem', color: 'var(--kala-text-secondary)' }}>
-            Placed on {formattedDate}
+            Placed on {formattedDate} · Status:{' '}
+            <strong style={{ textTransform: 'uppercase', color: 'var(--kala-black)' }}>
+              {order.status || 'pending'}
+            </strong>
           </div>
         </header>
 
@@ -61,19 +188,22 @@ export const OrderConfirmation: React.FC = () => {
           <div className="kala-order-info-block">
             <h2 className="kala-order-info-title">CUSTOMER INFORMATION</h2>
             <div className="kala-order-info-text">
-              <p><strong>{order.customer.firstName} {order.customer.lastName}</strong></p>
+              <p>
+                <strong>
+                  {order.customer.firstName} {order.customer.lastName}
+                </strong>
+              </p>
               <p>{order.customer.email}</p>
-              <p>+91 {order.customer.phone}</p>
+              <p>{order.customer.phone}</p>
             </div>
           </div>
 
           <div className="kala-order-info-block">
             <h2 className="kala-order-info-title">SHIPPING ADDRESS</h2>
             <div className="kala-order-info-text">
-              <p>{order.shippingAddress.addressLine1}</p>
-              {order.shippingAddress.addressLine2 && <p>{order.shippingAddress.addressLine2}</p>}
+              <p>{order.shippingAddress.address}</p>
               <p>
-                {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pinCode}
+                {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode}
               </p>
               <p>India</p>
             </div>
@@ -91,7 +221,7 @@ export const OrderConfirmation: React.FC = () => {
                 role="listitem"
               >
                 <img
-                  src={item.image}
+                  src={resolveItemImage(item.image)}
                   alt={item.name}
                   className="kala-order-item-img"
                 />
@@ -113,15 +243,15 @@ export const OrderConfirmation: React.FC = () => {
         <div className="kala-order-totals">
           <div className="kala-order-total-row">
             <span>Subtotal</span>
-            <span>₹{order.subtotal.toLocaleString('en-IN')}</span>
+            <span>₹{subtotal.toLocaleString('en-IN')}</span>
           </div>
           <div className="kala-order-total-row">
             <span>Shipping</span>
-            <span>{order.shipping === 0 ? 'FREE' : `₹${order.shipping}`}</span>
+            <span>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
           </div>
           <div className="kala-order-total-row grand-total">
             <span>Total Paid</span>
-            <span>₹{order.total.toLocaleString('en-IN')}</span>
+            <span>₹{total.toLocaleString('en-IN')}</span>
           </div>
         </div>
 

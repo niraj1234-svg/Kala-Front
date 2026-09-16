@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
-import { saveOrder, generateOrderId } from '../types/order'
-import type { Order, CustomerInformation, ShippingAddress } from '../types/order'
+import { createOrder } from '../services/orderApi'
+import type { CreateOrderPayload } from '../services/orderApi'
+import { saveOrder } from '../types/order'
 import '../styles/Checkout.css'
 
 interface FormData {
@@ -39,6 +40,7 @@ export const Checkout: React.FC = () => {
 
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [orderError, setOrderError] = useState<string | null>(null)
 
   // Empty cart protection
   if (cartItems.length === 0) {
@@ -57,7 +59,8 @@ export const Checkout: React.FC = () => {
     )
   }
 
-  const shippingCost = 0 // Free standard delivery
+  // Frontend estimation for preview; backend remains canonical source of truth
+  const shippingCost = cartSubtotal >= 2000 ? 0 : 99
   const totalAmount = cartSubtotal + shippingCost
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,6 +70,9 @@ export const Checkout: React.FC = () => {
     // Clear error for field being edited
     if (errors[name as keyof FormData]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }))
+    }
+    if (orderError) {
+      setOrderError(null)
     }
   }
 
@@ -127,8 +133,9 @@ export const Checkout: React.FC = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault()
+    setOrderError(null)
 
     if (!validateForm()) {
       return
@@ -137,56 +144,86 @@ export const Checkout: React.FC = () => {
     // Verify every cart item has size
     const hasInvalidItem = cartItems.some((item) => !item.size)
     if (hasInvalidItem) {
-      alert('One or more items in your cart is missing a size selection.')
+      setOrderError('One or more items in your cart is missing a size selection.')
       return
     }
 
     setIsSubmitting(true)
 
-    const customer: CustomerInformation = {
-      firstName: formData.firstName.trim(),
-      lastName: formData.lastName.trim(),
-      email: formData.email.trim(),
-      phone: formData.phone.trim(),
-    }
-
-    const shippingAddress: ShippingAddress = {
-      addressLine1: formData.addressLine1.trim(),
-      addressLine2: formData.addressLine2.trim() || undefined,
-      city: formData.city.trim(),
-      state: formData.state.trim(),
-      pinCode: formData.pinCode.trim(),
-    }
-
-    const orderId = generateOrderId()
-
-    const newOrder: Order = {
-      orderId,
-      createdAt: new Date().toISOString(),
-      customer,
-      shippingAddress,
+    // Construct server-safe payload
+    const payload: CreateOrderPayload = {
+      customer: {
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+      },
+      shippingAddress: {
+        address: [formData.addressLine1.trim(), formData.addressLine2.trim()].filter(Boolean).join(', '),
+        city: formData.city.trim(),
+        state: formData.state.trim(),
+        pincode: formData.pinCode.trim(),
+      },
       items: cartItems.map((item) => ({
         productId: item.productId,
-        name: item.name,
         size: item.size,
         quantity: item.quantity,
-        price: item.price,
-        image: item.image,
       })),
-      subtotal: cartSubtotal,
-      shipping: shippingCost,
-      total: totalAmount,
-      status: 'confirmed',
     }
 
-    // 1. Save order to localStorage without overwriting previous orders
-    saveOrder(newOrder)
+    try {
+      // 1. Send order to backend Express API (backed by MongoDB Atlas)
+      const response = await createOrder(payload)
 
-    // 2. Clear cart
-    clearCart()
+      if (response && response.success && response.orderId) {
+        // 2. Backward compatibility cache
+        try {
+          saveOrder({
+            orderId: response.orderId,
+            createdAt: response.order.createdAt,
+            customer: {
+              firstName: response.order.customer.firstName,
+              lastName: response.order.customer.lastName,
+              email: response.order.customer.email,
+              phone: response.order.customer.phone,
+            },
+            shippingAddress: {
+              addressLine1: formData.addressLine1.trim(),
+              addressLine2: formData.addressLine2.trim() || undefined,
+              city: formData.city.trim(),
+              state: formData.state.trim(),
+              pinCode: formData.pinCode.trim(),
+            },
+            items: response.order.items.map((it) => ({
+              productId: it.productId,
+              name: it.name,
+              size: it.size,
+              quantity: it.quantity,
+              price: it.price,
+              image: it.image,
+            })),
+            subtotal: response.order.pricing.subtotal,
+            shipping: response.order.pricing.shipping,
+            total: response.order.pricing.total,
+            status: (response.order.status as any) || 'confirmed',
+          })
+        } catch {
+          // Ignore localStorage failure
+        }
 
-    // 3. Navigate to order confirmation
-    navigate(`/order-confirmation/${orderId}`)
+        // 3. Clear cart ONLY after successful backend creation
+        clearCart()
+
+        // 4. Navigate using backend-generated orderId
+        navigate(`/order-confirmation/${response.orderId}`)
+      } else {
+        throw new Error('Unable to place your order right now. Please try again.')
+      }
+    } catch (err: any) {
+      console.error('[Checkout] Order placement error:', err)
+      setOrderError(err.message || 'Unable to place your order right now. Please try again.')
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -258,13 +295,13 @@ export const Checkout: React.FC = () => {
 
               <div className="kala-form-group">
                 <label htmlFor="phone" className="kala-form-label">
-                  Phone Number (10 Digits) *
+                  Phone Number *
                 </label>
                 <input
                   id="phone"
                   name="phone"
                   type="tel"
-                  placeholder="e.g. 9876543210"
+                  placeholder="10-digit mobile number"
                   className={`kala-form-input ${errors.phone ? 'error' : ''}`}
                   value={formData.phone}
                   onChange={handleChange}
@@ -276,8 +313,8 @@ export const Checkout: React.FC = () => {
           </section>
 
           {/* Section 2: Shipping Address */}
-          <section className="kala-checkout-section" aria-labelledby="shipping-address-heading">
-            <h2 id="shipping-address-heading" className="kala-checkout-section-title">
+          <section className="kala-checkout-section" aria-labelledby="shipping-heading">
+            <h2 id="shipping-heading" className="kala-checkout-section-title">
               SHIPPING ADDRESS
             </h2>
 
@@ -289,20 +326,18 @@ export const Checkout: React.FC = () => {
                 id="addressLine1"
                 name="addressLine1"
                 type="text"
-                placeholder="House/Flat No., Building, Street"
+                placeholder="House / Flat / Block No., Street"
                 className={`kala-form-input ${errors.addressLine1 ? 'error' : ''}`}
                 value={formData.addressLine1}
                 onChange={handleChange}
                 autoComplete="address-line1"
               />
-              {errors.addressLine1 && (
-                <span className="kala-form-error">{errors.addressLine1}</span>
-              )}
+              {errors.addressLine1 && <span className="kala-form-error">{errors.addressLine1}</span>}
             </div>
 
             <div className="kala-form-group" style={{ marginBottom: '1.25rem' }}>
               <label htmlFor="addressLine2" className="kala-form-label">
-                Address Line 2 <span className="optional">(Optional)</span>
+                Address Line 2 (Optional)
               </label>
               <input
                 id="addressLine2"
@@ -316,7 +351,7 @@ export const Checkout: React.FC = () => {
               />
             </div>
 
-            <div className="kala-form-grid two-col" style={{ marginBottom: '1.25rem' }}>
+            <div className="kala-form-grid three-col">
               <div className="kala-form-group">
                 <label htmlFor="city" className="kala-form-label">
                   City *
@@ -348,24 +383,24 @@ export const Checkout: React.FC = () => {
                 />
                 {errors.state && <span className="kala-form-error">{errors.state}</span>}
               </div>
-            </div>
 
-            <div className="kala-form-group">
-              <label htmlFor="pinCode" className="kala-form-label">
-                PIN Code (6 Digits) *
-              </label>
-              <input
-                id="pinCode"
-                name="pinCode"
-                type="text"
-                maxLength={6}
-                placeholder="e.g. 560001"
-                className={`kala-form-input ${errors.pinCode ? 'error' : ''}`}
-                value={formData.pinCode}
-                onChange={handleChange}
-                autoComplete="postal-code"
-              />
-              {errors.pinCode && <span className="kala-form-error">{errors.pinCode}</span>}
+              <div className="kala-form-group">
+                <label htmlFor="pinCode" className="kala-form-label">
+                  PIN Code *
+                </label>
+                <input
+                  id="pinCode"
+                  name="pinCode"
+                  type="text"
+                  placeholder="6 digits"
+                  maxLength={6}
+                  className={`kala-form-input ${errors.pinCode ? 'error' : ''}`}
+                  value={formData.pinCode}
+                  onChange={handleChange}
+                  autoComplete="postal-code"
+                />
+                {errors.pinCode && <span className="kala-form-error">{errors.pinCode}</span>}
+              </div>
             </div>
           </section>
         </div>
@@ -419,6 +454,23 @@ export const Checkout: React.FC = () => {
               <span>₹{totalAmount.toLocaleString('en-IN')}</span>
             </div>
           </div>
+
+          {orderError && (
+            <div
+              className="kala-checkout-error-banner"
+              style={{
+                color: '#b91c1c',
+                backgroundColor: '#fef2f2',
+                border: '1px solid #fecaca',
+                padding: '0.85rem',
+                marginBottom: '1rem',
+                fontSize: '0.875rem',
+                lineHeight: 1.4,
+              }}
+            >
+              {orderError}
+            </div>
+          )}
 
           <button
             type="submit"
