@@ -298,10 +298,12 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
       success: true,
       user: {
         id: user.userId,
+        userId: user.userId,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         phone: user.phone,
+        role: user.role || 'customer',
         createdAt: user.createdAt.toISOString(),
       },
     })
@@ -313,5 +315,125 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
     })
   }
 }
+
+/**
+ * POST /api/auth/admin/login
+ * Validates admin credentials, verifies user has database role === 'admin', and issues JWT.
+ */
+export const adminLogin = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, password } = req.body
+
+    // 1. Validate required fields
+    if (!email || typeof email !== 'string' || !email.trim()) {
+      res.status(400).json({
+        success: false,
+        message: 'Email address is required.',
+      })
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const normalizedEmail = email.trim().toLowerCase()
+    if (!emailRegex.test(normalizedEmail)) {
+      res.status(400).json({
+        success: false,
+        message: 'Please enter a valid email address.',
+      })
+      return
+    }
+
+    if (!password || typeof password !== 'string') {
+      res.status(400).json({
+        success: false,
+        message: 'Password is required.',
+      })
+      return
+    }
+
+    // 2. Find user in MongoDB explicitly selecting passwordHash (which has select: false)
+    const user = await User.findOne({ email: normalizedEmail }).select('+passwordHash')
+
+    // Generic error message for both non-existent user and invalid password
+    const genericAuthError = 'Invalid email or password.'
+
+    if (!user) {
+      res.status(401).json({
+        success: false,
+        message: genericAuthError,
+      })
+      return
+    }
+
+    // 3. Verify password with bcryptjs
+    const isMatch = await bcrypt.compare(password, user.passwordHash)
+    if (!isMatch) {
+      res.status(401).json({
+        success: false,
+        message: genericAuthError,
+      })
+      return
+    }
+
+    // 4. Verify authoritative database role === 'admin'
+    // Never trust client-provided role in body, headers, or query parameters
+    if (user.role !== 'admin') {
+      res.status(403).json({
+        success: false,
+        message: 'Admin access required.',
+      })
+      return
+    }
+
+    // 5. Sign JWT with minimal payload matching existing auth middleware
+    const jwtSecret = process.env.JWT_SECRET
+    if (!jwtSecret) {
+      console.error('[AuthController] JWT_SECRET is not configured in environment variables.')
+      res.status(500).json({
+        success: false,
+        message: 'Authentication service configuration error.',
+      })
+      return
+    }
+
+    const jwtExpiresIn = process.env.JWT_EXPIRES_IN || '7d'
+    const signOptions: jwt.SignOptions = {
+      expiresIn: jwtExpiresIn as jwt.SignOptions['expiresIn'],
+    }
+    const token = jwt.sign(
+      {
+        userId: user.userId,
+        email: user.email,
+      },
+      jwtSecret,
+      signOptions
+    )
+
+    // 6. Return HTTP 200 with token and safe admin user data (never password/passwordHash)
+    res.status(200).json({
+      success: true,
+      message: 'Admin login successful.',
+      token,
+      user: {
+        userId: user.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        role: 'admin',
+      },
+    })
+  } catch (error: unknown) {
+    console.error(
+      '[AuthController] adminLogin error:',
+      error instanceof Error ? error.message : 'Unknown error'
+    )
+    res.status(500).json({
+      success: false,
+      message: 'Server error while processing admin login.',
+    })
+  }
+}
+
 
 

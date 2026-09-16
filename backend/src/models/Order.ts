@@ -37,6 +37,12 @@ export type OrderStatus =
   | 'delivered'
   | 'cancelled'
 
+export interface ITracking {
+  trackingNumber?: string
+  carrier?: string
+  updatedAt?: Date
+}
+
 export interface IOrder extends Document {
   orderId: string
   userId?: string
@@ -45,6 +51,7 @@ export interface IOrder extends Document {
   items: IOrderItem[]
   pricing: IPricing
   status: OrderStatus
+  tracking?: ITracking
   createdAt: Date
   updatedAt: Date
 }
@@ -207,6 +214,15 @@ const OrderSchema = new Schema<IOrder>(
       ],
       default: 'pending',
       index: true,
+    },
+    tracking: {
+      type: {
+        trackingNumber: { type: String, trim: true, default: '' },
+        carrier: { type: String, trim: true, default: '' },
+        updatedAt: { type: Date, default: Date.now },
+      },
+      required: false,
+      _id: false,
     },
   },
   {

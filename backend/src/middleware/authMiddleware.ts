@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
+import { User } from '../models/User'
 
 export interface AuthenticatedUser {
   userId: string
@@ -87,10 +88,65 @@ export const requireAuth = (
     }
 
     next()
-  } catch (error: any) {
+  } catch (error: unknown) {
     res.status(401).json({
       success: false,
       message: 'Invalid or expired authentication token.',
+    })
+  }
+}
+
+/**
+ * Express middleware to verify that the authenticated user possesses the 'admin' role.
+ * Must be preceded by requireAuth in the middleware chain.
+ * Queries MongoDB to authoritatively verify user existence and admin status.
+ */
+export const requireAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  // 1. Verify user identity was established by preceding auth middleware
+  if (!req.user || !req.user.userId) {
+    res.status(401).json({
+      success: false,
+      message: 'Authentication required.',
+    })
+    return
+  }
+
+  try {
+    // 2. Query MongoDB by verified userId (passwordHash remains unselected by default)
+    const user = await User.findOne({ userId: req.user.userId })
+
+    // 3. User does not exist in database
+    if (!user) {
+      res.status(401).json({
+        success: false,
+        message: 'Authentication required.',
+      })
+      return
+    }
+
+    // 4. User role is not admin (customer or undefined)
+    if (user.role !== 'admin') {
+      res.status(403).json({
+        success: false,
+        message: 'Admin access required.',
+      })
+      return
+    }
+
+    // 5. User is verified admin; proceed to next handler
+    next()
+  } catch (error: unknown) {
+    console.error(
+      '[authMiddleware] requireAdmin error:',
+      error instanceof Error ? error.message : 'Database query failure'
+    )
+    res.status(500).json({
+      success: false,
+      message: 'Authorization service error.',
     })
   }
 }
