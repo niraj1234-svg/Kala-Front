@@ -27,6 +27,7 @@ import AdminCustomRequests from './pages/admin/AdminCustomRequests'
 import AdminBusinessRequests from './pages/admin/AdminBusinessRequests'
 import AdminCustomers from './pages/admin/AdminCustomers'
 import AdminCustomerDetail from './pages/admin/AdminCustomerDetail'
+import AdminCoupons from './pages/admin/AdminCoupons'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
 import AdminRoute from './components/admin/AdminRoute'
 import AdminLayout from './components/admin/AdminLayout'
@@ -158,6 +159,16 @@ function App() {
                       <AdminRoute>
                         <AdminLayout>
                           <AdminCustomerDetail />
+                        </AdminLayout>
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/coupons"
+                    element={
+                      <AdminRoute>
+                        <AdminLayout>
+                          <AdminCoupons />
                         </AdminLayout>
                       </AdminRoute>
                     }

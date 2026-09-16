@@ -949,5 +949,158 @@ export async function fetchAdminDashboardSummary(): Promise<AdminDashboardSummar
   return adminFetch<AdminDashboardSummaryResponse>('/admin/dashboard/summary')
 }
 
+// =========================================================================
+// COUPONS & DISCOUNTS MANAGEMENT (ADMIN)
+// =========================================================================
+
+export type AdminDiscountType = 'percentage' | 'fixed'
+export type AdminCouponStatus =
+  | 'disabled'
+  | 'scheduled'
+  | 'active'
+  | 'expired'
+  | 'exhausted'
+
+export interface AdminCoupon {
+  _id: string
+  code: string
+  description?: string
+  discountType: AdminDiscountType
+  discountValue: number
+  minimumOrderValue: number
+  maximumDiscount?: number | null
+  startDate: string
+  expiryDate: string
+  usageLimit?: number | null
+  perCustomerLimit?: number | null
+  usageCount: number
+  active: boolean
+  status: AdminCouponStatus
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AdminCouponCreateInput {
+  code: string
+  description?: string
+  discountType: AdminDiscountType
+  discountValue: number
+  minimumOrderValue?: number
+  maximumDiscount?: number | null
+  startDate: string
+  expiryDate: string
+  usageLimit?: number | null
+  perCustomerLimit?: number | null
+  active?: boolean
+}
+
+export interface AdminCouponUpdateInput {
+  description?: string
+  discountType?: AdminDiscountType
+  discountValue?: number
+  minimumOrderValue?: number
+  maximumDiscount?: number | null
+  startDate?: string
+  expiryDate?: string
+  usageLimit?: number | null
+  perCustomerLimit?: number | null
+  active?: boolean
+}
+
+export interface AdminCouponsFilterParams {
+  page?: number
+  limit?: number
+  search?: string
+  active?: boolean | string
+  discountType?: string
+  status?: string
+}
+
+export interface AdminCouponsResponse {
+  success: boolean
+  coupons: AdminCoupon[]
+  pagination: AdminPagination
+}
+
+export interface AdminCouponDetailResponse {
+  success: boolean
+  coupon: AdminCoupon
+}
+
+export interface AdminCouponActionResponse {
+  success: boolean
+  message: string
+  coupon?: AdminCoupon
+}
+
+/**
+ * Retrieves a paginated list of coupons with optional filters and search.
+ */
+export async function fetchAdminCoupons(
+  params: AdminCouponsFilterParams = {}
+): Promise<AdminCouponsResponse> {
+  const query = new URLSearchParams()
+  if (params.page) query.set('page', params.page.toString())
+  if (params.limit) query.set('limit', params.limit.toString())
+  if (params.search) query.set('search', params.search.trim())
+  if (params.active !== undefined && params.active !== '') {
+    query.set('active', params.active.toString())
+  }
+  if (params.discountType && params.discountType !== 'all') {
+    query.set('discountType', params.discountType)
+  }
+  if (params.status && params.status !== 'all') {
+    query.set('status', params.status)
+  }
+
+  const queryString = query.toString() ? `?${query.toString()}` : ''
+  return adminFetch<AdminCouponsResponse>(`/admin/coupons${queryString}`)
+}
+
+/**
+ * Retrieves details for a specific coupon by ID.
+ */
+export async function fetchAdminCouponById(
+  couponId: string
+): Promise<AdminCouponDetailResponse> {
+  return adminFetch<AdminCouponDetailResponse>(`/admin/coupons/${couponId}`)
+}
+
+/**
+ * Creates a new promotional coupon.
+ */
+export async function createAdminCoupon(
+  data: AdminCouponCreateInput
+): Promise<AdminCouponActionResponse> {
+  return adminFetch<AdminCouponActionResponse>('/admin/coupons', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+}
+
+/**
+ * Updates an existing coupon configuration.
+ */
+export async function updateAdminCoupon(
+  couponId: string,
+  data: AdminCouponUpdateInput
+): Promise<AdminCouponActionResponse> {
+  return adminFetch<AdminCouponActionResponse>(`/admin/coupons/${couponId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  })
+}
+
+/**
+ * Deletes an unused coupon. Used coupons (usageCount > 0) are rejected by server.
+ */
+export async function deleteAdminCoupon(
+  couponId: string
+): Promise<AdminCouponActionResponse> {
+  return adminFetch<AdminCouponActionResponse>(`/admin/coupons/${couponId}`, {
+    method: 'DELETE',
+  })
+}
+
 
 

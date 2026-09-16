@@ -20,9 +20,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { label: 'Dashboard', to: '/admin', available: true, end: true },
     { label: 'Orders', to: '/admin/orders', available: true, end: false },
     { label: 'Products', to: '/admin/products', available: true, end: false },
+    { label: 'Customers', to: '/admin/customers', available: true, end: false },
+    { label: 'Coupons', to: '/admin/coupons', available: true, end: false },
     { label: 'Custom Apparel', to: '/admin/custom-requests', available: true, end: false },
     { label: 'Business Branding', to: '/admin/business-requests', available: true, end: false },
-    { label: 'Customers', to: '/admin/customers', available: true, end: false },
     { label: 'Analytics', to: '/admin/analytics', available: true, end: false },
   ]
 

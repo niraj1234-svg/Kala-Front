@@ -14,6 +14,7 @@ import adminProductRouter from './routes/adminProductRoutes'
 import adminCustomerRouter from './routes/adminCustomerRoutes'
 import adminAnalyticsRouter from './routes/adminAnalyticsRoutes'
 import adminDashboardRouter from './routes/adminDashboardRoutes'
+import adminCouponRouter from './routes/adminCouponRoutes'
 
 // Load environment variables
 dotenv.config()
@@ -52,6 +53,7 @@ app.use('/api/admin/dashboard', adminDashboardRouter)
 app.use('/api/admin/orders', adminOrderRouter)
 app.use('/api/admin/products', adminProductRouter)
 app.use('/api/admin/customers', adminCustomerRouter)
+app.use('/api/admin/coupons', adminCouponRouter)
 app.use('/api/admin/analytics', adminAnalyticsRouter)
 app.use('/api/admin/custom-requests', adminCustomRequestRouter)
 app.use('/api/admin/business-requests', adminBusinessRequestRouter)
