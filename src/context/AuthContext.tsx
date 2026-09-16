@@ -1,161 +1,134 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import {
+  registerUser,
+  loginUser,
+  fetchCurrentUser,
+  getAuthToken,
+  clearAuthToken,
+  type User,
+  type RegisterRequest,
+} from '../services/authApi'
 
-export interface User {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  createdAt: string
-}
-
-export interface StoredUser extends User {
-  password: string
-}
+export type { User }
 
 export interface AuthContextType {
   currentUser: User | null
   isAuthenticated: boolean
-  login: (email: string, password: string) => { success: boolean; error?: string }
-  register: (userData: {
-    firstName: string
-    lastName: string
-    email: string
-    phone: string
-    password: string
-  }) => { success: boolean; error?: string }
+  isLoading: boolean
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
+  register: (userData: RegisterRequest) => Promise<{ success: boolean; error?: string }>
   logout: () => void
 }
 
-const USERS_STORAGE_KEY = 'kala_users'
-const CURRENT_USER_STORAGE_KEY = 'kala_current_user'
+const CURRENT_USER_KEY = 'kala_current_user'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-function getStoredUsers(): StoredUser[] {
-  try {
-    const data = localStorage.getItem(USERS_STORAGE_KEY)
-    if (data) {
-      const parsed = JSON.parse(data)
-      if (Array.isArray(parsed)) {
-        return parsed
-      }
-    }
-  } catch (err) {
-    console.error('Failed to read users from localStorage:', err)
-  }
-  return []
-}
-
-function saveUsers(users: StoredUser[]): void {
-  try {
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users))
-  } catch (err) {
-    console.error('Failed to write users to localStorage:', err)
-  }
-}
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Synchronous session initialization to support immediate component pre-fill (e.g. Checkout)
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    const token = getAuthToken()
+    if (!token) return null
     try {
-      const data = localStorage.getItem(CURRENT_USER_STORAGE_KEY)
-      if (data) {
-        return JSON.parse(data) as User
+      const cached = localStorage.getItem(CURRENT_USER_KEY)
+      if (cached) {
+        return JSON.parse(cached) as User
       }
-    } catch (err) {
-      console.error('Failed to restore session from localStorage:', err)
+    } catch {
+      // Ignore cache parse error
     }
     return null
   })
 
-  // Synchronize session to localStorage
+  const [isLoading, setIsLoading] = useState<boolean>(() => !currentUser && Boolean(getAuthToken()))
+
+  // Session hydration and verification on mount
   useEffect(() => {
-    try {
-      if (currentUser) {
-        localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(currentUser))
-      } else {
-        localStorage.removeItem(CURRENT_USER_STORAGE_KEY)
+    let isMounted = true
+
+    const initAuth = async () => {
+      const token = getAuthToken()
+      if (!token) {
+        if (isMounted) {
+          setCurrentUser(null)
+          localStorage.removeItem(CURRENT_USER_KEY)
+          setIsLoading(false)
+        }
+        return
       }
-    } catch (err) {
-      console.error('Failed to synchronize session to localStorage:', err)
-    }
-  }, [currentUser])
 
-  const register = (userData: {
-    firstName: string
-    lastName: string
-    email: string
-    phone: string
-    password: string
-  }): { success: boolean; error?: string } => {
-    const cleanEmail = userData.email.trim().toLowerCase()
-    const users = getStoredUsers()
-
-    // 1. Check duplicate email (case-insensitive)
-    const exists = users.some((u) => u.email.toLowerCase() === cleanEmail)
-    if (exists) {
-      return { success: false, error: 'An account with this email already exists.' }
-    }
-
-    // 2. Generate unique user ID
-    const userId = `KALA-USR-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
-
-    const newStoredUser: StoredUser = {
-      id: userId,
-      firstName: userData.firstName.trim(),
-      lastName: userData.lastName.trim(),
-      email: cleanEmail,
-      phone: userData.phone.trim(),
-      password: userData.password,
-      createdAt: new Date().toISOString(),
+      try {
+        const user = await fetchCurrentUser()
+        if (isMounted) {
+          if (user) {
+            setCurrentUser(user)
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user))
+          } else {
+            setCurrentUser(null)
+            localStorage.removeItem(CURRENT_USER_KEY)
+          }
+        }
+      } catch (err) {
+        if (isMounted) {
+          setCurrentUser(null)
+          localStorage.removeItem(CURRENT_USER_KEY)
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
     }
 
-    // Save user to kala_users without overwriting previous users
-    saveUsers([...users, newStoredUser])
+    initAuth()
 
-    // Create session for the newly registered user (without exposing password in session)
-    const userSession: User = {
-      id: newStoredUser.id,
-      firstName: newStoredUser.firstName,
-      lastName: newStoredUser.lastName,
-      email: newStoredUser.email,
-      phone: newStoredUser.phone,
-      createdAt: newStoredUser.createdAt,
+    return () => {
+      isMounted = false
     }
+  }, [])
 
-    setCurrentUser(userSession)
-    return { success: true }
+  const register = async (
+    userData: RegisterRequest
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const res = await registerUser(userData)
+      if (res && res.success && res.user) {
+        setCurrentUser(res.user)
+        try {
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(res.user))
+        } catch {}
+        return { success: true }
+      }
+      return { success: false, error: res?.message || 'Registration failed.' }
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Registration failed.' }
+    }
   }
 
-  const login = (
+  const login = async (
     email: string,
     password: string
-  ): { success: boolean; error?: string } => {
-    const cleanEmail = email.trim().toLowerCase()
-    const users = getStoredUsers()
-
-    const foundUser = users.find(
-      (u) => u.email.toLowerCase() === cleanEmail && u.password === password
-    )
-
-    if (!foundUser) {
-      return { success: false, error: 'Invalid email or password.' }
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const res = await loginUser({ email, password })
+      if (res && res.success && res.user) {
+        setCurrentUser(res.user)
+        try {
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(res.user))
+        } catch {}
+        return { success: true }
+      }
+      return { success: false, error: res?.message || 'Invalid email or password.' }
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Invalid email or password.' }
     }
-
-    const userSession: User = {
-      id: foundUser.id,
-      firstName: foundUser.firstName,
-      lastName: foundUser.lastName,
-      email: foundUser.email,
-      phone: foundUser.phone,
-      createdAt: foundUser.createdAt,
-    }
-
-    setCurrentUser(userSession)
-    return { success: true }
   }
 
   const logout = () => {
+    clearAuthToken()
+    try {
+      localStorage.removeItem(CURRENT_USER_KEY)
+    } catch {}
     setCurrentUser(null)
   }
 
@@ -164,6 +137,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         currentUser,
         isAuthenticated: Boolean(currentUser),
+        isLoading,
         login,
         register,
         logout,

@@ -7,6 +7,7 @@ import productRouter from './routes/productRoutes'
 import orderRouter from './routes/orderRoutes'
 import customRequestRouter from './routes/customRequestRoutes'
 import businessRequestRouter from './routes/businessRequestRoutes'
+import authRouter from './routes/authRoutes'
 
 // Load environment variables
 dotenv.config()
@@ -38,6 +39,7 @@ app.use('/api/products', productRouter)
 app.use('/api/orders', orderRouter)
 app.use('/api/custom-requests', customRequestRouter)
 app.use('/api/business-requests', businessRequestRouter)
+app.use('/api/auth', authRouter)
 
 // Start Server
 app.listen(PORT, async () => {
@@ -49,6 +51,7 @@ app.listen(PORT, async () => {
   console.log(`[KALA Backend] Orders API:      http://localhost:${PORT}/api/orders`)
   console.log(`[KALA Backend] Custom Req API:  http://localhost:${PORT}/api/custom-requests`)
   console.log(`[KALA Backend] Business API:    http://localhost:${PORT}/api/business-requests`)
+  console.log(`[KALA Backend] Auth API:        http://localhost:${PORT}/api/auth`)
 })
 
 export default app

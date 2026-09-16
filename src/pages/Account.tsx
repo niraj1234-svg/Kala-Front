@@ -6,7 +6,7 @@ import type { Order } from '../types/order'
 import '../styles/Account.css'
 
 export const Account: React.FC = () => {
-  const { currentUser, isAuthenticated, login, register, logout } = useAuth()
+  const { currentUser, isAuthenticated, isLoading, login, register, logout } = useAuth()
 
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
 
@@ -14,6 +14,7 @@ export const Account: React.FC = () => {
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
   const [loginError, setLoginError] = useState('')
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
 
   // Register form state
   const [regFirstName, setRegFirstName] = useState('')
@@ -23,9 +24,10 @@ export const Account: React.FC = () => {
   const [regPassword, setRegPassword] = useState('')
   const [regConfirmPassword, setRegConfirmPassword] = useState('')
   const [regErrors, setRegErrors] = useState<Record<string, string>>({})
+  const [isRegistering, setIsRegistering] = useState(false)
 
   // Handle Login submission
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoginError('')
 
@@ -34,14 +36,21 @@ export const Account: React.FC = () => {
       return
     }
 
-    const result = login(loginEmail, loginPassword)
-    if (!result.success) {
-      setLoginError(result.error || 'Invalid email or password.')
+    setIsLoggingIn(true)
+    try {
+      const result = await login(loginEmail, loginPassword)
+      if (!result.success) {
+        setLoginError(result.error || 'Invalid email or password.')
+      }
+    } catch (err: any) {
+      setLoginError(err.message || 'Invalid email or password.')
+    } finally {
+      setIsLoggingIn(false)
     }
   }
 
   // Handle Register submission
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const errors: Record<string, string> = {}
 
@@ -91,17 +100,33 @@ export const Account: React.FC = () => {
       return
     }
 
-    const result = register({
-      firstName: regFirstName,
-      lastName: regLastName,
-      email: regEmail,
-      phone: regPhone,
-      password: regPassword,
-    })
+    setIsRegistering(true)
+    try {
+      const result = await register({
+        firstName: regFirstName,
+        lastName: regLastName,
+        email: regEmail,
+        phone: regPhone,
+        password: regPassword,
+      })
 
-    if (!result.success) {
-      setRegErrors({ banner: result.error || 'Registration failed.' })
+      if (!result.success) {
+        setRegErrors({ banner: result.error || 'Registration failed.' })
+      }
+    } catch (err: any) {
+      setRegErrors({ banner: err.message || 'Registration failed.' })
+    } finally {
+      setIsRegistering(false)
     }
+  }
+
+  // Initial session hydration loading state
+  if (isLoading) {
+    return (
+      <main className="kala-container kala-account-page" style={{ minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p className="kala-body" style={{ color: 'var(--kala-text-secondary)', letterSpacing: '0.1em' }}>LOADING ACCOUNT...</p>
+      </main>
+    )
   }
 
   // --------------------------------------------------------------------------
@@ -180,8 +205,12 @@ export const Account: React.FC = () => {
                   />
                 </div>
 
-                <button type="submit" className="kala-btn kala-btn-primary kala-auth-submit-btn">
-                  LOG IN
+                <button
+                  type="submit"
+                  className="kala-btn kala-btn-primary kala-auth-submit-btn"
+                  disabled={isLoggingIn}
+                >
+                  {isLoggingIn ? 'LOGGING IN...' : 'LOG IN'}
                 </button>
               </form>
             </div>
@@ -315,8 +344,12 @@ export const Account: React.FC = () => {
                   </div>
                 </div>
 
-                <button type="submit" className="kala-btn kala-btn-primary kala-auth-submit-btn">
-                  CREATE ACCOUNT
+                <button
+                  type="submit"
+                  className="kala-btn kala-btn-primary kala-auth-submit-btn"
+                  disabled={isRegistering}
+                >
+                  {isRegistering ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
                 </button>
               </form>
             </div>
