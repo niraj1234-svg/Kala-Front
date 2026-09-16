@@ -51,6 +51,12 @@ export interface ITracking {
   updatedAt?: Date
 }
 
+export interface IOrderStatusHistory {
+  status: OrderStatus
+  changedAt: Date
+  note?: string
+}
+
 export interface IOrder extends Document {
   orderId: string
   userId?: string
@@ -61,6 +67,7 @@ export interface IOrder extends Document {
   coupon?: IOrderCoupon
   status: OrderStatus
   tracking?: ITracking
+  statusHistory?: IOrderStatusHistory[]
   createdAt: Date
   updatedAt: Date
 }
@@ -245,6 +252,35 @@ const OrderSchema = new Schema<IOrder>(
         carrier: { type: String, trim: true, default: '' },
         updatedAt: { type: Date, default: Date.now },
       },
+      required: false,
+      _id: false,
+    },
+    statusHistory: {
+      type: [
+        {
+          status: {
+            type: String,
+            required: true,
+            enum: [
+              'pending',
+              'confirmed',
+              'processing',
+              'shipped',
+              'delivered',
+              'cancelled',
+            ],
+          },
+          changedAt: {
+            type: Date,
+            default: Date.now,
+          },
+          note: {
+            type: String,
+            trim: true,
+            default: '',
+          },
+        },
+      ],
       required: false,
       _id: false,
     },

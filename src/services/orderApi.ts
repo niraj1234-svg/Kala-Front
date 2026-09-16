@@ -55,6 +55,18 @@ export interface BackendOrderItem {
   price: number
 }
 
+export interface OrderTracking {
+  trackingNumber?: string
+  carrier?: string
+  updatedAt?: string
+}
+
+export interface OrderStatusHistoryItem {
+  status: string
+  changedAt: string
+  note?: string
+}
+
 export interface BackendOrder {
   orderId: string
   userId?: string
@@ -84,6 +96,8 @@ export interface BackendOrder {
     discountAmount: number
   }
   status: string
+  tracking?: OrderTracking
+  statusHistory?: OrderStatusHistoryItem[]
   createdAt: string
   updatedAt?: string
 }

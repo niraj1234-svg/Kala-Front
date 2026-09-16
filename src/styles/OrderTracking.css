@@ -1,0 +1,402 @@
+/* ==========================================================================
+   KALA ORDER TRACKING & SHIPPING STYLES
+   Minimal Luxury Aesthetic
+   ========================================================================== */
+
+.kala-tracking-card {
+  background-color: var(--kala-bg-warm, #faf9f6);
+  border: 1px solid var(--kala-border, #e5e2db);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  margin-bottom: 2.25rem;
+}
+
+.kala-tracking-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--kala-border, #e5e2db);
+  margin-bottom: 2rem;
+}
+
+.kala-tracking-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.kala-tracking-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--kala-orange, #e05a2b);
+}
+
+.kala-tracking-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.kala-tracking-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Status Badges */
+.kala-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+}
+
+.kala-status-badge.pending {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.kala-status-badge.confirmed {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.kala-status-badge.processing {
+  background-color: #ffedd5;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+.kala-status-badge.shipped {
+  background-color: #f3e8ff;
+  color: #7e22ce;
+  border: 1px solid #e9d5ff;
+}
+
+.kala-status-badge.delivered {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.kala-status-badge.cancelled {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.kala-tracking-refresh-btn {
+  background: transparent;
+  border: 1px solid var(--kala-border, #e5e2db);
+  color: var(--kala-text-secondary, #6b7280);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+}
+
+.kala-tracking-refresh-btn:hover:not(:disabled) {
+  border-color: var(--kala-black, #111111);
+  color: var(--kala-black, #111111);
+}
+
+.kala-tracking-refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   Timeline Stepper (Horizontal on Desktop, Vertical on Mobile)
+   -------------------------------------------------------------------------- */
+.kala-timeline-wrap {
+  margin-bottom: 2.25rem;
+}
+
+.kala-timeline-stepper {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Horizontal connecting track */
+.kala-timeline-track {
+  position: absolute;
+  top: 18px;
+  left: 30px;
+  right: 30px;
+  height: 2px;
+  background-color: #e5e2db;
+  z-index: 1;
+}
+
+.kala-timeline-track-fill {
+  height: 100%;
+  background-color: var(--kala-black, #111111);
+  transition: width 0.4s ease;
+}
+
+.kala-timeline-step {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  padding: 0 0.5rem;
+}
+
+.kala-timeline-node {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 2px solid #d1d5db;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.65rem;
+  transition: all 0.3s ease;
+}
+
+.kala-timeline-step.completed .kala-timeline-node {
+  background-color: var(--kala-black, #111111);
+  border-color: var(--kala-black, #111111);
+  color: #ffffff;
+}
+
+.kala-timeline-step.current .kala-timeline-node {
+  background-color: #ffffff;
+  border-color: var(--kala-orange, #e05a2b);
+  color: var(--kala-orange, #e05a2b);
+  box-shadow: 0 0 0 4px rgba(224, 90, 43, 0.15);
+}
+
+.kala-timeline-step-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.kala-timeline-step.completed .kala-timeline-step-label,
+.kala-timeline-step.current .kala-timeline-step-label {
+  color: var(--kala-black, #111111);
+}
+
+.kala-timeline-step-time {
+  font-size: 0.725rem;
+  color: #9ca3af;
+  line-height: 1.3;
+}
+
+.kala-timeline-step-note {
+  font-size: 0.725rem;
+  color: var(--kala-orange, #e05a2b);
+  margin-top: 0.2rem;
+  max-width: 140px;
+}
+
+/* Vertical timeline adaptation for screens <= 720px */
+@media (max-width: 720px) {
+  .kala-timeline-stepper {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .kala-timeline-track {
+    top: 18px;
+    bottom: 18px;
+    left: 18px;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+
+  .kala-timeline-track-fill {
+    width: 100%;
+    transition: height 0.4s ease;
+  }
+
+  .kala-timeline-step {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+    padding: 0;
+    gap: 1.25rem;
+  }
+
+  .kala-timeline-node {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .kala-timeline-step-info {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.35rem;
+  }
+
+  .kala-timeline-step-note {
+    max-width: none;
+  }
+}
+
+/* Cancelled Order Notice */
+.kala-cancelled-alert {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 1.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.kala-cancelled-icon {
+  color: #b91c1c;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.kala-cancelled-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #991b1b;
+  margin: 0 0 0.25rem 0;
+}
+
+.kala-cancelled-desc {
+  font-size: 0.85rem;
+  color: #7f1d1d;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* --------------------------------------------------------------------------
+   Shipping Information Card
+   -------------------------------------------------------------------------- */
+.kala-shipping-card {
+  background-color: #ffffff;
+  border: 1px solid var(--kala-border, #e5e2db);
+  padding: 1.25rem 1.5rem;
+}
+
+.kala-shipping-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kala-black, #111111);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.kala-shipping-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 600px) {
+  .kala-shipping-grid {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+  }
+}
+
+.kala-shipping-field-label {
+  font-size: 0.725rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.kala-shipping-field-val {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+}
+
+.kala-tracking-num-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.kala-tracking-code {
+  font-family: monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+  word-break: break-all;
+}
+
+.kala-copy-btn {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  cursor: pointer;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.15s ease;
+}
+
+.kala-copy-btn:hover {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.kala-copy-btn.copied {
+  background-color: #dcfce7;
+  border-color: #86efac;
+  color: #15803d;
+}
+
+/* Shipping unavailable fallback */
+.kala-shipping-empty-note {
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}

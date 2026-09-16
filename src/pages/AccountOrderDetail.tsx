@@ -3,7 +3,9 @@ import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { fetchOrderById } from '../services/orderApi'
 import type { BackendOrder } from '../services/orderApi'
+import { OrderTrackingTimeline } from '../components/orders/OrderTrackingTimeline'
 import '../styles/OrderConfirmation.css'
+import '../styles/OrderTracking.css'
 
 export const AccountOrderDetail: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>()
@@ -11,8 +13,24 @@ export const AccountOrderDetail: React.FC = () => {
 
   const [order, setOrder] = useState<BackendOrder | null>(null)
   const [isLoadingOrder, setIsLoadingOrder] = useState<boolean>(true)
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
   const [statusCode, setStatusCode] = useState<number | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  const handleRefresh = async () => {
+    if (!orderId) return
+    setIsRefreshing(true)
+    try {
+      const refreshed = await fetchOrderById(orderId)
+      if (refreshed) {
+        setOrder(refreshed)
+      }
+    } catch (err: any) {
+      console.warn('Failed to refresh order details:', err)
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
 
   useEffect(() => {
     // 1. Wait for session hydration to complete
@@ -228,12 +246,16 @@ export const AccountOrderDetail: React.FC = () => {
             ORDER ID: <strong>{order.orderId}</strong>
           </div>
           <div style={{ marginTop: '0.5rem', fontSize: '0.8125rem', color: 'var(--kala-text-secondary)' }}>
-            Placed on {formattedDate} · Status:{' '}
-            <strong style={{ color: '#059669' }}>
-              {order.status === 'confirmed' ? 'Order Placed' : order.status}
-            </strong>
+            Placed on {formattedDate}
           </div>
         </header>
+
+        {/* Live Fulfillment & Shipping Tracker */}
+        <OrderTrackingTimeline
+          order={order}
+          onRefresh={handleRefresh}
+          isRefreshing={isRefreshing}
+        />
 
         {/* Customer and Shipping Details */}
         <div className="kala-order-info-grid">

@@ -403,6 +403,13 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         },
         ...(couponSnapshot ? { coupon: couponSnapshot } : {}),
         status: 'pending',
+        statusHistory: [
+          {
+            status: 'pending',
+            changedAt: new Date(),
+            note: 'Order placed by customer',
+          },
+        ],
       })
 
       res.status(201).json({

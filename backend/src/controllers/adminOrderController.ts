@@ -121,26 +121,26 @@ export const getAdminOrderById = async (req: Request, res: Response): Promise<vo
 
 /**
  * PATCH /api/admin/orders/:orderId/status
- * Updates the order lifecycle status.
+ * Updates the order lifecycle status with state transition rules and status history.
  * Protected by requireAuth and requireAdmin.
  */
 export const updateAdminOrderStatus = async (req: Request, res: Response): Promise<void> => {
   try {
     const { orderId } = req.params
-    const { status } = req.body
+    const { status, note, trackingNumber, carrier } = req.body
 
-    if (!orderId || typeof orderId !== 'string') {
+    if (!orderId || typeof orderId !== 'string' || !orderId.trim()) {
       res.status(400).json({
         success: false,
-        message: 'Order ID is required.',
+        message: 'A valid Order ID is required.',
       })
       return
     }
 
-    if (!status || typeof status !== 'string') {
+    if (!status || typeof status !== 'string' || !status.trim()) {
       res.status(400).json({
         success: false,
-        message: 'Status is required.',
+        message: 'Order status is required and must be a string.',
       })
       return
     }
@@ -154,9 +154,114 @@ export const updateAdminOrderStatus = async (req: Request, res: Response): Promi
       return
     }
 
+    const cleanOrderId = orderId.trim()
+    const order = await Order.findOne({ orderId: cleanOrderId })
+
+    if (!order) {
+      res.status(404).json({
+        success: false,
+        message: `Order '${cleanOrderId}' not found.`,
+      })
+      return
+    }
+
+    // 1. State Transition Validation Rules
+    // Rule A: Cancelled orders cannot be transitioned back into active fulfillment
+    if (order.status === 'cancelled' && normalizedStatus !== 'cancelled') {
+      res.status(400).json({
+        success: false,
+        message: 'Cannot transition a cancelled order back into active fulfillment.',
+      })
+      return
+    }
+
+    // Rule B: Delivered orders cannot be regressed to earlier fulfillment stages
+    if (
+      order.status === 'delivered' &&
+      normalizedStatus !== 'delivered' &&
+      normalizedStatus !== 'cancelled'
+    ) {
+      res.status(400).json({
+        success: false,
+        message: 'Delivered orders cannot be regressed to earlier fulfillment stages.',
+      })
+      return
+    }
+
+    // If identical status and no tracking updates, return current order cleanly
+    if (order.status === normalizedStatus && !trackingNumber && !carrier) {
+      res.status(200).json({
+        success: true,
+        message: `Order is already in '${normalizedStatus}' status.`,
+        order,
+      })
+      return
+    }
+
+    // 2. Prepare Updates
+    const updateQuery: Record<string, any> = {
+      $set: {
+        status: normalizedStatus as OrderStatus,
+      },
+    }
+
+    // If tracking info is provided alongside status (especially when moving to shipped)
+    if (trackingNumber !== undefined || carrier !== undefined) {
+      if (trackingNumber !== undefined) {
+        if (typeof trackingNumber !== 'string' || !trackingNumber.trim()) {
+          res.status(400).json({
+            success: false,
+            message: 'Tracking number must be a non-empty string when provided.',
+          })
+          return
+        }
+        if (trackingNumber.trim().length > 100) {
+          res.status(400).json({
+            success: false,
+            message: 'Tracking number cannot exceed 100 characters.',
+          })
+          return
+        }
+      }
+
+      if (carrier !== undefined) {
+        if (typeof carrier !== 'string' || !carrier.trim()) {
+          res.status(400).json({
+            success: false,
+            message: 'Carrier must be a non-empty string when provided.',
+          })
+          return
+        }
+        if (carrier.trim().length > 100) {
+          res.status(400).json({
+            success: false,
+            message: 'Carrier cannot exceed 100 characters.',
+          })
+          return
+        }
+      }
+
+      updateQuery.$set.tracking = {
+        trackingNumber: trackingNumber !== undefined ? trackingNumber.trim() : (order.tracking?.trackingNumber || ''),
+        carrier: carrier !== undefined ? carrier.trim() : (order.tracking?.carrier || ''),
+        updatedAt: new Date(),
+      }
+    }
+
+    // 3. Append Status History Entry with Server Timestamp
+    const historyEntry = {
+      status: normalizedStatus as OrderStatus,
+      changedAt: new Date(),
+      note: typeof note === 'string' && note.trim() ? note.trim() : `Status updated to ${normalizedStatus}`,
+    }
+
+    updateQuery.$push = {
+      statusHistory: historyEntry,
+    }
+
     const updatedOrder = await Order.findOneAndUpdate(
-      { orderId: orderId.trim() },
-      { $set: { status: normalizedStatus as OrderStatus } },
+      { orderId: cleanOrderId },
+      updateQuery,
       { new: true }
     )
 
@@ -170,7 +275,7 @@ export const updateAdminOrderStatus = async (req: Request, res: Response): Promi
 
     res.status(200).json({
       success: true,
-      message: 'Order status updated successfully.',
+      message: `Order status updated to '${normalizedStatus}' successfully.`,
       order: updatedOrder,
     })
   } catch (error: unknown) {
@@ -187,7 +292,7 @@ export const updateAdminOrderStatus = async (req: Request, res: Response): Promi
 
 /**
  * PATCH /api/admin/orders/:orderId/tracking
- * Updates carrier and tracking number for an order.
+ * Updates carrier and tracking number for an order with strict validation.
  * Protected by requireAuth and requireAdmin.
  */
 export const updateAdminOrderTracking = async (req: Request, res: Response): Promise<void> => {
@@ -195,25 +300,78 @@ export const updateAdminOrderTracking = async (req: Request, res: Response): Pro
     const { orderId } = req.params
     const { trackingNumber, carrier } = req.body
 
-    if (!orderId || typeof orderId !== 'string') {
+    if (!orderId || typeof orderId !== 'string' || !orderId.trim()) {
       res.status(400).json({
         success: false,
-        message: 'Order ID is required.',
+        message: 'A valid Order ID is required.',
       })
       return
     }
 
-    const cleanTrackingNumber = typeof trackingNumber === 'string' ? trackingNumber.trim() : ''
-    const cleanCarrier = typeof carrier === 'string' ? carrier.trim() : ''
-
-    if (cleanTrackingNumber.length > 100 || cleanCarrier.length > 100) {
+    // 1. Validate Tracking Number
+    if (trackingNumber === undefined || typeof trackingNumber !== 'string') {
       res.status(400).json({
         success: false,
-        message: 'Tracking details exceed maximum allowed length.',
+        message: 'Tracking number is required and must be a string.',
       })
       return
     }
 
+    const cleanTrackingNumber = trackingNumber.trim()
+    if (!cleanTrackingNumber) {
+      res.status(400).json({
+        success: false,
+        message: 'Tracking number cannot be empty.',
+      })
+      return
+    }
+
+    if (cleanTrackingNumber.length > 100) {
+      res.status(400).json({
+        success: false,
+        message: 'Tracking number cannot exceed 100 characters.',
+      })
+      return
+    }
+
+    // 2. Validate Carrier
+    if (carrier === undefined || typeof carrier !== 'string') {
+      res.status(400).json({
+        success: false,
+        message: 'Carrier is required and must be a string.',
+      })
+      return
+    }
+
+    const cleanCarrier = carrier.trim()
+    if (!cleanCarrier) {
+      res.status(400).json({
+        success: false,
+        message: 'Carrier cannot be empty.',
+      })
+      return
+    }
+
+    if (cleanCarrier.length > 100) {
+      res.status(400).json({
+        success: false,
+        message: 'Carrier cannot exceed 100 characters.',
+      })
+      return
+    }
+
+    const cleanOrderId = orderId.trim()
+    const order = await Order.findOne({ orderId: cleanOrderId })
+
+    if (!order) {
+      res.status(404).json({
+        success: false,
+        message: `Order '${cleanOrderId}' not found.`,
+      })
+      return
+    }
+
+    // 3. Save Server-Generated Timestamp
     const tracking = {
       trackingNumber: cleanTrackingNumber,
       carrier: cleanCarrier,
@@ -221,7 +379,7 @@ export const updateAdminOrderTracking = async (req: Request, res: Response): Pro
     }
 
     const updatedOrder = await Order.findOneAndUpdate(
-      { orderId: orderId.trim() },
+      { orderId: cleanOrderId },
       { $set: { tracking } },
       { new: true }
     )

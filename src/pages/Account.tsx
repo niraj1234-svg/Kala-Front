@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { fetchMyOrders } from '../services/orderApi'
 import type { BackendOrder } from '../services/orderApi'
 import '../styles/Account.css'
+import '../styles/OrderTracking.css'
 
 export const Account: React.FC = () => {
   const { currentUser, isAuthenticated, isLoading, login, register, logout } = useAuth()
@@ -500,14 +501,31 @@ export const Account: React.FC = () => {
 
                   <div className="kala-order-summary-body">
                     <div>
-                      <div className="kala-order-summary-status">
-                        ● {order.status === 'confirmed' ? 'Order Placed' : order.status}
+                      <div style={{ marginBottom: '0.4rem' }}>
+                        <span
+                          className={`kala-status-badge ${(order.status || 'pending').toLowerCase()}`}
+                          style={{ fontSize: '0.7rem', padding: '0.25rem 0.6rem' }}
+                        >
+                          Status: {order.status === 'pending'
+                            ? 'Pending'
+                            : order.status === 'confirmed'
+                            ? 'Confirmed'
+                            : order.status === 'processing'
+                            ? 'Processing'
+                            : order.status === 'shipped'
+                            ? 'Shipped'
+                            : order.status === 'delivered'
+                            ? 'Delivered'
+                            : order.status === 'cancelled'
+                            ? 'Cancelled'
+                            : order.status}
+                        </span>
                       </div>
                       <div
                         style={{
                           fontSize: '0.85rem',
                           color: 'var(--kala-text-secondary)',
-                          marginTop: '0.35rem',
+                          marginTop: '0.25rem',
                         }}
                       >
                         {totalItems} {totalItems === 1 ? 'Item' : 'Items'}

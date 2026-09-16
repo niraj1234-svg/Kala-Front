@@ -68,9 +68,13 @@ export const AdminOrderDetail: React.FC = () => {
       const result = await updateAdminOrderStatus(order.orderId, selectedStatus)
       setOrder(result.order)
       setStatusFeedback({ type: 'success', message: 'Order status updated successfully.' })
+      // Refresh order details from backend to ensure all side-effects and history are loaded
+      await loadOrder()
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to update order status.'
       setStatusFeedback({ type: 'error', message: msg })
+      // On backend rejection, refresh order to reset selectedStatus to actual server status
+      await loadOrder()
     } finally {
       setIsUpdatingStatus(false)
     }
@@ -79,19 +83,42 @@ export const AdminOrderDetail: React.FC = () => {
   const handleTrackingSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!order) return
-    setIsUpdatingTracking(true)
     setTrackingFeedback(null)
+
+    const trimmedCarrier = carrier.trim()
+    const trimmedTracking = trackingNumber.trim()
+
+    if (!trimmedCarrier) {
+      setTrackingFeedback({ type: 'error', message: 'Carrier is required.' })
+      return
+    }
+    if (trimmedCarrier.length > 100) {
+      setTrackingFeedback({ type: 'error', message: 'Carrier cannot exceed 100 characters.' })
+      return
+    }
+    if (!trimmedTracking) {
+      setTrackingFeedback({ type: 'error', message: 'Tracking number is required.' })
+      return
+    }
+    if (trimmedTracking.length > 100) {
+      setTrackingFeedback({ type: 'error', message: 'Tracking number cannot exceed 100 characters.' })
+      return
+    }
+
+    setIsUpdatingTracking(true)
 
     try {
       const result = await updateAdminOrderTracking(order.orderId, {
-        trackingNumber,
-        carrier,
+        trackingNumber: trimmedTracking,
+        carrier: trimmedCarrier,
       })
       setOrder(result.order)
       setTrackingFeedback({ type: 'success', message: 'Tracking details updated successfully.' })
+      await loadOrder()
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to update tracking details.'
       setTrackingFeedback({ type: 'error', message: msg })
+      await loadOrder()
     } finally {
       setIsUpdatingTracking(false)
     }
@@ -296,9 +323,9 @@ export const AdminOrderDetail: React.FC = () => {
 
         {/* Right Column: Administrative Actions & Controls */}
         <aside className="admin-detail-sidebar">
-          {/* Order Lifecycle Status Update Form */}
+          {/* Order Fulfillment Section */}
           <div className="admin-card-section">
-            <h3 className="admin-section-title">Update Order Status</h3>
+            <h3 className="admin-section-title">Order Fulfillment</h3>
             {statusFeedback && (
               <div
                 className={`admin-feedback-alert ${
@@ -312,7 +339,7 @@ export const AdminOrderDetail: React.FC = () => {
             <form onSubmit={handleStatusSubmit} className="admin-action-form">
               <div className="admin-form-group">
                 <label htmlFor="order-status-select" className="admin-form-label">
-                  Fulfillment Status
+                  Current Status
                 </label>
                 <select
                   id="order-status-select"
@@ -333,14 +360,14 @@ export const AdminOrderDetail: React.FC = () => {
                 className="admin-btn admin-btn-primary full-width"
                 disabled={isUpdatingStatus || selectedStatus === order.status}
               >
-                {isUpdatingStatus ? 'Updating Status...' : 'Save Status'}
+                {isUpdatingStatus ? 'Updating...' : 'UPDATE STATUS'}
               </button>
             </form>
           </div>
 
-          {/* Logistics & Courier Tracking Form */}
+          {/* Tracking Information Form */}
           <div className="admin-card-section">
-            <h3 className="admin-section-title">Logistics & Tracking</h3>
+            <h3 className="admin-section-title">Tracking Information</h3>
             {trackingFeedback && (
               <div
                 className={`admin-feedback-alert ${
@@ -354,7 +381,7 @@ export const AdminOrderDetail: React.FC = () => {
             <form onSubmit={handleTrackingSubmit} className="admin-action-form">
               <div className="admin-form-group">
                 <label htmlFor="carrier-input" className="admin-form-label">
-                  Shipping Carrier
+                  Carrier
                 </label>
                 <input
                   id="carrier-input"
@@ -369,13 +396,13 @@ export const AdminOrderDetail: React.FC = () => {
 
               <div className="admin-form-group">
                 <label htmlFor="tracking-input" className="admin-form-label">
-                  Tracking Number / AWB
+                  Tracking Number
                 </label>
                 <input
                   id="tracking-input"
                   type="text"
                   className="admin-form-input font-mono"
-                  placeholder="e.g. BLD123456789"
+                  placeholder="e.g. ABC123456789"
                   value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
                   disabled={isUpdatingTracking}
@@ -393,10 +420,61 @@ export const AdminOrderDetail: React.FC = () => {
                 className="admin-btn admin-btn-secondary full-width"
                 disabled={isUpdatingTracking}
               >
-                {isUpdatingTracking ? 'Saving Tracking...' : 'Save Tracking'}
+                {isUpdatingTracking ? 'Updating...' : 'UPDATE TRACKING'}
               </button>
             </form>
           </div>
+
+          {/* Status History Audit Trail */}
+          {order.statusHistory && order.statusHistory.length > 0 && (
+            <div className="admin-card-section">
+              <h3 className="admin-section-title">Status History</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                {order.statusHistory.map((item, idx) => (
+                  <div
+                    key={`${item.status}-${item.changedAt}-${idx}`}
+                    style={{
+                      padding: '0.6rem 0.75rem',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '0.2rem',
+                      }}
+                    >
+                      <span
+                        className={getStatusBadgeClass(item.status)}
+                        style={{ fontSize: '0.68rem', padding: '0.15rem 0.45rem' }}
+                      >
+                        {item.status.toUpperCase()}
+                      </span>
+                      <span style={{ color: '#9ca3af', fontSize: '0.72rem' }}>
+                        {formatDate(item.changedAt)}
+                      </span>
+                    </div>
+                    {item.note && (
+                      <p
+                        style={{
+                          color: '#d1d5db',
+                          margin: '0.25rem 0 0 0',
+                          fontSize: '0.75rem',
+                          lineHeight: '1.3',
+                        }}
+                      >
+                        {item.note}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </aside>
       </div>
     </div>

@@ -66,6 +66,12 @@ export type AdminOrderStatus =
   | 'delivered'
   | 'cancelled'
 
+export interface AdminOrderStatusHistory {
+  status: AdminOrderStatus
+  changedAt: string
+  note?: string
+}
+
 export interface AdminOrder {
   orderId: string
   userId?: string
@@ -75,6 +81,7 @@ export interface AdminOrder {
   pricing: AdminPricing
   status: AdminOrderStatus
   tracking?: AdminOrderTracking
+  statusHistory?: AdminOrderStatusHistory[]
   createdAt: string
   updatedAt: string
 }
@@ -484,13 +491,14 @@ export async function fetchAdminOrderById(orderId: string): Promise<AdminOrderDe
 
 export async function updateAdminOrderStatus(
   orderId: string,
-  status: AdminOrderStatus
+  status: AdminOrderStatus,
+  options?: { note?: string; trackingNumber?: string; carrier?: string }
 ): Promise<{ success: boolean; message: string; order: AdminOrder }> {
   return adminFetch<{ success: boolean; message: string; order: AdminOrder }>(
     `/admin/orders/${encodeURIComponent(orderId)}/status`,
     {
       method: 'PATCH',
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ status, ...(options || {}) }),
     }
   )
 }
