@@ -1,12 +1,16 @@
 import { Router } from 'express'
-import { createOrder, getOrderById } from '../controllers/orderController'
+import { createOrder, getMyOrders, getOrderById } from '../controllers/orderController'
+import { requireAuth } from '../middleware/authMiddleware'
 
 export const orderRouter = Router()
 
-// POST /api/orders
+// POST /api/orders - Public / Guest-compatible order creation
 orderRouter.post('/', createOrder)
 
-// GET /api/orders/:orderId
-orderRouter.get('/:orderId', getOrderById)
+// GET /api/orders/my-orders - Authenticated customer order history (MUST be before /:orderId)
+orderRouter.get('/my-orders', requireAuth, getMyOrders)
+
+// GET /api/orders/:orderId - Authenticated order details with ownership verification
+orderRouter.get('/:orderId', requireAuth, getOrderById)
 
 export default orderRouter

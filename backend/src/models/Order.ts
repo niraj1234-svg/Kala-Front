@@ -39,6 +39,7 @@ export type OrderStatus =
 
 export interface IOrder extends Document {
   orderId: string
+  userId?: string
   customer: ICustomer
   shippingAddress: IShippingAddress
   items: IOrderItem[]
@@ -100,6 +101,7 @@ const CustomerSchema = new Schema<ICustomer>(
       required: true,
       trim: true,
       lowercase: true,
+      index: true,
     },
     phone: {
       type: String,
@@ -163,6 +165,12 @@ const OrderSchema = new Schema<IOrder>(
       type: String,
       required: true,
       unique: true,
+      trim: true,
+      index: true,
+    },
+    userId: {
+      type: String,
+      required: false,
       trim: true,
       index: true,
     },

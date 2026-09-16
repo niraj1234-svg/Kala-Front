@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
 import { Order } from '../models/Order'
 import { Product } from '../models/Product'
+import { AuthenticatedUser } from '../middleware/authMiddleware'
 import mongoose from 'mongoose'
 
 const VALID_SIZES = ['S', 'M', 'L', 'XL', 'XXL']
@@ -19,9 +21,86 @@ function generateOrderId(): string {
   return `KALA-${datePart}-${randomPart}`
 }
 
-// POST /api/orders
-export const createOrder = async (req: Request, res: Response) => {
+interface AuthResult {
+  user?: AuthenticatedUser
+  error?: string
+}
+
+/**
+ * Helper to safely extract authenticated user from req.user or Authorization header.
+ * - Returns { user } if valid token or already authenticated by middleware.
+ * - Returns {} if no authorization header provided (guest).
+ * - Returns { error } if authorization header is provided but invalid/expired.
+ */
+function getAuthenticatedUser(req: Request): AuthResult {
+  // 1. If already populated by upstream requireAuth middleware
+  if (
+    req.user &&
+    typeof req.user.userId === 'string' &&
+    req.user.userId.trim() &&
+    typeof req.user.email === 'string' &&
+    req.user.email.trim()
+  ) {
+    return { user: req.user }
+  }
+
+  // 2. Check Authorization header
+  const authHeader = req.headers.authorization
+  if (!authHeader || typeof authHeader !== 'string') {
+    return {}
+  }
+
+  const parts = authHeader.trim().split(/\s+/)
+  if (parts.length !== 2 || parts[0] !== 'Bearer' || !parts[1]) {
+    return { error: 'Authentication required: Invalid Authorization header format.' }
+  }
+
+  const token = parts[1]
+  const jwtSecret = process.env.JWT_SECRET
+  if (!jwtSecret) {
+    console.error('[OrderController] JWT_SECRET is missing in environment variables.')
+    return { error: 'Authentication service configuration error.' }
+  }
+
   try {
+    const decoded = jwt.verify(token, jwtSecret) as jwt.JwtPayload
+    if (
+      !decoded ||
+      typeof decoded !== 'object' ||
+      typeof decoded.userId !== 'string' ||
+      !decoded.userId.trim() ||
+      typeof decoded.email !== 'string' ||
+      !decoded.email.trim()
+    ) {
+      return { error: 'Invalid or expired authentication token.' }
+    }
+
+    return {
+      user: {
+        userId: decoded.userId.trim(),
+        email: decoded.email.trim(),
+      },
+    }
+  } catch {
+    return { error: 'Invalid or expired authentication token.' }
+  }
+}
+
+// POST /api/orders
+export const createOrder = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // 0. Optional Authentication Detection (Guests allowed, but invalid tokens rejected with 401)
+    const auth = getAuthenticatedUser(req)
+    if (auth.error) {
+      res.status(401).json({
+        success: false,
+        message: auth.error,
+      })
+      return
+    }
+
+    const authenticatedUserId = auth.user?.userId
+
     const { customer, shippingAddress, items } = req.body
 
     // 1. Validate Customer Information
@@ -148,9 +227,10 @@ export const createOrder = async (req: Request, res: Response) => {
       existing = await Order.findOne({ orderId })
     }
 
-    // 10. Save Order to MongoDB
+    // 10. Save Order to MongoDB (attach authenticated userId if present, ignore body.userId)
     const newOrder = await Order.create({
       orderId,
+      ...(authenticatedUserId ? { userId: authenticatedUserId } : {}),
       customer: {
         firstName: customer.firstName.trim(),
         lastName: customer.lastName.trim(),
@@ -178,19 +258,69 @@ export const createOrder = async (req: Request, res: Response) => {
       order: newOrder,
       message: 'Order created successfully',
     })
-  } catch (error: any) {
-    console.error('[OrderController] createOrder error:', error)
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown server error'
+    console.error('[OrderController] createOrder error:', message)
     res.status(500).json({
       success: false,
       message: 'Server error while creating order',
-      error: error.message,
+      error: message,
+    })
+  }
+}
+
+// GET /api/orders/my-orders
+export const getMyOrders = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const auth = getAuthenticatedUser(req)
+    if (auth.error || !auth.user) {
+      res.status(401).json({
+        success: false,
+        message: auth.error || 'Authentication required.',
+      })
+      return
+    }
+
+    const normalizedEmail = auth.user.email.trim().toLowerCase()
+    const escapedEmail = normalizedEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const emailRegex = new RegExp(`^${escapedEmail}$`, 'i')
+
+    // Find orders belonging to the authenticated customer:
+    // Matches by userId OR by customer.email (case-insensitive)
+    const orders = await Order.find({
+      $or: [
+        { userId: auth.user.userId },
+        { 'customer.email': emailRegex },
+      ],
+    }).sort({ createdAt: -1 })
+
+    res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    })
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown server error'
+    console.error('[OrderController] getMyOrders error:', message)
+    res.status(500).json({
+      success: false,
+      message: 'Server error while retrieving customer orders',
     })
   }
 }
 
 // GET /api/orders/:orderId
-export const getOrderById = async (req: Request, res: Response) => {
+export const getOrderById = async (req: Request, res: Response): Promise<void> => {
   try {
+    const auth = getAuthenticatedUser(req)
+    if (auth.error || !auth.user) {
+      res.status(401).json({
+        success: false,
+        message: auth.error || 'Authentication required.',
+      })
+      return
+    }
+
     const orderId = req.params.orderId as string
 
     if (!orderId || typeof orderId !== 'string') {
@@ -216,16 +346,32 @@ export const getOrderById = async (req: Request, res: Response) => {
       return
     }
 
+    // Ownership check:
+    // Order must belong to the authenticated user either by userId or by customer.email (case-insensitive)
+    const isOwnerByUserId = Boolean(order.userId && order.userId === auth.user.userId)
+    const isOwnerByEmail = Boolean(
+      order.customer?.email &&
+      order.customer.email.trim().toLowerCase() === auth.user.email.trim().toLowerCase()
+    )
+
+    if (!isOwnerByUserId && !isOwnerByEmail) {
+      res.status(403).json({
+        success: false,
+        message: 'Access denied: You do not have permission to view this order.',
+      })
+      return
+    }
+
     res.status(200).json({
       success: true,
       order,
     })
-  } catch (error: any) {
-    console.error('[OrderController] getOrderById error:', error)
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown server error'
+    console.error('[OrderController] getOrderById error:', message)
     res.status(500).json({
       success: false,
       message: 'Server error while retrieving order',
-      error: error.message,
     })
   }
 }

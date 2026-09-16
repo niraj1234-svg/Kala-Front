@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { getSavedOrders } from '../types/order'
-import type { Order } from '../types/order'
+import { fetchMyOrders } from '../services/orderApi'
+import type { BackendOrder } from '../services/orderApi'
 import '../styles/Account.css'
 
 export const Account: React.FC = () => {
@@ -25,6 +25,33 @@ export const Account: React.FC = () => {
   const [regConfirmPassword, setRegConfirmPassword] = useState('')
   const [regErrors, setRegErrors] = useState<Record<string, string>>({})
   const [isRegistering, setIsRegistering] = useState(false)
+
+  // Orders state
+  const [orders, setOrders] = useState<BackendOrder[]>([])
+  const [isLoadingOrders, setIsLoadingOrders] = useState(false)
+  const [ordersError, setOrdersError] = useState<string | null>(null)
+
+  const loadOrders = useCallback(async () => {
+    if (!isAuthenticated || !currentUser) return
+    setIsLoadingOrders(true)
+    setOrdersError(null)
+    try {
+      const data = await fetchMyOrders()
+      setOrders(data)
+    } catch (err: any) {
+      setOrdersError(err.message || 'Unable to retrieve your orders. Please try again.')
+    } finally {
+      setIsLoadingOrders(false)
+    }
+  }, [isAuthenticated, currentUser])
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && currentUser) {
+      loadOrders()
+    } else if (!isAuthenticated) {
+      setOrders([])
+    }
+  }, [isLoading, isAuthenticated, currentUser, loadOrders])
 
   // Handle Login submission
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -362,12 +389,6 @@ export const Account: React.FC = () => {
   // --------------------------------------------------------------------------
   // RENDER: AUTHENTICATED (MY ACCOUNT VIEW)
   // --------------------------------------------------------------------------
-  const allOrders: Order[] = getSavedOrders()
-  // Filter orders by current user's email
-  const userOrders = allOrders.filter(
-    (order) => order.customer.email.toLowerCase() === currentUser.email.toLowerCase()
-  )
-
   return (
     <main className="kala-container kala-account-page">
       <header className="kala-account-header">
@@ -414,10 +435,36 @@ export const Account: React.FC = () => {
       {/* Customer Orders Section */}
       <section aria-labelledby="orders-title">
         <h2 id="orders-title" className="kala-orders-section-title">
-          MY ORDERS ({userOrders.length})
+          MY ORDERS {isLoadingOrders ? '' : `(${orders.length})`}
         </h2>
 
-        {userOrders.length === 0 ? (
+        {isLoadingOrders ? (
+          <div className="kala-orders-empty" style={{ minHeight: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <p className="kala-body" style={{ color: 'var(--kala-text-secondary)', letterSpacing: '0.08em' }}>
+              LOADING YOUR ORDERS...
+            </p>
+          </div>
+        ) : ordersError ? (
+          <div className="kala-auth-banner-error" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>{ordersError}</span>
+            <button
+              type="button"
+              onClick={loadOrders}
+              style={{
+                background: 'transparent',
+                border: '1px solid currentColor',
+                color: 'inherit',
+                padding: '0.25rem 0.75rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '0.8rem',
+              }}
+            >
+              RETRY
+            </button>
+          </div>
+        ) : orders.length === 0 ? (
           <div className="kala-orders-empty">
             <h3 className="kala-orders-empty-title">NO ORDERS YET</h3>
             <p className="kala-orders-empty-desc">
@@ -429,13 +476,14 @@ export const Account: React.FC = () => {
           </div>
         ) : (
           <div className="kala-orders-list" role="list">
-            {userOrders.map((order) => {
+            {orders.map((order) => {
               const formattedDate = new Date(order.createdAt).toLocaleDateString('en-IN', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',
               })
               const totalItems = order.items.reduce((acc, item) => acc + item.quantity, 0)
+              const orderTotal = order.pricing?.total ?? 0
 
               return (
                 <article
@@ -468,7 +516,7 @@ export const Account: React.FC = () => {
 
                     <div style={{ textAlign: 'right' }}>
                       <div className="kala-order-summary-total">
-                        ₹{order.total.toLocaleString('en-IN')}
+                        ₹{orderTotal.toLocaleString('en-IN')}
                       </div>
                       <div style={{ marginTop: '0.5rem' }}>
                         <Link
