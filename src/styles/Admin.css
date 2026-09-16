@@ -1241,4 +1241,289 @@
   }
 }
 
+/* ---------------------------------------------------
+   10. ADMIN ANALYTICS DASHBOARD
+   --------------------------------------------------- */
+.admin-analytics-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.admin-analytics-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.admin-metric-card {
+  background: #121215;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.admin-metric-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateY(-2px);
+}
+
+.admin-metric-card.highlight-revenue {
+  background: linear-gradient(135deg, #181513 0%, #121215 100%);
+  border-color: rgba(249, 115, 22, 0.25);
+}
+
+.admin-metric-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a1a1aa;
+  font-weight: 600;
+}
+
+.admin-metric-value {
+  font-size: 1.65rem;
+  font-weight: 700;
+  font-family: monospace;
+  color: #f4f4f5;
+  letter-spacing: -0.02em;
+}
+
+.admin-metric-sub {
+  font-size: 0.75rem;
+  color: #71717a;
+}
+
+.admin-chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.admin-chart-summary-badge {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.5rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.admin-svg-chart-wrapper {
+  position: relative;
+  width: 100%;
+  background: #0d0d10;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 0.5rem 0.25rem 0.25rem 0.25rem;
+}
+
+.admin-svg-chart {
+  width: 100%;
+  height: 220px;
+  display: block;
+}
+
+.admin-chart-tooltip-floating {
+  position: fixed;
+  transform: translate(-50%, -100%);
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 1000;
+  min-width: 130px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.tooltip-date {
+  color: #a1a1aa;
+  font-size: 0.72rem;
+  margin-bottom: 0.2rem;
+}
+
+.tooltip-rev {
+  color: #f97316;
+}
+
+.admin-analytics-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.admin-status-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-status-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.admin-status-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-status-counts {
+  font-size: 0.85rem;
+}
+
+.admin-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #27272a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.admin-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.admin-progress-fill.fill-pending { background: #eab308; }
+.admin-progress-fill.fill-confirmed { background: #22c55e; }
+.admin-progress-fill.fill-processing { background: #3b82f6; }
+.admin-progress-fill.fill-shipped { background: #06b6d4; }
+.admin-progress-fill.fill-delivered { background: #10b981; }
+.admin-progress-fill.fill-cancelled { background: #ef4444; }
+
+.admin-category-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-category-metric-card {
+  background: #161619;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.admin-category-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.category-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.category-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.category-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.admin-category-card-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.admin-rank-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.75rem;
+  color: #a1a1aa;
+}
+
+.admin-requests-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.admin-request-metric-card {
+  background: #161619;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.admin-request-metric-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: #1c1c20;
+}
+
+.request-card-label {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.request-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.request-card-link {
+  color: #f97316;
+  font-weight: 500;
+}
+
+.admin-revenue-breakout-box {
+  background: #121215;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.admin-spin {
+  animation: adminSpinAnim 1s linear infinite;
+}
+
+@keyframes adminSpinAnim {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 992px) {
+  .admin-analytics-two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-requests-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 

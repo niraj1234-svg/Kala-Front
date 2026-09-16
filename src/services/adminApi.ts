@@ -801,4 +801,73 @@ export async function updateAdminCustomer(
   )
 }
 
+// =========================================================================
+// ANALYTICS DASHBOARD (ADMIN)
+// =========================================================================
+
+export interface AdminAnalyticsOverview {
+  totalRevenue: number
+  totalOrders: number
+  totalCustomers: number
+  totalProducts: number
+  averageOrderValue: number
+  deliveredRevenue: number
+  pendingRevenue: number
+  cancelledRevenue: number
+}
+
+export interface AdminAnalyticsOrdersByStatus {
+  pending: number
+  confirmed: number
+  processing: number
+  shipped: number
+  delivered: number
+  cancelled: number
+}
+
+export interface AdminAnalyticsRequests {
+  customApparel: number
+  businessBranding: number
+}
+
+export interface AdminDailySalesItem {
+  date: string
+  revenue: number
+  orders: number
+}
+
+export interface AdminSalesByCategoryItem {
+  category: string
+  revenue: number
+  orders: number
+  itemsSold: number
+}
+
+export interface AdminTopProductItem {
+  productId: string
+  productName: string
+  orders: number
+  itemsSold: number
+  revenue: number
+}
+
+export interface AdminAnalyticsResponse {
+  success: boolean
+  overview: AdminAnalyticsOverview
+  ordersByStatus: AdminAnalyticsOrdersByStatus
+  requests: AdminAnalyticsRequests
+  dailySales: AdminDailySalesItem[]
+  salesByCategory: AdminSalesByCategoryItem[]
+  topProducts: AdminTopProductItem[]
+}
+
+/**
+ * Retrieves aggregate business analytics from MongoDB.
+ * Protected by requireAuth and requireAdmin server-side.
+ */
+export async function fetchAdminAnalytics(): Promise<AdminAnalyticsResponse> {
+  return adminFetch<AdminAnalyticsResponse>('/admin/analytics/overview')
+}
+
+
 
