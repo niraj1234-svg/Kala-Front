@@ -5,6 +5,7 @@ import type { Product } from '../data/products'
 import { fetchProductById } from '../services/productApi'
 import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext'
+import ProductReviewsSection from '../components/reviews/ProductReviewsSection'
 import '../styles/ProductDetails.css'
 
 const AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL']
@@ -231,6 +232,9 @@ export const ProductDetails: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Customer Reviews & Ratings Section */}
+      <ProductReviewsSection productId={product.id} />
     </main>
   )
 }

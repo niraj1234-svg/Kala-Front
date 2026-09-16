@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { Order } from '../models/Order'
 import { Product } from '../models/Product'
+import { Coupon } from '../models/Coupon'
 import { AuthenticatedUser } from '../middleware/authMiddleware'
 import mongoose from 'mongoose'
 
@@ -101,7 +102,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
     const authenticatedUserId = auth.user?.userId
 
-    const { customer, shippingAddress, items } = req.body
+    const { customer, shippingAddress, items, couponCode } = req.body
 
     // 1. Validate Customer Information
     if (
@@ -153,7 +154,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
     // 4. Validate Each Item Format (Size & Quantity)
     for (const item of items) {
-      if (!item.productId || typeof item.productId !== 'string') {
+      if (!item.productId || typeof item.productId !== 'string' || !item.productId.trim()) {
         res.status(400).json({
           success: false,
           message: 'Invalid order data: Each item must contain a valid productId.',
@@ -179,17 +180,25 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       }
     }
 
-    // 5. Fetch Actual Products from MongoDB
-    const productIds = items.map((i) => i.productId)
+    // 5. Fetch Authoritative Products from MongoDB
+    const productIds = items.map((i) => i.productId.trim())
     const dbProducts = await Product.find({ id: { $in: productIds } })
     const productMap = new Map(dbProducts.map((p) => [p.id, p]))
 
-    // 6. Verify All Product IDs Exist in MongoDB
+    // 6. Verify All Product IDs Exist & Are Available in MongoDB
     for (const item of items) {
-      if (!productMap.has(item.productId)) {
+      const dbProduct = productMap.get(item.productId.trim())
+      if (!dbProduct) {
         res.status(404).json({
           success: false,
           message: `Product not found: No product found with ID '${item.productId}'.`,
+        })
+        return
+      }
+      if (dbProduct.available === false) {
+        res.status(400).json({
+          success: false,
+          message: `Product '${dbProduct.name}' is currently unavailable.`,
         })
         return
       }
@@ -197,7 +206,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
     // 7. Construct Verified Items & NEVER Trust Frontend Price
     const verifiedItems = items.map((item) => {
-      const dbProduct = productMap.get(item.productId)!
+      const dbProduct = productMap.get(item.productId.trim())!
       return {
         productId: dbProduct.id,
         name: dbProduct.name,
@@ -208,56 +217,211 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       }
     })
 
-    // 8. Calculate Subtotal, Shipping, and Total on Server
+    // 8. Calculate Authoritative Subtotal on Server
     const subtotal = verifiedItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     )
 
-    // Shipping rule: subtotal >= 2000 -> shipping = 0, else 99
-    const shipping = subtotal >= 2000 ? 0 : 99
-    const total = subtotal + shipping
+    // 9. Process Coupon if Provided (Never trust frontend discount or pricing)
+    let discountAmount = 0
+    let couponSnapshot:
+      | {
+          code: string
+          discountType: 'percentage' | 'fixed'
+          discountValue: number
+          discountAmount: number
+        }
+      | undefined = undefined
+    let couponIncrementedId: mongoose.Types.ObjectId | null = null
 
-    // 9. Generate Unique Order ID
+    if (couponCode && typeof couponCode === 'string' && couponCode.trim()) {
+      const cleanCode = couponCode.trim().toUpperCase()
+      const couponDoc = await Coupon.findOne({ code: cleanCode })
+
+      if (!couponDoc) {
+        res.status(404).json({
+          success: false,
+          message: 'Invalid coupon code.',
+        })
+        return
+      }
+
+      if (!couponDoc.active) {
+        res.status(400).json({
+          success: false,
+          message: 'Coupon is currently disabled.',
+        })
+        return
+      }
+
+      const now = new Date()
+      if (now < new Date(couponDoc.startDate)) {
+        res.status(400).json({
+          success: false,
+          message: 'Coupon is not active yet.',
+        })
+        return
+      }
+
+      if (now > new Date(couponDoc.expiryDate)) {
+        res.status(400).json({
+          success: false,
+          message: 'Coupon has expired.',
+        })
+        return
+      }
+
+      if (
+        typeof couponDoc.usageLimit === 'number' &&
+        couponDoc.usageLimit > 0 &&
+        couponDoc.usageCount >= couponDoc.usageLimit
+      ) {
+        res.status(400).json({
+          success: false,
+          message: 'Coupon usage limit has been reached.',
+        })
+        return
+      }
+
+      if (couponDoc.minimumOrderValue > 0 && subtotal < couponDoc.minimumOrderValue) {
+        res.status(400).json({
+          success: false,
+          message: `Minimum order value for this coupon is ₹${couponDoc.minimumOrderValue.toLocaleString('en-IN')}.`,
+        })
+        return
+      }
+
+      // Per-Customer Limit Check
+      if (
+        (authenticatedUserId || customer.email) &&
+        typeof couponDoc.perCustomerLimit === 'number' &&
+        couponDoc.perCustomerLimit > 0
+      ) {
+        const normalizedCustomerEmail = customer.email.trim().toLowerCase()
+        const escapedEmail = normalizedCustomerEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        const customerEmailRegex = new RegExp(`^${escapedEmail}$`, 'i')
+
+        const previousCustomerOrdersCount = await Order.countDocuments({
+          $or: [
+            ...(authenticatedUserId ? [{ userId: authenticatedUserId }] : []),
+            { 'customer.email': customerEmailRegex },
+          ],
+          'coupon.code': cleanCode,
+          status: { $ne: 'cancelled' },
+        })
+
+        if (previousCustomerOrdersCount >= couponDoc.perCustomerLimit) {
+          res.status(400).json({
+            success: false,
+            message: 'You have already used this coupon the maximum allowed times.',
+          })
+          return
+        }
+      }
+
+      // Calculate Authoritative Discount Amount
+      if (couponDoc.discountType === 'percentage') {
+        discountAmount = (subtotal * couponDoc.discountValue) / 100
+        if (typeof couponDoc.maximumDiscount === 'number' && couponDoc.maximumDiscount > 0) {
+          discountAmount = Math.min(discountAmount, couponDoc.maximumDiscount)
+        }
+      } else if (couponDoc.discountType === 'fixed') {
+        discountAmount = couponDoc.discountValue
+      }
+
+      discountAmount = Math.min(discountAmount, subtotal)
+      discountAmount = Math.max(0, Math.round(discountAmount))
+
+      // Atomic Coupon Usage Increment (Prevents Race Conditions)
+      const updatedCoupon = await Coupon.findOneAndUpdate(
+        {
+          _id: couponDoc._id,
+          active: true,
+          $or: [
+            { usageLimit: null },
+            { $expr: { $lt: ['$usageCount', '$usageLimit'] } },
+          ],
+        },
+        { $inc: { usageCount: 1 } },
+        { new: true }
+      )
+
+      if (!updatedCoupon) {
+        res.status(400).json({
+          success: false,
+          message: 'Coupon usage limit has been reached.',
+        })
+        return
+      }
+
+      couponIncrementedId = couponDoc._id as mongoose.Types.ObjectId
+      couponSnapshot = {
+        code: couponDoc.code,
+        discountType: couponDoc.discountType,
+        discountValue: couponDoc.discountValue,
+        discountAmount,
+      }
+    }
+
+    // 10. Shipping & Authoritative Total Calculation
+    // Consistent KALA Shipping Policy: subtotal >= 2000 -> free shipping, else 99
+    const shipping = subtotal >= 2000 ? 0 : 99
+    const total = subtotal - discountAmount + shipping
+
+    // 11. Generate Unique Order ID
     let orderId = generateOrderId()
-    // Collision safety check
     let existing = await Order.findOne({ orderId })
     while (existing) {
       orderId = generateOrderId()
       existing = await Order.findOne({ orderId })
     }
 
-    // 10. Save Order to MongoDB (attach authenticated userId if present, ignore body.userId)
-    const newOrder = await Order.create({
-      orderId,
-      ...(authenticatedUserId ? { userId: authenticatedUserId } : {}),
-      customer: {
-        firstName: customer.firstName.trim(),
-        lastName: customer.lastName.trim(),
-        email: customer.email.trim().toLowerCase(),
-        phone: customer.phone.trim(),
-      },
-      shippingAddress: {
-        address: shippingAddress.address.trim(),
-        city: shippingAddress.city.trim(),
-        state: shippingAddress.state.trim(),
-        pincode: shippingAddress.pincode.trim(),
-      },
-      items: verifiedItems,
-      pricing: {
-        subtotal,
-        shipping,
-        total,
-      },
-      status: 'pending',
-    })
+    try {
+      // 12. Save Order to MongoDB (attach authenticated userId if present, ignore body.userId)
+      const newOrder = await Order.create({
+        orderId,
+        ...(authenticatedUserId ? { userId: authenticatedUserId } : {}),
+        customer: {
+          firstName: customer.firstName.trim(),
+          lastName: customer.lastName.trim(),
+          email: customer.email.trim().toLowerCase(),
+          phone: customer.phone.trim(),
+        },
+        shippingAddress: {
+          address: shippingAddress.address.trim(),
+          city: shippingAddress.city.trim(),
+          state: shippingAddress.state.trim(),
+          pincode: shippingAddress.pincode.trim(),
+        },
+        items: verifiedItems,
+        pricing: {
+          subtotal,
+          discount: discountAmount,
+          shipping,
+          total,
+        },
+        ...(couponSnapshot ? { coupon: couponSnapshot } : {}),
+        status: 'pending',
+      })
 
-    res.status(201).json({
-      success: true,
-      orderId: newOrder.orderId,
-      order: newOrder,
-      message: 'Order created successfully',
-    })
+      res.status(201).json({
+        success: true,
+        orderId: newOrder.orderId,
+        order: newOrder,
+        message: 'Order created successfully',
+      })
+    } catch (orderSaveError) {
+      // Rollback coupon usage increment if order persistence fails
+      if (couponIncrementedId) {
+        await Coupon.findByIdAndUpdate(couponIncrementedId, { $inc: { usageCount: -1 } }).catch(
+          (rollbackErr) => {
+            console.error('[OrderController] Failed to rollback coupon usageCount:', rollbackErr)
+          }
+        )
+      }
+      throw orderSaveError
+    }
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown server error'
     console.error('[OrderController] createOrder error:', message)

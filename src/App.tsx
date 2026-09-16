@@ -28,6 +28,8 @@ import AdminBusinessRequests from './pages/admin/AdminBusinessRequests'
 import AdminCustomers from './pages/admin/AdminCustomers'
 import AdminCustomerDetail from './pages/admin/AdminCustomerDetail'
 import AdminCoupons from './pages/admin/AdminCoupons'
+import AdminReviews from './pages/admin/AdminReviews'
+import AdminReviewDetail from './pages/admin/AdminReviewDetail'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
 import AdminRoute from './components/admin/AdminRoute'
 import AdminLayout from './components/admin/AdminLayout'
@@ -169,6 +171,26 @@ function App() {
                       <AdminRoute>
                         <AdminLayout>
                           <AdminCoupons />
+                        </AdminLayout>
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/reviews"
+                    element={
+                      <AdminRoute>
+                        <AdminLayout>
+                          <AdminReviews />
+                        </AdminLayout>
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/reviews/:reviewId"
+                    element={
+                      <AdminRoute>
+                        <AdminLayout>
+                          <AdminReviewDetail />
                         </AdminLayout>
                       </AdminRoute>
                     }

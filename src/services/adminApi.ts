@@ -1102,5 +1102,16 @@ export async function deleteAdminCoupon(
   })
 }
 
-
-
+// =========================================================================
+// REVIEWS MANAGEMENT (ADMIN)
+// =========================================================================
+export {
+  fetchAdminReviews,
+  fetchAdminReviewById,
+  updateAdminReviewStatus,
+  deleteAdminReview,
+  type AdminReview,
+  type AdminReviewsFilterParams,
+  type AdminReviewsResponse,
+  type AdminReviewDetailResponse,
+} from './reviewApi'

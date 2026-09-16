@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
-import { createOrder } from '../services/orderApi'
-import type { CreateOrderPayload } from '../services/orderApi'
+import { createOrder, validateCoupon } from '../services/orderApi'
+import type { CreateOrderPayload, ValidateCouponResponse } from '../services/orderApi'
 import { saveOrder } from '../types/order'
 import '../styles/Checkout.css'
 
@@ -42,6 +42,72 @@ export const Checkout: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [orderError, setOrderError] = useState<string | null>(null)
 
+  // Coupon state
+  const [couponInput, setCouponInput] = useState<string>('')
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string
+    discountType: 'percentage' | 'fixed'
+    discountValue: number
+    discount: number
+    subtotal: number
+    shipping: number
+    total: number
+  } | null>(null)
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState<boolean>(false)
+  const [couponError, setCouponError] = useState<string | null>(null)
+  const [couponSuccess, setCouponSuccess] = useState<string | null>(null)
+
+  // Cart mutation reactivity: automatically revalidate or invalidate coupon when cart changes
+  const cartKey = JSON.stringify(
+    cartItems.map((it) => ({ id: it.productId, s: it.size, q: it.quantity }))
+  )
+  const isInitialMount = useRef(true)
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
+
+    if (!appliedCoupon) return
+
+    let cancelled = false
+    const revalidate = async () => {
+      try {
+        const res: ValidateCouponResponse = await validateCoupon({
+          code: appliedCoupon.code,
+          items: cartItems.map((item) => ({
+            productId: item.productId,
+            size: item.size,
+            quantity: item.quantity,
+          })),
+        })
+        if (!cancelled && res.success && res.coupon && res.pricing) {
+          setAppliedCoupon({
+            code: res.coupon.code,
+            discountType: res.coupon.discountType,
+            discountValue: res.coupon.discountValue,
+            discount: res.pricing.discount,
+            subtotal: res.pricing.subtotal,
+            shipping: res.pricing.shipping,
+            total: res.pricing.total,
+          })
+        }
+      } catch (err: any) {
+        if (!cancelled) {
+          setAppliedCoupon(null)
+          setCouponError(`Coupon removed: ${err.message || 'Cart no longer meets requirements.'}`)
+          setCouponSuccess(null)
+        }
+      }
+    }
+
+    revalidate()
+    return () => {
+      cancelled = true
+    }
+  }, [cartKey])
+
   // Empty cart protection
   if (cartItems.length === 0) {
     return (
@@ -59,9 +125,14 @@ export const Checkout: React.FC = () => {
     )
   }
 
-  // Frontend estimation for preview; backend remains canonical source of truth
-  const shippingCost = cartSubtotal >= 2000 ? 0 : 99
-  const totalAmount = cartSubtotal + shippingCost
+  // Pricing calculations (Server is ultimate authority; frontend displays responsive values)
+  const baseShippingCost = cartSubtotal >= 2000 ? 0 : 99
+  const displaySubtotal = appliedCoupon ? appliedCoupon.subtotal : cartSubtotal
+  const displayDiscount = appliedCoupon ? appliedCoupon.discount : 0
+  const displayShipping = appliedCoupon ? appliedCoupon.shipping : baseShippingCost
+  const displayTotal = appliedCoupon
+    ? appliedCoupon.total
+    : cartSubtotal + baseShippingCost
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -133,6 +204,64 @@ export const Checkout: React.FC = () => {
     return Object.keys(newErrors).length === 0
   }
 
+  const handleApplyCoupon = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    setCouponError(null)
+    setCouponSuccess(null)
+
+    const cleanCode = couponInput.trim().toUpperCase()
+    if (!cleanCode) {
+      setCouponError('Please enter a coupon code.')
+      return
+    }
+
+    if (cartItems.length === 0) {
+      setCouponError('Your cart is empty.')
+      return
+    }
+
+    setIsApplyingCoupon(true)
+
+    try {
+      const res: ValidateCouponResponse = await validateCoupon({
+        code: cleanCode,
+        items: cartItems.map((item) => ({
+          productId: item.productId,
+          size: item.size,
+          quantity: item.quantity,
+        })),
+      })
+
+      if (res.success && res.coupon && res.pricing) {
+        setAppliedCoupon({
+          code: res.coupon.code,
+          discountType: res.coupon.discountType,
+          discountValue: res.coupon.discountValue,
+          discount: res.pricing.discount,
+          subtotal: res.pricing.subtotal,
+          shipping: res.pricing.shipping,
+          total: res.pricing.total,
+        })
+        setCouponSuccess(
+          `Coupon '${res.coupon.code}' applied! Saved ₹${res.pricing.discount.toLocaleString('en-IN')}`
+        )
+        setCouponError(null)
+        setCouponInput('')
+      }
+    } catch (err: any) {
+      setCouponError(err.message || 'Invalid coupon code.')
+      setCouponSuccess(null)
+    } finally {
+      setIsApplyingCoupon(false)
+    }
+  }
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null)
+    setCouponError(null)
+    setCouponSuccess(null)
+  }
+
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault()
     setOrderError(null)
@@ -150,7 +279,7 @@ export const Checkout: React.FC = () => {
 
     setIsSubmitting(true)
 
-    // Construct server-safe payload
+    // Construct server-safe payload (server authoritatively calculates discount & total)
     const payload: CreateOrderPayload = {
       customer: {
         firstName: formData.firstName.trim(),
@@ -169,6 +298,7 @@ export const Checkout: React.FC = () => {
         size: item.size,
         quantity: item.quantity,
       })),
+      ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
     }
 
     try {
@@ -438,20 +568,93 @@ export const Checkout: React.FC = () => {
             ))}
           </div>
 
+          {/* Coupon Code Section */}
+          <div className="kala-checkout-coupon-section">
+            <label htmlFor="checkout-coupon-input" className="kala-coupon-label">
+              COUPON CODE
+            </label>
+
+            {appliedCoupon ? (
+              <div className="kala-coupon-applied-box">
+                <div className="kala-coupon-applied-info">
+                  <span className="kala-coupon-badge">{appliedCoupon.code}</span>
+                  <span className="kala-coupon-applied-text">
+                    {appliedCoupon.discountType === 'percentage'
+                      ? `${appliedCoupon.discountValue}% OFF`
+                      : `₹${appliedCoupon.discountValue} OFF`}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemoveCoupon}
+                  className="kala-coupon-remove-btn"
+                  aria-label="Remove coupon"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : (
+              <div className="kala-coupon-input-group">
+                <input
+                  id="checkout-coupon-input"
+                  type="text"
+                  placeholder="Coupon code (e.g. KALA20)"
+                  value={couponInput}
+                  onChange={(e) => {
+                    setCouponInput(e.target.value.toUpperCase())
+                    if (couponError) setCouponError(null)
+                  }}
+                  className="kala-coupon-input"
+                  disabled={isApplyingCoupon}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleApplyCoupon()
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleApplyCoupon()}
+                  disabled={isApplyingCoupon || !couponInput.trim()}
+                  className="kala-btn kala-coupon-apply-btn"
+                >
+                  {isApplyingCoupon ? 'APPLYING...' : 'APPLY'}
+                </button>
+              </div>
+            )}
+
+            {couponSuccess && (
+              <div className="kala-coupon-feedback success">{couponSuccess}</div>
+            )}
+            {couponError && (
+              <div className="kala-coupon-feedback error">{couponError}</div>
+            )}
+          </div>
+
           <div className="kala-checkout-pricing">
             <div className="kala-checkout-pricing-row">
               <span>Subtotal</span>
-              <span>₹{cartSubtotal.toLocaleString('en-IN')}</span>
+              <span>₹{displaySubtotal.toLocaleString('en-IN')}</span>
             </div>
+
+            {appliedCoupon && appliedCoupon.discount > 0 && (
+              <div className="kala-checkout-pricing-row kala-pricing-discount-row">
+                <span>Coupon Discount ({appliedCoupon.code})</span>
+                <span className="kala-discount-value">
+                  -₹{displayDiscount.toLocaleString('en-IN')}
+                </span>
+              </div>
+            )}
 
             <div className="kala-checkout-pricing-row">
               <span>Shipping</span>
-              <span>{shippingCost === 0 ? 'FREE' : `₹${shippingCost}`}</span>
+              <span>{displayShipping === 0 ? 'FREE' : `₹${displayShipping}`}</span>
             </div>
 
             <div className="kala-checkout-pricing-row total">
               <span>Total</span>
-              <span>₹{totalAmount.toLocaleString('en-IN')}</span>
+              <span>₹{displayTotal.toLocaleString('en-IN')}</span>
             </div>
           </div>
 

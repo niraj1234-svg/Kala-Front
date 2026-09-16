@@ -8,6 +8,27 @@ export interface OrderItemInput {
   quantity: number
 }
 
+export interface ValidateCouponPayload {
+  code: string
+  items: OrderItemInput[]
+}
+
+export interface ValidateCouponResponse {
+  success: boolean
+  coupon: {
+    code: string
+    discountType: 'percentage' | 'fixed'
+    discountValue: number
+  }
+  pricing: {
+    subtotal: number
+    discount: number
+    shipping: number
+    total: number
+  }
+  message?: string
+}
+
 export interface CreateOrderPayload {
   customer: {
     firstName: string
@@ -22,6 +43,7 @@ export interface CreateOrderPayload {
     pincode: string
   }
   items: OrderItemInput[]
+  couponCode?: string
 }
 
 export interface BackendOrderItem {
@@ -51,8 +73,15 @@ export interface BackendOrder {
   items: BackendOrderItem[]
   pricing: {
     subtotal: number
+    discount?: number
     shipping: number
     total: number
+  }
+  coupon?: {
+    code: string
+    discountType: 'percentage' | 'fixed'
+    discountValue: number
+    discountAmount: number
   }
   status: string
   createdAt: string
@@ -112,6 +141,51 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
     }
     // Clean user-friendly message, no leaked secrets or raw Mongo errors
     throw new Error(err.message || 'Unable to place your order right now. Please try again.')
+  }
+}
+
+/**
+ * Validates a coupon code against cart items using backend API.
+ * Uses customer token (kala_auth_token) if authenticated; allows guests.
+ * Does NOT use admin token.
+ */
+export async function validateCoupon(
+  payload: ValidateCouponPayload
+): Promise<ValidateCouponResponse> {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 8000)
+
+  try {
+    const token = getAuthToken()
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+
+    const response = await fetch(`${API_BASE_URL}/coupons/validate`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    })
+    clearTimeout(timeoutId)
+
+    const data = await response.json()
+
+    if (!response.ok || !data.success) {
+      const errorMessage = data?.message || 'Invalid coupon code.'
+      throw new Error(errorMessage)
+    }
+
+    return data
+  } catch (err: any) {
+    clearTimeout(timeoutId)
+    if (err.name === 'AbortError') {
+      throw new Error('Coupon validation timed out. Please try again.')
+    }
+    throw new Error(err.message || 'Unable to validate coupon.')
   }
 }
 

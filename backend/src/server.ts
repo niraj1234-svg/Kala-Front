@@ -15,6 +15,9 @@ import adminCustomerRouter from './routes/adminCustomerRoutes'
 import adminAnalyticsRouter from './routes/adminAnalyticsRoutes'
 import adminDashboardRouter from './routes/adminDashboardRoutes'
 import adminCouponRouter from './routes/adminCouponRoutes'
+import customerCouponRouter from './routes/customerCouponRoutes'
+import reviewRouter from './routes/reviewRoutes'
+import adminReviewRouter from './routes/adminReviewRoutes'
 
 // Load environment variables
 dotenv.config()
@@ -44,6 +47,8 @@ app.get('/api/health', (_req: Request, res: Response) => {
 // API Routes
 app.use('/api/products', productRouter)
 app.use('/api/orders', orderRouter)
+app.use('/api/coupons', customerCouponRouter)
+app.use('/api/reviews', reviewRouter)
 app.use('/api/custom-requests', customRequestRouter)
 app.use('/api/business-requests', businessRequestRouter)
 app.use('/api/auth', authRouter)
@@ -54,6 +59,7 @@ app.use('/api/admin/orders', adminOrderRouter)
 app.use('/api/admin/products', adminProductRouter)
 app.use('/api/admin/customers', adminCustomerRouter)
 app.use('/api/admin/coupons', adminCouponRouter)
+app.use('/api/admin/reviews', adminReviewRouter)
 app.use('/api/admin/analytics', adminAnalyticsRouter)
 app.use('/api/admin/custom-requests', adminCustomRequestRouter)
 app.use('/api/admin/business-requests', adminBusinessRequestRouter)

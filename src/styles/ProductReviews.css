@@ -1,0 +1,569 @@
+/* ==========================================================================
+   KALA PRODUCT REVIEWS & RATINGS STYLES
+   Minimal Luxury Aesthetic
+   ========================================================================== */
+
+.kala-reviews-section {
+  margin-top: clamp(3rem, 5vw, 4.5rem);
+  padding-top: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--kala-border);
+}
+
+.kala-reviews-header-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.kala-reviews-badge {
+  color: var(--kala-orange);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.kala-reviews-heading {
+  font-size: clamp(1.4rem, 2vw, 1.85rem);
+  font-weight: 700;
+  color: var(--kala-black);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Rating Summary Grid
+   -------------------------------------------------------------------------- */
+.kala-reviews-summary-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  background-color: #faf9f6;
+  border: 1px solid var(--kala-border);
+  margin-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .kala-reviews-summary-card {
+    grid-template-columns: 240px 1fr;
+    align-items: center;
+    gap: 3rem;
+  }
+}
+
+.kala-summary-score-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--kala-border);
+}
+
+@media (min-width: 768px) {
+  .kala-summary-score-box {
+    padding-bottom: 0;
+    padding-right: 2rem;
+    border-bottom: none;
+    border-right: 1px solid var(--kala-border);
+  }
+}
+
+.kala-summary-average {
+  font-size: clamp(2.8rem, 4vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--kala-black);
+  margin-bottom: 0.5rem;
+  font-family: var(--kala-font-primary);
+}
+
+.kala-summary-stars {
+  display: flex;
+  gap: 0.25rem;
+  color: #f59e0b;
+  margin-bottom: 0.5rem;
+}
+
+.kala-summary-count {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--kala-text-secondary);
+  letter-spacing: 0.04em;
+}
+
+/* Distribution Bars */
+.kala-distribution-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.kala-distribution-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--kala-text-secondary);
+}
+
+.kala-distribution-label {
+  width: 44px;
+  font-weight: 600;
+  color: var(--kala-black);
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.kala-distribution-label span {
+  color: #f59e0b;
+}
+
+.kala-distribution-bar-bg {
+  flex: 1;
+  height: 8px;
+  background-color: #e5e2db;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.kala-distribution-bar-fill {
+  height: 100%;
+  background-color: var(--kala-black);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.kala-distribution-val {
+  width: 32px;
+  text-align: right;
+  font-weight: 600;
+  color: var(--kala-black);
+}
+
+/* --------------------------------------------------------------------------
+   Write / Edit Review Action Area
+   -------------------------------------------------------------------------- */
+.kala-review-cta-box {
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+}
+
+.kala-review-guest-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .kala-review-guest-prompt {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.kala-review-guest-text {
+  font-size: 0.95rem;
+  color: var(--kala-text-secondary);
+  line-height: 1.5;
+}
+
+.kala-review-login-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--kala-black);
+  color: var(--kala-white);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--kala-transition-fast);
+}
+
+.kala-review-login-btn:hover {
+  background-color: var(--kala-orange);
+}
+
+/* Existing Review Banner for Author */
+.kala-my-review-banner {
+  background-color: #fdfaf6;
+  border: 1px solid rgba(224, 90, 43, 0.25);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.kala-my-review-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.kala-my-review-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+}
+
+.kala-my-review-badge.approved {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.kala-my-review-badge.pending {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.kala-my-review-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.kala-btn-pill {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid var(--kala-border);
+  background-color: var(--kala-white);
+  color: var(--kala-black);
+  transition: all var(--kala-transition-fast);
+}
+
+.kala-btn-pill:hover {
+  border-color: var(--kala-black);
+}
+
+.kala-btn-pill.danger {
+  color: #b91c1c;
+}
+
+.kala-btn-pill.danger:hover {
+  background-color: #fee2e2;
+  border-color: #ef4444;
+}
+
+/* Form Styles */
+.kala-review-form-card {
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border: 1px solid var(--kala-border);
+  margin-bottom: 2.5rem;
+}
+
+.kala-form-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--kala-black);
+  margin-bottom: 1.25rem;
+}
+
+.kala-star-picker-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.kala-star-picker-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kala-black);
+  margin-bottom: 0.5rem;
+}
+
+.kala-star-picker-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.kala-star-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem;
+  color: #d1d5db;
+  font-size: 1.75rem;
+  line-height: 1;
+  transition: color 0.15s ease, transform 0.1s ease;
+}
+
+.kala-star-btn:hover {
+  transform: scale(1.15);
+}
+
+.kala-star-btn.active {
+  color: #f59e0b;
+}
+
+.kala-star-helper-text {
+  margin-left: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--kala-text-secondary);
+}
+
+.kala-review-textarea {
+  width: 100%;
+  min-height: 110px;
+  padding: 0.85rem 1rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--kala-black);
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  resize: vertical;
+  outline: none;
+  transition: border-color var(--kala-transition-fast);
+}
+
+.kala-review-textarea:focus {
+  border-color: var(--kala-black);
+}
+
+.kala-textarea-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--kala-text-secondary);
+  margin-top: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.kala-review-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.kala-form-feedback {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.kala-form-feedback.success {
+  background-color: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+}
+
+.kala-form-feedback.error {
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+/* --------------------------------------------------------------------------
+   Reviews List & Cards
+   -------------------------------------------------------------------------- */
+.kala-reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.kala-review-card {
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  transition: border-color var(--kala-transition-fast);
+}
+
+.kala-review-card:hover {
+  border-color: #d1d5db;
+}
+
+.kala-review-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.kala-review-author-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.kala-review-author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f3f4f6;
+  color: var(--kala-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  border: 1px solid var(--kala-border);
+}
+
+.kala-review-author-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--kala-black);
+}
+
+.kala-review-badge-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  color: #059669;
+  font-weight: 600;
+}
+
+.kala-review-date {
+  font-size: 0.8rem;
+  color: var(--kala-text-secondary);
+}
+
+.kala-review-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #f59e0b;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.kala-review-card-text {
+  font-size: 0.925rem;
+  line-height: 1.6;
+  color: #374151;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   Empty / Loading / Error States
+   -------------------------------------------------------------------------- */
+.kala-reviews-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background-color: #faf9f6;
+  border: 1px dashed var(--kala-border);
+}
+
+.kala-reviews-empty-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--kala-black);
+  margin-bottom: 0.5rem;
+}
+
+.kala-reviews-empty-text {
+  font-size: 0.9rem;
+  color: var(--kala-text-secondary);
+}
+
+.kala-reviews-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  gap: 1rem;
+  color: var(--kala-text-secondary);
+  font-size: 0.9rem;
+}
+
+.kala-reviews-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--kala-border);
+  border-top-color: var(--kala-black);
+  border-radius: 50%;
+  animation: kalaSpin 0.7s linear infinite;
+}
+
+@keyframes kalaSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.kala-reviews-error {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.kala-reviews-error-btn {
+  margin-top: 1rem;
+  padding: 0.6rem 1.25rem;
+  background-color: #991b1b;
+  color: #ffffff;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* Pagination */
+.kala-reviews-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.kala-reviews-page-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--kala-white);
+  border: 1px solid var(--kala-border);
+  color: var(--kala-black);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--kala-transition-fast);
+}
+
+.kala-reviews-page-btn:hover:not(:disabled) {
+  border-color: var(--kala-black);
+}
+
+.kala-reviews-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.kala-reviews-page-info {
+  font-size: 0.8125rem;
+  color: var(--kala-text-secondary);
+}

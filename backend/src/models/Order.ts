@@ -23,8 +23,16 @@ export interface IShippingAddress {
   pincode: string
 }
 
+export interface IOrderCoupon {
+  code: string
+  discountType: 'percentage' | 'fixed'
+  discountValue: number
+  discountAmount: number
+}
+
 export interface IPricing {
   subtotal: number
+  discount?: number
   shipping: number
   total: number
 }
@@ -50,6 +58,7 @@ export interface IOrder extends Document {
   shippingAddress: IShippingAddress
   items: IOrderItem[]
   pricing: IPricing
+  coupon?: IOrderCoupon
   status: OrderStatus
   tracking?: ITracking
   createdAt: Date
@@ -152,6 +161,11 @@ const PricingSchema = new Schema<IPricing>(
       required: true,
       min: 0,
     },
+    discount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     shipping: {
       type: Number,
       required: true,
@@ -201,6 +215,16 @@ const OrderSchema = new Schema<IOrder>(
       type: PricingSchema,
       required: true,
     },
+    coupon: {
+      type: {
+        code: { type: String, required: true, trim: true, uppercase: true },
+        discountType: { type: String, required: true, enum: ['percentage', 'fixed'] },
+        discountValue: { type: Number, required: true, min: 0 },
+        discountAmount: { type: Number, required: true, min: 0 },
+      },
+      required: false,
+      _id: false,
+    },
     status: {
       type: String,
       required: true,
@@ -229,6 +253,9 @@ const OrderSchema = new Schema<IOrder>(
     timestamps: true,
   }
 )
+
+// Index on coupon.code for fast per-customer and coupon usage queries
+OrderSchema.index({ 'coupon.code': 1 })
 
 export const Order = mongoose.model<IOrder>('Order', OrderSchema)
 export default Order
