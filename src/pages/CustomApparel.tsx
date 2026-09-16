@@ -1,8 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { PRODUCTS } from '../data/products'
-import { saveCustomRequest, generateCustomRequestId } from '../types/requests'
-import type { CustomApparelRequest } from '../types/requests'
+import { saveCustomRequest } from '../types/requests'
+import { createCustomRequest } from '../services/customRequestApi'
+import type { CustomRequestInput } from '../services/customRequestApi'
 import '../styles/CustomApparel.css'
+
+interface SubmittedDisplay {
+  id: string
+  name: string
+  apparelType: string
+  quantity: number
+  printingType: string
+  status: string
+}
 
 export const CustomApparel: React.FC = () => {
   useEffect(() => {
@@ -23,8 +33,9 @@ export const CustomApparel: React.FC = () => {
 
   // Validation & Submission State
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [submittedRequest, setSubmittedRequest] = useState<CustomApparelRequest | null>(null)
+  const [submittedRequest, setSubmittedRequest] = useState<SubmittedDisplay | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const formRef = useRef<HTMLDivElement>(null)
   const categoriesRef = useRef<HTMLDivElement>(null)
@@ -83,8 +94,9 @@ export const CustomApparel: React.FC = () => {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitError(null)
 
     if (!validateForm()) {
       return
@@ -92,9 +104,7 @@ export const CustomApparel: React.FC = () => {
 
     setIsSubmitting(true)
 
-    const newRequest: CustomApparelRequest = {
-      id: generateCustomRequestId(),
-      createdAt: new Date().toISOString(),
+    const payload: CustomRequestInput = {
       name: name.trim(),
       email: email.trim(),
       phone: phone.trim(),
@@ -105,17 +115,57 @@ export const CustomApparel: React.FC = () => {
       description: description.trim(),
       additionalRequirements: additionalRequirements.trim() || undefined,
       fileName: uploadedFileName || undefined,
-      status: 'Request Submitted',
     }
 
-    saveCustomRequest(newRequest)
-    setSubmittedRequest(newRequest)
-    setIsSubmitting(false)
+    try {
+      // 1. Submit to backend Express API (persisting directly in MongoDB Atlas)
+      const response = await createCustomRequest(payload)
 
-    // Scroll to success notification
-    setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, 50)
+      if (response && response.success && response.requestId) {
+        setSubmittedRequest({
+          id: response.requestId,
+          name: response.request.name,
+          apparelType: response.request.apparelType,
+          quantity: response.request.quantity,
+          printingType: response.request.printingType,
+          status: response.request.status || 'pending',
+        })
+
+        // 2. Compatibility cache in localStorage
+        try {
+          saveCustomRequest({
+            id: response.requestId,
+            createdAt: response.request.createdAt,
+            name: response.request.name,
+            email: response.request.email,
+            phone: response.request.phone,
+            apparelType: response.request.apparelType,
+            quantity: response.request.quantity,
+            sizeRange: response.request.sizeRange,
+            printingType: response.request.printingType,
+            description: response.request.description,
+            additionalRequirements: response.request.additionalRequirements,
+            fileName: response.request.fileName,
+            status: 'Request Submitted',
+          })
+        } catch {
+          // Ignore localStorage errors
+        }
+
+        setIsSubmitting(false)
+
+        // Scroll to confirmation card
+        setTimeout(() => {
+          formRef.current?.scrollIntoView({ behavior: 'smooth' })
+        }, 50)
+      } else {
+        throw new Error('Unable to submit your custom request right now. Please try again.')
+      }
+    } catch (err: any) {
+      console.error('[CustomApparel] Submission error:', err)
+      setSubmitError(err.message || 'Unable to submit your custom request right now. Please try again.')
+      setIsSubmitting(false)
+    }
   }
 
   const handleResetForm = () => {
@@ -130,6 +180,7 @@ export const CustomApparel: React.FC = () => {
     setAdditionalRequirements('')
     setUploadedFileName(null)
     setErrors({})
+    setSubmitError(null)
     setSubmittedRequest(null)
   }
 
@@ -402,7 +453,9 @@ export const CustomApparel: React.FC = () => {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
                 <span style={{ color: 'var(--kala-text-secondary)' }}>Status:</span>
-                <span style={{ fontWeight: 700, color: 'var(--kala-black)' }}>{submittedRequest.status}</span>
+                <span style={{ fontWeight: 700, color: 'var(--kala-black)', textTransform: 'capitalize' }}>
+                  {submittedRequest.status}
+                </span>
               </div>
             </div>
 
@@ -432,6 +485,7 @@ export const CustomApparel: React.FC = () => {
                     onChange={(e) => {
                       setName(e.target.value)
                       if (errors.name) setErrors((prev) => ({ ...prev, name: '' }))
+                      if (submitError) setSubmitError(null)
                     }}
                   />
                   {errors.name && <p className="kala-form-error">{errors.name}</p>}
@@ -450,6 +504,7 @@ export const CustomApparel: React.FC = () => {
                     onChange={(e) => {
                       setEmail(e.target.value)
                       if (errors.email) setErrors((prev) => ({ ...prev, email: '' }))
+                      if (submitError) setSubmitError(null)
                     }}
                   />
                   {errors.email && <p className="kala-form-error">{errors.email}</p>}
@@ -471,6 +526,7 @@ export const CustomApparel: React.FC = () => {
                     onChange={(e) => {
                       setPhone(e.target.value)
                       if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }))
+                      if (submitError) setSubmitError(null)
                     }}
                   />
                   {errors.phone && <p className="kala-form-error">{errors.phone}</p>}
@@ -512,6 +568,7 @@ export const CustomApparel: React.FC = () => {
                       const val = e.target.value === '' ? '' : Number(e.target.value)
                       setQuantity(val)
                       if (errors.quantity) setErrors((prev) => ({ ...prev, quantity: '' }))
+                      if (submitError) setSubmitError(null)
                     }}
                   />
                   {errors.quantity && <p className="kala-form-error">{errors.quantity}</p>}
@@ -568,6 +625,7 @@ export const CustomApparel: React.FC = () => {
                   onChange={(e) => {
                     setDescription(e.target.value)
                     if (errors.description) setErrors((prev) => ({ ...prev, description: '' }))
+                    if (submitError) setSubmitError(null)
                   }}
                 />
                 {errors.description && <p className="kala-form-error">{errors.description}</p>}
@@ -640,6 +698,23 @@ export const CustomApparel: React.FC = () => {
                 )}
               </div>
 
+              {submitError && (
+                <div
+                  className="kala-form-error-banner"
+                  style={{
+                    color: '#b91c1c',
+                    backgroundColor: '#fef2f2',
+                    border: '1px solid #fecaca',
+                    padding: '0.85rem',
+                    marginBottom: '1.25rem',
+                    fontSize: '0.875rem',
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {submitError}
+                </div>
+              )}
+
               {/* Submit Button */}
               <button
                 type="submit"
@@ -647,7 +722,7 @@ export const CustomApparel: React.FC = () => {
                 style={{ width: '100%', padding: '1rem' }}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'SUBMITTING...' : 'SUBMIT CUSTOM REQUEST'}
+                {isSubmitting ? 'SUBMITTING REQUEST...' : 'SUBMIT CUSTOM REQUEST'}
               </button>
             </form>
           </div>
