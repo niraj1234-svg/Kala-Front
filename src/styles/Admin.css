@@ -1525,5 +1525,334 @@
   }
 }
 
+/* ===================================================
+   COMMAND CENTER DASHBOARD STYLES (STEP 8.17.2)
+   =================================================== */
 
+.admin-dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
 
+/* Quick Actions Toolbar */
+.admin-quick-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #121215;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  flex-wrap: wrap;
+}
+
+.admin-quick-actions-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: #71717a;
+}
+
+.admin-quick-actions-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-quick-action-chip {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #e4e4e7;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.admin-quick-action-chip:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.admin-quick-action-chip.highlight {
+  color: #f97316;
+  border-color: rgba(249, 115, 22, 0.35);
+  background: rgba(249, 115, 22, 0.08);
+}
+
+.admin-quick-action-chip.highlight:hover {
+  background: rgba(249, 115, 22, 0.18);
+  border-color: #f97316;
+}
+
+/* Sections */
+.admin-dashboard-section {
+  background: #121215;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.admin-section-header-flex {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.admin-dashboard-section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.admin-dashboard-section-desc {
+  font-size: 0.85rem;
+  color: #a1a1aa;
+  margin: 0.25rem 0 0 0;
+}
+
+.admin-section-view-all {
+  font-size: 0.825rem;
+  color: #f97316;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+
+.admin-section-view-all:hover {
+  color: #fb923c;
+  text-decoration: underline;
+}
+
+/* Two-column Dashboard Split */
+.admin-dashboard-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.admin-dashboard-card-section {
+  background: #121215;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Recent Customers List */
+.admin-customers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-customer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  gap: 0.75rem;
+}
+
+.admin-customer-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.admin-customer-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(249, 115, 22, 0.15);
+  color: #f97316;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-customer-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-customer-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-customer-email {
+  font-size: 0.8rem;
+  color: #a1a1aa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-customer-action-col {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.admin-customer-date {
+  font-size: 0.75rem;
+}
+
+/* Recent Requests List */
+.admin-requests-links-flex {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.admin-requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-request-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  gap: 0.75rem;
+}
+
+.admin-request-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.admin-request-tag-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #d4d4d8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.admin-request-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.admin-request-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-request-contact {
+  font-size: 0.8rem;
+  color: #a1a1aa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-request-detail-text {
+  font-size: 0.75rem;
+  color: #71717a;
+}
+
+.admin-request-action-col {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.admin-request-date {
+  font-size: 0.75rem;
+}
+
+/* Empty Card Inside Section */
+.admin-empty-card {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: #18181b;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #a1a1aa;
+}
+
+.admin-empty-card svg {
+  color: #22c55e;
+  margin-bottom: 0.5rem;
+}
+
+.admin-empty-card p {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f3f4f6;
+  margin: 0;
+}
+
+.admin-empty-sub {
+  font-size: 0.8rem;
+  color: #71717a;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Responsive Rules for Command Center */
+@media (max-width: 992px) {
+  .admin-dashboard-two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-customer-row,
+  .admin-request-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-customer-action-col,
+  .admin-request-action-col {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+  }
+}

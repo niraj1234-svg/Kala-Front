@@ -13,6 +13,7 @@ import { adminCustomRequestRouter, adminBusinessRequestRouter } from './routes/a
 import adminProductRouter from './routes/adminProductRoutes'
 import adminCustomerRouter from './routes/adminCustomerRoutes'
 import adminAnalyticsRouter from './routes/adminAnalyticsRoutes'
+import adminDashboardRouter from './routes/adminDashboardRoutes'
 
 // Load environment variables
 dotenv.config()
@@ -47,6 +48,7 @@ app.use('/api/business-requests', businessRequestRouter)
 app.use('/api/auth', authRouter)
 
 // Admin Management Routes (Protected by requireAuth + requireAdmin)
+app.use('/api/admin/dashboard', adminDashboardRouter)
 app.use('/api/admin/orders', adminOrderRouter)
 app.use('/api/admin/products', adminProductRouter)
 app.use('/api/admin/customers', adminCustomerRouter)

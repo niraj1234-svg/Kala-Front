@@ -869,5 +869,85 @@ export async function fetchAdminAnalytics(): Promise<AdminAnalyticsResponse> {
   return adminFetch<AdminAnalyticsResponse>('/admin/analytics/overview')
 }
 
+// =========================================================================
+// COMMAND CENTER DASHBOARD (ADMIN)
+// =========================================================================
+
+export interface AdminDashboardToday {
+  revenue: number
+  orders: number
+}
+
+export interface AdminDashboardCustomers {
+  total: number
+  newToday: number
+}
+
+export interface AdminDashboardOrders {
+  pending: number
+  confirmed: number
+  processing: number
+  shipped: number
+  delivered: number
+  cancelled: number
+}
+
+export interface AdminDashboardRequests {
+  customApparelPending: number
+  businessBrandingPending: number
+}
+
+export interface AdminDashboardSummaryData {
+  today: AdminDashboardToday
+  customers: AdminDashboardCustomers
+  orders: AdminDashboardOrders
+  requests: AdminDashboardRequests
+}
+
+export interface AdminDashboardRecentOrder {
+  orderId: string
+  customerName: string
+  customerEmail: string
+  total: number
+  status: AdminOrderStatus
+  createdAt: string
+  itemCount: number
+}
+
+export interface AdminDashboardRecentCustomer {
+  userId: string
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  createdAt: string
+}
+
+export interface AdminDashboardRecentRequest {
+  requestId: string
+  requestType: 'custom_apparel' | 'business_branding'
+  name: string
+  email: string
+  status: string
+  createdAt: string
+  detail?: string
+}
+
+export interface AdminDashboardSummaryResponse {
+  success: boolean
+  summary: AdminDashboardSummaryData
+  recentOrders: AdminDashboardRecentOrder[]
+  recentCustomers: AdminDashboardRecentCustomer[]
+  recentRequests: AdminDashboardRecentRequest[]
+}
+
+/**
+ * Retrieves real-time command center summary from MongoDB.
+ * Protected by requireAuth and requireAdmin server-side.
+ */
+export async function fetchAdminDashboardSummary(): Promise<AdminDashboardSummaryResponse> {
+  return adminFetch<AdminDashboardSummaryResponse>('/admin/dashboard/summary')
+}
+
 
 
