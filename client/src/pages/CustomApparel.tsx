@@ -287,17 +287,80 @@ export const CustomApparel: React.FC = () => {
             <div className="kala-custom-hero-ctas">
               <button
                 type="button"
-                className="kala-btn-primary"
+                className="kala-custom-cta-btn kala-custom-cta-primary"
                 onClick={() => scrollToForm()}
               >
-                START YOUR DESIGN
+                <span className="kala-custom-cta-content">
+                  <svg
+                    className="kala-custom-cta-icon"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                  </svg>
+                  <span>START YOUR DESIGN</span>
+                </span>
+                <svg
+                  className="kala-custom-cta-arrow"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
               </button>
               <button
                 type="button"
-                className="kala-btn-secondary"
+                className="kala-custom-cta-btn kala-custom-cta-secondary"
                 onClick={scrollToCategories}
               >
-                VIEW APPAREL
+                <span className="kala-custom-cta-content">
+                  <svg
+                    className="kala-custom-cta-icon"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.9"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" />
+                  </svg>
+                  <span>VIEW APPAREL</span>
+                </span>
+                <svg
+                  className="kala-custom-cta-arrow"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
               </button>
             </div>
           </div>
@@ -389,13 +452,44 @@ export const CustomApparel: React.FC = () => {
           ))}
         </div>
 
-        <div style={{ marginTop: '2rem' }}>
+        <div className="kala-custom-order-cta-wrap">
           <button
             type="button"
-            className="kala-btn-primary"
+            className="kala-custom-cta-btn kala-custom-cta-primary"
             onClick={() => scrollToForm()}
           >
-            START A CUSTOM ORDER
+            <span className="kala-custom-cta-content">
+              <svg
+                className="kala-custom-cta-icon"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.9"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" />
+              </svg>
+              <span>START A CUSTOM ORDER</span>
+            </span>
+            <svg
+              className="kala-custom-cta-arrow"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
           </button>
         </div>
       </section>

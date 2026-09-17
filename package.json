@@ -1,26 +1,26 @@
 {
   "name": "final-kala",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "description": "Kala - Custom Apparel & E-commerce Platform",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "oxlint",
-    "preview": "vite preview"
+    "dev": "npm --prefix client run dev",
+    "dev:client": "npm --prefix client run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "npm --prefix client run build",
+    "build:client": "npm --prefix client run build",
+    "build:backend": "npm --prefix backend run build",
+    "start:backend": "npm --prefix backend start",
+    "lint:client": "npm --prefix client run lint"
   },
-  "dependencies": {
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.4"
-  },
-  "devDependencies": {
-    "@types/node": "^24.13.3",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.7",
-    "@vitejs/plugin-react": "^6.1.1",
-    "oxlint": "^1.81.0",
-    "typescript": "~6.0.2",
-    "vite": "^8.3.0"
-  }
+  "keywords": [
+    "kala",
+    "apparel",
+    "react",
+    "vite",
+    "express",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC"
 }

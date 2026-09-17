@@ -49,7 +49,8 @@
 .kala-custom-hero-ctas {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.125rem;
 }
 
 .kala-custom-hero-visual {
@@ -334,3 +335,170 @@
   font-size: 1.75rem;
   margin-bottom: 1.25rem;
 }
+
+/* ==========================================================================
+   6. PREMIUM CTA BUTTONS REDESIGN
+   Minimal, Modern, Clean and Professional KALA Brand Style
+   ========================================================================== */
+
+.kala-custom-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 16px 28px;
+  border-radius: 12px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  box-sizing: border-box;
+  outline: none;
+  transition: background-color 200ms ease,
+              color 200ms ease,
+              border-color 200ms ease,
+              transform 200ms ease,
+              box-shadow 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kala-custom-cta-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.kala-custom-cta-icon {
+  flex-shrink: 0;
+  display: block;
+}
+
+.kala-custom-cta-arrow {
+  flex-shrink: 0;
+  display: block;
+  transition: transform 200ms ease;
+}
+
+/* Primary CTA Button ("START YOUR DESIGN" & "START A CUSTOM ORDER") */
+.kala-custom-cta-primary {
+  background-color: var(--kala-orange);
+  color: var(--kala-white);
+  border: 1.5px solid var(--kala-orange);
+  box-shadow: 0 2px 8px rgba(217, 71, 0, 0.15);
+}
+
+.kala-custom-cta-primary:hover:not(:disabled) {
+  background-color: var(--kala-orange-hover);
+  border-color: var(--kala-orange-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(217, 71, 0, 0.25);
+}
+
+.kala-custom-cta-primary:hover:not(:disabled) .kala-custom-cta-arrow {
+  transform: translateX(4px);
+}
+
+.kala-custom-cta-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Secondary CTA Button ("VIEW APPAREL") */
+.kala-custom-cta-secondary {
+  background-color: transparent;
+  color: var(--kala-black);
+  border: 1.5px solid var(--kala-black);
+  box-shadow: none;
+}
+
+.kala-custom-cta-secondary:hover:not(:disabled) {
+  background-color: var(--kala-black);
+  color: var(--kala-white);
+  border-color: var(--kala-black);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(17, 17, 17, 0.14);
+}
+
+.kala-custom-cta-secondary:hover:not(:disabled) .kala-custom-cta-arrow {
+  transform: translateX(4px);
+}
+
+.kala-custom-cta-secondary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Accessible Keyboard Focus States */
+.kala-custom-cta-btn:focus-visible {
+  outline: 2px solid var(--kala-black);
+  outline-offset: 3px;
+}
+
+.kala-custom-cta-primary:focus-visible {
+  outline: 2px solid var(--kala-orange);
+  outline-offset: 3px;
+}
+
+/* Disabled State */
+.kala-custom-cta-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Section 4 Custom Order CTA Alignment & Width */
+.kala-custom-order-cta-wrap {
+  margin-top: 2rem;
+  display: flex;
+}
+
+.kala-custom-order-cta-wrap .kala-custom-cta-btn {
+  min-width: 280px;
+}
+
+/* Responsive Rules */
+@media (max-width: 640px) {
+  .kala-custom-hero-ctas {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.875rem;
+  }
+
+  .kala-custom-hero-ctas .kala-custom-cta-btn,
+  .kala-custom-order-cta-wrap .kala-custom-cta-btn {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .kala-custom-order-cta-wrap {
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .kala-custom-cta-btn {
+    padding: 14px 18px;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    gap: 0.75rem;
+  }
+
+  .kala-custom-cta-content {
+    gap: 0.5rem;
+  }
+
+  .kala-custom-cta-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .kala-custom-cta-arrow {
+    width: 14px;
+    height: 14px;
+  }
+}
+
