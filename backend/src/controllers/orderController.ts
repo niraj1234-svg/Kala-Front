@@ -435,7 +435,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({
       success: false,
       message: 'Server error while creating order',
-      error: message,
+      ...(process.env.NODE_ENV !== 'production' ? { error: message } : {}),
     })
   }
 }
