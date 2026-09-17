@@ -52,6 +52,12 @@ app.use(
         return callback(null, true)
       }
 
+      // In local development, permit loopback origins on any port allocated by dev servers
+      const isProduction = process.env.NODE_ENV === 'production'
+      if (!isProduction && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(normalizedOrigin)) {
+        return callback(null, true)
+      }
+
       return callback(null, false)
     },
     credentials: true,

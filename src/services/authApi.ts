@@ -70,6 +70,27 @@ export function clearAuthToken(): void {
 }
 
 /**
+ * Normalizes technical network/fetch exceptions into user-friendly messages
+ * without exposing internal server stack traces or raw 'Failed to fetch'.
+ */
+function formatAuthErrorMessage(err: any, fallbackMessage: string): string {
+  if (err?.name === 'AbortError') {
+    return 'Request timed out. Please check your connection and try again.'
+  }
+  const msg = err?.message || ''
+  if (
+    msg === 'Failed to fetch' ||
+    msg === 'fetch failed' ||
+    msg.toLowerCase().includes('failed to fetch') ||
+    msg.toLowerCase().includes('networkerror') ||
+    err?.name === 'TypeError'
+  ) {
+    return 'Unable to connect to KALA right now. Please make sure the server is running and try again.'
+  }
+  return msg || fallbackMessage
+}
+
+/**
  * Registers a new customer account
  */
 export async function registerUser(
@@ -77,9 +98,12 @@ export async function registerUser(
 ): Promise<AuthResponse> {
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), 8000)
+  const endpoint = `${API_BASE_URL}/auth/register`
+
+  console.log(`[AuthApi] Register request -> URL: ${endpoint}`)
 
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -95,11 +119,14 @@ export async function registerUser(
     })
     clearTimeout(timeoutId)
 
+    console.log(`[AuthApi] Register response status: ${response.status}`)
+
     const data = await response.json()
 
     if (!response.ok || !data.success) {
       const errorMessage =
         data?.message || 'Unable to complete registration. Please try again.'
+      console.warn(`[AuthApi] Register response not ok: ${response.status} - ${errorMessage}`)
       throw new Error(errorMessage)
     }
 
@@ -110,11 +137,12 @@ export async function registerUser(
     return data
   } catch (err: any) {
     clearTimeout(timeoutId)
-    if (err.name === 'AbortError') {
-      throw new Error('Request timed out. Please check your connection and try again.')
-    }
+    console.error(`[AuthApi] Register fetch failure -> URL: ${endpoint}, error:`, {
+      name: err?.name,
+      message: err?.message,
+    })
     throw new Error(
-      err.message || 'Unable to complete registration. Please try again.'
+      formatAuthErrorMessage(err, 'Unable to complete registration. Please try again.')
     )
   }
 }
@@ -127,9 +155,12 @@ export async function loginUser(
 ): Promise<AuthResponse> {
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), 8000)
+  const endpoint = `${API_BASE_URL}/auth/login`
+
+  console.log(`[AuthApi] Login request -> URL: ${endpoint}`)
 
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -142,11 +173,14 @@ export async function loginUser(
     })
     clearTimeout(timeoutId)
 
+    console.log(`[AuthApi] Login response status: ${response.status}`)
+
     const data = await response.json()
 
     if (!response.ok || !data.success) {
       const errorMessage =
         data?.message || 'Invalid email or password.'
+      console.warn(`[AuthApi] Login response not ok: ${response.status} - ${errorMessage}`)
       throw new Error(errorMessage)
     }
 
@@ -157,11 +191,12 @@ export async function loginUser(
     return data
   } catch (err: any) {
     clearTimeout(timeoutId)
-    if (err.name === 'AbortError') {
-      throw new Error('Request timed out. Please check your connection and try again.')
-    }
+    console.error(`[AuthApi] Login fetch failure -> URL: ${endpoint}, error:`, {
+      name: err?.name,
+      message: err?.message,
+    })
     throw new Error(
-      err.message || 'Unable to log in right now. Please try again.'
+      formatAuthErrorMessage(err, 'Unable to log in right now. Please try again.')
     )
   }
 }

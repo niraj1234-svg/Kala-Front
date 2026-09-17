@@ -1,0 +1,179 @@
+/* ==========================================================================
+   KALA FOOTER STYLES
+   ========================================================================== */
+
+.kala-footer {
+  background-color: var(--kala-black);
+  color: var(--kala-white);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: auto;
+  padding-top: clamp(3rem, 5vw, 4.5rem);
+}
+
+.kala-footer-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: clamp(2rem, 4vw, 4rem);
+  padding-bottom: clamp(2.5rem, 4vw, 3.5rem);
+}
+
+/* Brand Column */
+.kala-footer-brand-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 440px;
+}
+
+.kala-footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--kala-white);
+  text-decoration: none;
+  margin-bottom: 1rem;
+}
+
+.kala-footer-logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  transition: transform var(--kala-transition-fast);
+}
+
+.kala-footer-logo:hover .kala-footer-logo-img {
+  transform: scale(1.06);
+}
+
+.kala-footer-logo-text {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--kala-white);
+}
+
+.kala-footer-tagline {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: var(--kala-fs-small);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.kala-footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: var(--kala-fs-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.kala-footer-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--kala-orange);
+}
+
+/* Nav Columns */
+.kala-footer-nav-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-footer-heading {
+  font-size: var(--kala-fs-label);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--kala-orange);
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.kala-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.kala-footer-link {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: var(--kala-fs-small);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: color var(--kala-transition-fast), transform var(--kala-transition-fast);
+  display: inline-block;
+}
+
+.kala-footer-link:hover {
+  color: var(--kala-white);
+  transform: translateX(2px);
+}
+
+/* Bottom Row */
+.kala-footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.kala-footer-bottom-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.kala-footer-copy {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.8rem;
+  margin-bottom: 0;
+}
+
+.kala-footer-location {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.8rem;
+  margin-bottom: 0;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 900px) {
+  .kala-footer-container {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .kala-footer-brand-col {
+    grid-column: span 2;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 580px) {
+  .kala-footer-container {
+    grid-template-columns: 1fr;
+    gap: 2.25rem;
+  }
+
+  .kala-footer-brand-col {
+    grid-column: span 1;
+  }
+
+  .kala-footer-bottom-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

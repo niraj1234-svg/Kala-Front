@@ -72,8 +72,15 @@ export function getAllowedOrigins(): string[] {
 
   const isProduction = process.env.NODE_ENV === 'production'
 
-  // In development, ensure localhost is always included in allowlist
-  const devOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173']
+  // In development, ensure common local development ports are included in allowlist
+  const devOrigins = [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174',
+    'http://127.0.0.1:5175',
+  ]
 
   if (!isProduction) {
     for (const devOrigin of devOrigins) {

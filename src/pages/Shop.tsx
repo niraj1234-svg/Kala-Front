@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { PRODUCTS } from '../data/products'
 import type { Product } from '../data/products'
 import { fetchProducts } from '../services/productApi'
@@ -10,10 +11,48 @@ type CategoryFilter = 'All' | 'Streetwear' | 'Gaming' | 'Gymwear'
 const CATEGORIES: CategoryFilter[] = ['All', 'Streetwear', 'Gaming', 'Gymwear']
 
 export const Shop: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const categoryFromUrl = searchParams.get('category')
+  const searchFromUrl = searchParams.get('search')
+
+  const initialCategory: CategoryFilter = useMemo(() => {
+    if (!categoryFromUrl) return 'All'
+    const found = CATEGORIES.find(
+      (c) => c.toLowerCase() === categoryFromUrl.trim().toLowerCase()
+    )
+    return found || 'All'
+  }, [categoryFromUrl])
+
   const [products, setProducts] = useState<Product[]>(PRODUCTS)
-  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All')
-  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>(initialCategory)
+  const [searchQuery, setSearchQuery] = useState<string>(searchFromUrl || '')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  // Sync state if URL search params change
+  useEffect(() => {
+    if (categoryFromUrl) {
+      const found = CATEGORIES.find(
+        (c) => c.toLowerCase() === categoryFromUrl.trim().toLowerCase()
+      )
+      if (found && found !== selectedCategory) {
+        setSelectedCategory(found)
+      }
+    }
+    if (searchFromUrl !== null && searchFromUrl !== searchQuery) {
+      setSearchQuery(searchFromUrl)
+    }
+  }, [categoryFromUrl, searchFromUrl])
+
+  const handleCategorySelect = (category: CategoryFilter) => {
+    setSelectedCategory(category)
+    if (category === 'All') {
+      searchParams.delete('category')
+      setSearchParams(searchParams, { replace: true })
+    } else {
+      searchParams.set('category', category)
+      setSearchParams(searchParams, { replace: true })
+    }
+  }
 
   // Fetch live products from MongoDB Atlas via Express API on mount
   useEffect(() => {
@@ -61,8 +100,12 @@ export const Shop: React.FC = () => {
   }, [products, selectedCategory, searchQuery])
 
   const handleResetFilters = () => {
-    setSelectedCategory('All')
+    handleCategorySelect('All')
     setSearchQuery('')
+    if (searchParams.has('search')) {
+      searchParams.delete('search')
+      setSearchParams(searchParams, { replace: true })
+    }
   }
 
   return (
@@ -88,7 +131,7 @@ export const Shop: React.FC = () => {
                 role="tab"
                 aria-selected={isActive}
                 className={`kala-category-tab ${isActive ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => handleCategorySelect(category)}
               >
                 {category}
               </button>

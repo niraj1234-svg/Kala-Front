@@ -23,6 +23,14 @@ export const connectDB = async () => {
     return
   }
 
+  mongoose.connection.on('disconnected', () => {
+    console.warn('[MongoDB] Disconnected. Reconnecting...')
+  })
+
+  mongoose.connection.on('error', (err) => {
+    console.error('[MongoDB] Connection event error:', err.message)
+  })
+
   try {
     await mongoose.connect(mongoUri)
     console.log('[MongoDB] Connected successfully')

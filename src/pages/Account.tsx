@@ -54,6 +54,16 @@ export const Account: React.FC = () => {
     }
   }, [isLoading, isAuthenticated, currentUser, loadOrders])
 
+  // Safe error mapping helper
+  const mapErrorMessage = (rawError?: string, defaultMsg = 'An error occurred.'): string => {
+    if (!rawError) return defaultMsg
+    const lower = rawError.toLowerCase()
+    if (lower.includes('failed to fetch') || lower.includes('fetch failed') || lower.includes('networkerror')) {
+      return 'Unable to connect to KALA right now. Please make sure the server is running and try again.'
+    }
+    return rawError
+  }
+
   // Handle Login submission
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -68,10 +78,10 @@ export const Account: React.FC = () => {
     try {
       const result = await login(loginEmail, loginPassword)
       if (!result.success) {
-        setLoginError(result.error || 'Invalid email or password.')
+        setLoginError(mapErrorMessage(result.error, 'Invalid email or password.'))
       }
     } catch (err: any) {
-      setLoginError(err.message || 'Invalid email or password.')
+      setLoginError(mapErrorMessage(err?.message, 'Invalid email or password.'))
     } finally {
       setIsLoggingIn(false)
     }
@@ -131,18 +141,18 @@ export const Account: React.FC = () => {
     setIsRegistering(true)
     try {
       const result = await register({
-        firstName: regFirstName,
-        lastName: regLastName,
-        email: regEmail,
-        phone: regPhone,
+        firstName: regFirstName.trim(),
+        lastName: regLastName.trim(),
+        email: regEmail.trim(),
+        phone: cleanPhone,
         password: regPassword,
       })
 
       if (!result.success) {
-        setRegErrors({ banner: result.error || 'Registration failed.' })
+        setRegErrors({ banner: mapErrorMessage(result.error, 'Registration failed.') })
       }
     } catch (err: any) {
-      setRegErrors({ banner: err.message || 'Registration failed.' })
+      setRegErrors({ banner: mapErrorMessage(err?.message, 'Registration failed.') })
     } finally {
       setIsRegistering(false)
     }

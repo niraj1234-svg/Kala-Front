@@ -4,6 +4,7 @@ import { WishlistProvider } from './context/WishlistContext'
 import { AuthProvider } from './context/AuthContext'
 import { AdminProvider } from './context/AdminContext'
 import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 import Home from './pages/Home'
 import Shop from './pages/Shop'
 import CustomApparel from './pages/CustomApparel'
@@ -210,6 +211,7 @@ function App() {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </div>
+              {!isAdminPath && <Footer />}
             </div>
           </WishlistProvider>
         </CartProvider>
