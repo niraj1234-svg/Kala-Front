@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api'
+import { API_BASE_URL } from '../config/api'
 const AUTH_TOKEN_KEY = 'kala_auth_token'
 
 export interface User {

@@ -1,7 +1,6 @@
 import { PRODUCTS, getProductImage } from '../data/products'
 import type { Product } from '../data/products'
-
-const API_BASE_URL = 'http://localhost:5000/api'
+import { API_BASE_URL } from '../config/api'
 
 /**
  * Normalizes a product returned from the Express / MongoDB API

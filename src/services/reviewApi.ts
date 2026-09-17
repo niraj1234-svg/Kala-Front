@@ -1,7 +1,6 @@
 import { getAuthToken } from './authApi'
 import { getAdminAuthToken, clearAdminAuthToken, clearStoredAdminUser } from './adminApi'
-
-const API_BASE_URL = 'http://localhost:5000/api'
+import { API_BASE_URL } from '../config/api'
 
 export interface Review {
   _id: string

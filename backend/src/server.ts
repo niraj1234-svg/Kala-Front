@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import cors from 'cors'
-import dotenv from 'dotenv'
+import { validateEnv, getAllowedOrigins } from './config/env'
 import { connectDB } from './config/db'
 import { seedProducts } from './config/seed'
 import productRouter from './routes/productRoutes'
@@ -19,17 +19,29 @@ import customerCouponRouter from './routes/customerCouponRoutes'
 import reviewRouter from './routes/reviewRoutes'
 import adminReviewRouter from './routes/adminReviewRoutes'
 
-// Load environment variables
-dotenv.config()
+// Validate required environment configuration at startup
+validateEnv()
 
 const app = express()
 const PORT = process.env.PORT || 5000
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173'
+const allowedOrigins = getAllowedOrigins()
 
-// Middleware
+// CORS configuration with explicit allowlisting and credentials support
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, Postman, health check)
+      if (!origin) {
+        return callback(null, true)
+      }
+
+      const normalizedOrigin = origin.replace(/\/+$/, '')
+      if (allowedOrigins.includes(normalizedOrigin)) {
+        return callback(null, true)
+      }
+
+      return callback(null, false)
+    },
     credentials: true,
   })
 )
