@@ -18,14 +18,15 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
   const navItems = [
     { label: 'Dashboard', to: '/admin', available: true, end: true },
-    { label: 'Orders', to: '/admin/orders', available: true, end: false },
     { label: 'Products', to: '/admin/products', available: true, end: false },
+    { label: 'Orders', to: '/admin/orders', available: true, end: false },
     { label: 'Customers', to: '/admin/customers', available: true, end: false },
-    { label: 'Reviews', to: '/admin/reviews', available: true, end: false },
+    { label: 'Custom Requests', to: '/admin/custom-requests', available: true, end: false },
+    { label: 'Business Requests', to: '/admin/business-requests', available: true, end: false },
     { label: 'Coupons', to: '/admin/coupons', available: true, end: false },
-    { label: 'Custom Apparel', to: '/admin/custom-requests', available: true, end: false },
-    { label: 'Business Branding', to: '/admin/business-requests', available: true, end: false },
+    { label: 'Reviews', to: '/admin/reviews', available: true, end: false },
     { label: 'Analytics', to: '/admin/analytics', available: true, end: false },
+    { label: 'Settings', to: '/admin/settings', available: true, end: false },
   ]
 
   return (
@@ -71,7 +72,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             type="button"
             className="admin-logout-btn"
             onClick={handleLogout}
-            aria-label="Sign out of admin session"
+            aria-label="Logout of admin session"
           >
             <svg
               width="16"
@@ -88,7 +89,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               <polyline points="16 17 21 12 16 7" />
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
-            <span>Sign Out</span>
+            <span>Logout</span>
           </button>
         </div>
       </aside>

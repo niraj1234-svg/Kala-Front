@@ -236,17 +236,81 @@ export const BusinessBranding: React.FC = () => {
             <div className="kala-business-hero-ctas">
               <button
                 type="button"
-                className="kala-btn-primary"
+                className="kala-cta-btn kala-cta-primary"
                 onClick={() => scrollToForm()}
               >
-                REQUEST A QUOTE
+                <span className="kala-cta-content">
+                  <span className="kala-cta-icon" aria-hidden="true">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M12 20h9" />
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                    </svg>
+                  </span>
+                  <span>REQUEST A QUOTE</span>
+                </span>
+                <span className="kala-cta-arrow" aria-hidden="true">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </span>
               </button>
+
               <button
                 type="button"
-                className="kala-btn-secondary"
+                className="kala-cta-btn kala-cta-secondary"
                 onClick={scrollToSolutions}
               >
-                EXPLORE MERCH
+                <span className="kala-cta-content">
+                  <span className="kala-cta-icon" aria-hidden="true">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </span>
+                  <span>EXPLORE MERCH</span>
+                </span>
+                <span className="kala-cta-arrow" aria-hidden="true">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </span>
               </button>
             </div>
           </div>

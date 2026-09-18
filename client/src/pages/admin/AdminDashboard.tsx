@@ -216,25 +216,25 @@ export const AdminDashboard: React.FC = () => {
               Command Center Primary Metrics
             </h2>
             <div className="admin-analytics-metrics-grid">
-              {/* Card 1: Today's Revenue */}
+              {/* Card 1: Total Revenue */}
               <div className="admin-metric-card highlight-revenue">
-                <span className="admin-metric-label">Today's Revenue</span>
+                <span className="admin-metric-label">Total Revenue</span>
                 <span className="admin-metric-value text-white">
-                  {formatCurrency(summaryData.today.revenue)}
+                  {formatCurrency(summaryData.totalRevenue ?? summaryData.today.revenue)}
                 </span>
                 <span className="admin-metric-sub">
-                  From active orders today
+                  All-time non-cancelled sales
                 </span>
               </div>
 
-              {/* Card 2: Today's Orders */}
+              {/* Card 2: Total Orders */}
               <div className="admin-metric-card">
-                <span className="admin-metric-label">Today's Orders</span>
+                <span className="admin-metric-label">Total Orders</span>
                 <span className="admin-metric-value">
-                  {formatNumber(summaryData.today.orders)}
+                  {formatNumber(summaryData.totalOrders ?? summaryData.today.orders)}
                 </span>
                 <span className="admin-metric-sub">
-                  Volume placed today
+                  Total store orders placed
                 </span>
               </div>
 
@@ -242,20 +242,31 @@ export const AdminDashboard: React.FC = () => {
               <div className="admin-metric-card">
                 <span className="admin-metric-label">Total Customers</span>
                 <span className="admin-metric-value">
-                  {formatNumber(summaryData.customers.total)}
+                  {formatNumber(summaryData.totalCustomers ?? summaryData.customers.total)}
                 </span>
                 <span className="admin-metric-sub">
                   {summaryData.customers.newToday > 0
                     ? `+${formatNumber(summaryData.customers.newToday)} new today`
-                    : 'Customer accounts'}
+                    : 'Registered customer accounts'}
                 </span>
               </div>
 
-              {/* Card 4: Pending Orders */}
+              {/* Card 4: Products */}
+              <div className="admin-metric-card">
+                <span className="admin-metric-label">Products</span>
+                <span className="admin-metric-value">
+                  {formatNumber(summaryData.totalProducts ?? 20)}
+                </span>
+                <span className="admin-metric-sub">
+                  Active catalog products
+                </span>
+              </div>
+
+              {/* Card 5: Pending Orders */}
               <div className="admin-metric-card">
                 <span className="admin-metric-label">Pending Orders</span>
                 <span className="admin-metric-value text-warning">
-                  {formatNumber(summaryData.orders.pending)}
+                  {formatNumber(summaryData.pendingOrders ?? summaryData.orders.pending)}
                 </span>
                 <span className="admin-metric-sub">
                   {summaryData.orders.processing > 0
@@ -264,25 +275,29 @@ export const AdminDashboard: React.FC = () => {
                 </span>
               </div>
 
-              {/* Card 5: Pending Custom Apparel */}
+              {/* Card 6: Custom Requests */}
               <div className="admin-metric-card">
-                <span className="admin-metric-label">Pending Custom Apparel</span>
+                <span className="admin-metric-label">Custom Requests</span>
                 <span className="admin-metric-value text-accent">
-                  {formatNumber(summaryData.requests.customApparelPending)}
+                  {formatNumber(summaryData.totalCustomRequests ?? summaryData.requests.customApparelPending)}
                 </span>
                 <span className="admin-metric-sub">
-                  Design inquiries
+                  {summaryData.requests.customApparelPending > 0
+                    ? `${formatNumber(summaryData.requests.customApparelPending)} pending review`
+                    : 'Apparel design inquiries'}
                 </span>
               </div>
 
-              {/* Card 6: Pending Business Branding */}
+              {/* Card 7: Business Requests */}
               <div className="admin-metric-card">
-                <span className="admin-metric-label">Pending Business Branding</span>
+                <span className="admin-metric-label">Business Requests</span>
                 <span className="admin-metric-value text-accent">
-                  {formatNumber(summaryData.requests.businessBrandingPending)}
+                  {formatNumber(summaryData.totalBusinessRequests ?? summaryData.requests.businessBrandingPending)}
                 </span>
                 <span className="admin-metric-sub">
-                  Corporate quote requests
+                  {summaryData.requests.businessBrandingPending > 0
+                    ? `${formatNumber(summaryData.requests.businessBrandingPending)} pending quotes`
+                    : 'Corporate quote requests'}
                 </span>
               </div>
             </div>
@@ -338,6 +353,7 @@ export const AdminDashboard: React.FC = () => {
                     <tr>
                       <th scope="col">Order ID</th>
                       <th scope="col">Customer</th>
+                      <th scope="col">Items</th>
                       <th scope="col">Amount</th>
                       <th scope="col">Status</th>
                       <th scope="col" className="text-right">
@@ -360,6 +376,11 @@ export const AdminDashboard: React.FC = () => {
                               {order.customerEmail}
                             </span>
                           </div>
+                        </td>
+                        <td>
+                          <span className="font-mono text-bold">
+                            {order.itemCount || 1}
+                          </span>
                         </td>
                         <td>
                           <span className="text-bold font-mono">
@@ -422,8 +443,9 @@ export const AdminDashboard: React.FC = () => {
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th scope="col">Order</th>
+                      <th scope="col">Order ID</th>
                       <th scope="col">Customer</th>
+                      <th scope="col">Items</th>
                       <th scope="col">Amount</th>
                       <th scope="col">Status</th>
                       <th scope="col">Date</th>
@@ -447,6 +469,11 @@ export const AdminDashboard: React.FC = () => {
                               {order.customerEmail}
                             </span>
                           </div>
+                        </td>
+                        <td>
+                          <span className="font-mono text-bold">
+                            {order.itemCount || 1}
+                          </span>
                         </td>
                         <td>
                           <span className="font-mono text-bold">

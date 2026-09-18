@@ -906,6 +906,13 @@ export interface AdminDashboardRequests {
 }
 
 export interface AdminDashboardSummaryData {
+  totalRevenue?: number
+  totalOrders?: number
+  totalCustomers?: number
+  totalProducts?: number
+  pendingOrders?: number
+  totalCustomRequests?: number
+  totalBusinessRequests?: number
   today: AdminDashboardToday
   customers: AdminDashboardCustomers
   orders: AdminDashboardOrders

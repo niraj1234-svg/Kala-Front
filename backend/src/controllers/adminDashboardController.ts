@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { Order } from '../models/Order'
 import { User } from '../models/User'
+import { Product } from '../models/Product'
 import { CustomRequest } from '../models/CustomRequest'
 import { BusinessRequest } from '../models/BusinessRequest'
 
@@ -21,11 +22,15 @@ export const getAdminDashboardSummary = async (
     // Execute independent database queries in parallel for high performance
     const [
       todaySalesAgg,
+      totalRevenueAgg,
       totalCustomers,
       newCustomersToday,
       ordersByStatusAgg,
+      totalProducts,
       customApparelPending,
+      totalCustomRequests,
       businessBrandingPending,
+      totalBusinessRequests,
       rawRecentOrders,
       rawRecentCustomers,
       rawRecentCustomRequests,
@@ -48,16 +53,31 @@ export const getAdminDashboardSummary = async (
         },
       ]),
 
-      // 2. Total registered customers (excluding admins)
+      // 2. All-time non-cancelled total revenue
+      Order.aggregate([
+        {
+          $match: {
+            status: { $ne: 'cancelled' },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            revenue: { $sum: '$pricing.total' },
+          },
+        },
+      ]),
+
+      // 3. Total registered customers (excluding admins)
       User.countDocuments({ role: { $ne: 'admin' } }),
 
-      // 3. New registered customers today
+      // 4. New registered customers today
       User.countDocuments({
         role: { $ne: 'admin' },
         createdAt: { $gte: startOfToday },
       }),
 
-      // 4. Order status distribution
+      // 5. Order status distribution
       Order.aggregate([
         {
           $group: {
@@ -67,34 +87,43 @@ export const getAdminDashboardSummary = async (
         },
       ]),
 
-      // 5. Pending custom apparel requests
+      // 6. Total active/catalog products
+      Product.countDocuments({}),
+
+      // 7. Pending custom apparel requests
       CustomRequest.countDocuments({ status: 'pending' }),
 
-      // 6. Pending business branding requests
+      // 8. Total custom apparel requests
+      CustomRequest.countDocuments({}),
+
+      // 9. Pending business branding requests
       BusinessRequest.countDocuments({ status: 'pending' }),
 
-      // 7. Recent 5 orders
+      // 10. Total business branding requests
+      BusinessRequest.countDocuments({}),
+
+      // 11. Recent 5 orders
       Order.find({})
         .sort({ createdAt: -1 })
         .limit(5)
         .select('orderId customer pricing status createdAt items')
         .lean(),
 
-      // 8. Recent 5 customers (excluding admins)
+      // 12. Recent 5 customers (excluding admins)
       User.find({ role: { $ne: 'admin' } })
         .sort({ createdAt: -1 })
         .limit(5)
         .select('userId firstName lastName email phone createdAt -_id')
         .lean(),
 
-      // 9. Recent 5 custom apparel requests
+      // 13. Recent 5 custom apparel requests
       CustomRequest.find({})
         .sort({ createdAt: -1 })
         .limit(5)
         .select('requestId name email status createdAt apparelType')
         .lean(),
 
-      // 10. Recent 5 business branding requests
+      // 14. Recent 5 business branding requests
       BusinessRequest.find({})
         .sort({ createdAt: -1 })
         .limit(5)
@@ -105,6 +134,7 @@ export const getAdminDashboardSummary = async (
     // Parse today's business revenue and orders
     const todayRevenue = Math.round(todaySalesAgg[0]?.revenue || 0)
     const todayOrders = todaySalesAgg[0]?.orders || 0
+    const totalRevenue = Math.round(totalRevenueAgg[0]?.revenue || 0)
 
     // Parse orders by status
     const orderStatuses: Record<string, number> = {
@@ -182,9 +212,18 @@ export const getAdminDashboardSummary = async (
       )
       .slice(0, 5)
 
+    const totalOrders = Object.values(orderStatuses).reduce((acc, c) => acc + c, 0)
+
     res.status(200).json({
       success: true,
       summary: {
+        totalRevenue,
+        totalOrders,
+        totalCustomers,
+        totalProducts,
+        pendingOrders: orderStatuses.pending,
+        totalCustomRequests,
+        totalBusinessRequests,
         today: {
           revenue: todayRevenue,
           orders: todayOrders,
@@ -203,7 +242,9 @@ export const getAdminDashboardSummary = async (
         },
         requests: {
           customApparelPending,
+          customApparelTotal: totalCustomRequests,
           businessBrandingPending,
+          businessBrandingTotal: totalBusinessRequests,
         },
       },
       recentOrders,

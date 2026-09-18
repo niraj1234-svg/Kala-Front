@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext'
 import { AdminProvider } from './context/AdminContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import AuthPromptModal from './components/AuthPromptModal'
 import Home from './pages/Home'
 import Shop from './pages/Shop'
 import CustomApparel from './pages/CustomApparel'
@@ -32,6 +33,7 @@ import AdminCoupons from './pages/admin/AdminCoupons'
 import AdminReviews from './pages/admin/AdminReviews'
 import AdminReviewDetail from './pages/admin/AdminReviewDetail'
 import AdminAnalytics from './pages/admin/AdminAnalytics'
+import AdminSettings from './pages/admin/AdminSettings'
 import AdminRoute from './components/admin/AdminRoute'
 import AdminLayout from './components/admin/AdminLayout'
 import NotFound from './pages/NotFound'
@@ -48,6 +50,7 @@ function App() {
           <WishlistProvider>
             <div className={`kala-app ${isAdminPath ? 'kala-admin-app' : ''}`}>
               {!isAdminPath && <Navbar />}
+              {!isAdminPath && <AuthPromptModal />}
               <div className={isAdminPath ? 'kala-admin-app-content' : 'kala-main-content'}>
                 <Routes>
                   {/* Customer Storefront Routes */}
@@ -202,6 +205,16 @@ function App() {
                       <AdminRoute>
                         <AdminLayout>
                           <AdminAnalytics />
+                        </AdminLayout>
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/settings"
+                    element={
+                      <AdminRoute>
+                        <AdminLayout>
+                          <AdminSettings />
                         </AdminLayout>
                       </AdminRoute>
                     }

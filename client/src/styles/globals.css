@@ -264,6 +264,132 @@ a {
 }
 
 /* --------------------------------------------------------------------------
+   4.3 MODERN REFERENCE CTA BUTTON SYSTEM (Primary & Secondary)
+   -------------------------------------------------------------------------- */
+.kala-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.65rem;
+  border-radius: 12px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  box-sizing: border-box;
+  outline: none;
+  min-height: 52px;
+  transition: background-color 200ms ease,
+              color 200ms ease,
+              border-color 200ms ease,
+              transform 200ms ease,
+              box-shadow 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kala-cta-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.kala-cta-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-cta-arrow {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 200ms ease;
+}
+
+/* Primary CTA Button (KALA Orange) */
+.kala-cta-primary {
+  background-color: var(--kala-orange);
+  color: var(--kala-white);
+  border: 1.5px solid var(--kala-orange);
+  box-shadow: 0 4px 14px rgba(217, 71, 0, 0.22);
+}
+
+.kala-cta-primary:hover:not(:disabled) {
+  background-color: var(--kala-orange-hover);
+  border-color: var(--kala-orange-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(217, 71, 0, 0.32);
+}
+
+.kala-cta-primary:hover:not(:disabled) .kala-cta-arrow {
+  transform: translateX(4px);
+}
+
+.kala-cta-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.kala-cta-primary:focus-visible {
+  outline: 2px solid var(--kala-orange);
+  outline-offset: 3px;
+}
+
+/* Secondary CTA Button (Dark Border / Off-White) */
+.kala-cta-secondary {
+  background-color: transparent;
+  color: var(--kala-black);
+  border: 1.5px solid var(--kala-black);
+  box-shadow: 0 2px 8px rgba(17, 17, 17, 0.04);
+}
+
+.kala-cta-secondary:hover:not(:disabled) {
+  background-color: var(--kala-black);
+  color: var(--kala-white);
+  border-color: var(--kala-black);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(17, 17, 17, 0.18);
+}
+
+.kala-cta-secondary:hover:not(:disabled) .kala-cta-arrow {
+  transform: translateX(4px);
+}
+
+.kala-cta-secondary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.kala-cta-secondary:focus-visible {
+  outline: 2px solid var(--kala-black);
+  outline-offset: 3px;
+}
+
+/* Disabled State */
+.kala-cta-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Responsive Mobile Layout */
+@media (max-width: 480px) {
+  .kala-cta-btn {
+    width: 100%;
+    padding: 0.95rem 1.25rem;
+    font-size: 0.875rem;
+    justify-content: space-between;
+  }
+}
+
+/* --------------------------------------------------------------------------
    5. LAYOUT & CONTAINER FOUNDATION
    -------------------------------------------------------------------------- */
 .kala-container {

@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import { validateEnv, getAllowedOrigins } from './config/env'
 import { connectDB } from './config/db'
 import { seedProducts } from './config/seed'
+import { seedAdmin } from './config/seedAdmin'
 import { authLimiter, orderLimiter, reviewLimiter, inquiryLimiter } from './middleware/rateLimiter'
 import productRouter from './routes/productRoutes'
 import orderRouter from './routes/orderRoutes'
@@ -136,6 +137,13 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 app.listen(PORT, async () => {
   await connectDB()
   await seedProducts()
+  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+    try {
+      await seedAdmin()
+    } catch (err: unknown) {
+      console.warn('[Admin Seeder] Auto-seed skipped:', err instanceof Error ? err.message : err)
+    }
+  }
   console.log(`[KALA Backend] Server running on port ${PORT}`)
   console.log(`[KALA Backend] Health check:    http://localhost:${PORT}/api/health`)
   console.log(`[KALA Backend] Products API:    http://localhost:${PORT}/api/products`)

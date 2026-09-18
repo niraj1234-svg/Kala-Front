@@ -85,34 +85,47 @@
 }
 
 .kala-hero-btn {
-  padding: 1rem 2.25rem;
+  padding: 0.95rem 2rem;
   font-size: 0.875rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  transition: all var(--kala-transition-fast);
+  letter-spacing: 0.06em;
+  border-radius: 12px;
+  min-height: 48px;
+  transition: background-color 200ms ease,
+              color 200ms ease,
+              border-color 200ms ease,
+              transform 200ms ease,
+              box-shadow 200ms ease;
 }
 
 .kala-hero-btn-primary {
-  background-color: var(--kala-black);
+  background-color: var(--kala-orange);
   color: var(--kala-white);
-  border: 1px solid var(--kala-black);
+  border: 1.5px solid var(--kala-orange);
+  box-shadow: 0 4px 14px rgba(217, 71, 0, 0.22);
 }
 
 .kala-hero-btn-primary:hover {
-  background-color: var(--kala-orange);
-  border-color: var(--kala-orange);
+  background-color: var(--kala-orange-hover);
+  border-color: var(--kala-orange-hover);
   color: var(--kala-white);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(217, 71, 0, 0.32);
 }
 
 .kala-hero-btn-secondary {
   background-color: transparent;
   color: var(--kala-black);
-  border: 1px solid var(--kala-black);
+  border: 1.5px solid var(--kala-black);
+  box-shadow: 0 2px 8px rgba(17, 17, 17, 0.04);
 }
 
 .kala-hero-btn-secondary:hover {
   background-color: var(--kala-black);
   color: var(--kala-white);
+  border-color: var(--kala-black);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(17, 17, 17, 0.18);
 }
 
 .kala-hero-meta {
@@ -340,6 +353,18 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
+.kala-path-btn {
+  border-radius: 12px;
+  font-weight: 700;
+  padding: 0.95rem 1.75rem;
+  letter-spacing: 0.05em;
+  transition: all 200ms ease;
+}
+
+.kala-path-btn:hover {
+  transform: translateY(-2px);
+}
+
 .kala-path-card-accent .kala-path-btn {
   background-color: var(--kala-white);
   color: var(--kala-black);
@@ -350,6 +375,7 @@
   background-color: var(--kala-orange);
   border-color: var(--kala-orange);
   color: var(--kala-white);
+  box-shadow: 0 4px 14px rgba(217, 71, 0, 0.3);
 }
 
 .kala-path-eyebrow {

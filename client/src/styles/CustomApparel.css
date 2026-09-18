@@ -390,14 +390,14 @@
   background-color: var(--kala-orange);
   color: var(--kala-white);
   border: 1.5px solid var(--kala-orange);
-  box-shadow: 0 2px 8px rgba(217, 71, 0, 0.15);
+  box-shadow: 0 4px 14px rgba(217, 71, 0, 0.22);
 }
 
 .kala-custom-cta-primary:hover:not(:disabled) {
   background-color: var(--kala-orange-hover);
   border-color: var(--kala-orange-hover);
   transform: translateY(-2px);
-  box-shadow: 0 5px 16px rgba(217, 71, 0, 0.25);
+  box-shadow: 0 6px 20px rgba(217, 71, 0, 0.32);
 }
 
 .kala-custom-cta-primary:hover:not(:disabled) .kala-custom-cta-arrow {
@@ -413,7 +413,7 @@
   background-color: transparent;
   color: var(--kala-black);
   border: 1.5px solid var(--kala-black);
-  box-shadow: none;
+  box-shadow: 0 2px 8px rgba(17, 17, 17, 0.04);
 }
 
 .kala-custom-cta-secondary:hover:not(:disabled) {
@@ -421,7 +421,7 @@
   color: var(--kala-white);
   border-color: var(--kala-black);
   transform: translateY(-2px);
-  box-shadow: 0 5px 16px rgba(17, 17, 17, 0.14);
+  box-shadow: 0 6px 18px rgba(17, 17, 17, 0.18);
 }
 
 .kala-custom-cta-secondary:hover:not(:disabled) .kala-custom-cta-arrow {

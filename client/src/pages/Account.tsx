@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { fetchMyOrders } from '../services/orderApi'
 import type { BackendOrder } from '../services/orderApi'
@@ -8,8 +8,18 @@ import '../styles/OrderTracking.css'
 
 export const Account: React.FC = () => {
   const { currentUser, isAuthenticated, isLoading, login, register, logout } = useAuth()
+  const [searchParams] = useSearchParams()
+  const tabParam = searchParams.get('tab')
 
-  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
+  const [activeTab, setActiveTab] = useState<'login' | 'register'>(() => {
+    return tabParam === 'register' ? 'register' : 'login'
+  })
+
+  useEffect(() => {
+    if (tabParam === 'register' || tabParam === 'login') {
+      setActiveTab(tabParam)
+    }
+  }, [tabParam])
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState('')
