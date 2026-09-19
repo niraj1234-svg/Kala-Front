@@ -241,26 +241,74 @@ a {
 
 /* 4.1 Primary KALA Button */
 .kala-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--kala-space-sm);
+  font-family: var(--kala-font-primary);
+  font-size: var(--kala-fs-small);
+  font-weight: 600;
+  letter-spacing: var(--kala-ls-wide);
+  padding: 0.85rem 1.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--kala-orange);
   background-color: var(--kala-orange);
   color: var(--kala-white);
-  border-color: var(--kala-orange);
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1;
+  transition: background-color var(--kala-transition-fast),
+              border-color var(--kala-transition-fast),
+              box-shadow var(--kala-transition-fast),
+              transform var(--kala-transition-fast);
+  outline: none;
+  box-sizing: border-box;
 }
 
 .kala-btn-primary:hover:not(:disabled) {
   background-color: var(--kala-orange-hover);
   border-color: var(--kala-orange-hover);
+  transform: translateY(-1px);
+}
+
+.kala-btn-primary:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 /* 4.2 Secondary Button */
 .kala-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--kala-space-sm);
+  font-family: var(--kala-font-primary);
+  font-size: var(--kala-fs-small);
+  font-weight: 600;
+  letter-spacing: var(--kala-ls-wide);
+  padding: 0.85rem 1.85rem;
+  border-radius: 8px;
   background-color: transparent;
   border: 1px solid var(--kala-black);
   color: var(--kala-black);
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1;
+  transition: background-color var(--kala-transition-fast),
+              color var(--kala-transition-fast),
+              border-color var(--kala-transition-fast),
+              transform var(--kala-transition-fast);
+  outline: none;
+  box-sizing: border-box;
 }
 
 .kala-btn-secondary:hover:not(:disabled) {
   background-color: var(--kala-black);
   color: var(--kala-white);
+  transform: translateY(-1px);
+}
+
+.kala-btn-secondary:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 /* --------------------------------------------------------------------------
@@ -404,4 +452,19 @@ a {
 .kala-section {
   padding-top: var(--kala-section-spacing);
   padding-bottom: var(--kala-section-spacing);
+}
+
+/* Spinner Animation */
+@keyframes kalaSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.kala-spin {
+  animation: kalaSpin 0.8s linear infinite;
+  display: inline-block;
 }

@@ -212,6 +212,18 @@
   color: var(--kala-black);
 }
 
+.kala-bulk-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .kala-bulk-actions .kala-cta-btn {
+    width: 100%;
+  }
+}
+
 /* --------------------------------------------------------------------------
    4. BUSINESS QUOTE FORM
    -------------------------------------------------------------------------- */

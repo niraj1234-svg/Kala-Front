@@ -57,6 +57,15 @@ export interface IOrderStatusHistory {
   note?: string
 }
 
+export interface IOrderPayment {
+  method?: string
+  razorpayOrderId?: string
+  razorpayPaymentId?: string
+  razorpaySignature?: string
+  status?: 'pending' | 'paid' | 'failed'
+  paidAt?: Date
+}
+
 export interface IOrder extends Document {
   orderId: string
   userId?: string
@@ -65,6 +74,7 @@ export interface IOrder extends Document {
   items: IOrderItem[]
   pricing: IPricing
   coupon?: IOrderCoupon
+  payment?: IOrderPayment
   status: OrderStatus
   tracking?: ITracking
   statusHistory?: IOrderStatusHistory[]
@@ -228,6 +238,18 @@ const OrderSchema = new Schema<IOrder>(
         discountType: { type: String, required: true, enum: ['percentage', 'fixed'] },
         discountValue: { type: Number, required: true, min: 0 },
         discountAmount: { type: Number, required: true, min: 0 },
+      },
+      required: false,
+      _id: false,
+    },
+    payment: {
+      type: {
+        method: { type: String, default: 'razorpay' },
+        razorpayOrderId: { type: String, trim: true },
+        razorpayPaymentId: { type: String, trim: true },
+        razorpaySignature: { type: String, trim: true },
+        status: { type: String, enum: ['pending', 'paid', 'failed'], default: 'pending' },
+        paidAt: { type: Date },
       },
       required: false,
       _id: false,

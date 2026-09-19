@@ -21,6 +21,7 @@ import adminCouponRouter from './routes/adminCouponRoutes'
 import customerCouponRouter from './routes/customerCouponRoutes'
 import reviewRouter from './routes/reviewRoutes'
 import adminReviewRouter from './routes/adminReviewRoutes'
+import paymentRouter from './routes/paymentRoutes'
 
 // Validate required environment configuration at startup
 validateEnv()
@@ -85,6 +86,8 @@ app.use('/api/reviews', reviewLimiter, reviewRouter)
 app.use('/api/custom-requests', inquiryLimiter, customRequestRouter)
 app.use('/api/business-requests', inquiryLimiter, businessRequestRouter)
 app.use('/api/auth', authLimiter, authRouter)
+app.use('/api', paymentRouter)
+app.use('/api/payment', paymentRouter)
 
 // Admin Management Routes (Protected by requireAuth + requireAdmin)
 app.use('/api/admin/dashboard', adminDashboardRouter)
@@ -151,6 +154,7 @@ app.listen(PORT, async () => {
   console.log(`[KALA Backend] Custom Req API:  http://localhost:${PORT}/api/custom-requests`)
   console.log(`[KALA Backend] Business API:    http://localhost:${PORT}/api/business-requests`)
   console.log(`[KALA Backend] Auth API:        http://localhost:${PORT}/api/auth`)
+  console.log(`[KALA Backend] Payments API:    http://localhost:${PORT}/api/create-order`)
 })
 
 export default app

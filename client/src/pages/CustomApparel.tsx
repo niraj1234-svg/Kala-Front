@@ -398,7 +398,7 @@ export const CustomApparel: React.FC = () => {
                 <p className="kala-category-card-desc">{cat.description}</p>
                 <button
                   type="button"
-                  className="kala-btn-primary kala-category-card-btn"
+                  className="kala-btn kala-btn-primary kala-category-card-btn"
                   onClick={() => scrollToForm(cat.typeValue)}
                 >
                   {cat.buttonText}
@@ -555,10 +555,13 @@ export const CustomApparel: React.FC = () => {
 
             <button
               type="button"
-              className="kala-btn-primary"
+              className="kala-cta-btn kala-cta-primary"
               onClick={handleResetForm}
+              style={{ minWidth: '240px', justifyContent: 'center' }}
             >
-              SUBMIT ANOTHER REQUEST
+              <span className="kala-cta-content">
+                <span>SUBMIT ANOTHER REQUEST</span>
+              </span>
             </button>
           </div>
         ) : (
@@ -812,11 +815,59 @@ export const CustomApparel: React.FC = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="kala-btn-primary"
-                style={{ width: '100%', padding: '1rem' }}
+                className="kala-cta-btn kala-cta-primary"
+                style={{ width: '100%', justifyContent: 'center' }}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'SUBMITTING REQUEST...' : 'SUBMIT CUSTOM REQUEST'}
+                <span className="kala-cta-content">
+                  <span className="kala-cta-icon" aria-hidden="true">
+                    {isSubmitting ? (
+                      <svg
+                        className="kala-spin"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                      >
+                        <circle cx="12" cy="12" r="10" strokeDasharray="60" strokeDashoffset="20" strokeLinecap="round" />
+                      </svg>
+                    ) : (
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="22" y1="2" x2="11" y2="13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                      </svg>
+                    )}
+                  </span>
+                  <span>{isSubmitting ? 'SUBMITTING REQUEST...' : 'SUBMIT CUSTOM REQUEST'}</span>
+                </span>
+                {!isSubmitting && (
+                  <span className="kala-cta-arrow" aria-hidden="true">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
+                )}
               </button>
             </form>
           </div>

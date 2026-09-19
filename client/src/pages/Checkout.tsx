@@ -4,6 +4,8 @@ import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { createOrder, validateCoupon } from '../services/orderApi'
 import type { CreateOrderPayload, ValidateCouponResponse } from '../services/orderApi'
+import { createRazorpayOrder, verifyRazorpayPayment, loadRazorpayScript } from '../services/paymentApi'
+import type { RazorpayOptions, RazorpaySuccessResponse, RazorpayErrorResponse } from '../types/razorpay'
 import { saveOrder } from '../types/order'
 import '../styles/Checkout.css'
 
@@ -305,50 +307,136 @@ export const Checkout: React.FC = () => {
       // 1. Send order to backend Express API (backed by MongoDB Atlas)
       const response = await createOrder(payload)
 
-      if (response && response.success && response.orderId) {
-        // 2. Backward compatibility cache
-        try {
-          saveOrder({
-            orderId: response.orderId,
-            createdAt: response.order.createdAt,
-            customer: {
-              firstName: response.order.customer.firstName,
-              lastName: response.order.customer.lastName,
-              email: response.order.customer.email,
-              phone: response.order.customer.phone,
-            },
-            shippingAddress: {
-              addressLine1: formData.addressLine1.trim(),
-              addressLine2: formData.addressLine2.trim() || undefined,
-              city: formData.city.trim(),
-              state: formData.state.trim(),
-              pinCode: formData.pinCode.trim(),
-            },
-            items: response.order.items.map((it) => ({
-              productId: it.productId,
-              name: it.name,
-              size: it.size,
-              quantity: it.quantity,
-              price: it.price,
-              image: it.image,
-            })),
-            subtotal: response.order.pricing.subtotal,
-            shipping: response.order.pricing.shipping,
-            total: response.order.pricing.total,
-            status: (response.order.status as any) || 'confirmed',
-          })
-        } catch {
-          // Ignore localStorage failure
-        }
-
-        // 3. Clear cart ONLY after successful backend creation
-        clearCart()
-
-        // 4. Navigate using backend-generated orderId
-        navigate(`/order-confirmation/${response.orderId}`)
-      } else {
+      if (!response || !response.success || !response.orderId) {
         throw new Error('Unable to place your order right now. Please try again.')
       }
+
+      // 2. Ensure Razorpay Checkout SDK is loaded
+      const isLoaded = await loadRazorpayScript()
+      if (!isLoaded || typeof window === 'undefined' || !window.Razorpay) {
+        throw new Error('Payment gateway failed to load. Please check your internet connection.')
+      }
+
+      // 3. Create Razorpay order on the backend (amount in paise, minimum 100 paise)
+      const amountInPaise = Math.max(100, Math.round(response.order.pricing.total * 100))
+      const razorpayOrder = await createRazorpayOrder({
+        amount: amountInPaise,
+        currency: 'INR',
+        receipt: response.orderId,
+        notes: {
+          orderId: response.orderId,
+          customerEmail: formData.email.trim(),
+        },
+      })
+
+      if (!razorpayOrder || !razorpayOrder.order_id) {
+        throw new Error(razorpayOrder?.message || 'Failed to initialize Razorpay checkout.')
+      }
+
+      // 4. Configure Razorpay Standard Web Checkout Modal
+      const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_TdunIBEShYctpb'
+
+      const options: RazorpayOptions = {
+        key: keyId,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency || 'INR',
+        name: 'KALA',
+        description: `Order ${response.orderId}`,
+        image: '/favicon.png',
+        order_id: razorpayOrder.order_id,
+        handler: async (paymentResponse: RazorpaySuccessResponse) => {
+          try {
+            setIsSubmitting(true)
+
+            // STEP 3: Verify signature with backend
+            await verifyRazorpayPayment({
+              razorpay_order_id: paymentResponse.razorpay_order_id,
+              razorpay_payment_id: paymentResponse.razorpay_payment_id,
+              razorpay_signature: paymentResponse.razorpay_signature,
+              orderId: response.orderId,
+            })
+
+            // Save order to local cache for fast offline display
+            try {
+              saveOrder({
+                orderId: response.orderId,
+                createdAt: response.order.createdAt,
+                customer: {
+                  firstName: response.order.customer.firstName,
+                  lastName: response.order.customer.lastName,
+                  email: response.order.customer.email,
+                  phone: response.order.customer.phone,
+                },
+                shippingAddress: {
+                  addressLine1: formData.addressLine1.trim(),
+                  addressLine2: formData.addressLine2.trim() || undefined,
+                  city: formData.city.trim(),
+                  state: formData.state.trim(),
+                  pinCode: formData.pinCode.trim(),
+                },
+                items: response.order.items.map((it) => ({
+                  productId: it.productId,
+                  name: it.name,
+                  size: it.size,
+                  quantity: it.quantity,
+                  price: it.price,
+                  image: it.image,
+                })),
+                subtotal: response.order.pricing.subtotal,
+                shipping: response.order.pricing.shipping,
+                total: response.order.pricing.total,
+                status: 'confirmed',
+              })
+            } catch {
+              // Ignore localStorage failure
+            }
+
+            // Clear cart ONLY after successful payment verification
+            clearCart()
+
+            // Navigate to confirmation page
+            navigate(`/order-confirmation/${response.orderId}`)
+          } catch (verifyErr: any) {
+            console.error('[Checkout] Verification error:', verifyErr)
+            setOrderError(
+              verifyErr.message ||
+                'Payment verification failed. If your money was debited, please contact support with Order ID: ' +
+                  response.orderId
+            )
+            setIsSubmitting(false)
+          }
+        },
+        prefill: {
+          name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+          email: formData.email.trim(),
+          contact: formData.phone.trim(),
+        },
+        theme: {
+          color: '#06413f',
+        },
+        modal: {
+          ondismiss: () => {
+            console.log('[Razorpay] Payment modal dismissed by user.')
+            setIsSubmitting(false)
+            setOrderError(
+              'Payment was cancelled. Your order has been placed as pending. You can complete payment anytime.'
+            )
+          },
+        },
+      }
+
+      // 5. Open Razorpay Checkout Modal
+      const rzp = new window.Razorpay(options)
+
+      rzp.on('payment.failed', (errResp: RazorpayErrorResponse) => {
+        console.error('[Razorpay] Payment failed:', errResp)
+        setIsSubmitting(false)
+        setOrderError(
+          errResp?.error?.description || 'Payment failed. Please try again with another card, UPI or payment method.'
+        )
+      })
+
+      rzp.open()
     } catch (err: any) {
       console.error('[Checkout] Order placement error:', err)
       setOrderError(err.message || 'Unable to place your order right now. Please try again.')
@@ -680,8 +768,26 @@ export const Checkout: React.FC = () => {
             disabled={isSubmitting}
             className="kala-btn kala-btn-primary kala-place-order-btn"
           >
-            {isSubmitting ? 'PLACING ORDER...' : 'PLACE ORDER'}
+            {isSubmitting
+              ? 'PROCESSING PAYMENT...'
+              : `PAY ₹${displayTotal.toLocaleString('en-IN')} VIA RAZORPAY`}
           </button>
+
+          <div
+            style={{
+              textAlign: 'center',
+              marginTop: '0.75rem',
+              fontSize: '0.75rem',
+              color: '#6b7280',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.35rem',
+            }}
+          >
+            <span>🔒</span>
+            <span>Secured by <strong>Razorpay</strong> · UPI, Cards, NetBanking, Wallets</span>
+          </div>
 
           <Link to="/cart" className="kala-back-to-cart-link">
             ← Return to Cart
