@@ -43,6 +43,7 @@ export const Checkout: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [orderError, setOrderError] = useState<string | null>(null)
+  const [pendingOrderId, setPendingOrderId] = useState<string | null>(null)
 
   // Coupon state
   const [couponInput, setCouponInput] = useState<string>('')
@@ -64,6 +65,11 @@ export const Checkout: React.FC = () => {
     cartItems.map((it) => ({ id: it.productId, s: it.size, q: it.quantity }))
   )
   const isInitialMount = useRef(true)
+
+  useEffect(() => {
+    // Reset pending order if cart items change so new order matches latest cart
+    setPendingOrderId(null)
+  }, [cartKey])
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -304,11 +310,18 @@ export const Checkout: React.FC = () => {
     }
 
     try {
-      // 1. Send order to backend Express API (backed by MongoDB Atlas)
-      const response = await createOrder(payload)
+      let targetOrderId = pendingOrderId
+      let activeOrder = null
 
-      if (!response || !response.success || !response.orderId) {
-        throw new Error('Unable to place your order right now. Please try again.')
+      // 1. If we don't have an active pending order for this cart, create one in MongoDB
+      if (!targetOrderId) {
+        const response = await createOrder(payload)
+        if (!response || !response.success || !response.orderId) {
+          throw new Error('Unable to place your order right now. Please try again.')
+        }
+        targetOrderId = response.orderId
+        activeOrder = response.order
+        setPendingOrderId(response.orderId)
       }
 
       // 2. Ensure Razorpay Checkout SDK is loaded
@@ -317,16 +330,9 @@ export const Checkout: React.FC = () => {
         throw new Error('Payment gateway failed to load. Please check your internet connection.')
       }
 
-      // 3. Create Razorpay order on the backend (amount in paise, minimum 100 paise)
-      const amountInPaise = Math.max(100, Math.round(response.order.pricing.total * 100))
+      // 3. Create Razorpay order on the backend (amount authoritatively derived from DB order)
       const razorpayOrder = await createRazorpayOrder({
-        amount: amountInPaise,
-        currency: 'INR',
-        receipt: response.orderId,
-        notes: {
-          orderId: response.orderId,
-          customerEmail: formData.email.trim(),
-        },
+        orderId: targetOrderId,
       })
 
       if (!razorpayOrder || !razorpayOrder.order_id) {
@@ -334,14 +340,18 @@ export const Checkout: React.FC = () => {
       }
 
       // 4. Configure Razorpay Standard Web Checkout Modal
-      const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_TdunIBEShYctpb'
+      const keyId = razorpayOrder.key_id || import.meta.env.VITE_RAZORPAY_KEY_ID
+
+      if (!keyId) {
+        throw new Error('Payment gateway configuration error: Razorpay Key ID not configured.')
+      }
 
       const options: RazorpayOptions = {
         key: keyId,
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency || 'INR',
         name: 'KALA',
-        description: `Order ${response.orderId}`,
+        description: `Order ${targetOrderId}`,
         image: '/favicon.png',
         order_id: razorpayOrder.order_id,
         handler: async (paymentResponse: RazorpaySuccessResponse) => {
@@ -353,55 +363,58 @@ export const Checkout: React.FC = () => {
               razorpay_order_id: paymentResponse.razorpay_order_id,
               razorpay_payment_id: paymentResponse.razorpay_payment_id,
               razorpay_signature: paymentResponse.razorpay_signature,
-              orderId: response.orderId,
+              orderId: targetOrderId,
             })
 
             // Save order to local cache for fast offline display
-            try {
-              saveOrder({
-                orderId: response.orderId,
-                createdAt: response.order.createdAt,
-                customer: {
-                  firstName: response.order.customer.firstName,
-                  lastName: response.order.customer.lastName,
-                  email: response.order.customer.email,
-                  phone: response.order.customer.phone,
-                },
-                shippingAddress: {
-                  addressLine1: formData.addressLine1.trim(),
-                  addressLine2: formData.addressLine2.trim() || undefined,
-                  city: formData.city.trim(),
-                  state: formData.state.trim(),
-                  pinCode: formData.pinCode.trim(),
-                },
-                items: response.order.items.map((it) => ({
-                  productId: it.productId,
-                  name: it.name,
-                  size: it.size,
-                  quantity: it.quantity,
-                  price: it.price,
-                  image: it.image,
-                })),
-                subtotal: response.order.pricing.subtotal,
-                shipping: response.order.pricing.shipping,
-                total: response.order.pricing.total,
-                status: 'confirmed',
-              })
-            } catch {
-              // Ignore localStorage failure
+            if (activeOrder) {
+              try {
+                saveOrder({
+                  orderId: activeOrder.orderId,
+                  createdAt: activeOrder.createdAt,
+                  customer: {
+                    firstName: activeOrder.customer.firstName,
+                    lastName: activeOrder.customer.lastName,
+                    email: activeOrder.customer.email,
+                    phone: activeOrder.customer.phone,
+                  },
+                  shippingAddress: {
+                    addressLine1: formData.addressLine1.trim(),
+                    addressLine2: formData.addressLine2.trim() || undefined,
+                    city: formData.city.trim(),
+                    state: formData.state.trim(),
+                    pinCode: formData.pinCode.trim(),
+                  },
+                  items: activeOrder.items.map((it) => ({
+                    productId: it.productId,
+                    name: it.name,
+                    size: it.size,
+                    quantity: it.quantity,
+                    price: it.price,
+                    image: it.image,
+                  })),
+                  subtotal: activeOrder.pricing.subtotal,
+                  shipping: activeOrder.pricing.shipping,
+                  total: activeOrder.pricing.total,
+                  status: 'confirmed',
+                })
+              } catch {
+                // Ignore localStorage failure
+              }
             }
 
             // Clear cart ONLY after successful payment verification
             clearCart()
+            setPendingOrderId(null)
 
             // Navigate to confirmation page
-            navigate(`/order-confirmation/${response.orderId}`)
+            navigate(`/order-confirmation/${targetOrderId}`)
           } catch (verifyErr: any) {
             console.error('[Checkout] Verification error:', verifyErr)
             setOrderError(
               verifyErr.message ||
                 'Payment verification failed. If your money was debited, please contact support with Order ID: ' +
-                  response.orderId
+                  targetOrderId
             )
             setIsSubmitting(false)
           }
@@ -419,7 +432,7 @@ export const Checkout: React.FC = () => {
             console.log('[Razorpay] Payment modal dismissed by user.')
             setIsSubmitting(false)
             setOrderError(
-              'Payment was cancelled. Your order has been placed as pending. You can complete payment anytime.'
+              'Payment was not completed. Your order has been saved as pending. You can click "PAY VIA RAZORPAY" below to retry.'
             )
           },
         },
@@ -770,7 +783,9 @@ export const Checkout: React.FC = () => {
           >
             {isSubmitting
               ? 'PROCESSING PAYMENT...'
-              : `PAY ₹${displayTotal.toLocaleString('en-IN')} VIA RAZORPAY`}
+              : pendingOrderId && orderError
+                ? `RETRY PAYMENT (₹${displayTotal.toLocaleString('en-IN')})`
+                : `PAY ₹${displayTotal.toLocaleString('en-IN')} VIA RAZORPAY`}
           </button>
 
           <div

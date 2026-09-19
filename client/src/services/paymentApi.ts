@@ -3,7 +3,8 @@ import { getAuthToken } from './authApi'
 import type { RazorpaySuccessResponse } from '../types/razorpay'
 
 export interface CreateRazorpayOrderPayload {
-  amount: number // in paise (e.g. 100 = ₹1.00)
+  orderId?: string
+  amount?: number // in paise (e.g. 100 = ₹1.00)
   currency?: string
   receipt?: string
   notes?: Record<string, string>
@@ -15,11 +16,12 @@ export interface CreateRazorpayOrderResponse {
   amount: number
   currency: string
   receipt?: string
+  key_id?: string
   message?: string
 }
 
 export interface VerifyPaymentPayload extends RazorpaySuccessResponse {
-  orderId?: string
+  orderId: string
 }
 
 export interface VerifyPaymentResponse {

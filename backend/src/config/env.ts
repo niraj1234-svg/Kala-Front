@@ -39,6 +39,22 @@ export function validateEnv(): EnvValidationResult {
     }
   }
 
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_ID.trim()) {
+    if (isProduction) {
+      missing.push('RAZORPAY_KEY_ID')
+    } else {
+      warnings.push('RAZORPAY_KEY_ID is not set in environment.')
+    }
+  }
+
+  if (!process.env.RAZORPAY_KEY_SECRET || !process.env.RAZORPAY_KEY_SECRET.trim()) {
+    if (isProduction) {
+      missing.push('RAZORPAY_KEY_SECRET')
+    } else {
+      warnings.push('RAZORPAY_KEY_SECRET is not set in environment.')
+    }
+  }
+
   if (isProduction && missing.length > 0) {
     console.error(
       `\n[Environment] CRITICAL ERROR: Missing required production environment variable(s): ${missing.join(', ')}`

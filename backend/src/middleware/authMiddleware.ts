@@ -19,6 +19,66 @@ export interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser
 }
 
+export interface AuthResult {
+  user?: AuthenticatedUser
+  error?: string
+}
+
+/**
+ * Safely extracts authenticated user from req.user or Authorization header without failing on guest requests.
+ */
+export function getAuthenticatedUser(req: Request): AuthResult {
+  if (
+    req.user &&
+    typeof req.user.userId === 'string' &&
+    req.user.userId.trim() &&
+    typeof req.user.email === 'string' &&
+    req.user.email.trim()
+  ) {
+    return { user: req.user }
+  }
+
+  const authHeader = req.headers.authorization
+  if (!authHeader || typeof authHeader !== 'string') {
+    return {}
+  }
+
+  const parts = authHeader.trim().split(/\s+/)
+  if (parts.length !== 2 || parts[0] !== 'Bearer' || !parts[1]) {
+    return { error: 'Authentication required: Invalid Authorization header format.' }
+  }
+
+  const token = parts[1]
+  const jwtSecret = process.env.JWT_SECRET
+  if (!jwtSecret) {
+    console.error('[authMiddleware] JWT_SECRET is missing in environment variables.')
+    return { error: 'Authentication service configuration error.' }
+  }
+
+  try {
+    const decoded = jwt.verify(token, jwtSecret) as jwt.JwtPayload
+    if (
+      !decoded ||
+      typeof decoded !== 'object' ||
+      typeof decoded.userId !== 'string' ||
+      !decoded.userId.trim() ||
+      typeof decoded.email !== 'string' ||
+      !decoded.email.trim()
+    ) {
+      return { error: 'Invalid or expired authentication token.' }
+    }
+
+    return {
+      user: {
+        userId: decoded.userId.trim(),
+        email: decoded.email.trim(),
+      },
+    }
+  } catch {
+    return { error: 'Invalid or expired authentication token.' }
+  }
+}
+
 /**
  * Express middleware to verify JWT in Authorization: Bearer <token> header.
  * Attaches verified { userId, email } to req.user.

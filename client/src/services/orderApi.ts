@@ -94,6 +94,13 @@ export interface BackendOrder {
     discountValue: number
     discountAmount: number
   }
+  payment?: {
+    method?: string
+    razorpayOrderId?: string
+    razorpayPaymentId?: string
+    status?: 'pending' | 'paid' | 'failed'
+    paidAt?: string
+  }
   status: string
   tracking?: OrderTracking
   statusHistory?: OrderStatusHistoryItem[]

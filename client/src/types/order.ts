@@ -31,7 +31,14 @@ export interface Order {
   subtotal: number
   shipping: number
   total: number
-  status: 'confirmed' | 'processing'
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+  payment?: {
+    method?: string
+    razorpayOrderId?: string
+    razorpayPaymentId?: string
+    status?: 'pending' | 'paid' | 'failed'
+    paidAt?: string
+  }
 }
 
 const ORDERS_STORAGE_KEY = 'kala_orders'

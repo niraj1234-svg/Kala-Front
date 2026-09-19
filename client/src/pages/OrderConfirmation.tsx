@@ -165,21 +165,30 @@ export const OrderConfirmation: React.FC = () => {
         {/* Header */}
         <header className="kala-confirmation-header">
           <div className="kala-confirmation-check" aria-hidden="true">
-            ✓
+            {order.status === 'pending' ? '⏳' : '✓'}
           </div>
-          <p className="kala-label kala-confirmation-badge">PURCHASE COMPLETE</p>
-          <h1 className="kala-confirmation-title">ORDER CONFIRMED</h1>
+          <p className="kala-label kala-confirmation-badge">
+            {order.status === 'pending' ? 'PAYMENT PENDING' : 'PURCHASE COMPLETE'}
+          </p>
+          <h1 className="kala-confirmation-title">
+            {order.status === 'pending' ? 'ORDER PLACED - PAYMENT PENDING' : 'ORDER CONFIRMED'}
+          </h1>
           <p className="kala-confirmation-subtitle">
-            Thank you for your order. We have received your request and are preparing it for shipment.
+            {order.status === 'pending'
+              ? 'Thank you for your order. Your order details have been saved, but payment is still pending.'
+              : 'Thank you for your order. We have received your request and are preparing it for shipment.'}
           </p>
           <div className="kala-order-id-box">
             ORDER ID: <strong>{order.orderId}</strong>
           </div>
           <div style={{ marginTop: '0.5rem', fontSize: '0.8125rem', color: 'var(--kala-text-secondary)' }}>
             Placed on {formattedDate} · Status:{' '}
-            <strong style={{ textTransform: 'uppercase', color: 'var(--kala-black)' }}>
+            <strong style={{ textTransform: 'uppercase', color: order.status === 'pending' ? '#b45309' : 'var(--kala-black)' }}>
               {order.status || 'pending'}
             </strong>
+            {order.payment?.razorpayPaymentId && (
+              <span> · Payment ID: <strong>{order.payment.razorpayPaymentId}</strong></span>
+            )}
           </div>
         </header>
 
@@ -250,14 +259,19 @@ export const OrderConfirmation: React.FC = () => {
             <span>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
           </div>
           <div className="kala-order-total-row grand-total">
-            <span>Total Paid</span>
+            <span>{order.status === 'pending' ? 'Total Due' : 'Total Paid'}</span>
             <span>₹{total.toLocaleString('en-IN')}</span>
           </div>
         </div>
 
         {/* Footer Action */}
-        <footer className="kala-confirmation-footer">
-          <Link to="/shop" className="kala-btn kala-btn-primary kala-confirmation-shop-btn">
+        <footer className="kala-confirmation-footer" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          {order.status === 'pending' && (
+            <Link to="/checkout" className="kala-btn kala-btn-primary kala-confirmation-shop-btn">
+              RETURN TO CHECKOUT TO PAY
+            </Link>
+          )}
+          <Link to="/shop" className={`kala-btn ${order.status === 'pending' ? 'kala-btn-secondary' : 'kala-btn-primary'} kala-confirmation-shop-btn`}>
             CONTINUE SHOPPING
           </Link>
         </footer>
