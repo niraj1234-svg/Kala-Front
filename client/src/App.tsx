@@ -37,6 +37,7 @@ import AdminSettings from './pages/admin/AdminSettings'
 import AdminRoute from './components/admin/AdminRoute'
 import AdminLayout from './components/admin/AdminLayout'
 import NotFound from './pages/NotFound'
+import ScrollToTop from './components/ScrollToTop'
 import './App.css'
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
       <AdminProvider>
         <CartProvider>
           <WishlistProvider>
+            <ScrollToTop />
             <div className={`kala-app ${isAdminPath ? 'kala-admin-app' : ''}`}>
               {!isAdminPath && <Navbar />}
               {!isAdminPath && <AuthPromptModal />}

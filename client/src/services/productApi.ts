@@ -15,12 +15,24 @@ function normalizeApiProduct(p: any): Product {
 
   const resolvedImage = getProductImage(filename)
 
+  let resolvedImages: string[] | undefined = undefined
+  if (Array.isArray(p.images) && p.images.length > 0) {
+    resolvedImages = p.images.map((img: string) => {
+      let f = img || ''
+      if (f.startsWith('/images/')) {
+        f = f.replace('/images/', '')
+      }
+      return getProductImage(f)
+    })
+  }
+
   return {
     id: p.id,
     name: p.name,
     category: p.category,
     price: p.price,
     image: resolvedImage,
+    images: resolvedImages,
     description: p.description,
     available: p.available ?? true,
   }

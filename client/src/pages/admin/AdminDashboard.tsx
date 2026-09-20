@@ -2,10 +2,11 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   fetchAdminDashboardSummary,
+  fetchAdminCustomers,
   type AdminDashboardSummaryData,
   type AdminDashboardRecentOrder,
-  type AdminDashboardRecentCustomer,
   type AdminDashboardRecentRequest,
+  type AdminCustomerAccount,
 } from '../../services/adminApi'
 import '../../styles/Admin.css'
 
@@ -14,14 +15,19 @@ export const AdminDashboard: React.FC = () => {
 
   const [summaryData, setSummaryData] = useState<AdminDashboardSummaryData | null>(null)
   const [recentOrders, setRecentOrders] = useState<AdminDashboardRecentOrder[]>([])
-  const [recentCustomers, setRecentCustomers] = useState<AdminDashboardRecentCustomer[]>([])
   const [recentRequests, setRecentRequests] = useState<AdminDashboardRecentRequest[]>([])
+  const [customers, setCustomers] = useState<AdminCustomerAccount[]>([])
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  // INR Currency Formatter
+  // Customer Search & Filter States
+  const [customerSearch, setCustomerSearch] = useState<string>('')
+  const [customerFilter, setCustomerFilter] = useState<'all' | 'active' | 'with_orders'>('all')
+  const [isCustomerLoading, setIsCustomerLoading] = useState<boolean>(false)
+
+  // Currency Formatter
   const formatCurrency = useCallback((amount: number): string => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -30,7 +36,7 @@ export const AdminDashboard: React.FC = () => {
     }).format(amount)
   }, [])
 
-  // Standard Number Formatter (Indian System)
+  // Number Formatter
   const formatNumber = useCallback((num: number): string => {
     return new Intl.NumberFormat('en-IN').format(num)
   }, [])
@@ -41,8 +47,8 @@ export const AdminDashboard: React.FC = () => {
       const d = new Date(dateStr)
       if (isNaN(d.getTime())) return dateStr
       return d.toLocaleDateString('en-IN', {
-        month: 'short',
         day: 'numeric',
+        month: 'short',
         year: 'numeric',
       })
     } catch {
@@ -50,7 +56,7 @@ export const AdminDashboard: React.FC = () => {
     }
   }, [])
 
-  // Status Badge Class Generator
+  // Status Badge Helper
   const getStatusBadgeClass = useCallback((status: string): string => {
     switch (status.toLowerCase()) {
       case 'delivered':
@@ -74,7 +80,7 @@ export const AdminDashboard: React.FC = () => {
     }
   }, [])
 
-  // Fetch Dashboard Summary from API
+  // Load Dashboard Core Data
   const loadDashboardData = useCallback(
     async (isManualRefresh = false): Promise<void> => {
       if (isManualRefresh) {
@@ -85,17 +91,24 @@ export const AdminDashboard: React.FC = () => {
       setErrorMessage(null)
 
       try {
-        const response = await fetchAdminDashboardSummary()
-        if (response && response.success) {
-          setSummaryData(response.summary)
-          setRecentOrders(response.recentOrders || [])
-          setRecentCustomers(response.recentCustomers || [])
-          setRecentRequests(response.recentRequests || [])
+        const [summaryRes, customersRes] = await Promise.all([
+          fetchAdminDashboardSummary(),
+          fetchAdminCustomers({ page: 1, limit: 10, search: customerSearch }),
+        ])
+
+        if (summaryRes && summaryRes.success) {
+          setSummaryData(summaryRes.summary)
+          setRecentOrders(summaryRes.recentOrders || [])
+          setRecentRequests(summaryRes.recentRequests || [])
         } else {
-          setErrorMessage('Unable to load dashboard.')
+          setErrorMessage('Unable to load dashboard summary.')
+        }
+
+        if (customersRes && customersRes.success) {
+          setCustomers(customersRes.customers || [])
         }
       } catch (err: unknown) {
-        console.error('Failed to load admin dashboard summary:', err)
+        console.error('Failed to load admin dashboard data:', err)
         if (err instanceof Error && err.message.includes('expired')) {
           navigate('/admin/login', { replace: true })
           return
@@ -106,28 +119,53 @@ export const AdminDashboard: React.FC = () => {
         setIsRefreshing(false)
       }
     },
-    [navigate]
+    [customerSearch, navigate]
   )
 
   useEffect(() => {
     loadDashboardData()
   }, [loadDashboardData])
 
-  // Orders needing urgent attention: pending, processing, or confirmed
-  const ordersNeedingAttention = useMemo(() => {
-    return recentOrders.filter((order) =>
-      ['pending', 'processing', 'confirmed'].includes(order.status.toLowerCase())
-    )
-  }, [recentOrders])
+  // Handle live customer search submit
+  const handleCustomerSearch = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsCustomerLoading(true)
+    try {
+      const res = await fetchAdminCustomers({
+        page: 1,
+        limit: 10,
+        search: customerSearch.trim(),
+      })
+      if (res && res.success) {
+        setCustomers(res.customers || [])
+      }
+    } catch (err) {
+      console.error('Customer search failed:', err)
+    } finally {
+      setIsCustomerLoading(false)
+    }
+  }
+
+  // Filtered customers list
+  const filteredCustomers = useMemo(() => {
+    return customers.filter((cust) => {
+      if (customerFilter === 'with_orders') {
+        return cust.orderCount > 0
+      }
+      if (customerFilter === 'active') {
+        return (cust.role || 'customer') !== 'disabled'
+      }
+      return true
+    })
+  }, [customers, customerFilter])
 
   return (
     <div className="admin-page-container">
       {/* 1. DASHBOARD HEADER */}
       <header className="admin-page-header">
         <div className="admin-page-header-left">
-          <div className="admin-breadcrumb-badge">Operations</div>
-          <h1 className="admin-page-title">KALA ADMIN</h1>
-          <p className="admin-page-subtitle">Business command center</p>
+          <h1 className="admin-page-title">Dashboard</h1>
+          <p className="admin-page-subtitle">Welcome to KALA Admin Control Center</p>
         </div>
 
         <div className="admin-page-header-actions">
@@ -140,8 +178,8 @@ export const AdminDashboard: React.FC = () => {
           >
             <svg
               className={`admin-icon ${isRefreshing ? 'admin-spin' : ''}`}
-              width="15"
-              height="15"
+              width="14"
+              height="14"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -157,15 +195,15 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </header>
 
-      {/* 2. LOADING STATE */}
+      {/* LOADING STATE */}
       {isLoading && !summaryData && (
         <div className="admin-state-container">
           <div className="admin-spinner" aria-hidden="true" />
-          <p className="admin-state-text">Loading command center metrics...</p>
+          <p className="admin-state-text">Loading dashboard metrics...</p>
         </div>
       )}
 
-      {/* 3. ERROR STATE */}
+      {/* ERROR STATE */}
       {errorMessage && !summaryData && (
         <div className="admin-state-container admin-state-error">
           <p className="admin-error-text">{errorMessage}</p>
@@ -179,229 +217,183 @@ export const AdminDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* 4. DASHBOARD CONTENT */}
+      {/* DASHBOARD CONTENT */}
       {summaryData && (
         <div className="admin-dashboard-wrapper">
-          {/* A. QUICK ACTIONS TOOLBAR */}
-          <section
-            className="admin-quick-actions-bar"
-            aria-label="Quick management actions"
-          >
-            <span className="admin-quick-actions-label">Quick Actions:</span>
-            <div className="admin-quick-actions-links">
-              <Link to="/admin/orders" className="admin-quick-action-chip">
-                Manage Orders
-              </Link>
-              <Link to="/admin/products" className="admin-quick-action-chip">
-                Manage Products
-              </Link>
-              <Link to="/admin/customers" className="admin-quick-action-chip">
-                Manage Customers
-              </Link>
-              <Link to="/admin/custom-requests" className="admin-quick-action-chip">
-                Custom Apparel
-              </Link>
-              <Link to="/admin/business-requests" className="admin-quick-action-chip">
-                Business Branding
-              </Link>
-              <Link to="/admin/analytics" className="admin-quick-action-chip highlight">
-                View Analytics
-              </Link>
-            </div>
-          </section>
-
-          {/* B. TOP METRIC CARDS (6 CARDS) */}
-          <section aria-labelledby="dashboard-metrics-heading">
-            <h2 id="dashboard-metrics-heading" className="sr-only">
-              Command Center Primary Metrics
-            </h2>
-            <div className="admin-analytics-metrics-grid">
-              {/* Card 1: Total Revenue */}
-              <div className="admin-metric-card highlight-revenue">
-                <span className="admin-metric-label">Total Revenue</span>
-                <span className="admin-metric-value text-white">
-                  {formatCurrency(summaryData.totalRevenue ?? summaryData.today.revenue)}
-                </span>
-                <span className="admin-metric-sub">
-                  All-time non-cancelled sales
-                </span>
-              </div>
-
-              {/* Card 2: Total Orders */}
-              <div className="admin-metric-card">
-                <span className="admin-metric-label">Total Orders</span>
-                <span className="admin-metric-value">
-                  {formatNumber(summaryData.totalOrders ?? summaryData.today.orders)}
-                </span>
-                <span className="admin-metric-sub">
-                  Total store orders placed
-                </span>
-              </div>
-
-              {/* Card 3: Total Customers */}
-              <div className="admin-metric-card">
-                <span className="admin-metric-label">Total Customers</span>
-                <span className="admin-metric-value">
+          {/* 2. IMPORTANT NUMBERS (TOP 6 CARDS) */}
+          <section className="admin-dashboard-metrics-section" aria-label="Key Metrics">
+            <div className="admin-clean-metrics-grid">
+              {/* Card 1: Total Customers */}
+              <div className="admin-clean-card">
+                <span className="admin-card-label">TOTAL CUSTOMERS</span>
+                <span className="admin-card-value">
                   {formatNumber(summaryData.totalCustomers ?? summaryData.customers.total)}
                 </span>
-                <span className="admin-metric-sub">
-                  {summaryData.customers.newToday > 0
-                    ? `+${formatNumber(summaryData.customers.newToday)} new today`
-                    : 'Registered customer accounts'}
+              </div>
+
+              {/* Card 2: New Customers */}
+              <div className="admin-clean-card">
+                <span className="admin-card-label">NEW CUSTOMERS</span>
+                <span className="admin-card-value text-accent">
+                  +{formatNumber(summaryData.customers.newToday)}
                 </span>
               </div>
 
-              {/* Card 4: Products */}
-              <div className="admin-metric-card">
-                <span className="admin-metric-label">Products</span>
-                <span className="admin-metric-value">
-                  {formatNumber(summaryData.totalProducts ?? 20)}
+              {/* Card 3: Total Orders */}
+              <div className="admin-clean-card">
+                <span className="admin-card-label">TOTAL ORDERS</span>
+                <span className="admin-card-value">
+                  {formatNumber(summaryData.totalOrders ?? summaryData.today.orders)}
                 </span>
-                <span className="admin-metric-sub">
-                  Active catalog products
+              </div>
+
+              {/* Card 4: Total Revenue */}
+              <div className="admin-clean-card">
+                <span className="admin-card-label">TOTAL REVENUE</span>
+                <span className="admin-card-value">
+                  {formatCurrency(summaryData.totalRevenue ?? summaryData.today.revenue)}
                 </span>
               </div>
 
               {/* Card 5: Pending Orders */}
-              <div className="admin-metric-card">
-                <span className="admin-metric-label">Pending Orders</span>
-                <span className="admin-metric-value text-warning">
+              <div className="admin-clean-card">
+                <span className="admin-card-label">PENDING ORDERS</span>
+                <span className="admin-card-value text-warning">
                   {formatNumber(summaryData.pendingOrders ?? summaryData.orders.pending)}
                 </span>
-                <span className="admin-metric-sub">
-                  {summaryData.orders.processing > 0
-                    ? `${formatNumber(summaryData.orders.processing)} in processing`
-                    : 'Awaiting fulfillment'}
-                </span>
               </div>
 
-              {/* Card 6: Custom Requests */}
-              <div className="admin-metric-card">
-                <span className="admin-metric-label">Custom Requests</span>
-                <span className="admin-metric-value text-accent">
-                  {formatNumber(summaryData.totalCustomRequests ?? summaryData.requests.customApparelPending)}
-                </span>
-                <span className="admin-metric-sub">
-                  {summaryData.requests.customApparelPending > 0
-                    ? `${formatNumber(summaryData.requests.customApparelPending)} pending review`
-                    : 'Apparel design inquiries'}
-                </span>
-              </div>
-
-              {/* Card 7: Business Requests */}
-              <div className="admin-metric-card">
-                <span className="admin-metric-label">Business Requests</span>
-                <span className="admin-metric-value text-accent">
-                  {formatNumber(summaryData.totalBusinessRequests ?? summaryData.requests.businessBrandingPending)}
-                </span>
-                <span className="admin-metric-sub">
-                  {summaryData.requests.businessBrandingPending > 0
-                    ? `${formatNumber(summaryData.requests.businessBrandingPending)} pending quotes`
-                    : 'Corporate quote requests'}
+              {/* Card 6: Products */}
+              <div className="admin-clean-card">
+                <span className="admin-card-label">PRODUCTS</span>
+                <span className="admin-card-value">
+                  {formatNumber(summaryData.totalProducts ?? 20)}
                 </span>
               </div>
             </div>
           </section>
 
-          {/* C. ORDERS NEEDING ATTENTION */}
-          <section
-            className="admin-dashboard-section"
-            aria-labelledby="orders-needing-attention-heading"
-          >
+          {/* 3. CUSTOMER OVERVIEW SECTION */}
+          <section className="admin-dashboard-section" aria-label="Customer Overview">
             <div className="admin-section-header-flex">
               <div>
-                <h2
-                  id="orders-needing-attention-heading"
-                  className="admin-dashboard-section-title text-warning"
-                >
-                  Orders Needing Attention
-                </h2>
+                <h2 className="admin-dashboard-section-title">Customers</h2>
                 <p className="admin-dashboard-section-desc">
-                  Active orders requiring immediate fulfillment, processing, or review.
+                  Overview of registered customer accounts.
                 </p>
               </div>
-              <Link to="/admin/orders" className="admin-section-view-all">
-                Fulfillment queue →
+              <Link to="/admin/customers" className="admin-section-view-all">
+                View all customers →
               </Link>
             </div>
 
-            {ordersNeedingAttention.length === 0 ? (
-              <div className="admin-empty-card">
-                <svg
-                  width="28"
-                  height="28"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
+            {/* Search & Simple Filter Toolbar */}
+            <div className="admin-customer-toolbar">
+              <form onSubmit={handleCustomerSearch} className="admin-customer-search-form">
+                <input
+                  type="text"
+                  className="admin-customer-search-input"
+                  placeholder="Search customers by name, email, or phone..."
+                  value={customerSearch}
+                  onChange={(e) => setCustomerSearch(e.target.value)}
+                />
+                <button type="submit" className="admin-btn admin-btn-secondary admin-btn-sm">
+                  Search
+                </button>
+                {customerSearch && (
+                  <button
+                    type="button"
+                    className="admin-btn admin-btn-secondary admin-btn-sm"
+                    onClick={() => {
+                      setCustomerSearch('')
+                      loadDashboardData()
+                    }}
+                  >
+                    Clear
+                  </button>
+                )}
+              </form>
+
+              <div className="admin-customer-filter-group">
+                <button
+                  type="button"
+                  className={`admin-filter-pill ${customerFilter === 'all' ? 'active' : ''}`}
+                  onClick={() => setCustomerFilter('all')}
                 >
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-                <p>No orders currently require immediate attention.</p>
-                <span className="admin-empty-sub">
-                  All pending orders have been processed or delivered.
-                </span>
+                  All
+                </button>
+                <button
+                  type="button"
+                  className={`admin-filter-pill ${customerFilter === 'active' ? 'active' : ''}`}
+                  onClick={() => setCustomerFilter('active')}
+                >
+                  Active customers
+                </button>
+                <button
+                  type="button"
+                  className={`admin-filter-pill ${customerFilter === 'with_orders' ? 'active' : ''}`}
+                  onClick={() => setCustomerFilter('with_orders')}
+                >
+                  Customers with orders
+                </button>
+              </div>
+            </div>
+
+            {/* Customers Table */}
+            {isCustomerLoading ? (
+              <div className="admin-state-container">
+                <div className="admin-spinner" aria-hidden="true" />
+                <p className="admin-state-text">Searching customers...</p>
+              </div>
+            ) : filteredCustomers.length === 0 ? (
+              <div className="admin-empty-card">
+                <p>No customers found matching your criteria.</p>
               </div>
             ) : (
               <div className="admin-table-container">
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th scope="col">Order ID</th>
-                      <th scope="col">Customer</th>
-                      <th scope="col">Items</th>
-                      <th scope="col">Amount</th>
-                      <th scope="col">Status</th>
-                      <th scope="col" className="text-right">
-                        Action
-                      </th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Phone</th>
+                      <th scope="col">Orders</th>
+                      <th scope="col">Joined</th>
+                      <th scope="col" className="text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {ordersNeedingAttention.map((order) => (
-                      <tr key={order.orderId}>
+                    {filteredCustomers.map((cust) => (
+                      <tr key={cust.userId}>
                         <td>
-                          <span className="font-mono text-bold text-white">
-                            {order.orderId}
+                          <span className="text-bold">
+                            {cust.firstName} {cust.lastName}
                           </span>
                         </td>
                         <td>
-                          <div>
-                            <span className="text-bold">{order.customerName}</span>
-                            <span className="admin-cell-sub">
-                              {order.customerEmail}
-                            </span>
-                          </div>
+                          <span className="font-mono text-sm">{cust.email}</span>
                         </td>
                         <td>
-                          <span className="font-mono text-bold">
-                            {order.itemCount || 1}
+                          <span className="font-mono text-sm text-muted">
+                            {cust.phone || '—'}
                           </span>
                         </td>
                         <td>
-                          <span className="text-bold font-mono">
-                            {formatCurrency(order.total)}
+                          <span className="admin-badge-count">
+                            {cust.orderCount} {cust.orderCount === 1 ? 'order' : 'orders'}
                           </span>
                         </td>
                         <td>
-                          <span
-                            className={`status-badge ${getStatusBadgeClass(
-                              order.status
-                            )}`}
-                          >
-                            {order.status.toUpperCase()}
+                          <span className="text-muted text-sm">
+                            {formatDate(cust.createdAt)}
                           </span>
                         </td>
                         <td className="text-right">
                           <Link
-                            to={`/admin/orders/${order.orderId}`}
-                            className="admin-btn admin-btn-sm admin-btn-secondary"
+                            to={`/admin/customers/${cust.userId}`}
+                            className="admin-btn admin-btn-sm admin-btn-primary"
                           >
-                            View Order
+                            VIEW
                           </Link>
                         </td>
                       </tr>
@@ -412,21 +404,13 @@ export const AdminDashboard: React.FC = () => {
             )}
           </section>
 
-          {/* D. RECENT ORDERS (LATEST 5) */}
-          <section
-            className="admin-dashboard-section"
-            aria-labelledby="recent-orders-heading"
-          >
+          {/* 4. RECENT ORDERS SECTION */}
+          <section className="admin-dashboard-section" aria-label="Recent Orders">
             <div className="admin-section-header-flex">
               <div>
-                <h2
-                  id="recent-orders-heading"
-                  className="admin-dashboard-section-title"
-                >
-                  Recent Orders
-                </h2>
+                <h2 className="admin-dashboard-section-title">Recent Orders</h2>
                 <p className="admin-dashboard-section-desc">
-                  Latest order transactions across the KALA store.
+                  Latest store orders.
                 </p>
               </div>
               <Link to="/admin/orders" className="admin-section-view-all">
@@ -436,7 +420,7 @@ export const AdminDashboard: React.FC = () => {
 
             {recentOrders.length === 0 ? (
               <div className="admin-empty-card">
-                <p>No orders found in database.</p>
+                <p>No recent orders found.</p>
               </div>
             ) : (
               <div className="admin-table-container">
@@ -444,36 +428,28 @@ export const AdminDashboard: React.FC = () => {
                   <thead>
                     <tr>
                       <th scope="col">Order ID</th>
+                      <th scope="col">Date</th>
                       <th scope="col">Customer</th>
-                      <th scope="col">Items</th>
                       <th scope="col">Amount</th>
                       <th scope="col">Status</th>
-                      <th scope="col">Date</th>
-                      <th scope="col" className="text-right">
-                        Action
-                      </th>
+                      <th scope="col" className="text-right">View</th>
                     </tr>
                   </thead>
                   <tbody>
                     {recentOrders.map((order) => (
                       <tr key={order.orderId}>
                         <td>
-                          <span className="font-mono text-bold text-white">
+                          <span className="font-mono text-bold">
                             {order.orderId}
                           </span>
                         </td>
                         <td>
-                          <div>
-                            <span className="text-bold">{order.customerName}</span>
-                            <span className="admin-cell-sub">
-                              {order.customerEmail}
-                            </span>
-                          </div>
+                          <span className="text-muted text-sm">
+                            {formatDate(order.createdAt)}
+                          </span>
                         </td>
                         <td>
-                          <span className="font-mono text-bold">
-                            {order.itemCount || 1}
-                          </span>
+                          <span className="text-bold">{order.customerName}</span>
                         </td>
                         <td>
                           <span className="font-mono text-bold">
@@ -487,11 +463,6 @@ export const AdminDashboard: React.FC = () => {
                             )}`}
                           >
                             {order.status.toUpperCase()}
-                          </span>
-                        </td>
-                        <td>
-                          <span className="text-muted">
-                            {formatDate(order.createdAt)}
                           </span>
                         </td>
                         <td className="text-right">
@@ -510,158 +481,83 @@ export const AdminDashboard: React.FC = () => {
             )}
           </section>
 
-          {/* E. TWO-COLUMN GRID: RECENT CUSTOMERS & REQUESTS REQUIRING ATTENTION */}
-          <div className="admin-dashboard-two-col">
-            {/* COLUMN 1: RECENT CUSTOMERS */}
-            <section
-              className="admin-dashboard-card-section"
-              aria-labelledby="recent-customers-heading"
-            >
+          {/* 5. REQUESTS NEEDING ATTENTION */}
+          {recentRequests.length > 0 && (
+            <section className="admin-dashboard-section" aria-label="Requests Needing Attention">
               <div className="admin-section-header-flex">
                 <div>
-                  <h2
-                    id="recent-customers-heading"
-                    className="admin-dashboard-section-title"
-                  >
-                    Recent Customers
-                  </h2>
+                  <h2 className="admin-dashboard-section-title">Requests Needing Attention</h2>
                   <p className="admin-dashboard-section-desc">
-                    Newly registered customer accounts.
-                  </p>
-                </div>
-                <Link to="/admin/customers" className="admin-section-view-all">
-                  View all customers →
-                </Link>
-              </div>
-
-              {recentCustomers.length === 0 ? (
-                <div className="admin-empty-card">
-                  <p>No registered customers found.</p>
-                </div>
-              ) : (
-                <div className="admin-customers-list">
-                  {recentCustomers.map((cust) => (
-                    <div key={cust.userId} className="admin-customer-row">
-                      <div className="admin-customer-info">
-                        <div className="admin-customer-avatar">
-                          {cust.firstName ? cust.firstName.charAt(0).toUpperCase() : 'U'}
-                        </div>
-                        <div className="admin-customer-details">
-                          <span className="admin-customer-name">
-                            {cust.firstName} {cust.lastName}
-                          </span>
-                          <span className="admin-customer-email">
-                            {cust.email}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="admin-customer-action-col">
-                        <span className="admin-customer-date text-muted">
-                          Joined {formatDate(cust.createdAt)}
-                        </span>
-                        <Link
-                          to={`/admin/customers/${cust.userId}`}
-                          className="admin-btn admin-btn-sm admin-btn-secondary"
-                        >
-                          View
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-
-            {/* COLUMN 2: REQUESTS REQUIRING ATTENTION */}
-            <section
-              className="admin-dashboard-card-section"
-              aria-labelledby="pending-requests-heading"
-            >
-              <div className="admin-section-header-flex">
-                <div>
-                  <h2
-                    id="pending-requests-heading"
-                    className="admin-dashboard-section-title"
-                  >
-                    Requests Requiring Attention
-                  </h2>
-                  <p className="admin-dashboard-section-desc">
-                    Custom apparel & corporate branding inquiries.
+                    Inquiries requiring review or quotes.
                   </p>
                 </div>
                 <div className="admin-requests-links-flex">
-                  <Link
-                    to="/admin/custom-requests"
-                    className="admin-section-view-all"
-                  >
-                    Custom
+                  <Link to="/admin/custom-requests" className="admin-section-view-all">
+                    Custom Apparel →
                   </Link>
                   <span className="text-muted">|</span>
-                  <Link
-                    to="/admin/business-requests"
-                    className="admin-section-view-all"
-                  >
-                    Corporate →
+                  <Link to="/admin/business-requests" className="admin-section-view-all">
+                    Corporate Branding →
                   </Link>
                 </div>
               </div>
 
-              {recentRequests.length === 0 ? (
-                <div className="admin-empty-card">
-                  <p>No pending custom or branding inquiries.</p>
-                </div>
-              ) : (
-                <div className="admin-requests-list">
-                  {recentRequests.map((req) => (
-                    <div key={req.requestId} className="admin-request-row">
-                      <div className="admin-request-info">
-                        <div className="admin-request-tag-badge">
-                          {req.requestType === 'custom_apparel' ? 'APPAREL' : 'CORPORATE'}
-                        </div>
-                        <div className="admin-request-details">
-                          <div className="admin-request-title-row">
-                            <span className="font-mono text-bold text-white">
-                              {req.requestId}
-                            </span>
-                            <span
-                              className={`status-badge ${getStatusBadgeClass(
-                                req.status
-                              )}`}
-                            >
-                              {req.status.toUpperCase()}
-                            </span>
-                          </div>
-                          <span className="admin-request-contact">
-                            {req.name} ({req.email})
+              <div className="admin-table-container">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Request ID</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Contact</th>
+                      <th scope="col">Details</th>
+                      <th scope="col">Status</th>
+                      <th scope="col" className="text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentRequests.map((req) => (
+                      <tr key={req.requestId}>
+                        <td>
+                          <span className="font-mono text-bold">{req.requestId}</span>
+                        </td>
+                        <td>
+                          <span className="admin-badge-count">
+                            {req.requestType === 'custom_apparel' ? 'Apparel' : 'Corporate'}
                           </span>
-                          {req.detail && (
-                            <span className="admin-request-detail-text">
-                              {req.detail}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="admin-request-action-col">
-                        <span className="admin-request-date text-muted">
-                          {formatDate(req.createdAt)}
-                        </span>
-                        <Link
-                          to={
-                            req.requestType === 'custom_apparel'
-                              ? '/admin/custom-requests'
-                              : '/admin/business-requests'
-                          }
-                          className="admin-btn admin-btn-sm admin-btn-secondary"
-                        >
-                          View
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                        </td>
+                        <td>
+                          <div>
+                            <span className="text-bold">{req.name}</span>
+                            <span className="admin-cell-sub">{req.email}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="text-sm text-muted">{req.detail || '—'}</span>
+                        </td>
+                        <td>
+                          <span className={`status-badge ${getStatusBadgeClass(req.status)}`}>
+                            {req.status.toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="text-right">
+                          <Link
+                            to={
+                              req.requestType === 'custom_apparel'
+                                ? '/admin/custom-requests'
+                                : '/admin/business-requests'
+                            }
+                            className="admin-btn admin-btn-sm admin-btn-secondary"
+                          >
+                            View
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </section>
-          </div>
+          )}
         </div>
       )}
     </div>

@@ -2062,3 +2062,219 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ===================================================
+   CLEAN ADMIN DASHBOARD & CUSTOMER MANAGEMENT STYLES
+   =================================================== */
+
+.admin-clean-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 1200px) {
+  .admin-clean-metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-clean-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-clean-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-clean-card {
+  background: #121215;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1.25rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.admin-clean-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.admin-card-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a1a1aa;
+}
+
+.admin-card-value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.15;
+  margin-top: 0.4rem;
+  font-family: inherit;
+}
+
+/* Customer Toolbar */
+.admin-customer-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding: 0.85rem 1rem;
+  background: #121215;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+}
+
+.admin-customer-search-form {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 240px;
+  max-width: 460px;
+}
+
+.admin-customer-search-input {
+  flex: 1;
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.875rem;
+  color: #ffffff;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.admin-customer-search-input:focus {
+  border-color: var(--kala-orange, #d94700);
+}
+
+.admin-customer-filter-group {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.admin-filter-pill {
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a1a1aa;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-filter-pill:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.admin-filter-pill.active {
+  background: var(--kala-orange, #d94700);
+  border-color: var(--kala-orange, #d94700);
+  color: #ffffff;
+}
+
+.admin-badge-count {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #ffffff;
+  display: inline-block;
+}
+
+/* Customer Detail Card Section & Info Rows */
+.admin-clean-card-section {
+  background: #121215;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.admin-customer-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.admin-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.9375rem;
+}
+
+.admin-info-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.admin-info-label {
+  color: #a1a1aa;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.admin-info-value {
+  color: #ffffff;
+  text-align: right;
+}
+
+/* Responsive Table Horizontal Scrolling */
+.admin-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: #121215;
+}
+
+@media (max-width: 480px) {
+  .admin-page-container {
+    padding: 1rem 0.75rem;
+  }
+
+  .admin-customer-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-customer-search-form {
+    max-width: 100%;
+  }
+
+  .admin-customer-filter-group {
+    justify-content: flex-start;
+  }
+
+  .admin-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+

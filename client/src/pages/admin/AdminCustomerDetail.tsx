@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
   fetchAdminCustomerById,
@@ -17,7 +17,7 @@ export const AdminCustomerDetail: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  // Edit Mode State
+  // Edit Profile State
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [editFirstName, setEditFirstName] = useState<string>('')
   const [editLastName, setEditLastName] = useState<string>('')
@@ -135,7 +135,7 @@ export const AdminCustomerDetail: React.FC = () => {
   }
 
   const getStatusBadgeClass = (status: string) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'confirmed':
       case 'delivered':
         return 'status-badge status-success'
@@ -148,6 +148,25 @@ export const AdminCustomerDetail: React.FC = () => {
         return 'status-badge status-warning'
     }
   }
+
+  // Calculated Order Summary Metrics
+  const orderSummary = useMemo(() => {
+    const totalOrders = orders.length
+    const totalSpent = orders
+      .filter((o) => o.status !== 'cancelled')
+      .reduce((sum, o) => sum + (o.pricing?.total || 0), 0)
+
+    const lastOrder = orders.length > 0 ? orders[0] : null
+    const currentStatus = lastOrder ? lastOrder.status : 'None'
+
+    return {
+      totalOrders,
+      totalSpent,
+      lastOrderDate: lastOrder ? formatDate(lastOrder.createdAt) : 'None',
+      lastOrderId: lastOrder ? lastOrder.orderId : null,
+      currentStatus,
+    }
+  }, [orders])
 
   if (isLoading) {
     return (
@@ -182,24 +201,23 @@ export const AdminCustomerDetail: React.FC = () => {
     <div className="admin-page-container">
       {/* Top Breadcrumb Back Link */}
       <div className="admin-detail-breadcrumb">
+        <Link to="/admin" className="admin-back-link">
+          ← Back to Dashboard
+        </Link>
+        <span className="text-muted" style={{ margin: '0 0.5rem' }}>|</span>
         <Link to="/admin/customers" className="admin-back-link">
-          ← Back to Customers List
+          Customers List
         </Link>
       </div>
 
       {/* Header */}
       <header className="admin-detail-header">
         <div>
-          <div className="admin-detail-title-row">
-            <h1 className="admin-page-title">
-              Customer: {customer.firstName} {customer.lastName}
-            </h1>
-            <span className="status-badge status-info">
-              {(customer.role || 'customer').toUpperCase()}
-            </span>
-          </div>
+          <h1 className="admin-page-title">
+            {customer.firstName} {customer.lastName}
+          </h1>
           <p className="admin-page-subtitle">
-            User ID: <span className="font-mono">{customer.userId}</span> • Member since {formatDate(customer.createdAt)}
+            Customer Profile & Order History
           </p>
         </div>
 
@@ -216,7 +234,7 @@ export const AdminCustomerDetail: React.FC = () => {
         </div>
       </header>
 
-      {/* Success / Error Feedback */}
+      {/* Feedback Alerts */}
       {saveSuccess && (
         <div className="admin-feedback-alert feedback-success" role="alert">
           {saveSuccess}
@@ -228,11 +246,11 @@ export const AdminCustomerDetail: React.FC = () => {
         </div>
       )}
 
-      {/* Grid: Profile Left, Order Summary / History Right */}
+      {/* 2-COLUMN GRID: CUSTOMER INFO & ORDER SUMMARY */}
       <div className="admin-detail-grid">
-        {/* Left Column: Profile Card */}
-        <div className="admin-card-section">
-          <h2 className="admin-section-title">Customer Profile</h2>
+        {/* SECTION 1: CUSTOMER */}
+        <div className="admin-clean-card-section">
+          <h2 className="admin-section-title">CUSTOMER</h2>
 
           {isEditing ? (
             <form onSubmit={handleSaveProfile} className="admin-action-form">
@@ -281,31 +299,6 @@ export const AdminCustomerDetail: React.FC = () => {
                 />
               </div>
 
-              {/* Locked/Read-only Fields */}
-              <div className="admin-form-group">
-                <span className="admin-form-label">Email Address (Locked)</span>
-                <input
-                  type="text"
-                  className="admin-form-input font-mono"
-                  value={customer.email}
-                  disabled
-                  readOnly
-                  title="Customer email addresses cannot be modified through this interface."
-                />
-                <span className="admin-form-hint">Email is locked to protect customer authentication integrity.</span>
-              </div>
-
-              <div className="admin-form-group">
-                <span className="admin-form-label">User ID (Locked)</span>
-                <input
-                  type="text"
-                  className="admin-form-input font-mono"
-                  value={customer.userId}
-                  disabled
-                  readOnly
-                />
-              </div>
-
               <div className="admin-btn-group" style={{ marginTop: '1rem' }}>
                 <button
                   type="submit"
@@ -325,104 +318,137 @@ export const AdminCustomerDetail: React.FC = () => {
               </div>
             </form>
           ) : (
-            <div className="admin-detail-specs">
-              <div className="spec-group">
-                <span className="spec-label">Full Name</span>
-                <span className="spec-value text-white font-medium">
+            <div className="admin-customer-info-list">
+              <div className="admin-info-row">
+                <span className="admin-info-label">Name</span>
+                <span className="admin-info-value text-bold">
                   {customer.firstName} {customer.lastName}
                 </span>
               </div>
-              <div className="spec-group">
-                <span className="spec-label">Email Address</span>
-                <span className="spec-value font-mono text-white">{customer.email}</span>
+              <div className="admin-info-row">
+                <span className="admin-info-label">Email</span>
+                <span className="admin-info-value font-mono">{customer.email}</span>
               </div>
-              <div className="spec-group">
-                <span className="spec-label">Phone</span>
-                <span className="spec-value font-mono">
+              <div className="admin-info-row">
+                <span className="admin-info-label">Phone</span>
+                <span className="admin-info-value font-mono">
                   {customer.phone || 'No phone registered'}
                 </span>
               </div>
-              <div className="spec-group">
-                <span className="spec-label">Account User ID</span>
-                <span className="spec-value font-mono text-muted">{customer.userId}</span>
-              </div>
-              <div className="spec-group">
-                <span className="spec-label">Account Role</span>
-                <span className="spec-value">{customer.role || 'customer'}</span>
-              </div>
-              <div className="spec-group">
-                <span className="spec-label">Registration Date</span>
-                <span className="spec-value">{formatDate(customer.createdAt)}</span>
-              </div>
-              <div className="spec-group">
-                <span className="spec-label">Lifetime Order Volume</span>
-                <span className="spec-value text-white font-bold">
-                  {customer.orderCount} {customer.orderCount === 1 ? 'Order' : 'Orders'}
-                </span>
+              <div className="admin-info-row">
+                <span className="admin-info-label">Joined date</span>
+                <span className="admin-info-value">{formatDate(customer.createdAt)}</span>
               </div>
             </div>
           )}
         </div>
 
-        {/* Right Column: Order History */}
-        <div className="admin-card-section">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h2 className="admin-section-title" style={{ margin: 0 }}>
-              Order History ({orders.length})
-            </h2>
-            <span className="admin-category-badge">
-              {orders.length} Total
-            </span>
-          </div>
+        {/* SECTION 2: ORDER SUMMARY */}
+        <div className="admin-clean-card-section">
+          <h2 className="admin-section-title">ORDER SUMMARY</h2>
 
-          {orders.length === 0 ? (
-            <p className="text-muted" style={{ padding: '1rem 0' }}>
-              This customer has not placed any orders yet.
-            </p>
-          ) : (
-            <div className="admin-table-wrapper">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Order ID</th>
-                    <th>Date</th>
-                    <th>Items</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th className="text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((ord) => (
-                    <tr key={ord.orderId}>
-                      <td className="font-mono text-white">{ord.orderId}</td>
-                      <td className="text-muted text-sm">{formatDate(ord.createdAt)}</td>
-                      <td className="text-sm">
-                        {ord.items.length} {ord.items.length === 1 ? 'item' : 'items'}
-                      </td>
-                      <td className="font-medium text-white">{formatPrice(ord.pricing.total)}</td>
-                      <td>
-                        <span className={getStatusBadgeClass(ord.status)}>
-                          {ord.status.toUpperCase()}
-                        </span>
-                      </td>
-                      <td className="text-right">
-                        <Link
-                          to={`/admin/orders/${ord.orderId}`}
-                          className="admin-btn-action"
-                          aria-label={`View order ${ord.orderId}`}
-                        >
-                          View Order
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="admin-customer-info-list">
+            <div className="admin-info-row">
+              <span className="admin-info-label">Total orders</span>
+              <span className="admin-info-value text-bold">
+                {orderSummary.totalOrders} {orderSummary.totalOrders === 1 ? 'order' : 'orders'}
+              </span>
             </div>
-          )}
+            <div className="admin-info-row">
+              <span className="admin-info-label">Total spent</span>
+              <span className="admin-info-value font-mono text-bold text-accent">
+                {formatPrice(orderSummary.totalSpent)}
+              </span>
+            </div>
+            <div className="admin-info-row">
+              <span className="admin-info-label">Last order</span>
+              <span className="admin-info-value">
+                {orderSummary.lastOrderId ? (
+                  <>
+                    {orderSummary.lastOrderDate}{' '}
+                    <span className="text-muted font-mono text-sm">({orderSummary.lastOrderId})</span>
+                  </>
+                ) : (
+                  'None'
+                )}
+              </span>
+            </div>
+            <div className="admin-info-row">
+              <span className="admin-info-label">Current order status</span>
+              <span className="admin-info-value">
+                {orderSummary.currentStatus !== 'None' ? (
+                  <span className={getStatusBadgeClass(orderSummary.currentStatus)}>
+                    {orderSummary.currentStatus.toUpperCase()}
+                  </span>
+                ) : (
+                  <span className="text-muted">No orders</span>
+                )}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* SECTION 3: RECENT ORDERS */}
+      <section className="admin-dashboard-section" style={{ marginTop: '2rem' }} aria-label="Recent Orders">
+        <div className="admin-section-header-flex">
+          <div>
+            <h2 className="admin-dashboard-section-title">RECENT ORDERS</h2>
+            <p className="admin-dashboard-section-desc">
+              All orders placed by this customer.
+            </p>
+          </div>
+        </div>
+
+        {orders.length === 0 ? (
+          <div className="admin-empty-card">
+            <p>This customer has not placed any orders yet.</p>
+          </div>
+        ) : (
+          <div className="admin-table-container">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th scope="col">Order ID</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" className="text-right">View</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((ord) => (
+                  <tr key={ord.orderId}>
+                    <td>
+                      <span className="font-mono text-bold">{ord.orderId}</span>
+                    </td>
+                    <td>
+                      <span className="text-muted text-sm">{formatDate(ord.createdAt)}</span>
+                    </td>
+                    <td>
+                      <span className="font-mono text-bold">{formatPrice(ord.pricing.total)}</span>
+                    </td>
+                    <td>
+                      <span className={getStatusBadgeClass(ord.status)}>
+                        {ord.status.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="text-right">
+                      <Link
+                        to={`/admin/orders/${ord.orderId}`}
+                        className="admin-btn admin-btn-sm admin-btn-secondary"
+                        aria-label={`View order ${ord.orderId}`}
+                      >
+                        View
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
     </div>
   )
 }

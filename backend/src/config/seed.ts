@@ -7,54 +7,54 @@ export const SEED_PRODUCTS = [
     id: 'streetwear-oversized-acid-tee',
     name: 'KALA Raw Acid-Wash Oversized Tee',
     category: 'Streetwear',
-    price: 1899,
+    price: 399,
     image: 'Streetwear 01.png',
-    description: 'Heavyweight 280 GSM cotton oversized streetwear t-shirt featuring artisanal acid-wash finish and dropped shoulders.',
+    description: 'Premium 280 GSM oversized cotton tee.',
     available: true,
   },
   {
     id: 'streetwear-heavyweight-hoodie-onyx',
     name: 'KALA Heavyweight Boxy Hoodie',
     category: 'Streetwear',
-    price: 3499,
+    price: 499,
     image: 'Streetwear -02.png',
-    description: '450 GSM French Terry luxury heavyweight hoodie with double-layered hood and minimalist tonal embroidered branding.',
+    description: 'Heavyweight 450 GSM French Terry boxy hoodie.',
     available: true,
   },
   {
     id: 'streetwear-tactical-cargo-pant',
     name: 'KALA Utility Relaxed Cargo',
     category: 'Streetwear',
-    price: 2999,
+    price: 479,
     image: 'Streetwear 03.png',
-    description: 'Relaxed fit industrial streetwear cargo pants engineered with deep gusseted pockets and adjustable ankle cinches.',
+    description: 'Relaxed utility cargo pants with deep pockets.',
     available: true,
   },
   {
     id: 'streetwear-vintage-wash-tee',
     name: 'KALA Vintage Fade Graphic Tee',
     category: 'Streetwear',
-    price: 1799,
+    price: 349,
     image: 'Streetwear 04.png',
-    description: 'Custom vintage wash tee crafted from 100% combed ringspun cotton with distressed hand-feel typography.',
+    description: 'Vintage fade combed ringspun cotton graphic tee.',
     available: true,
   },
   {
     id: 'streetwear-monochrome-sweatshirt',
     name: 'KALA Minimalist Crewneck Sweatshirt',
     category: 'Streetwear',
-    price: 2799,
+    price: 449,
     image: 'Streetwear 05.png',
-    description: 'Clean architectural crewneck cut from premium brushed cotton fleece with ribbed collar and cuffs.',
+    description: 'Minimalist brushed cotton fleece crewneck sweatshirt.',
     available: true,
   },
   {
     id: 'streetwear-distressed-urban-tee',
     name: 'KALA Urban Statement Distressed Tee',
     category: 'Streetwear',
-    price: 1999,
+    price: 379,
     image: 'Streetwear 06.png',
-    description: 'Modern Indian street aesthetic with subtle raw hemlines, high ribbed collar, and signature KALA orange accent tab.',
+    description: 'Modern urban raw-hemline streetwear tee.',
     available: true,
   },
 
@@ -63,45 +63,45 @@ export const SEED_PRODUCTS = [
     id: 'gaming-cyber-pro-jersey-01',
     name: 'KALA Apex Cyber Esports Jersey',
     category: 'Gaming',
-    price: 2499,
+    price: 429,
     image: 'gaming 01.png',
-    description: 'Performance-grade moisture-wicking esports tournament jersey engineered with anti-snag aerodynamic microfiber.',
+    description: 'Moisture-wicking tournament esports jersey.',
     available: true,
   },
   {
     id: 'gaming-stealth-tactical-hoodie-02',
     name: 'KALA Stealth Tactical Gamer Hoodie',
     category: 'Gaming',
-    price: 3899,
+    price: 499,
     image: 'gaming 02.png',
-    description: 'Ergonomic hoodie with headset-compatible deep hood, thumbhole storm cuffs, and matte black cybernetic detailing.',
+    description: 'Tactical hoodie with headset-compatible hood.',
     available: true,
   },
   {
     id: 'gaming-neon-overload-tee-03',
     name: 'KALA Neo-Tokyo Glitch Graphic Tee',
     category: 'Gaming',
-    price: 1699,
+    price: 349,
     image: 'gaming 03.png',
-    description: 'High-density cyber-punk graphic tee inspired by competitive gaming culture and digital distortion aesthetics.',
+    description: 'High-density glitch graphic gaming tee.',
     available: true,
   },
   {
     id: 'gaming-pro-arena-warmup-04',
     name: 'KALA Arena Champion Warmup Zip',
     category: 'Gaming',
-    price: 3299,
+    price: 479,
     image: 'gaming 04.png',
-    description: 'Ultra-lightweight quarter-zip athletic trainer jacket with vented back yoke for peak tournament performance.',
+    description: 'Lightweight quarter-zip athletic trainer jacket.',
     available: true,
   },
   {
     id: 'gaming-shadow-spec-ops-tee-05',
     name: 'KALA Shadow Protocol Gaming Tee',
     category: 'Gaming',
-    price: 1799,
+    price: 369,
     image: 'gaming 05.png',
-    description: 'Stealth edition gaming apparel with breathable side mesh panels and low-friction wrist seam construction.',
+    description: 'Breathable mesh-paneled stealth gaming tee.',
     available: true,
   },
 
@@ -110,90 +110,113 @@ export const SEED_PRODUCTS = [
     id: 'gymwear-performance-compression-tee-01',
     name: 'KALA Aerodynamic Compression Tee',
     category: 'Gymwear',
-    price: 1499,
+    price: 549,
     image: 'gymwear-01.jpg.jpeg',
-    description: '4-way stretch second-skin compression top that optimizes muscle temperature and accelerates post-lift recovery.',
+    description: '4-way stretch athletic compression tee.',
     available: true,
   },
   {
     id: 'gymwear-seamless-muscle-tank-02',
     name: 'KALA Core Seamless Muscle Tank',
     category: 'Gymwear',
-    price: 1299,
+    price: 499,
     image: 'gymwear02.png',
-    description: 'Deep cut drop-armhole stringer tank made from sweat-wicking poly-spandex blend for unrestricted mobility.',
+    description: 'Drop-armhole sweat-wicking seamless muscle tank.',
     available: true,
   },
   {
     id: 'gymwear-tapered-jogger-03',
     name: 'KALA Precision Tapered Training Jogger',
     category: 'Gymwear',
-    price: 2499,
+    price: 749,
     image: 'gymwear-03.png',
-    description: 'Tailored athletic joggers featuring zippered waterproof pockets, ankle zips, and squat-proof stretch fabric.',
+    description: 'Squat-proof tapered training joggers with zip pockets.',
     available: true,
   },
   {
     id: 'gymwear-endurance-dryfit-tee-04',
     name: 'KALA VaporLite Dry-Fit Tee',
     category: 'Gymwear',
-    price: 1399,
+    price: 519,
     image: 'Gymwear04.png',
-    description: 'Featherlight anti-odor training tee built with micro-perforated back zone for rapid heat dissipation.',
+    description: 'Featherlight anti-odor dry-fit training tee.',
     available: true,
   },
   {
     id: 'gymwear-oversized-pump-cover-05',
     name: 'KALA Heavy Pump Cover Tee',
     category: 'Gymwear',
-    price: 1899,
+    price: 599,
     image: 'Gymwear-05.png',
-    description: 'Boxy bodybuilding pump cover crafted from durable 300 GSM dense cotton with wide ribbed neck collar.',
+    description: 'Heavyweight 300 GSM boxy cotton pump cover tee.',
     available: true,
   },
   {
     id: 'gymwear-dynamic-stretch-shorts-06',
     name: 'KALA 5-Inch Dynamic Training Shorts',
     category: 'Gymwear',
-    price: 1699,
+    price: 569,
     image: 'Gymwear06.png',
-    description: 'High-split lightweight training shorts with internal compression liner and secure zippered phone pocket.',
+    description: '5-inch stretch training shorts with compression liner.',
     available: true,
   },
   {
     id: 'gymwear-hybrid-longsleeve-07',
     name: 'KALA Thermal Guard Hybrid Longsleeve',
     category: 'Gymwear',
-    price: 2199,
+    price: 699,
     image: 'Gymwear07.png',
-    description: 'Breathable cold-weather training longsleeve with ergonomic raglan sleeves and reflective night-run accents.',
+    description: 'Breathable thermal training longsleeve.',
     available: true,
   },
   {
     id: 'gymwear-power-lifting-hoodie-08',
     name: 'KALA Iron Cut Sleeveless Lift Hoodie',
     category: 'Gymwear',
-    price: 2299,
+    price: 729,
     image: 'Gymwear08.png',
-    description: 'Heavyweight sleeveless fleece hoodie built for heavy barbell sessions and rugged athletic movement.',
+    description: 'Heavyweight sleeveless fleece lifting hoodie.',
     available: true,
   },
   {
     id: 'gymwear-elite-recovery-pants-09',
     name: 'KALA Elite Recovery Ribbed Trackpant',
     category: 'Gymwear',
-    price: 2699,
+    price: 799,
     image: 'Gymwear09.png',
-    description: 'Plush ribbed athletic trackpants designed for post-workout downtime, travel, and cool-down comfort.',
+    description: 'Plush ribbed athletic recovery trackpants.',
     available: true,
   },
 ]
+
+/**
+ * Safely updates prices and simplified descriptions in MongoDB Atlas in-place without modifying _id, names,
+ * categories, or images.
+ */
+export const syncProductPrices = async () => {
+  try {
+    let updatedCount = 0
+    for (const item of SEED_PRODUCTS) {
+      const res = await Product.updateOne(
+        { id: item.id },
+        { $set: { price: item.price, description: item.description } }
+      )
+      if (res.matchedCount > 0) {
+        updatedCount++
+      }
+    }
+    console.log(`[MongoDB] Successfully synchronized authoritative catalog for ${updatedCount} products in MongoDB.`)
+  } catch (error) {
+    console.error('[MongoDB] Error updating product catalog:', error)
+  }
+}
 
 export const seedProducts = async (force: boolean = false) => {
   try {
     const count = await Product.countDocuments()
     if (count > 0 && !force) {
-      console.log(`[MongoDB] Products collection already contains ${count} items. Skipping initial seed.`)
+      console.log(`[MongoDB] Products collection contains ${count} items. Synchronizing authoritative catalog...`)
+      await syncProductPrices()
       return
     }
 
@@ -213,7 +236,7 @@ export const seedProducts = async (force: boolean = false) => {
 if (require.main === module || process.argv[1]?.includes('seed')) {
   ;(async () => {
     await connectDB()
-    await seedProducts(true)
+    await syncProductPrices()
     process.exit(0)
   })()
 }

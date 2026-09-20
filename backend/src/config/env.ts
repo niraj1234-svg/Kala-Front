@@ -1,10 +1,9 @@
 import dotenv from 'dotenv'
 import path from 'path'
 
-// Attempt to load .env from standard backend locations without overwriting system env vars
-dotenv.config({ path: path.resolve(process.cwd(), '.env'), override: false })
-dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: false })
-dotenv.config({ path: path.resolve(__dirname, '../.env'), override: false })
+// Load .env with override: true so local .env values take precedence over stale session environment variables
+dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: true })
+dotenv.config({ path: path.resolve(process.cwd(), '.env'), override: true })
 
 export interface EnvValidationResult {
   isValid: boolean

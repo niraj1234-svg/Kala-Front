@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { PRODUCTS } from '../data/products'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { PRODUCTS, getProductHighlights } from '../data/products'
 import type { Product } from '../data/products'
 import { fetchProductById } from '../services/productApi'
 import { useCart } from '../context/CartContext'
@@ -12,6 +12,7 @@ const AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 
 export const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const { addToCart } = useCart()
   const { isInWishlist, toggleWishlist } = useWishlist()
 
@@ -19,13 +20,23 @@ export const ProductDetails: React.FC = () => {
     return PRODUCTS.find((p) => p.id === id) || null
   })
 
+  const [activeImage, setActiveImage] = useState<string>('')
+  const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const [quantity, setQuantity] = useState<number>(1)
+  const [sizeError, setSizeError] = useState<string>('')
+  const [addedNotification, setAddedNotification] = useState<boolean>(false)
+  const [shareFeedback, setShareFeedback] = useState<string>('')
+
+  // Scroll to top and fetch fresh product data on route change
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
     if (!id) return
     let isMounted = true
 
     fetchProductById(id).then((liveProduct) => {
       if (isMounted && liveProduct) {
         setProduct(liveProduct)
+        setActiveImage(liveProduct.image)
       }
     })
 
@@ -34,11 +45,12 @@ export const ProductDetails: React.FC = () => {
     }
   }, [id])
 
-  const [selectedSize, setSelectedSize] = useState<string | null>(null)
-  const [quantity, setQuantity] = useState<number>(1)
-  const [sizeError, setSizeError] = useState<string>('')
-  const [addedNotification, setAddedNotification] = useState<boolean>(false)
-  const isWishlisted = product ? isInWishlist(product.id) : false
+  // Sync activeImage whenever product initial load or update occurs
+  useEffect(() => {
+    if (product && !activeImage) {
+      setActiveImage(product.image)
+    }
+  }, [product, activeImage])
 
   // 1. PRODUCT NOT FOUND STATE
   if (!product) {
@@ -60,6 +72,13 @@ export const ProductDetails: React.FC = () => {
     )
   }
 
+  const galleryImages = (product.images && product.images.length > 0)
+    ? product.images
+    : [product.image].filter(Boolean)
+
+  const highlights = getProductHighlights(product)
+  const isWishlisted = isInWishlist(product.id)
+
   // Handle Quantity adjustments
   const handleIncreaseQty = () => {
     setQuantity((prev) => Math.min(prev + 1, 10))
@@ -69,10 +88,22 @@ export const ProductDetails: React.FC = () => {
     setQuantity((prev) => Math.max(prev - 1, 1))
   }
 
+  // Handle Buy Now: immediately add item with selected size/quantity and go to checkout
+  const handleBuyNow = () => {
+    if (!selectedSize) {
+      setSizeError('Please select a size')
+      return
+    }
+
+    setSizeError('')
+    addToCart(product, selectedSize, quantity)
+    navigate('/checkout')
+  }
+
   // Handle Add to Cart
   const handleAddToCart = () => {
     if (!selectedSize) {
-      setSizeError('Please select a size.')
+      setSizeError('Please select a size')
       return
     }
 
@@ -80,10 +111,10 @@ export const ProductDetails: React.FC = () => {
     addToCart(product, selectedSize, quantity)
     setAddedNotification(true)
 
-    // Reset notification after 4 seconds
+    // Reset notification after 3 seconds
     setTimeout(() => {
       setAddedNotification(false)
-    }, 4000)
+    }, 3000)
   }
 
   const handleSizeSelect = (size: string) => {
@@ -93,53 +124,95 @@ export const ProductDetails: React.FC = () => {
     }
   }
 
+  // Handle Share action
+  const handleShare = async () => {
+    const shareData = {
+      title: product.name,
+      text: `${product.name} — KALA`,
+      url: window.location.href,
+    }
+
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData)
+        return
+      } catch {
+        // Fall back to clipboard if user dismissed native sheet
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setShareFeedback('Link Copied!')
+      setTimeout(() => setShareFeedback(''), 2500)
+    } catch {
+      setShareFeedback('Link Copied!')
+      setTimeout(() => setShareFeedback(''), 2500)
+    }
+  }
+
   return (
     <main className="kala-container kala-details-page">
-      {/* Back to Shop Navigation */}
-      <Link to="/shop" className="kala-details-back-link">
-        ← BACK TO SHOP
-      </Link>
-
       <div className="kala-details-grid">
-        {/* Product Image */}
-        <div className="kala-details-image-card">
-          <img
-            src={product.image}
-            alt={product.name}
-            loading="eager"
-          />
+        {/* Product Image Gallery */}
+        <div className="kala-details-gallery">
+          {galleryImages.length > 1 && (
+            <div className="kala-gallery-thumbnails" role="tablist" aria-label="Product thumbnails">
+              {galleryImages.map((imgUrl, idx) => {
+                const isCurrent = (activeImage || product.image) === imgUrl
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    role="tab"
+                    aria-selected={isCurrent}
+                    aria-label={`View image ${idx + 1}`}
+                    className={`kala-gallery-thumb-btn ${isCurrent ? 'active' : ''}`}
+                    onClick={() => setActiveImage(imgUrl)}
+                  >
+                    <img src={imgUrl} alt={`${product.name} view ${idx + 1}`} />
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
+          <div className="kala-details-main-image-card">
+            <img
+              src={activeImage || product.image}
+              alt={product.name}
+              loading="eager"
+            />
+          </div>
         </div>
 
         {/* Product Information */}
         <div className="kala-details-info">
-          <span className="kala-details-category">{product.category}</span>
+          {/* Product Name */}
           <h1 className="kala-details-title">{product.name}</h1>
+
+          {/* Price */}
           <div className="kala-details-price">
             ₹{product.price.toLocaleString('en-IN')}
           </div>
 
+          {/* Stock */}
           <div
             className={`kala-details-stock-status ${
               product.available ? 'in-stock' : 'out-of-stock'
             }`}
           >
-            <span>●</span>
-            <span>{product.available ? 'In Stock — Ready to Dispatch' : 'Out of Stock'}</span>
+            <span className="kala-stock-dot">●</span>
+            <span>{product.available ? 'In Stock' : 'Out of Stock'}</span>
           </div>
 
+          {/* Short 1-line description */}
           <p className="kala-details-description">{product.description}</p>
 
           {/* Size Selector */}
           <div className="kala-size-section">
-            <div className="kala-section-label-row">
-              <span className="kala-section-label">SIZE</span>
-              {selectedSize && (
-                <span className="kala-label" style={{ color: 'var(--kala-orange)' }}>
-                  Selected: {selectedSize}
-                </span>
-              )}
-            </div>
-            <div className="kala-size-options" role="radiogroup" aria-label="Select apparel size">
+            <span className="kala-section-label">SIZE</span>
+            <div className="kala-size-options" role="radiogroup" aria-label="Select size">
               {AVAILABLE_SIZES.map((size) => {
                 const isSelected = selectedSize === size
                 return (
@@ -161,9 +234,7 @@ export const ProductDetails: React.FC = () => {
 
           {/* Quantity Selector */}
           <div className="kala-qty-section">
-            <div className="kala-section-label-row">
-              <span className="kala-section-label">QUANTITY</span>
-            </div>
+            <span className="kala-section-label">QUANTITY</span>
             <div className="kala-qty-controls" aria-label="Quantity controls">
               <button
                 type="button"
@@ -192,34 +263,47 @@ export const ProductDetails: React.FC = () => {
           {/* Added to Cart Feedback Notification */}
           {addedNotification && (
             <div className="kala-added-banner" role="status">
-              <span>✓ Added {quantity} × {product.name} ({selectedSize}) to cart!</span>
+              <span>✓ Added to cart</span>
               <Link to="/cart" className="kala-view-cart-link">
                 View Bag →
               </Link>
             </div>
           )}
 
-          {/* Action Buttons (Add to Cart + Wishlist) */}
+          {/* Action Buttons (BUY NOW + ADD TO CART) */}
           <div className="kala-details-actions">
-            <button
-              type="button"
-              className="kala-btn kala-btn-primary kala-add-to-cart-btn"
-              onClick={handleAddToCart}
-              disabled={!product.available}
-            >
-              {product.available ? 'ADD TO CART' : 'OUT OF STOCK'}
-            </button>
+            <div className="kala-details-cta-stack">
+              <button
+                type="button"
+                className="kala-btn kala-btn-primary kala-buy-now-btn"
+                onClick={handleBuyNow}
+                disabled={!product.available}
+              >
+                BUY NOW
+              </button>
 
+              <button
+                type="button"
+                className="kala-btn kala-btn-secondary kala-add-to-cart-btn"
+                onClick={handleAddToCart}
+                disabled={!product.available}
+              >
+                ADD TO CART
+              </button>
+            </div>
+          </div>
+
+          {/* Small Actions (Wishlist + Share) */}
+          <div className="kala-details-small-actions">
             <button
               type="button"
-              className={`kala-details-wishlist-btn ${isWishlisted ? 'active' : ''}`}
-              aria-label={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
-              title={isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
+              className={`kala-small-action-btn ${isWishlisted ? 'active' : ''}`}
+              aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
               onClick={() => toggleWishlist(product.id)}
             >
               <svg
-                width="20"
-                height="20"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill={isWishlisted ? 'var(--kala-orange)' : 'none'}
                 stroke={isWishlisted ? 'var(--kala-orange)' : 'currentColor'}
@@ -228,10 +312,66 @@ export const ProductDetails: React.FC = () => {
               >
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
+              <span>{isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}</span>
             </button>
+
+            <button
+              type="button"
+              className="kala-small-action-btn"
+              aria-label="Share product"
+              onClick={handleShare}
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                aria-hidden="true"
+              >
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                <polyline points="16 6 12 2 8 6" />
+                <line x1="12" y1="2" x2="12" y2="15" />
+              </svg>
+              <span>{shareFeedback || 'Share'}</span>
+            </button>
+          </div>
+
+          {/* Service Row (Pan-India Delivery, Secure Payments, Premium Quality ONLY) */}
+          <div className="kala-details-services">
+            <div className="kala-service-pill">
+              <span className="kala-service-icon" aria-hidden="true">🚚</span>
+              <span className="kala-service-text">Pan-India Delivery</span>
+            </div>
+            <div className="kala-service-pill">
+              <span className="kala-service-icon" aria-hidden="true">🛡</span>
+              <span className="kala-service-text">Secure Payments</span>
+            </div>
+            <div className="kala-service-pill">
+              <span className="kala-service-icon" aria-hidden="true">★</span>
+              <span className="kala-service-text">Premium Quality</span>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Product Highlights Section (Clean compact layout for T-Shirts) */}
+      {highlights.length > 0 && (
+        <section className="kala-product-highlights" aria-labelledby="highlights-heading">
+          <h2 id="highlights-heading" className="kala-highlights-title">
+            Product Highlights
+          </h2>
+          <div className="kala-highlights-grid">
+            {highlights.map((item) => (
+              <div key={item.label} className="kala-highlight-item">
+                <span className="kala-highlight-label">{item.label}</span>
+                <span className="kala-highlight-value">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Customer Reviews & Ratings Section */}
       <ProductReviewsSection productId={product.id} />

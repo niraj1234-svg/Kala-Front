@@ -185,7 +185,7 @@ export const createRazorpayOrder = async (req: Request, res: Response): Promise<
   } catch (error: any) {
     console.error('[PaymentController] createRazorpayOrder error:', error)
 
-    if (error?.statusCode === 401 || error?.error?.code === 'BAD_REQUEST_ERROR' && error?.error?.description?.includes('auth')) {
+    if (error?.statusCode === 401 || (error?.error?.code === 'BAD_REQUEST_ERROR' && error?.error?.description?.includes('auth'))) {
       res.status(401).json({
         success: false,
         message: 'Razorpay authentication failed. Please verify API keys.',
