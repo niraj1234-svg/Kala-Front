@@ -90,17 +90,18 @@ function getAuthenticatedUser(req: Request): AuthResult {
 // POST /api/orders
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
-    // 0. Optional Authentication Detection (Guests allowed, but invalid tokens rejected with 401)
+    // 0. Authentication Enforcement (Customer login is strictly required before creating an order)
     const auth = getAuthenticatedUser(req)
-    if (auth.error) {
+    if (auth.error || !auth.user) {
       res.status(401).json({
         success: false,
-        message: auth.error,
+        message: auth.error || 'Authentication required: Please log in to place an order.',
       })
       return
     }
 
-    const authenticatedUserId = auth.user?.userId
+    const authenticatedUserId = auth.user.userId
+    const authenticatedEmail = auth.user.email.trim().toLowerCase()
 
     const { customer, shippingAddress, items, couponCode } = req.body
 
@@ -109,21 +110,11 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       !customer ||
       !customer.firstName?.trim() ||
       !customer.lastName?.trim() ||
-      !customer.email?.trim() ||
       !customer.phone?.trim()
     ) {
       res.status(400).json({
         success: false,
-        message: 'Invalid order data: Complete customer information (firstName, lastName, email, phone) is required.',
-      })
-      return
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(customer.email.trim())) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid order data: Please provide a valid email address.',
+        message: 'Invalid order data: Complete customer information (firstName, lastName, phone) is required.',
       })
       return
     }
@@ -294,17 +285,15 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
       // Per-Customer Limit Check
       if (
-        (authenticatedUserId || customer.email) &&
         typeof couponDoc.perCustomerLimit === 'number' &&
         couponDoc.perCustomerLimit > 0
       ) {
-        const normalizedCustomerEmail = customer.email.trim().toLowerCase()
-        const escapedEmail = normalizedCustomerEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        const escapedEmail = authenticatedEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
         const customerEmailRegex = new RegExp(`^${escapedEmail}$`, 'i')
 
         const previousCustomerOrdersCount = await Order.countDocuments({
           $or: [
-            ...(authenticatedUserId ? [{ userId: authenticatedUserId }] : []),
+            { userId: authenticatedUserId },
             { 'customer.email': customerEmailRegex },
           ],
           'coupon.code': cleanCode,
@@ -378,14 +367,14 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     }
 
     try {
-      // 12. Save Order to MongoDB (attach authenticated userId if present, ignore body.userId)
+      // 12. Save Order to MongoDB (attach authenticated userId and email strictly from verified JWT)
       const newOrder = await Order.create({
         orderId,
-        ...(authenticatedUserId ? { userId: authenticatedUserId } : {}),
+        userId: authenticatedUserId,
         customer: {
           firstName: customer.firstName.trim(),
           lastName: customer.lastName.trim(),
-          email: customer.email.trim().toLowerCase(),
+          email: authenticatedEmail,
           phone: customer.phone.trim(),
         },
         shippingAddress: {

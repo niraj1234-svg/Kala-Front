@@ -5,6 +5,7 @@ import type { Product } from '../data/products'
 import { fetchProductById } from '../services/productApi'
 import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext'
+import { useAuth } from '../context/AuthContext'
 import ProductReviewsSection from '../components/reviews/ProductReviewsSection'
 import '../styles/ProductDetails.css'
 
@@ -15,6 +16,7 @@ export const ProductDetails: React.FC = () => {
   const navigate = useNavigate()
   const { addToCart } = useCart()
   const { isInWishlist, toggleWishlist } = useWishlist()
+  const { isAuthenticated } = useAuth()
 
   const [product, setProduct] = useState<Product | null>(() => {
     return PRODUCTS.find((p) => p.id === id) || null
@@ -88,7 +90,7 @@ export const ProductDetails: React.FC = () => {
     setQuantity((prev) => Math.max(prev - 1, 1))
   }
 
-  // Handle Buy Now: immediately add item with selected size/quantity and go to checkout
+  // Handle Buy Now: immediately add item with selected size/quantity and go to checkout (or login if unauthenticated)
   const handleBuyNow = () => {
     if (!selectedSize) {
       setSizeError('Please select a size')
@@ -97,6 +99,12 @@ export const ProductDetails: React.FC = () => {
 
     setSizeError('')
     addToCart(product, selectedSize, quantity)
+
+    if (!isAuthenticated) {
+      navigate('/account?redirect=/checkout&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.')
+      return
+    }
+
     navigate('/checkout')
   }
 

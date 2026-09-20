@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { fetchMyOrders } from '../services/orderApi'
 import type { BackendOrder } from '../services/orderApi'
@@ -7,13 +7,23 @@ import '../styles/Account.css'
 import '../styles/OrderTracking.css'
 
 export const Account: React.FC = () => {
+  const navigate = useNavigate()
   const { currentUser, isAuthenticated, isLoading, login, register, logout } = useAuth()
   const [searchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
+  const redirectParam = searchParams.get('redirect')
+  const messageParam = searchParams.get('message')
 
   const [activeTab, setActiveTab] = useState<'login' | 'register'>(() => {
     return tabParam === 'register' ? 'register' : 'login'
   })
+
+  // If already authenticated and visiting with redirect, navigate immediately
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && currentUser && redirectParam) {
+      navigate(redirectParam, { replace: true })
+    }
+  }, [isLoading, isAuthenticated, currentUser, redirectParam, navigate])
 
   useEffect(() => {
     if (tabParam === 'register' || tabParam === 'login') {
@@ -110,7 +120,11 @@ export const Account: React.FC = () => {
     setIsLoggingIn(true)
     try {
       const result = await login(loginEmail, loginPassword)
-      if (!result.success) {
+      if (result.success) {
+        if (redirectParam) {
+          navigate(redirectParam, { replace: true })
+        }
+      } else {
         setLoginError(mapErrorMessage(result.error, 'Invalid email or password.'))
       }
     } catch (err: any) {
@@ -202,7 +216,11 @@ export const Account: React.FC = () => {
         password: regPassword,
       })
 
-      if (!result.success) {
+      if (result.success) {
+        if (redirectParam) {
+          navigate(redirectParam, { replace: true })
+        }
+      } else {
         setRegErrors({ banner: mapErrorMessage(result.error, 'Registration failed.') })
       }
     } catch (err: any) {
@@ -228,6 +246,31 @@ export const Account: React.FC = () => {
     return (
       <main className="kala-container kala-account-page">
         <div className="kala-auth-card">
+          {messageParam && (
+            <div
+              className="kala-auth-banner-notice"
+              role="alert"
+              style={{
+                backgroundColor: 'rgba(234, 88, 12, 0.08)',
+                border: '1px solid var(--kala-orange)',
+                color: 'var(--kala-orange)',
+                padding: '0.9rem 1.25rem',
+                borderRadius: '6px',
+                marginBottom: '1.5rem',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                letterSpacing: '0.02em',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                lineHeight: 1.4,
+              }}
+            >
+              <span>🔒</span>
+              <span>{messageParam}</span>
+            </div>
+          )}
+
           <div className="kala-auth-tabs" role="tablist">
             <button
               type="button"

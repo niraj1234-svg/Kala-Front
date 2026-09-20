@@ -1,10 +1,21 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 import '../styles/Cart.css'
 
 export const Cart: React.FC = () => {
+  const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
   const { cartItems, cartCount, cartSubtotal, removeFromCart, updateQuantity } = useCart()
+
+  const handleProceedToCheckout = () => {
+    if (!isAuthenticated) {
+      navigate('/account?redirect=/checkout&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.')
+      return
+    }
+    navigate('/checkout')
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -136,12 +147,13 @@ export const Cart: React.FC = () => {
             <span>₹{cartSubtotal.toLocaleString('en-IN')}</span>
           </div>
 
-          <Link
-            to="/checkout"
+          <button
+            type="button"
+            onClick={handleProceedToCheckout}
             className="kala-btn kala-btn-primary kala-checkout-btn"
           >
             PROCEED TO CHECKOUT
-          </Link>
+          </button>
 
           <Link to="/shop" className="kala-continue-link">
             ← Continue Shopping

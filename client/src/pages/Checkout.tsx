@@ -26,7 +26,7 @@ type FormErrors = Partial<Record<keyof FormData, string>>
 export const Checkout: React.FC = () => {
   const navigate = useNavigate()
   const { cartItems, cartCount, cartSubtotal, clearCart } = useCart()
-  const { currentUser } = useAuth()
+  const { currentUser, isAuthenticated, isLoading } = useAuth()
 
   const [formData, setFormData] = useState<FormData>(() => ({
     firstName: currentUser?.firstName || '',
@@ -39,6 +39,28 @@ export const Checkout: React.FC = () => {
     state: '',
     pinCode: '',
   }))
+
+  // Auto-sync customer details once authenticated user is loaded
+  useEffect(() => {
+    if (currentUser) {
+      setFormData((prev) => ({
+        ...prev,
+        firstName: prev.firstName || currentUser.firstName || '',
+        lastName: prev.lastName || currentUser.lastName || '',
+        email: currentUser.email || prev.email || '',
+        phone: prev.phone || currentUser.phone || '',
+      }))
+    }
+  }, [currentUser])
+
+  // Authentication guard: redirect to login if unauthenticated
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate('/account?redirect=/checkout&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.', {
+        replace: true,
+      })
+    }
+  }, [isLoading, isAuthenticated, navigate])
 
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -115,6 +137,20 @@ export const Checkout: React.FC = () => {
       cancelled = true
     }
   }, [cartKey])
+
+  // Authentication loading state
+  if (isLoading) {
+    return (
+      <main className="kala-container kala-checkout-page" style={{ minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p className="kala-body" style={{ color: 'var(--kala-text-secondary)', letterSpacing: '0.1em' }}>CHECKING AUTHENTICATION...</p>
+      </main>
+    )
+  }
+
+  // If not authenticated, prevent rendering while redirect effect executes
+  if (!isAuthenticated) {
+    return null
+  }
 
   // Empty cart protection
   if (cartItems.length === 0) {
@@ -273,6 +309,13 @@ export const Checkout: React.FC = () => {
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault()
     setOrderError(null)
+
+    if (!isAuthenticated) {
+      navigate('/account?redirect=/checkout&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.', {
+        replace: true,
+      })
+      return
+    }
 
     if (!validateForm()) {
       return

@@ -6,33 +6,23 @@ import { getAuthenticatedUser, AuthResult } from '../middleware/authMiddleware'
 
 /**
  * Verifies that the requester has legitimate ownership over the KALA order.
- * - If the order was created by an authenticated user, requester must match that user.
- * - If the order was created by a guest, an authenticated user with a different email is denied.
- * - No client-provided query parameters are trusted for identity.
+ * - Customer must be authenticated.
+ * - Order must belong to the authenticated customer (by userId or matching verified customer email).
+ * - No client-provided query parameters or body parameters are trusted for identity.
  */
 function verifyOrderOwnership(order: any, auth: AuthResult): { allowed: boolean; message?: string } {
-  // If the order was created by an authenticated user (has userId)
-  if (order.userId) {
-    if (!auth.user) {
-      return { allowed: false, message: 'Authentication required: This order belongs to a registered customer account.' }
-    }
-    const isOwnerByUserId = order.userId === auth.user.userId
-    const isOwnerByEmail = Boolean(
-      order.customer?.email &&
-      order.customer.email.trim().toLowerCase() === auth.user.email.trim().toLowerCase()
-    )
-    if (!isOwnerByUserId && !isOwnerByEmail) {
-      return { allowed: false, message: 'Access denied: You do not have permission to access or pay for this order.' }
-    }
-    return { allowed: true }
+  if (!auth.user || !auth.user.userId) {
+    return { allowed: false, message: 'Authentication required: Please log in to continue.' }
   }
 
-  // If the order was created as a guest (no userId)
-  // If the requester is authenticated, ensure their email matches the order's customer email
-  if (auth.user && order.customer?.email) {
-    if (order.customer.email.trim().toLowerCase() !== auth.user.email.trim().toLowerCase()) {
-      return { allowed: false, message: 'Access denied: You do not have permission to access or pay for this order.' }
-    }
+  const isOwnerByUserId = Boolean(order.userId && order.userId === auth.user.userId)
+  const isOwnerByEmail = Boolean(
+    order.customer?.email &&
+    order.customer.email.trim().toLowerCase() === auth.user.email.trim().toLowerCase()
+  )
+
+  if (!isOwnerByUserId && !isOwnerByEmail) {
+    return { allowed: false, message: 'Access denied: You do not have permission to access or pay for this order.' }
   }
 
   return { allowed: true }
@@ -65,10 +55,10 @@ export const createRazorpayOrder = async (req: Request, res: Response): Promise<
 
     // 2. Validate requester authentication state
     const auth = getAuthenticatedUser(req)
-    if (auth.error) {
+    if (auth.error || !auth.user) {
       res.status(401).json({
         success: false,
-        message: auth.error,
+        message: auth.error || 'Authentication required.',
       })
       return
     }
@@ -263,10 +253,10 @@ export const verifyRazorpayPayment = async (req: Request, res: Response): Promis
 
     // 2. Validate requester authentication state
     const auth = getAuthenticatedUser(req)
-    if (auth.error) {
+    if (auth.error || !auth.user) {
       res.status(401).json({
         success: false,
-        message: auth.error,
+        message: auth.error || 'Authentication required.',
       })
       return
     }
