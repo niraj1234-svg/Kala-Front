@@ -50,126 +50,79 @@ export const Home: React.FC = () => {
       {/* ====================================================================
           1. HERO SECTION
           ==================================================================== */}
+      {/* ====================================================================
+          1. HERO SECTION (Streetwear Cinematic Aesthetic)
+          ==================================================================== */}
       <section className="kala-hero-section" aria-label="Introduction">
+        <div className="kala-hero-bg-glow" aria-hidden="true" />
         <div className="kala-container kala-hero-grid">
           <div className="kala-hero-content">
-            <p className="kala-hero-eyebrow">KALA APPAREL</p>
+            <p className="kala-hero-eyebrow">MORE THAN CLOTHING</p>
             <h1 className="kala-hero-title">
-              WEAR YOUR
+              WEAR YOUR<br />
               <span className="kala-hero-title-highlight">IDENTITY.</span>
             </h1>
             <p className="kala-hero-subtitle">
-              Custom apparel and brand merchandise made for teams, businesses, colleges, events, and individuals.
+              CUSTOM APPAREL. YOUR DESIGNS. YOUR BRAND.
             </p>
             <div className="kala-hero-actions">
-              <Link to="/shop" className="kala-btn kala-hero-btn kala-hero-btn-primary">
-                SHOP APPAREL
+              <Link to="/shop" className="kala-hero-btn kala-hero-btn-primary">
+                <span>SHOP NOW</span>
+                <svg className="kala-hero-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
               </Link>
-              <Link to="/custom-apparel" className="kala-btn kala-hero-btn kala-hero-btn-secondary">
-                CREATE YOURS
+              <Link to="/custom-apparel" className="kala-hero-btn kala-hero-btn-secondary">
+                <span>CREATE YOURS</span>
+                <svg className="kala-hero-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
               </Link>
-            </div>
-            <div className="kala-hero-meta">
-              <span className="kala-hero-meta-item">
-                <span className="kala-hero-meta-dot" aria-hidden="true" />
-                Custom Apparel & Merch
-              </span>
-              <span className="kala-hero-meta-item">
-                <span className="kala-hero-meta-dot" aria-hidden="true" />
-                Pan-India Delivery
-              </span>
-              <span className="kala-hero-meta-item">
-                <span className="kala-hero-meta-dot" aria-hidden="true" />
-                Quality Checked
-              </span>
             </div>
           </div>
 
-          <div className="kala-hero-visual" aria-hidden="true">
-            <div className="kala-hero-card-stack">
-              <div className="kala-hero-main-card">
-                <div className="kala-hero-image-wrap">
-                  <img
-                    src={getProductImage('Streetwear 01.png')}
-                    alt="KALA Raw Acid-Wash Oversized Streetwear Tee"
-                    className="kala-hero-image"
-                  />
-                  <span className="kala-hero-card-badge">2026 COLLECTION</span>
-                </div>
-                <div className="kala-hero-card-footer">
-                  <div>
-                    <h3 className="kala-hero-card-name">Raw Acid-Wash Tee</h3>
-                    <p className="kala-hero-card-sub">Streetwear • 280 GSM Cotton</p>
-                  </div>
-                  <span className="kala-hero-card-pill">IN STOCK</span>
-                </div>
-              </div>
-              <div className="kala-hero-floating-badge">
-                <span className="kala-floating-badge-num">500+</span>
-                <span className="kala-floating-badge-label">Orders Completed</span>
-              </div>
+          <div className="kala-hero-visual">
+            <div className="kala-hero-image-frame">
+              <img
+                src="/hero/kala-hero-model.png"
+                alt="KALA Streetwear Model wearing Black KALA Hoodie in concrete urban environment"
+                className="kala-hero-model-img"
+                loading="eager"
+                fetchPriority="high"
+              />
+              <div className="kala-hero-image-overlay" aria-hidden="true" />
             </div>
           </div>
         </div>
       </section>
 
       {/* ====================================================================
-          2. TWO MAIN KALA PATHS
+          2. TWO MAIN KALA PATHS (Direct Clean Two-Option Section)
           ==================================================================== */}
-      <section className="kala-paths-section" aria-labelledby="paths-heading">
-        <div className="kala-container">
-          <div className="kala-section-header">
-            <p className="kala-label kala-section-badge">WHAT WE DO</p>
-            <h2 id="paths-heading" className="kala-section-title">CHOOSE YOUR KALA PATH</h2>
-            <p className="kala-section-subtitle">
-              Whether you need customized apparel for personal expression or end-to-end brand merchandise for your organization.
+      <section className="kala-paths-direct-section" aria-label="Explore KALA Paths">
+        <div className="kala-container kala-paths-direct-grid">
+          {/* Option 1: Custom Apparel */}
+          <div className="kala-path-direct-card">
+            <h2 className="kala-path-direct-title">CUSTOM APPAREL</h2>
+            <p className="kala-path-direct-desc">
+              T-shirts, hoodies, jerseys &amp; more.<br />
+              Made your way.
             </p>
+            <Link to="/custom-apparel" className="kala-path-direct-btn kala-path-direct-btn-primary">
+              EXPLORE CUSTOM APPAREL
+            </Link>
           </div>
 
-          <div className="kala-paths-grid">
-            {/* Custom Apparel Card */}
-            <article className="kala-path-card">
-              <div>
-                <p className="kala-path-eyebrow">PERSONAL & TEAM APPAREL</p>
-                <h3 className="kala-path-title">CUSTOM APPAREL</h3>
-                <p className="kala-path-tagline">Your idea. Your design. Your apparel.</p>
-                <p className="kala-path-desc">
-                  Create custom T-shirts, oversized T-shirts, hoodies, jerseys, tracksuits and other apparel tailored to your unique specifications.
-                </p>
-                <ul className="kala-path-tags" aria-label="Available custom apparel types">
-                  <li>T-Shirts</li>
-                  <li>Oversized Tees</li>
-                  <li>Hoodies</li>
-                  <li>Jerseys</li>
-                  <li>Tracksuits</li>
-                </ul>
-              </div>
-              <Link to="/custom-apparel" className="kala-btn kala-btn-primary kala-path-btn">
-                EXPLORE CUSTOM APPAREL
-              </Link>
-            </article>
-
-            {/* Business Branding Card */}
-            <article className="kala-path-card kala-path-card-accent">
-              <div>
-                <p className="kala-path-eyebrow">ORGANIZATIONS & MERCH</p>
-                <h3 className="kala-path-title">BUSINESS BRANDING</h3>
-                <p className="kala-path-tagline">Build a brand people remember.</p>
-                <p className="kala-path-desc">
-                  KALA provides branded merchandise and printed materials such as packaging, thank-you cards, carry bags, stickers, bottle labels, boxes, uniforms, caps, posters and other brand merchandise.
-                </p>
-                <ul className="kala-path-tags" aria-label="Available business branding items">
-                  <li>Uniforms & Caps</li>
-                  <li>Packaging & Boxes</li>
-                  <li>Stickers & Labels</li>
-                  <li>Carry Bags & Cards</li>
-                  <li>Posters & Merch</li>
-                </ul>
-              </div>
-              <Link to="/business-branding" className="kala-btn kala-path-btn">
-                EXPLORE BUSINESS BRANDING
-              </Link>
-            </article>
+          {/* Option 2: Business Branding */}
+          <div className="kala-path-direct-card kala-path-direct-card-dark">
+            <h2 className="kala-path-direct-title">BUSINESS BRANDING</h2>
+            <p className="kala-path-direct-desc">
+              Packaging, uniforms &amp; merch<br />
+              for your brand.
+            </p>
+            <Link to="/business-branding" className="kala-path-direct-btn kala-path-direct-btn-secondary">
+              EXPLORE BUSINESS BRANDING
+            </Link>
           </div>
         </div>
       </section>
