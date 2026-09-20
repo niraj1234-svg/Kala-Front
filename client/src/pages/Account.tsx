@@ -34,8 +34,31 @@ export const Account: React.FC = () => {
   const [regPhone, setRegPhone] = useState('')
   const [regPassword, setRegPassword] = useState('')
   const [regConfirmPassword, setRegConfirmPassword] = useState('')
+  const [showRegPassword, setShowRegPassword] = useState(false)
+  const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false)
   const [regErrors, setRegErrors] = useState<Record<string, string>>({})
   const [isRegistering, setIsRegistering] = useState(false)
+
+  // Live password criteria evaluation
+  const passwordCriteria = {
+    hasMinLength: regPassword.length >= 8,
+    hasUpper: /[A-Z]/.test(regPassword),
+    hasLower: /[a-z]/.test(regPassword),
+    hasNumber: /[0-9]/.test(regPassword),
+    hasSpecial: /[^a-zA-Z0-9]/.test(regPassword),
+  }
+
+  const criteriaMetCount = Object.values(passwordCriteria).filter(Boolean).length
+
+  const getPasswordStrength = (): { label: string; score: number; className: string } => {
+    if (!regPassword) return { label: 'Empty', score: 0, className: '' }
+    if (criteriaMetCount <= 2) return { label: 'Weak', score: 25, className: 'weak' }
+    if (criteriaMetCount <= 3) return { label: 'Fair', score: 50, className: 'fair' }
+    if (criteriaMetCount <= 4) return { label: 'Good', score: 75, className: 'good' }
+    return { label: 'Strong', score: 100, className: 'strong' }
+  }
+
+  const passwordStrength = getPasswordStrength()
 
   // Orders state
   const [orders, setOrders] = useState<BackendOrder[]>([])
@@ -102,41 +125,62 @@ export const Account: React.FC = () => {
     e.preventDefault()
     const errors: Record<string, string> = {}
 
-    // 1. First Name
-    if (!regFirstName.trim()) {
+    const trimmedFirstName = regFirstName.trim()
+    const trimmedLastName = regLastName.trim()
+    const trimmedEmail = regEmail.trim()
+    const trimmedPhone = regPhone.trim()
+    const nameRegex = /^[A-Za-z\s]+$/
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    const phoneRegex = /^[6-9]\d{9}$/
+
+    // 1. First Name (required, min 2 chars, letters & spaces only)
+    if (!trimmedFirstName) {
       errors.firstName = 'First name is required.'
+    } else if (trimmedFirstName.length < 2) {
+      errors.firstName = 'First name must be at least 2 characters.'
+    } else if (!nameRegex.test(trimmedFirstName)) {
+      errors.firstName = 'First name can only contain letters and spaces.'
     }
 
-    // 2. Last Name
-    if (!regLastName.trim()) {
+    // 2. Last Name (required, min 2 chars, letters & spaces only)
+    if (!trimmedLastName) {
       errors.lastName = 'Last name is required.'
+    } else if (trimmedLastName.length < 2) {
+      errors.lastName = 'Last name must be at least 2 characters.'
+    } else if (!nameRegex.test(trimmedLastName)) {
+      errors.lastName = 'Last name can only contain letters and spaces.'
     }
 
-    // 3. Email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!regEmail.trim()) {
-      errors.email = 'Email is required.'
-    } else if (!emailRegex.test(regEmail.trim())) {
+    // 3. Email (required, valid format)
+    if (!trimmedEmail) {
+      errors.email = 'Email address is required.'
+    } else if (!emailRegex.test(trimmedEmail)) {
       errors.email = 'Please enter a valid email address.'
     }
 
-    // 4. Phone (10-digit Indian format)
-    const cleanPhone = regPhone.replace(/[\s-+]/g, '')
-    const phoneRegex = /^[6-9]\d{9}$/
-    if (!regPhone.trim()) {
+    // 4. Phone (strictly 10 digits starting with 6, 7, 8, or 9; no +91, spaces, letters, or special chars)
+    if (!trimmedPhone) {
       errors.phone = 'Phone number is required.'
-    } else if (!phoneRegex.test(cleanPhone)) {
-      errors.phone = 'Please enter a valid 10-digit Indian phone number.'
+    } else if (!phoneRegex.test(trimmedPhone)) {
+      errors.phone = 'Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.'
     }
 
-    // 5. Password
+    // 5. Password (min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character)
     if (!regPassword) {
       errors.password = 'Password is required.'
-    } else if (regPassword.length < 6) {
-      errors.password = 'Password must be at least 6 characters.'
+    } else if (regPassword.length < 8) {
+      errors.password = 'Password must be at least 8 characters.'
+    } else if (!/[A-Z]/.test(regPassword)) {
+      errors.password = 'Password must contain at least one uppercase letter.'
+    } else if (!/[a-z]/.test(regPassword)) {
+      errors.password = 'Password must contain at least one lowercase letter.'
+    } else if (!/[0-9]/.test(regPassword)) {
+      errors.password = 'Password must contain at least one number.'
+    } else if (!/[^a-zA-Z0-9]/.test(regPassword)) {
+      errors.password = 'Password must contain at least one special character.'
     }
 
-    // 6. Confirm Password
+    // 6. Confirm Password (required, must match Password)
     if (!regConfirmPassword) {
       errors.confirmPassword = 'Please confirm your password.'
     } else if (regPassword !== regConfirmPassword) {
@@ -151,10 +195,10 @@ export const Account: React.FC = () => {
     setIsRegistering(true)
     try {
       const result = await register({
-        firstName: regFirstName.trim(),
-        lastName: regLastName.trim(),
-        email: regEmail.trim(),
-        phone: cleanPhone,
+        firstName: trimmedFirstName,
+        lastName: trimmedLastName,
+        email: trimmedEmail.toLowerCase(),
+        phone: trimmedPhone,
         password: regPassword,
       })
 
@@ -301,7 +345,10 @@ export const Account: React.FC = () => {
                       type="text"
                       className={`kala-form-input ${regErrors.firstName ? 'error' : ''}`}
                       value={regFirstName}
-                      onChange={(e) => setRegFirstName(e.target.value)}
+                      onChange={(e) => {
+                        setRegFirstName(e.target.value)
+                        if (regErrors.firstName) setRegErrors((prev) => ({ ...prev, firstName: '' }))
+                      }}
                     />
                     {regErrors.firstName && (
                       <span className="kala-form-error">{regErrors.firstName}</span>
@@ -317,7 +364,10 @@ export const Account: React.FC = () => {
                       type="text"
                       className={`kala-form-input ${regErrors.lastName ? 'error' : ''}`}
                       value={regLastName}
-                      onChange={(e) => setRegLastName(e.target.value)}
+                      onChange={(e) => {
+                        setRegLastName(e.target.value)
+                        if (regErrors.lastName) setRegErrors((prev) => ({ ...prev, lastName: '' }))
+                      }}
                     />
                     {regErrors.lastName && (
                       <span className="kala-form-error">{regErrors.lastName}</span>
@@ -334,7 +384,10 @@ export const Account: React.FC = () => {
                     type="email"
                     className={`kala-form-input ${regErrors.email ? 'error' : ''}`}
                     value={regEmail}
-                    onChange={(e) => setRegEmail(e.target.value)}
+                    onChange={(e) => {
+                      setRegEmail(e.target.value)
+                      if (regErrors.email) setRegErrors((prev) => ({ ...prev, email: '' }))
+                    }}
                   />
                   {regErrors.email && (
                     <span className="kala-form-error">{regErrors.email}</span>
@@ -348,48 +401,135 @@ export const Account: React.FC = () => {
                   <input
                     id="regPhone"
                     type="tel"
-                    placeholder="e.g. 9876543210"
+                    placeholder="e.g. 9876543210 (10 digits)"
                     className={`kala-form-input ${regErrors.phone ? 'error' : ''}`}
                     value={regPhone}
-                    onChange={(e) => setRegPhone(e.target.value)}
+                    onChange={(e) => {
+                      setRegPhone(e.target.value)
+                      if (regErrors.phone) setRegErrors((prev) => ({ ...prev, phone: '' }))
+                    }}
                   />
                   {regErrors.phone && (
                     <span className="kala-form-error">{regErrors.phone}</span>
                   )}
                 </div>
 
-                <div className="kala-form-grid two-col">
-                  <div className="kala-form-group">
-                    <label htmlFor="regPassword" className="kala-form-label">
-                      Password (min 6 chars) *
-                    </label>
+                <div className="kala-form-group">
+                  <label htmlFor="regPassword" className="kala-form-label">
+                    Password (min 8 chars) *
+                  </label>
+                  <div className="kala-password-input-wrap">
                     <input
                       id="regPassword"
-                      type="password"
+                      type={showRegPassword ? 'text' : 'password'}
                       className={`kala-form-input ${regErrors.password ? 'error' : ''}`}
                       value={regPassword}
-                      onChange={(e) => setRegPassword(e.target.value)}
+                      onChange={(e) => {
+                        setRegPassword(e.target.value)
+                        if (regErrors.password) setRegErrors((prev) => ({ ...prev, password: '' }))
+                      }}
                     />
-                    {regErrors.password && (
-                      <span className="kala-form-error">{regErrors.password}</span>
-                    )}
+                    <button
+                      type="button"
+                      className="kala-password-toggle-btn"
+                      onClick={() => setShowRegPassword(!showRegPassword)}
+                      aria-label={showRegPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showRegPassword ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
                   </div>
 
-                  <div className="kala-form-group">
-                    <label htmlFor="regConfirmPassword" className="kala-form-label">
-                      Confirm Password *
-                    </label>
+                  {regPassword && (
+                    <div className="kala-password-strength" aria-live="polite">
+                      <div className="kala-strength-header">
+                        <span className="kala-strength-title">Password Strength</span>
+                        <span className={`kala-strength-badge ${passwordStrength.className}`}>
+                          {passwordStrength.label}
+                        </span>
+                      </div>
+                      <div className="kala-strength-track">
+                        <div
+                          className={`kala-strength-bar ${passwordStrength.className}`}
+                          style={{ width: `${passwordStrength.score}%` }}
+                        />
+                      </div>
+                      <div className="kala-strength-criteria">
+                        <div className={`kala-criterion-item ${passwordCriteria.hasMinLength ? 'valid' : ''}`}>
+                          <span className="kala-criterion-icon">{passwordCriteria.hasMinLength ? '✓' : '○'}</span>
+                          <span>8+ characters</span>
+                        </div>
+                        <div className={`kala-criterion-item ${passwordCriteria.hasUpper ? 'valid' : ''}`}>
+                          <span className="kala-criterion-icon">{passwordCriteria.hasUpper ? '✓' : '○'}</span>
+                          <span>Uppercase letter (A-Z)</span>
+                        </div>
+                        <div className={`kala-criterion-item ${passwordCriteria.hasLower ? 'valid' : ''}`}>
+                          <span className="kala-criterion-icon">{passwordCriteria.hasLower ? '✓' : '○'}</span>
+                          <span>Lowercase letter (a-z)</span>
+                        </div>
+                        <div className={`kala-criterion-item ${passwordCriteria.hasNumber ? 'valid' : ''}`}>
+                          <span className="kala-criterion-icon">{passwordCriteria.hasNumber ? '✓' : '○'}</span>
+                          <span>Number (0-9)</span>
+                        </div>
+                        <div className={`kala-criterion-item ${passwordCriteria.hasSpecial ? 'valid' : ''}`}>
+                          <span className="kala-criterion-icon">{passwordCriteria.hasSpecial ? '✓' : '○'}</span>
+                          <span>Special character (!@#$)</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {regErrors.password && (
+                    <span className="kala-form-error">{regErrors.password}</span>
+                  )}
+                </div>
+
+                <div className="kala-form-group">
+                  <label htmlFor="regConfirmPassword" className="kala-form-label">
+                    Confirm Password *
+                  </label>
+                  <div className="kala-password-input-wrap">
                     <input
                       id="regConfirmPassword"
-                      type="password"
+                      type={showRegConfirmPassword ? 'text' : 'password'}
                       className={`kala-form-input ${regErrors.confirmPassword ? 'error' : ''}`}
                       value={regConfirmPassword}
-                      onChange={(e) => setRegConfirmPassword(e.target.value)}
+                      onChange={(e) => {
+                        setRegConfirmPassword(e.target.value)
+                        if (regErrors.confirmPassword) setRegErrors((prev) => ({ ...prev, confirmPassword: '' }))
+                      }}
                     />
-                    {regErrors.confirmPassword && (
-                      <span className="kala-form-error">{regErrors.confirmPassword}</span>
-                    )}
+                    <button
+                      type="button"
+                      className="kala-password-toggle-btn"
+                      onClick={() => setShowRegConfirmPassword(!showRegConfirmPassword)}
+                      aria-label={showRegConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                    >
+                      {showRegConfirmPassword ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
                   </div>
+                  {regErrors.confirmPassword && (
+                    <span className="kala-form-error">{regErrors.confirmPassword}</span>
+                  )}
                 </div>
 
                 <button

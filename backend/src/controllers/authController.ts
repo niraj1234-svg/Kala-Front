@@ -20,8 +20,9 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const { firstName, lastName, email, phone, password } = req.body
 
-    // 1. Validate required fields
-    if (!firstName || typeof firstName !== 'string' || !firstName.trim()) {
+    // 1. Validate First Name (required, min 2 chars, letters & spaces only)
+    const trimmedFirstName = typeof firstName === 'string' ? firstName.trim() : ''
+    if (!trimmedFirstName) {
       res.status(400).json({
         success: false,
         message: 'First name is required.',
@@ -29,7 +30,26 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    if (!lastName || typeof lastName !== 'string' || !lastName.trim()) {
+    const nameRegex = /^[A-Za-z\s]+$/
+    if (trimmedFirstName.length < 2) {
+      res.status(400).json({
+        success: false,
+        message: 'First name must be at least 2 characters long.',
+      })
+      return
+    }
+
+    if (!nameRegex.test(trimmedFirstName)) {
+      res.status(400).json({
+        success: false,
+        message: 'First name can only contain letters and spaces.',
+      })
+      return
+    }
+
+    // 2. Validate Last Name (required, min 2 chars, letters & spaces only)
+    const trimmedLastName = typeof lastName === 'string' ? lastName.trim() : ''
+    if (!trimmedLastName) {
       res.status(400).json({
         success: false,
         message: 'Last name is required.',
@@ -37,7 +57,25 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    if (!email || typeof email !== 'string' || !email.trim()) {
+    if (trimmedLastName.length < 2) {
+      res.status(400).json({
+        success: false,
+        message: 'Last name must be at least 2 characters long.',
+      })
+      return
+    }
+
+    if (!nameRegex.test(trimmedLastName)) {
+      res.status(400).json({
+        success: false,
+        message: 'Last name can only contain letters and spaces.',
+      })
+      return
+    }
+
+    // 3. Validate Email (required, valid email format, normalized to lowercase)
+    const trimmedEmail = typeof email === 'string' ? email.trim() : ''
+    if (!trimmedEmail) {
       res.status(400).json({
         success: false,
         message: 'Email address is required.',
@@ -45,8 +83,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const normalizedEmail = email.trim().toLowerCase()
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    const normalizedEmail = trimmedEmail.toLowerCase()
     if (!emailRegex.test(normalizedEmail)) {
       res.status(400).json({
         success: false,
@@ -55,7 +93,9 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    if (!phone || typeof phone !== 'string' || !phone.trim()) {
+    // 4. Validate Phone (required, strictly 10 digits starting with 6, 7, 8, or 9; no +91, spaces, letters, or special characters)
+    const trimmedPhone = typeof phone === 'string' ? phone.trim() : ''
+    if (!trimmedPhone) {
       res.status(400).json({
         success: false,
         message: 'Phone number is required.',
@@ -63,17 +103,16 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    // Clean common phone formatting (strip spaces, hyphens, plus, and leading 91 country code if 12 digits)
-    const cleanPhone = phone.trim().replace(/[\s-+]/g, '').replace(/^91(?=[6-9]\d{9}$)/, '')
     const phoneRegex = /^[6-9]\d{9}$/
-    if (!phoneRegex.test(cleanPhone)) {
+    if (!phoneRegex.test(trimmedPhone)) {
       res.status(400).json({
         success: false,
-        message: 'Please enter a valid 10-digit Indian phone number.',
+        message: 'Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.',
       })
       return
     }
 
+    // 5. Validate Password (required, min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character)
     if (!password || typeof password !== 'string') {
       res.status(400).json({
         success: false,
@@ -82,15 +121,47 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       res.status(400).json({
         success: false,
-        message: 'Password must contain at least 6 characters.',
+        message: 'Password must be at least 8 characters long.',
       })
       return
     }
 
-    // 2. Check duplicate email in MongoDB
+    if (!/[A-Z]/.test(password)) {
+      res.status(400).json({
+        success: false,
+        message: 'Password must contain at least one uppercase letter.',
+      })
+      return
+    }
+
+    if (!/[a-z]/.test(password)) {
+      res.status(400).json({
+        success: false,
+        message: 'Password must contain at least one lowercase letter.',
+      })
+      return
+    }
+
+    if (!/[0-9]/.test(password)) {
+      res.status(400).json({
+        success: false,
+        message: 'Password must contain at least one number.',
+      })
+      return
+    }
+
+    if (!/[^a-zA-Z0-9]/.test(password)) {
+      res.status(400).json({
+        success: false,
+        message: 'Password must contain at least one special character.',
+      })
+      return
+    }
+
+    // 6. Check duplicate email in MongoDB (case-insensitively via normalized email)
     const existingUser = await User.findOne({ email: normalizedEmail })
     if (existingUser) {
       res.status(409).json({
@@ -100,11 +171,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    // 3. Hash password using bcryptjs
+    // 7. Hash password using bcryptjs
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(password, saltRounds)
 
-    // 4. Generate unique server-side user ID
+    // 8. Generate unique server-side user ID
     let userId = generateUserId()
     let existingId = await User.findOne({ userId })
     while (existingId) {
@@ -112,13 +183,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       existingId = await User.findOne({ userId })
     }
 
-    // 5. Create User document in MongoDB
+    // 9. Create User document in MongoDB
     const newUser = await User.create({
       userId,
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
+      firstName: trimmedFirstName,
+      lastName: trimmedLastName,
       email: normalizedEmail,
-      phone: cleanPhone,
+      phone: trimmedPhone,
       passwordHash,
     })
 

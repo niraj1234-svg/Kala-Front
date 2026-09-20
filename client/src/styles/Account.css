@@ -286,3 +286,159 @@
   margin-bottom: 1.5rem;
   font-size: 0.95rem;
 }
+
+/* --------------------------------------------------------------------------
+   3. PASSWORD VISIBILITY & LIVE STRENGTH INDICATOR
+   -------------------------------------------------------------------------- */
+.kala-password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.kala-password-input-wrap .kala-form-input {
+  padding-right: 2.75rem;
+}
+
+.kala-password-toggle-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  color: var(--kala-text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--kala-transition-fast);
+}
+
+.kala-password-toggle-btn:hover {
+  color: var(--kala-black);
+}
+
+.kala-password-toggle-btn:focus-visible {
+  outline: 2px solid var(--kala-orange);
+  outline-offset: 2px;
+}
+
+.kala-password-strength {
+  margin-top: 0.6rem;
+  padding: 0.85rem;
+  background-color: #fafafa;
+  border: 1px solid var(--kala-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.kala-strength-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kala-strength-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--kala-black);
+}
+
+.kala-strength-badge {
+  padding: 0.15rem 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.kala-strength-badge.weak {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.kala-strength-badge.fair {
+  background-color: #ffedd5;
+  color: #c2410c;
+}
+
+.kala-strength-badge.good {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+.kala-strength-badge.strong {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.kala-strength-track {
+  height: 4px;
+  background-color: #e5e7eb;
+  width: 100%;
+  overflow: hidden;
+}
+
+.kala-strength-bar {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.kala-strength-bar.weak {
+  background-color: #ef4444;
+}
+
+.kala-strength-bar.fair {
+  background-color: #f97316;
+}
+
+.kala-strength-bar.good {
+  background-color: #eab308;
+}
+
+.kala-strength-bar.strong {
+  background-color: #22c55e;
+}
+
+.kala-strength-criteria {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+
+@media (min-width: 480px) {
+  .kala-strength-criteria {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.kala-criterion-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  color: var(--kala-text-secondary);
+  transition: color var(--kala-transition-fast);
+}
+
+.kala-criterion-item.valid {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.kala-criterion-icon {
+  width: 13px;
+  height: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
