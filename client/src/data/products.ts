@@ -1,11 +1,17 @@
-// Product image map using Vite's glob import with Node fallback
-const imageMap = (typeof import.meta !== 'undefined' && typeof (import.meta as any).glob === 'function')
-  ? (import.meta as any).glob('/images/*', { eager: true, import: 'default' }) as Record<string, string>
-  : {}
+// Product image map using Vite's compile-time glob import
+const imageMap: Record<string, string> = import.meta.glob('/images/*', {
+  eager: true,
+  import: 'default',
+})
 
 export function getProductImage(filename: string): string {
-  const path = `/images/${filename}`
-  return imageMap[path] || path
+  if (!filename) return ''
+  if (filename.startsWith('http://') || filename.startsWith('https://') || filename.startsWith('data:')) {
+    return filename
+  }
+  const cleanName = filename.replace(/^\/?(images\/)?/, '')
+  const path = `/images/${cleanName}`
+  return imageMap[path] || imageMap[decodeURIComponent(path)] || path
 }
 
 export interface Product {
