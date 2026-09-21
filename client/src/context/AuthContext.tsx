@@ -125,9 +125,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   const logout = () => {
+    const previousId = currentUser?.id
     clearAuthToken()
     try {
       localStorage.removeItem(CURRENT_USER_KEY)
+      if (previousId) {
+        localStorage.removeItem(`kala_cart_${previousId}`)
+      }
+      localStorage.removeItem('kala_cart')
+      localStorage.removeItem('kala_guest_cart')
     } catch {}
     setCurrentUser(null)
   }
