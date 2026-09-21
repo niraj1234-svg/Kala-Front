@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchProducts } from '../services/productApi'
-import { getProductImage } from '../data/products'
 import type { Product } from '../data/products'
-import ProductCard from '../components/ProductCard'
+import { useWishlist } from '../context/WishlistContext'
+import { useCart } from '../context/CartContext'
 import '../styles/Home.css'
 
 export const Home: React.FC = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
   const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(true)
   const [productError, setProductError] = useState<string | null>(null)
+  const [addedProductId, setAddedProductId] = useState<string | null>(null)
 
-  // Fetch products from the MongoDB-backed API with fallback
+  const { isInWishlist, toggleWishlist } = useWishlist()
+  const { addToCart } = useCart()
+
+  // Fetch products from MongoDB API with fallback
   useEffect(() => {
     let isMounted = true
     setIsLoadingProducts(true)
@@ -21,8 +25,8 @@ export const Home: React.FC = () => {
       .then((data) => {
         if (isMounted) {
           if (data && data.length > 0) {
-            // Display 6 curated products across categories
-            setFeaturedProducts(data.slice(0, 6))
+            // Display top 5 curated products across categories matching reference design
+            setFeaturedProducts(data.slice(0, 5))
           } else {
             setFeaturedProducts([])
           }
@@ -45,441 +49,331 @@ export const Home: React.FC = () => {
     }
   }, [])
 
+  const handleQuickAdd = (e: React.MouseEvent, product: Product) => {
+    e.preventDefault()
+    e.stopPropagation()
+    addToCart(
+      {
+        id: product.id,
+        name: product.name,
+        image: product.image,
+        price: product.price,
+      },
+      'M',
+      1
+    )
+    setAddedProductId(product.id)
+    setTimeout(() => {
+      setAddedProductId((current) => (current === product.id ? null : current))
+    }, 1800)
+  }
+
+  const handleWishlistClick = (e: React.MouseEvent, productId: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+    toggleWishlist(productId)
+  }
+
   return (
     <main className="kala-home" id="main-content">
       {/* ====================================================================
-          1. HERO SECTION
+          1. HERO SECTION (Minimalist, Visual, Streetwear Aesthetic)
           ==================================================================== */}
-      {/* ====================================================================
-          1. HERO SECTION (Streetwear Cinematic Aesthetic)
-          ==================================================================== */}
-      <section className="kala-hero-section" aria-label="Introduction">
-        <div className="kala-hero-bg-glow" aria-hidden="true" />
-        <div className="kala-container kala-hero-grid">
-          <div className="kala-hero-content">
-            <p className="kala-hero-eyebrow">MORE THAN CLOTHING</p>
+      <section className="kala-hero-section" aria-label="KALA Streetwear">
+        <div className="kala-hero-bg-media">
+          <img
+            src="/home/hero-banner.jpg"
+            alt="KALA Streetwear Model"
+            className="kala-hero-bg-img"
+            loading="eager"
+            fetchPriority="high"
+          />
+          <div className="kala-hero-vignette" aria-hidden="true" />
+        </div>
+
+        <div className="kala-hero-container">
+          <div className="kala-hero-text-wrap">
             <h1 className="kala-hero-title">
               WEAR YOUR<br />
-              <span className="kala-hero-title-highlight">IDENTITY.</span>
+              <span className="kala-hero-title-accent">STORY</span>
             </h1>
             <p className="kala-hero-subtitle">
-              CUSTOM APPAREL. YOUR DESIGNS. YOUR BRAND.
+              APPAREL &times; IDENTITY &times; YOU
             </p>
-            <div className="kala-hero-actions">
-              <Link to="/shop" className="kala-hero-btn kala-hero-btn-primary">
-                <span>SHOP NOW</span>
-                <svg className="kala-hero-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </Link>
-              <Link to="/custom-apparel" className="kala-hero-btn kala-hero-btn-secondary">
-                <span>CREATE YOURS</span>
-                <svg className="kala-hero-btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </Link>
-            </div>
           </div>
 
-          <div className="kala-hero-visual">
-            <div className="kala-hero-image-frame">
-              <img
-                src="/hero/kala-hero-model.png"
-                alt="KALA Streetwear Model wearing Black KALA Hoodie in concrete urban environment"
-                className="kala-hero-model-img"
-                loading="eager"
-                fetchPriority="high"
-              />
-              <div className="kala-hero-image-overlay" aria-hidden="true" />
-            </div>
+          <div className="kala-hero-script-wrap" aria-hidden="true">
+            <span className="kala-hero-script">More Than Apparel</span>
           </div>
         </div>
       </section>
 
       {/* ====================================================================
-          2. TWO MAIN KALA PATHS (Direct Clean Two-Option Section)
+          2. TWO VISUAL CARDS: CUSTOM APPAREL & BUSINESS BRANDING
           ==================================================================== */}
-      <section className="kala-paths-direct-section" aria-label="Explore KALA Paths">
-        <div className="kala-container kala-paths-direct-grid">
-          {/* Option 1: Custom Apparel */}
-          <div className="kala-path-direct-card">
-            <h2 className="kala-path-direct-title">CUSTOM APPAREL</h2>
-            <p className="kala-path-direct-desc">
-              T-shirts, hoodies, jerseys &amp; more.<br />
-              Made your way.
-            </p>
-            <Link to="/custom-apparel" className="kala-path-direct-btn kala-path-direct-btn-primary">
-              EXPLORE CUSTOM APPAREL
-            </Link>
-          </div>
+      <section className="kala-split-cards-section" aria-label="Explore KALA Services">
+        <div className="kala-split-cards-grid">
+          {/* Card 1: Custom Apparel */}
+          <Link
+            to="/custom-apparel"
+            className="kala-split-card kala-split-card-light"
+            aria-label="Custom Apparel — T-shirts, Hoodies, Jerseys made your way"
+          >
+            <div className="kala-split-card-content">
+              <h2 className="kala-split-card-title">
+                CUSTOM<br />
+                APPAREL
+              </h2>
+              <p className="kala-split-card-desc">
+                T-shirts. Hoodies. Jerseys.<br />
+                Made your way.
+              </p>
+              <div className="kala-split-card-arrow" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </div>
+            </div>
+            <div className="kala-split-card-visual">
+              <img
+                src="/home/custom-apparel.jpg"
+                alt="Custom KALA Apparel model"
+                className="kala-split-card-img"
+                loading="lazy"
+              />
+            </div>
+          </Link>
 
-          {/* Option 2: Business Branding */}
-          <div className="kala-path-direct-card kala-path-direct-card-dark">
-            <h2 className="kala-path-direct-title">BUSINESS BRANDING</h2>
-            <p className="kala-path-direct-desc">
-              Packaging, uniforms &amp; merch<br />
-              for your brand.
-            </p>
-            <Link to="/business-branding" className="kala-path-direct-btn kala-path-direct-btn-secondary">
-              EXPLORE BUSINESS BRANDING
-            </Link>
-          </div>
+          {/* Card 2: Business Branding */}
+          <Link
+            to="/business-branding"
+            className="kala-split-card kala-split-card-dark"
+            aria-label="Business Branding — Packaging, Uniforms, Merch built for your brand"
+          >
+            <div className="kala-split-card-content">
+              <h2 className="kala-split-card-title">
+                BUSINESS<br />
+                BRANDING
+              </h2>
+              <p className="kala-split-card-desc">
+                Packaging. Uniforms. Merch.<br />
+                Built for your brand.
+              </p>
+              <div className="kala-split-card-arrow" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </div>
+            </div>
+            <div className="kala-split-card-visual">
+              <img
+                src="/home/business-branding.jpg"
+                alt="Business Branding packaging and apparel merchandise"
+                className="kala-split-card-img"
+                loading="lazy"
+              />
+            </div>
+          </Link>
         </div>
       </section>
 
       {/* ====================================================================
-          3. SHOP / FEATURED PRODUCTS
+          3. FEATURED PRODUCTS (Clean Visual Row)
           ==================================================================== */}
       <section className="kala-featured-section" aria-labelledby="featured-heading">
-        <div className="kala-container">
-          <div className="kala-section-header">
-            <p className="kala-label kala-section-badge">CATALOG</p>
-            <h2 id="featured-heading" className="kala-section-title">FEATURED APPAREL</h2>
-            <p className="kala-section-subtitle">
-              Explore our core catalog pieces built for streetwear aesthetics, tactical gaming sessions, and gym training.
-            </p>
+        <div className="kala-featured-container">
+          <div className="kala-featured-header-row">
+            <h2 id="featured-heading" className="kala-featured-heading">Featured Products</h2>
+            <div className="kala-featured-divider" aria-hidden="true" />
+            <Link to="/shop" className="kala-featured-view-all">
+              <span>View All</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </Link>
           </div>
 
-          {/* Loading State */}
           {isLoadingProducts && (
             <div className="kala-featured-loading" role="status">
-              <p>Loading featured apparel catalog...</p>
+              <p>Loading collection...</p>
             </div>
           )}
 
-          {/* Error State */}
           {productError && !isLoadingProducts && featuredProducts.length === 0 && (
             <div className="kala-featured-error" role="alert">
               <p>{productError}</p>
-              <Link to="/shop" className="kala-btn kala-btn-secondary">
-                Go to Shop
-              </Link>
+              <Link to="/shop" className="kala-featured-error-btn">Go to Shop</Link>
             </div>
           )}
 
-          {/* Products Grid */}
           {!isLoadingProducts && featuredProducts.length > 0 && (
             <div className="kala-featured-grid">
-              {featuredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              {featuredProducts.map((product) => {
+                const wishlisted = isInWishlist(product.id)
+                const isRecentlyAdded = addedProductId === product.id
+
+                return (
+                  <article key={product.id} className="kala-clean-product-card">
+                    <Link to={`/product/${product.id}`} className="kala-clean-product-link" aria-label={`View ${product.name}`}>
+                      <div className="kala-clean-product-media">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="kala-clean-product-img"
+                          loading="lazy"
+                        />
+                        <button
+                          type="button"
+                          className={`kala-clean-wishlist-btn ${wishlisted ? 'active' : ''}`}
+                          aria-label={wishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+                          onClick={(e) => handleWishlistClick(e, product.id)}
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill={wishlisted ? 'var(--kala-orange)' : 'none'}
+                            stroke={wishlisted ? 'var(--kala-orange)' : 'currentColor'}
+                            strokeWidth="1.9"
+                            aria-hidden="true"
+                          >
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                          </svg>
+                        </button>
+                      </div>
+
+                      <div className="kala-clean-product-details">
+                        <div className="kala-clean-product-text">
+                          <h3 className="kala-clean-product-name">{product.name}</h3>
+                          <span className="kala-clean-product-price">₹{product.price.toLocaleString('en-IN')}</span>
+                        </div>
+
+                        <button
+                          type="button"
+                          className={`kala-clean-cart-btn ${isRecentlyAdded ? 'added' : ''}`}
+                          aria-label={`Add ${product.name} to cart`}
+                          title="Add to cart"
+                          onClick={(e) => handleQuickAdd(e, product)}
+                        >
+                          {isRecentlyAdded ? (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          ) : (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                              <circle cx="9" cy="21" r="1" />
+                              <circle cx="20" cy="21" r="1" />
+                              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                    </Link>
+                  </article>
+                )
+              })}
             </div>
           )}
+        </div>
+      </section>
 
-          <div className="kala-featured-footer">
-            <Link to="/shop" className="kala-btn kala-btn-secondary kala-featured-cta">
-              VIEW ALL PRODUCTS
-            </Link>
+      {/* ====================================================================
+          4. SERVICE / TRUST SECTION (Minimal Row)
+          ==================================================================== */}
+      <section className="kala-trust-bar-section" aria-label="Trust & Guarantees">
+        <div className="kala-trust-bar-container">
+          <div className="kala-trust-item">
+            <svg className="kala-trust-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="1" y="3" width="15" height="13" />
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+              <circle cx="5.5" cy="18.5" r="2.5" />
+              <circle cx="18.5" cy="18.5" r="2.5" />
+            </svg>
+            <span className="kala-trust-text">Reliable Delivery</span>
+          </div>
+
+          <div className="kala-trust-item">
+            <svg className="kala-trust-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            <span className="kala-trust-text">Secure Payments</span>
+          </div>
+
+          <div className="kala-trust-item">
+            <svg className="kala-trust-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+            <span className="kala-trust-text">Premium Quality</span>
+          </div>
+
+          <div className="kala-trust-item">
+            <svg className="kala-trust-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <span className="kala-trust-text">Trusted by Teams</span>
           </div>
         </div>
       </section>
 
       {/* ====================================================================
-          4. CATEGORY SECTION
+          5. CINEMATIC STATEMENT BANNER (From Reference Image 2)
           ==================================================================== */}
-      <section className="kala-categories-section" aria-labelledby="categories-heading">
-        <div className="kala-container">
-          <div className="kala-section-header">
-            <p className="kala-label kala-section-badge">COLLECTIONS</p>
-            <h2 id="categories-heading" className="kala-section-title">SHOP BY CATEGORY</h2>
-            <p className="kala-section-subtitle">
-              Browse dedicated apparel lines crafted specifically for your subculture and lifestyle.
-            </p>
-          </div>
-
-          <div className="kala-categories-grid">
-            {/* Category: STREETWEAR */}
-            <Link
-              to="/shop?category=Streetwear"
-              className="kala-category-card"
-              aria-label="Browse STREETWEAR apparel collection"
-            >
-              <div className="kala-category-image-wrap">
-                <img
-                  src={getProductImage('Streetwear 01.png')}
-                  alt="KALA Streetwear collection"
-                  className="kala-category-image"
-                  loading="lazy"
-                />
-              </div>
-              <div className="kala-category-content">
-                <div>
-                  <h3 className="kala-category-name">STREETWEAR</h3>
-                  <p className="kala-category-desc">
-                    Acid-washed oversized tees, boxy heavy French Terry hoodies, and relaxed cargo trousers.
-                  </p>
-                </div>
-                <span className="kala-category-link-text">
-                  EXPLORE STREETWEAR
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </span>
-              </div>
-            </Link>
-
-            {/* Category: Gaming */}
-            <Link
-              to="/shop?category=Gaming"
-              className="kala-category-card"
-              aria-label="Browse Gaming apparel collection"
-            >
-              <div className="kala-category-image-wrap">
-                <img
-                  src={getProductImage('gaming 01.png')}
-                  alt="KALA Gaming collection"
-                  className="kala-category-image"
-                  loading="lazy"
-                />
-              </div>
-              <div className="kala-category-content">
-                <div>
-                  <h3 className="kala-category-name">Gaming</h3>
-                  <p className="kala-category-desc">
-                    Moisture-wicking esports tournament jerseys, cyber-aesthetic tees, and tactical warmup jackets.
-                  </p>
-                </div>
-                <span className="kala-category-link-text">
-                  EXPLORE GAMING
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </span>
-              </div>
-            </Link>
-
-            {/* Category: GYMWEAR */}
-            <Link
-              to="/shop?category=Gymwear"
-              className="kala-category-card"
-              aria-label="Browse GYMWEAR apparel collection"
-            >
-              <div className="kala-category-image-wrap">
-                <img
-                  src={getProductImage('Gymwear-05.png')}
-                  alt="KALA Gymwear collection"
-                  className="kala-category-image"
-                  loading="lazy"
-                />
-              </div>
-              <div className="kala-category-content">
-                <div>
-                  <h3 className="kala-category-name">GYMWEAR</h3>
-                  <p className="kala-category-desc">
-                    Heavyweight pump covers, 4-way stretch compression gear, dynamic training shorts, and joggers.
-                  </p>
-                </div>
-                <span className="kala-category-link-text">
-                  EXPLORE GYMWEAR
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
-                </span>
-              </div>
-            </Link>
-          </div>
+      <section className="kala-statement-banner-section" aria-label="Brand Philosophy">
+        <div className="kala-statement-bg-media">
+          <img
+            src="/home/statement-banner.jpg"
+            alt="KALA Apparel Silhouette"
+            className="kala-statement-bg-img"
+            loading="lazy"
+          />
+          <div className="kala-statement-overlay" aria-hidden="true" />
         </div>
-      </section>
 
-      {/* ====================================================================
-          5. WHY KALA
-          ==================================================================== */}
-      <section className="kala-why-section" aria-labelledby="why-heading">
-        <div className="kala-container">
-          <div className="kala-section-header">
-            <p className="kala-label kala-section-badge">POSITIONING</p>
-            <h2 id="why-heading" className="kala-section-title">MADE FOR YOUR WORLD</h2>
-            <p className="kala-section-subtitle">
-              Engineered for individuals, collegiate squads, competitive teams, and expanding businesses across India.
-            </p>
-          </div>
-
-          <div className="kala-why-grid">
-            <div className="kala-why-card">
-              <div className="kala-why-icon-wrap" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" />
-                </svg>
-              </div>
-              <h3 className="kala-why-card-title">Custom Apparel</h3>
-              <p className="kala-why-card-desc">
-                Custom garments crafted to your cut, fabric, and print preferences with no complex barriers.
-              </p>
-            </div>
-
-            <div className="kala-why-card">
-              <div className="kala-why-icon-wrap" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                </svg>
-              </div>
-              <h3 className="kala-why-card-title">Business & Brand Merchandise</h3>
-              <p className="kala-why-card-desc">
-                Complete corporate swag, customer packaging, carry bags, and marketing stationery.
-              </p>
-            </div>
-
-            <div className="kala-why-card">
-              <div className="kala-why-icon-wrap" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                </svg>
-              </div>
-              <h3 className="kala-why-card-title">College & Event Apparel</h3>
-              <p className="kala-why-card-desc">
-                Fest tees, departmental hoodies, and batch commemorative merchandise delivered on schedule.
-              </p>
-            </div>
-
-            <div className="kala-why-card">
-              <div className="kala-why-icon-wrap" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                </svg>
-              </div>
-              <h3 className="kala-why-card-title">Sports Team Apparel</h3>
-              <p className="kala-why-card-desc">
-                Athletic kits and tournament jerseys engineered for mobility, breathability, and team pride.
-              </p>
-            </div>
-
-            <div className="kala-why-card">
-              <div className="kala-why-icon-wrap" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="1" y="3" width="15" height="13" />
-                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-                  <circle cx="5.5" cy="18.5" r="2.5" />
-                  <circle cx="18.5" cy="18.5" r="2.5" />
-                </svg>
-              </div>
-              <h3 className="kala-why-card-title">All-India Delivery</h3>
-              <p className="kala-why-card-desc">
-                Direct shipping to doorsteps and offices across major metros, cities, and regional zones.
-              </p>
-            </div>
-
-            <div className="kala-why-card">
-              <div className="kala-why-icon-wrap" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-              </div>
-              <h3 className="kala-why-card-title">Quality Checked</h3>
-              <p className="kala-why-card-desc">
-                Every batch is thoroughly inspected before dispatch so your order arrives ready for wear.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          6. HOW KALA WORKS
-          ==================================================================== */}
-      <section className="kala-steps-section" aria-labelledby="how-heading">
-        <div className="kala-container">
-          <div className="kala-section-header">
-            <p className="kala-label kala-section-badge">PROCESS</p>
-            <h2 id="how-heading" className="kala-section-title">HOW KALA WORKS</h2>
-            <p className="kala-section-subtitle">
-              From your initial concept to finished products delivered to your location.
-            </p>
-          </div>
-
-          <div className="kala-steps-grid">
-            <div className="kala-step-card">
-              <span className="kala-step-num">01</span>
-              <h3 className="kala-step-title">YOU SHARE YOUR IDEA</h3>
-              <p className="kala-step-desc">
-                Tell us what you want to create.
-              </p>
-            </div>
-
-            <div className="kala-step-card">
-              <span className="kala-step-num">02</span>
-              <h3 className="kala-step-title">WE CREATE &amp; PRINT</h3>
-              <p className="kala-step-desc">
-                KALA works with printing/manufacturing partners to produce your order.
-              </p>
-            </div>
-
-            <div className="kala-step-card">
-              <span className="kala-step-num">03</span>
-              <h3 className="kala-step-title">QUALITY CHECK</h3>
-              <p className="kala-step-desc">
-                KALA checks the finished order before dispatch.
-              </p>
-            </div>
-
-            <div className="kala-step-card">
-              <span className="kala-step-num">04</span>
-              <h3 className="kala-step-title">DELIVERED TO YOU</h3>
-              <p className="kala-step-desc">
-                Your finished products are delivered across India.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          7. KALA NUMBERS / SOCIAL PROOF
-          ==================================================================== */}
-      <section className="kala-numbers-section" aria-label="KALA Milestones">
-        <div className="kala-container">
-          <div className="kala-numbers-grid">
-            <div className="kala-number-item">
-              <span className="kala-number-val">500+</span>
-              <span className="kala-number-label">ORDERS</span>
-            </div>
-
-            <div className="kala-number-item">
-              <span className="kala-number-val">500+</span>
-              <span className="kala-number-label">CUSTOMERS</span>
-            </div>
-
-            <div className="kala-number-item">
-              <span className="kala-number-val">ALL INDIA</span>
-              <span className="kala-number-label">DELIVERY</span>
-            </div>
-
-            <div className="kala-number-item">
-              <span className="kala-number-val">JAN 2026</span>
-              <span className="kala-number-label">STARTED</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          8. FINAL CTA
-          ==================================================================== */}
-      <section className="kala-final-cta-section" aria-labelledby="cta-heading">
-        <div className="kala-container">
-          <div className="kala-final-cta-inner">
-            <p className="kala-label kala-final-cta-badge">GET STARTED</p>
-            <h2 id="cta-heading" className="kala-final-cta-title">
-              READY TO MAKE SOMETHING YOURS?
+        <div className="kala-statement-container">
+          <div className="kala-statement-content">
+            <h2 className="kala-statement-title">
+              MORE<br />
+              THAN<br />
+              APPAREL
             </h2>
-            <p className="kala-final-cta-desc">
-              From one custom piece to apparel for your entire team, event, college or business — KALA helps bring your idea to life.
-            </p>
-            <div className="kala-final-cta-actions">
-              <Link to="/shop" className="kala-btn kala-hero-btn-primary kala-final-btn">
-                SHOP APPAREL
-              </Link>
-              <Link to="/custom-apparel" className="kala-btn kala-hero-btn-secondary kala-final-btn">
-                CREATE YOURS
-              </Link>
-            </div>
+            <div className="kala-statement-underline" aria-hidden="true" />
           </div>
         </div>
       </section>
+
+      {/* ====================================================================
+          6. BRAND STATEMENT SUB-BAR (From Reference Image 2)
+          ==================================================================== */}
+      <section className="kala-tagline-bar-section" aria-label="Brand Philosophy Tagline">
+        <p className="kala-tagline-bar-text">
+          APPAREL &times; TEAMS &times; BRANDS &times; YOU
+        </p>
+      </section>
+
+      {/* ====================================================================
+          7. FLOATING WHATSAPP BUTTON (From Reference Images)
+          ==================================================================== */}
+      <a
+        href="https://wa.me/919999999999?text=Hi%20KALA,%20I'd%20like%20to%20know%20more%20about%20your%20custom%20apparel%20and%20products."
+        target="_blank"
+        rel="noopener noreferrer"
+        className="kala-floating-whatsapp"
+        aria-label="Contact KALA on WhatsApp"
+        title="Chat with us on WhatsApp"
+      >
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12.031 2C6.516 2 2.031 6.484 2.031 12c0 1.984.582 3.832 1.586 5.402L2 22l4.754-1.57A9.972 9.972 0 0012.031 22C17.547 22 22.031 17.516 22.031 12c0-5.516-4.484-10-10-10zm0 18.281c-1.742 0-3.375-.5-4.781-1.371l-.344-.215-2.828.934.95-2.754-.234-.375a8.23 8.23 0 01-1.344-4.496c0-4.57 3.711-8.281 8.281-8.281 4.57 0 8.281 3.711 8.281 8.281 0 4.57-3.711 8.281-8.281 8.281zm4.539-6.203c-.25-.125-1.477-.73-1.707-.812-.23-.086-.398-.125-.566.125-.168.25-.656.812-.805.98-.148.168-.297.188-.547.063-.25-.125-1.055-.39-2.012-1.242-.746-.664-1.25-1.484-1.398-1.734-.148-.25-.016-.387.109-.512.113-.113.25-.297.375-.445.125-.148.168-.25.25-.418.082-.168.043-.316-.02-.441-.063-.125-.566-1.363-.777-1.867-.203-.492-.414-.426-.566-.434l-.484-.008c-.168 0-.441.063-.672.316-.23.25-.883.863-.883 2.105 0 1.242.906 2.441 1.031 2.61.125.168 1.777 2.715 4.309 3.805.602.262 1.07.418 1.437.535.605.191 1.156.164 1.59.1.484-.07 1.477-.605 1.684-1.191.207-.586.207-1.086.145-1.191-.063-.106-.23-.168-.48-.293z" />
+        </svg>
+      </a>
     </main>
   )
 }
 
 export default Home
+
