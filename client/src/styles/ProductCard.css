@@ -135,3 +135,66 @@
   font-weight: 500;
   color: var(--kala-text-secondary);
 }
+
+/* Mobile Responsive Optimization for 2-Column Grids */
+@media (max-width: 640px) {
+  .kala-product-info {
+    padding: 0.65rem 0.55rem 0.75rem;
+  }
+
+  .kala-product-category {
+    font-size: 0.65rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .kala-product-name {
+    font-size: 0.8125rem;
+    line-height: 1.25;
+    margin-bottom: 0.35rem;
+  }
+
+  .kala-product-price-row {
+    padding-top: 0.45rem;
+  }
+
+  .kala-product-price {
+    font-size: 0.925rem;
+  }
+
+  .kala-product-status {
+    font-size: 0.65rem;
+  }
+
+  .kala-card-wishlist-btn {
+    width: 32px;
+    height: 32px;
+    top: 6px;
+    right: 6px;
+  }
+
+  .kala-card-wishlist-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .kala-card-badge {
+    font-size: 0.6rem;
+    padding: 2px 5px;
+    bottom: 6px;
+    left: 6px;
+  }
+}
+
+@media (max-width: 350px) {
+  .kala-product-info {
+    padding: 0.5rem 0.4rem 0.6rem;
+  }
+
+  .kala-product-name {
+    font-size: 0.75rem;
+  }
+
+  .kala-product-price {
+    font-size: 0.85rem;
+  }
+}

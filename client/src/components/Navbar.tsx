@@ -193,7 +193,7 @@ export const Navbar: React.FC = () => {
             {/* Wishlist / Heart Icon */}
             <Link
               to="/wishlist"
-              className="kala-icon-btn desktop-only"
+              className="kala-icon-btn"
               aria-label="View wishlist"
               title="Wishlist"
               onClick={closeMobileMenu}
@@ -216,7 +216,7 @@ export const Navbar: React.FC = () => {
             {/* User Account Icon */}
             <Link
               to="/account"
-              className="kala-icon-btn desktop-only"
+              className="kala-icon-btn"
               aria-label="User account"
               title="Account"
               onClick={closeMobileMenu}

@@ -119,22 +119,6 @@ export const Home: React.FC = () => {
             className="kala-split-card kala-split-card-light"
             aria-label="Custom Apparel — T-shirts, Hoodies, Jerseys made your way"
           >
-            <div className="kala-split-card-content">
-              <h2 className="kala-split-card-title">
-                CUSTOM<br />
-                APPAREL
-              </h2>
-              <p className="kala-split-card-desc">
-                T-shirts. Hoodies. Jerseys.<br />
-                Made your way.
-              </p>
-              <div className="kala-split-card-arrow" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </div>
-            </div>
             <div className="kala-split-card-visual">
               <img
                 src="/home/custom-apparel.jpg"
@@ -142,6 +126,25 @@ export const Home: React.FC = () => {
                 className="kala-split-card-img"
                 loading="lazy"
               />
+            </div>
+            <div className="kala-split-card-content">
+              <h2 className="kala-split-card-title">
+                CUSTOM<br />
+                APPAREL
+              </h2>
+              <p className="kala-split-card-desc">
+                T-shirts, hoodies &amp; jerseys.<br />
+                Made your way.
+              </p>
+              <div className="kala-split-card-action">
+                <span className="kala-split-card-btn">
+                  <span>EXPLORE</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </span>
+              </div>
             </div>
           </Link>
 
@@ -151,22 +154,6 @@ export const Home: React.FC = () => {
             className="kala-split-card kala-split-card-dark"
             aria-label="Business Branding — Packaging, Uniforms, Merch built for your brand"
           >
-            <div className="kala-split-card-content">
-              <h2 className="kala-split-card-title">
-                BUSINESS<br />
-                BRANDING
-              </h2>
-              <p className="kala-split-card-desc">
-                Packaging. Uniforms. Merch.<br />
-                Built for your brand.
-              </p>
-              <div className="kala-split-card-arrow" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </div>
-            </div>
             <div className="kala-split-card-visual">
               <img
                 src="/home/business-branding.jpg"
@@ -174,6 +161,25 @@ export const Home: React.FC = () => {
                 className="kala-split-card-img"
                 loading="lazy"
               />
+            </div>
+            <div className="kala-split-card-content">
+              <h2 className="kala-split-card-title">
+                BUSINESS<br />
+                BRANDING
+              </h2>
+              <p className="kala-split-card-desc">
+                Packaging, uniforms &amp; merch.<br />
+                Built for your brand.
+              </p>
+              <div className="kala-split-card-action">
+                <span className="kala-split-card-btn">
+                  <span>EXPLORE</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </span>
+              </div>
             </div>
           </Link>
         </div>
@@ -322,44 +328,9 @@ export const Home: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          5. CINEMATIC STATEMENT BANNER (From Reference Image 2)
+          5. CONTACT US SECTION (Mobile-First 4-Option Contact Hub)
           ==================================================================== */}
-      <section className="kala-statement-banner-section" aria-label="Brand Philosophy">
-        <div className="kala-statement-bg-media">
-          <img
-            src="/home/statement-banner.jpg"
-            alt="KALA Apparel Silhouette"
-            className="kala-statement-bg-img"
-            loading="lazy"
-          />
-          <div className="kala-statement-overlay" aria-hidden="true" />
-        </div>
-
-        <div className="kala-statement-container">
-          <div className="kala-statement-content">
-            <h2 className="kala-statement-title">
-              MORE<br />
-              THAN<br />
-              APPAREL
-            </h2>
-            <div className="kala-statement-underline" aria-hidden="true" />
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          6. BRAND STATEMENT SUB-BAR (From Reference Image 2)
-          ==================================================================== */}
-      <section className="kala-tagline-bar-section" aria-label="Brand Philosophy Tagline">
-        <p className="kala-tagline-bar-text">
-          APPAREL &times; TEAMS &times; BRANDS &times; YOU
-        </p>
-      </section>
-
-      {/* ====================================================================
-          7. CONTACT US SECTION (Clean, Minimal, 4-Option Contact Hub)
-          ==================================================================== */}
-      <section className="kala-contact-section" aria-labelledby="contact-heading">
+      <section className="kala-contact-section" id="contact" aria-labelledby="contact-heading">
         <div className="kala-contact-container">
           <div className="kala-contact-header">
             <h2 id="contact-heading" className="kala-contact-heading">CONTACT US</h2>
@@ -385,7 +356,7 @@ export const Home: React.FC = () => {
               </div>
               <span className="kala-contact-value">9406030116</span>
               <span className="kala-contact-action">
-                <span>CHAT ON WHATSAPP</span>
+                <span>CHAT</span>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
@@ -409,7 +380,7 @@ export const Home: React.FC = () => {
               </div>
               <span className="kala-contact-value">9406030116</span>
               <span className="kala-contact-action">
-                <span>CALL US</span>
+                <span>CALL</span>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
@@ -419,7 +390,7 @@ export const Home: React.FC = () => {
 
             {/* Option 3: Instagram */}
             <a
-              href="https://instagram.com/kala_originals"
+              href="https://www.instagram.com/kala_originals/"
               target="_blank"
               rel="noopener noreferrer"
               className="kala-contact-card"
@@ -437,7 +408,7 @@ export const Home: React.FC = () => {
               </div>
               <span className="kala-contact-value">@kala_originals</span>
               <span className="kala-contact-action">
-                <span>FOLLOW US</span>
+                <span>FOLLOW</span>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
@@ -462,7 +433,7 @@ export const Home: React.FC = () => {
               </div>
               <span className="kala-contact-value">KalaOriginals@gmail.com</span>
               <span className="kala-contact-action">
-                <span>EMAIL US</span>
+                <span>EMAIL</span>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
@@ -471,6 +442,41 @@ export const Home: React.FC = () => {
             </a>
           </div>
         </div>
+      </section>
+
+      {/* ====================================================================
+          6. CINEMATIC STATEMENT BANNER
+          ==================================================================== */}
+      <section className="kala-statement-banner-section" aria-label="Brand Philosophy">
+        <div className="kala-statement-bg-media">
+          <img
+            src="/home/statement-banner.jpg"
+            alt="KALA Apparel Silhouette"
+            className="kala-statement-bg-img"
+            loading="lazy"
+          />
+          <div className="kala-statement-overlay" aria-hidden="true" />
+        </div>
+
+        <div className="kala-statement-container">
+          <div className="kala-statement-content">
+            <h2 className="kala-statement-title">
+              MORE<br />
+              THAN<br />
+              APPAREL
+            </h2>
+            <div className="kala-statement-underline" aria-hidden="true" />
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          7. BRAND STATEMENT SUB-BAR
+          ==================================================================== */}
+      <section className="kala-tagline-bar-section" aria-label="Brand Philosophy Tagline">
+        <p className="kala-tagline-bar-text">
+          APPAREL &times; TEAMS &times; BRANDS &times; YOU
+        </p>
       </section>
 
       {/* ====================================================================

@@ -37,8 +37,6 @@
   object-fit: cover;
   object-position: 65% 25%;
   display: block;
-  transform: scale(1.02);
-  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .kala-hero-vignette {
@@ -210,29 +208,43 @@
   color: rgba(255, 255, 255, 0.72);
 }
 
-.kala-split-card-arrow {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1.5px solid currentColor;
-  display: flex;
+.kala-split-card-action {
+  margin-top: auto;
+}
+
+.kala-split-card-btn {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+  gap: 0.65rem;
+  font-family: var(--kala-font-primary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.75rem 1.4rem;
+  border-radius: 6px;
+  min-height: 44px;
+  transition: all 0.22s ease;
 }
 
-.kala-split-card:hover .kala-split-card-arrow {
-  transform: translateX(4px) scale(1.06);
-}
-
-.kala-split-card-light:hover .kala-split-card-arrow {
+.kala-split-card-light .kala-split-card-btn {
   background-color: #111111;
   color: #FFFFFF;
 }
 
-.kala-split-card-dark:hover .kala-split-card-arrow {
+.kala-split-card-dark .kala-split-card-btn {
   background-color: #FFFFFF;
   color: #0E0E10;
+}
+
+.kala-split-card-light:hover .kala-split-card-btn {
+  background-color: var(--kala-orange);
+  color: #FFFFFF;
+}
+
+.kala-split-card-dark:hover .kala-split-card-btn {
+  background-color: var(--kala-orange);
+  color: #FFFFFF;
 }
 
 .kala-split-card-visual {
@@ -806,32 +818,121 @@
     object-position: 70% center;
   }
 
+  .kala-hero-title {
+    font-size: clamp(2.4rem, 8.5vw, 3.8rem);
+    margin-bottom: 1rem;
+  }
+
+  .kala-hero-script-wrap {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .kala-hero-script {
+    font-size: clamp(1.5rem, 4.5vw, 2.2rem);
+    transform: rotate(-6deg);
+    max-width: 100%;
+  }
+
+  /* Custom Apparel & Business Branding: Image -> Title -> Short Line -> Action */
   .kala-split-cards-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }
 
   .kala-split-card {
-    min-height: 270px;
+    flex-direction: column;
+    min-height: auto;
+    border-radius: 12px;
+  }
+
+  .kala-split-card-visual {
+    order: 1;
+    width: 100%;
+    height: 220px;
   }
 
   .kala-split-card-content {
-    padding: 1.75rem;
+    order: 2;
+    padding: 1.35rem 1.15rem 1.5rem;
   }
 
+  .kala-split-card-title {
+    font-size: 1.45rem;
+    line-height: 1.1;
+    margin-bottom: 0.35rem;
+  }
+
+  .kala-split-card-desc {
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+    max-width: 100%;
+  }
+
+  .kala-split-card-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 46px;
+  }
+
+  /* Featured Products: Compact 2-Column Grid */
   .kala-featured-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.85rem;
+    gap: 0.75rem;
   }
 
+  .kala-clean-product-details {
+    padding: 0.75rem 0.65rem;
+  }
+
+  .kala-clean-product-name {
+    font-size: 0.825rem;
+    line-height: 1.25;
+  }
+
+  .kala-clean-product-price {
+    font-size: 0.925rem;
+  }
+
+  .kala-clean-cart-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+
+  /* Trust Bar: 2x2 Grid */
   .kala-trust-bar-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1.25rem 1rem;
   }
 
+  /* Contact Us: 2-Column Layout */
+  .kala-contact-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .kala-contact-card {
+    padding: 1.15rem 0.95rem;
+    min-height: 140px;
+  }
+
+  .kala-contact-value {
+    font-size: 0.88rem;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    margin-bottom: 0.85rem;
+  }
+
+  .kala-contact-action {
+    min-height: 44px;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+  }
+
   .kala-statement-banner-section {
-    min-height: 340px;
+    min-height: 320px;
     justify-content: flex-start;
   }
 
@@ -858,55 +959,49 @@
 
 @media (max-width: 480px) {
   .kala-hero-title {
-    font-size: 2.85rem;
+    font-size: clamp(2.2rem, 8vw, 2.75rem);
   }
 
   .kala-hero-subtitle {
     font-size: 0.7rem;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
   }
 
-  .kala-split-card {
-    min-height: 240px;
+  .kala-split-card-visual {
+    height: 190px;
   }
 
   .kala-split-card-title {
-    font-size: 1.55rem;
+    font-size: 1.35rem;
   }
 
   .kala-split-card-desc {
-    font-size: 0.88rem;
-    margin-bottom: 1.25rem;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
   }
 
-  .kala-split-card-arrow {
-    width: 42px;
-    height: 42px;
+  .kala-clean-product-media {
+    padding: 0.5rem;
   }
 
   .kala-clean-product-name {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
   }
 
   .kala-clean-product-price {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
   }
 
   .kala-clean-cart-btn {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
     border-radius: 6px;
   }
 
-  .kala-clean-cart-btn svg {
-    width: 14px;
-    height: 14px;
-  }
-
   .kala-trust-item {
-    font-size: 0.82rem;
-    gap: 0.55rem;
+    font-size: 0.8rem;
+    gap: 0.5rem;
   }
 
   .kala-trust-icon {
@@ -915,27 +1010,24 @@
   }
 
   .kala-tagline-bar-text {
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
+    font-size: 0.7rem;
   }
+}
 
+/* Extra Small Screens (320px - 350px): Single Column Contact & Zero Horizontal Scroll */
+@media (max-width: 350px) {
   .kala-contact-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
   }
 
-  .kala-contact-card {
-    padding: 1rem 0.8rem;
-    min-height: 140px;
+  .kala-featured-grid {
+    gap: 0.5rem;
   }
 
-  .kala-contact-value {
-    font-size: 0.85rem;
-    margin-bottom: 0.85rem;
-  }
-
-  .kala-contact-action {
-    font-size: 0.68rem;
-    letter-spacing: 0.04em;
+  .kala-clean-product-details {
+    padding: 0.5rem 0.4rem;
   }
 }
 

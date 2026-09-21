@@ -50,7 +50,13 @@
   align-items: center;
   gap: 0.5rem;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
   padding-bottom: 4px;
+}
+
+.kala-category-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .kala-category-tab {
@@ -62,8 +68,12 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 0.65rem 1.35rem;
-  border-radius: 0;
+  padding: 0.65rem 1.25rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
   cursor: pointer;
   white-space: nowrap;
   transition: all var(--kala-transition-fast);
@@ -86,13 +96,20 @@
   max-width: 380px;
 }
 
+@media (max-width: 768px) {
+  .kala-shop-search-wrap {
+    max-width: 100%;
+  }
+}
+
 .kala-shop-search-input {
   width: 100%;
+  min-height: 44px;
   font-family: var(--kala-font-primary);
   font-size: 0.875rem;
   padding: 0.65rem 2.5rem 0.65rem 1rem;
   border: 1px solid var(--kala-border);
-  border-radius: 0;
+  border-radius: 4px;
   background-color: var(--kala-white);
   color: var(--kala-black);
   outline: none;
@@ -153,10 +170,16 @@
   gap: clamp(1.25rem, 2.5vw, 2rem);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .kala-products-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .kala-products-grid {
+    gap: 0.5rem;
   }
 }
 

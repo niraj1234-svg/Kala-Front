@@ -372,3 +372,56 @@
 .kala-back-to-cart-link:hover {
   color: var(--kala-orange);
 }
+
+/* Mobile Responsive Optimization */
+@media (max-width: 640px) {
+  .kala-checkout-page {
+    padding-top: 1.25rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .kala-checkout-layout {
+    gap: 1.5rem;
+  }
+
+  .kala-checkout-section,
+  .kala-checkout-summary {
+    padding: 1.15rem 1rem;
+  }
+
+  .kala-form-input {
+    min-height: 44px;
+    font-size: 16px;
+    border-radius: 4px;
+  }
+
+  .kala-coupon-input {
+    min-height: 44px;
+    font-size: 16px;
+    border-radius: 4px;
+  }
+
+  .kala-coupon-apply-btn {
+    min-height: 44px;
+    padding: 0.65rem 1rem;
+    border-radius: 4px;
+  }
+
+  .kala-place-order-btn {
+    min-height: 50px;
+    font-size: 0.9rem;
+    margin-top: 1.25rem;
+  }
+
+  .kala-checkout-item-img {
+    width: 48px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 350px) {
+  .kala-checkout-section,
+  .kala-checkout-summary {
+    padding: 1rem 0.75rem;
+  }
+}

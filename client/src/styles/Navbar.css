@@ -366,27 +366,101 @@
 
 @media (max-width: 640px) {
   .kala-navbar {
-    height: 72px;
+    height: 64px;
+    padding: 0 clamp(0.5rem, 2.5vw, 1.25rem);
   }
 
   .kala-mobile-backdrop,
   .kala-mobile-drawer {
-    top: 72px;
+    top: 64px;
   }
 
-  /* Keep essential icons on mobile header */
-  .kala-icon-btn.desktop-only {
-    display: none;
+  .kala-logo {
+    gap: 0.35rem;
   }
 
   .kala-logo-img {
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
   }
 
   .kala-logo-text {
-    font-size: 1.15rem;
-    letter-spacing: 0.12em;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+  }
+
+  .kala-nav-actions {
+    gap: 0.2rem;
+  }
+
+  .kala-nav-icons {
+    gap: 0.15rem;
+  }
+
+  .kala-icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .kala-icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .kala-hamburger-btn {
+    width: 38px;
+    height: 38px;
+    margin-left: 0;
+  }
+
+  .kala-cart-badge {
+    top: 2px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    font-size: 0.6rem;
+    line-height: 16px;
+    padding: 0 3px;
+  }
+}
+
+@media (max-width: 360px) {
+  .kala-navbar {
+    padding: 0 6px;
+  }
+
+  .kala-logo {
+    gap: 0.25rem;
+  }
+
+  .kala-logo-img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .kala-logo-text {
+    font-size: 0.98rem;
+    letter-spacing: 0.05em;
+  }
+
+  .kala-icon-btn {
+    width: 33px;
+    height: 33px;
+  }
+
+  .kala-icon-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .kala-hamburger-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .kala-hamburger-btn svg {
+    width: 18px;
+    height: 18px;
   }
 }
 

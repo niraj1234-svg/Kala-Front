@@ -442,3 +442,47 @@
   flex-shrink: 0;
 }
 
+/* Mobile Responsive Optimization */
+@media (max-width: 480px) {
+  .kala-account-page {
+    padding-top: 1.25rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .kala-auth-card {
+    padding: 1.25rem 1rem;
+    border-radius: 8px;
+  }
+
+  .kala-auth-title {
+    font-size: 1.2rem;
+  }
+
+  .kala-auth-desc {
+    font-size: 0.825rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .kala-auth-submit-btn {
+    min-height: 48px;
+    font-size: 0.85rem;
+  }
+
+  .kala-password-toggle-btn {
+    min-width: 44px;
+    min-height: 44px;
+    right: 0.25rem;
+  }
+
+  .kala-auth-banner-error {
+    font-size: 0.8125rem;
+    padding: 0.65rem 0.85rem;
+    overflow-wrap: break-word;
+  }
+
+  .kala-profile-card,
+  .kala-order-summary-card {
+    padding: 1rem;
+  }
+}
+

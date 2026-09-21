@@ -14,7 +14,7 @@ export const Footer: React.FC = () => {
             <span className="kala-footer-logo-text">KALA</span>
           </Link>
           <p className="kala-footer-tagline">
-            Wear your identity. Custom apparel and brand merchandise engineered for teams, businesses, colleges, events, and individuals.
+            Wear your story. Custom apparel &amp; brand merchandise crafted for India.
           </p>
           <div className="kala-footer-badge">
             <span className="kala-footer-badge-dot" aria-hidden="true" />
@@ -22,37 +22,49 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Navigation Column */}
+        {/* Essential Navigation Column */}
         <div className="kala-footer-nav-col">
-          <h4 className="kala-footer-heading">EXPLORE</h4>
+          <h4 className="kala-footer-heading">NAVIGATION</h4>
           <ul className="kala-footer-links">
             <li>
-              <Link to="/shop" className="kala-footer-link">SHOP</Link>
+              <Link to="/shop" className="kala-footer-link">Shop</Link>
             </li>
             <li>
-              <Link to="/custom-apparel" className="kala-footer-link">CUSTOM APPAREL</Link>
+              <Link to="/custom-apparel" className="kala-footer-link">Custom Apparel</Link>
             </li>
             <li>
-              <Link to="/business-branding" className="kala-footer-link">BUSINESS BRANDING</Link>
+              <Link to="/business-branding" className="kala-footer-link">Business Branding</Link>
             </li>
             <li>
-              <Link to="/about" className="kala-footer-link">ABOUT</Link>
+              <Link to="/about" className="kala-footer-link">About</Link>
+            </li>
+            <li>
+              <a href="/#contact" className="kala-footer-link">Contact</a>
             </li>
           </ul>
         </div>
 
-        {/* Account Column */}
+        {/* Connect / Social Column */}
         <div className="kala-footer-nav-col">
-          <h4 className="kala-footer-heading">ACCOUNT</h4>
+          <h4 className="kala-footer-heading">CONNECT</h4>
           <ul className="kala-footer-links">
             <li>
-              <Link to="/account" className="kala-footer-link">ACCOUNT</Link>
+              <a
+                href="https://www.instagram.com/kala_originals/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="kala-footer-link"
+              >
+                Instagram
+              </a>
             </li>
             <li>
-              <Link to="/wishlist" className="kala-footer-link">WISHLIST</Link>
-            </li>
-            <li>
-              <Link to="/cart" className="kala-footer-link">CART</Link>
+              <a
+                href="mailto:KalaOriginals@gmail.com"
+                className="kala-footer-link"
+              >
+                Email
+              </a>
             </li>
           </ul>
         </div>

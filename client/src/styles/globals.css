@@ -52,8 +52,8 @@
 
   /* Layout Foundation */
   --kala-max-width: 1400px;
-  --kala-page-padding: clamp(1.25rem, 4vw, 3.5rem);
-  --kala-section-spacing: clamp(3.5rem, 7vw, 6.5rem);
+  --kala-page-padding: clamp(0.85rem, 3.5vw, 3.5rem);
+  --kala-section-spacing: clamp(2.5rem, 5vw, 6.5rem);
 
   /* Spacing Scale */
   --kala-space-xs: 0.25rem;   /* 4px */
@@ -75,6 +75,13 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  min-width: 0; /* Prevents flex/grid children from overflowing containers */
+}
+
+html, body, #root, .kala-app {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 html {
@@ -95,6 +102,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Universal Text Wrapping & Overflow Prevention */
+p, h1, h2, h3, h4, h5, h6, span, a, label, button, input, select, textarea {
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 /* Text Selection */
@@ -106,6 +120,7 @@ body {
 /* Images & Media */
 img, picture, video, canvas, svg {
   max-width: 100%;
+  height: auto;
   display: block;
 }
 
@@ -202,12 +217,28 @@ a {
 }
 
 /* --------------------------------------------------------------------------
+   3.1 FORM INPUTS & TOUCH FOUNDATION
+   -------------------------------------------------------------------------- */
+input, select, textarea {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  /* Prevent iOS Safari from zooming in on input focus */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
    4. BUTTON FOUNDATION
    -------------------------------------------------------------------------- */
 .kala-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 44px;
   gap: var(--kala-space-sm);
   font-family: var(--kala-font-primary);
   font-size: var(--kala-fs-small);
