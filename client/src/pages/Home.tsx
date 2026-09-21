@@ -357,10 +357,127 @@ export const Home: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          7. FLOATING WHATSAPP BUTTON (From Reference Images)
+          7. CONTACT US SECTION (Clean, Minimal, 4-Option Contact Hub)
+          ==================================================================== */}
+      <section className="kala-contact-section" aria-labelledby="contact-heading">
+        <div className="kala-contact-container">
+          <div className="kala-contact-header">
+            <h2 id="contact-heading" className="kala-contact-heading">CONTACT US</h2>
+            <div className="kala-contact-divider" aria-hidden="true" />
+          </div>
+
+          <div className="kala-contact-grid">
+            {/* Option 1: WhatsApp */}
+            <a
+              href="https://wa.me/919406030116?text=Hi%20KALA,%20I'd%20like%20to%20inquire%20about%20your%20products%20and%20services."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="kala-contact-card"
+              aria-label="Chat with KALA on WhatsApp: 9406030116"
+            >
+              <div className="kala-contact-card-top">
+                <span className="kala-contact-icon-wrap" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.031 2C6.516 2 2.031 6.484 2.031 12c0 1.984.582 3.832 1.586 5.402L2 22l4.754-1.57A9.972 9.972 0 0012.031 22C17.547 22 22.031 17.516 22.031 12c0-5.516-4.484-10-10-10zm0 18.281c-1.742 0-3.375-.5-4.781-1.371l-.344-.215-2.828.934.95-2.754-.234-.375a8.23 8.23 0 01-1.344-4.496c0-4.57 3.711-8.281 8.281-8.281 4.57 0 8.281 3.711 8.281 8.281 0 4.57-3.711 8.281-8.281 8.281zm4.539-6.203c-.25-.125-1.477-.73-1.707-.812-.23-.086-.398-.125-.566.125-.168.25-.656.812-.805.98-.148.168-.297.188-.547.063-.25-.125-1.055-.39-2.012-1.242-.746-.664-1.25-1.484-1.398-1.734-.148-.25-.016-.387.109-.512.113-.113.25-.297.375-.445.125-.148.168-.25.25-.418.082-.168.043-.316-.02-.441-.063-.125-.566-1.363-.777-1.867-.203-.492-.414-.426-.566-.434l-.484-.008c-.168 0-.441.063-.672.316-.23.25-.883.863-.883 2.105 0 1.242.906 2.441 1.031 2.61.125.168 1.777 2.715 4.309 3.805.602.262 1.07.418 1.437.535.605.191 1.156.164 1.59.1.484-.07 1.477-.605 1.684-1.191.207-.586.207-1.086.145-1.191-.063-.106-.23-.168-.48-.293z" />
+                  </svg>
+                </span>
+                <span className="kala-contact-channel">WhatsApp</span>
+              </div>
+              <span className="kala-contact-value">9406030116</span>
+              <span className="kala-contact-action">
+                <span>CHAT ON WHATSAPP</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </span>
+            </a>
+
+            {/* Option 2: Phone */}
+            <a
+              href="tel:9406030116"
+              className="kala-contact-card"
+              aria-label="Call KALA: 9406030116"
+            >
+              <div className="kala-contact-card-top">
+                <span className="kala-contact-icon-wrap" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
+                </span>
+                <span className="kala-contact-channel">Phone</span>
+              </div>
+              <span className="kala-contact-value">9406030116</span>
+              <span className="kala-contact-action">
+                <span>CALL US</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </span>
+            </a>
+
+            {/* Option 3: Instagram */}
+            <a
+              href="https://instagram.com/kala_originals"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="kala-contact-card"
+              aria-label="Follow KALA on Instagram: @kala_originals"
+            >
+              <div className="kala-contact-card-top">
+                <span className="kala-contact-icon-wrap" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                  </svg>
+                </span>
+                <span className="kala-contact-channel">Instagram</span>
+              </div>
+              <span className="kala-contact-value">@kala_originals</span>
+              <span className="kala-contact-action">
+                <span>FOLLOW US</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </span>
+            </a>
+
+            {/* Option 4: Email */}
+            <a
+              href="mailto:KalaOriginals@gmail.com"
+              className="kala-contact-card"
+              aria-label="Email KALA: KalaOriginals@gmail.com"
+            >
+              <div className="kala-contact-card-top">
+                <span className="kala-contact-icon-wrap" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                </span>
+                <span className="kala-contact-channel">Email</span>
+              </div>
+              <span className="kala-contact-value">KalaOriginals@gmail.com</span>
+              <span className="kala-contact-action">
+                <span>EMAIL US</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          8. FLOATING WHATSAPP BUTTON (Direct Support)
           ==================================================================== */}
       <a
-        href="https://wa.me/919999999999?text=Hi%20KALA,%20I'd%20like%20to%20know%20more%20about%20your%20custom%20apparel%20and%20products."
+        href="https://wa.me/919406030116?text=Hi%20KALA,%20I'd%20like%20to%20know%20more%20about%20your%20custom%20apparel%20and%20products."
         target="_blank"
         rel="noopener noreferrer"
         className="kala-floating-whatsapp"
