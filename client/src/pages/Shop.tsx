@@ -4,6 +4,7 @@ import { PRODUCTS } from '../data/products'
 import type { Product } from '../data/products'
 import { fetchProducts } from '../services/productApi'
 import ProductCard from '../components/ProductCard'
+import logoImg from '../assets/logo.png'
 import '../styles/Shop.css'
 
 type CategoryFilter = 'All' | 'Streetwear' | 'Gaming' | 'Gymwear'
@@ -109,104 +110,131 @@ export const Shop: React.FC = () => {
   }
 
   return (
-    <main className="kala-container kala-shop-page">
-      {/* 1. Page Header */}
-      <header className="kala-shop-header">
-        <p className="kala-label kala-shop-badge">COLLECTION 2026</p>
-        <h1 className="kala-h1 kala-shop-title">SHOP CATALOG</h1>
-        <p className="kala-body kala-shop-subtitle">
-          Explore handcrafted Indian streetwear, tactical esports tournament wear, and high-performance gym essentials.
-        </p>
-      </header>
+    <main className="kala-shop-page">
+      {/* 1. Shop Catalog Header & Introduction Section */}
+      <section className="kala-shop-intro-section" aria-labelledby="shop-catalog-title">
+        <div className="kala-container kala-shop-intro-container">
+          <div className="kala-shop-intro-main">
+            <div className="kala-shop-intro-content">
+              <p className="kala-label kala-shop-badge">COLLECTION 2026</p>
+              <h1 id="shop-catalog-title" className="kala-shop-title">
+                <span className="kala-shop-title-dark">SHOP </span>
+                <span className="kala-shop-title-accent">CATALOG</span>
+              </h1>
+              <p className="kala-shop-subtitle">
+                Explore handcrafted Indian streetwear, tactical esports tournament wear, and high-performance gym essentials.
+              </p>
+              <div className="kala-shop-accent-bar" aria-hidden="true" />
+            </div>
 
-      {/* 2. Controls: Category Tabs & Search Bar */}
-      <div className="kala-shop-controls">
-        <div className="kala-category-tabs" role="tablist" aria-label="Product categories">
-          {CATEGORIES.map((category) => {
-            const isActive = selectedCategory === category
-            return (
-              <button
-                key={category}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                className={`kala-category-tab ${isActive ? 'active' : ''}`}
-                onClick={() => handleCategorySelect(category)}
-              >
-                {category}
-              </button>
-            )
-          })}
+            <div className="kala-shop-branded-visual" aria-hidden="true">
+              <div className="kala-shop-visual-glow" />
+              <div className="kala-shop-packaging-card">
+                <div className="kala-shop-packaging-fold" />
+                <div className="kala-shop-packaging-branding">
+                  <img src={logoImg} alt="" className="kala-shop-packaging-logo" />
+                  <div className="kala-shop-packaging-label-col">
+                    <span className="kala-shop-packaging-diamond">◆</span>
+                    <span className="kala-shop-packaging-brandname">KALA</span>
+                  </div>
+                </div>
+                <div className="kala-shop-packaging-sheen" />
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Controls: Category Tabs & Search Bar */}
+          <div className="kala-shop-controls">
+            <div className="kala-category-tabs" role="tablist" aria-label="Product categories">
+              {CATEGORIES.map((category) => {
+                const isActive = selectedCategory === category
+                return (
+                  <button
+                    key={category}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    className={`kala-category-tab ${isActive ? 'active' : ''}`}
+                    onClick={() => handleCategorySelect(category)}
+                  >
+                    {category}
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="kala-shop-search-wrap">
+              <input
+                type="text"
+                className="kala-shop-search-input"
+                placeholder="Search products, styles..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Search products"
+              />
+              {searchQuery ? (
+                <button
+                  type="button"
+                  className="kala-search-clear-btn"
+                  onClick={() => setSearchQuery('')}
+                  aria-label="Clear search"
+                >
+                  ✕
+                </button>
+              ) : (
+                <span className="kala-shop-search-icon" aria-hidden="true">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="11" cy="11" r="7" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Products Area */}
+      <div className="kala-container kala-shop-products-container">
+        <div className="kala-shop-meta-row">
+          <p className="kala-product-count">
+            Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+            {isLoading && <span style={{ marginLeft: '0.75rem', opacity: 0.6 }}>• Syncing with Atlas...</span>}
+          </p>
         </div>
 
-        <div className="kala-shop-search-wrap">
-          <input
-            type="text"
-            className="kala-shop-search-input"
-            placeholder="Search products, styles..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            aria-label="Search products"
-          />
-          {searchQuery ? (
+        {/* 4. Products Grid or Empty State */}
+        {filteredProducts.length > 0 ? (
+          <div className="kala-products-grid">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="kala-empty-state">
+            <h2 className="kala-empty-title">NO PRODUCTS FOUND</h2>
+            <p className="kala-empty-text">
+              Try changing your search or category filter.
+            </p>
             <button
               type="button"
-              className="kala-search-clear-btn"
-              onClick={() => setSearchQuery('')}
-              aria-label="Clear search"
+              className="kala-btn kala-btn-secondary"
+              onClick={handleResetFilters}
             >
-              ✕
+              Clear Filters
             </button>
-          ) : (
-            <span className="kala-shop-search-icon" aria-hidden="true">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="11" cy="11" r="7" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-            </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-
-      {/* 3. Product Count Meta Row */}
-      <div className="kala-shop-meta-row">
-        <p className="kala-product-count">
-          Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
-          {isLoading && <span style={{ marginLeft: '0.75rem', opacity: 0.6 }}>• Syncing with Atlas...</span>}
-        </p>
-      </div>
-
-      {/* 4. Products Grid or Empty State */}
-      {filteredProducts.length > 0 ? (
-        <div className="kala-products-grid">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      ) : (
-        <div className="kala-empty-state">
-          <h2 className="kala-empty-title">NO PRODUCTS FOUND</h2>
-          <p className="kala-empty-text">
-            Try changing your search or category filter.
-          </p>
-          <button
-            type="button"
-            className="kala-btn kala-btn-secondary"
-            onClick={handleResetFilters}
-          >
-            Clear Filters
-          </button>
-        </div>
-      )}
     </main>
   )
 }

@@ -1,38 +1,201 @@
 /* ==========================================================================
    KALA SHOP PAGE STYLES
+   Editorial Commerce Header & Catalog System
    ========================================================================== */
 
 .kala-shop-page {
-  padding-top: clamp(2rem, 4vw, 3.5rem);
-  padding-bottom: clamp(3rem, 6vw, 5rem);
+  width: 100%;
+  padding-bottom: 0;
 }
 
-.kala-shop-header {
-  margin-bottom: clamp(1.5rem, 2.5vw, 2.5rem);
+/* 1. Shop Catalog Header & Intro Section */
+.kala-shop-intro-section {
+  width: 100%;
+  background: #FAF7F2;
+  background: linear-gradient(110deg, #FAF8F5 0%, #F6F2EB 52%, #ECE5DA 100%);
+  border-bottom: 1px solid #EAE5DC;
+  position: relative;
+  overflow: hidden;
+  padding-top: clamp(2rem, 3.5vw, 3.25rem);
+  padding-bottom: clamp(1.75rem, 2.8vw, 2.4rem);
+}
+
+.kala-shop-intro-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(ellipse 65% 55% at 80% 30%, rgba(255, 255, 255, 0.85) 0%, transparent 70%),
+    radial-gradient(circle at 15% 85%, rgba(255, 255, 255, 0.5) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.kala-shop-intro-container {
+  position: relative;
+  z-index: 1;
+}
+
+.kala-shop-intro-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: clamp(1.75rem, 2.8vw, 2.4rem);
+}
+
+.kala-shop-intro-content {
+  flex: 1;
+  max-width: 660px;
 }
 
 .kala-shop-badge {
   color: var(--kala-orange);
+  font-family: var(--kala-font-primary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   margin-bottom: 0.5rem;
+  display: inline-block;
 }
 
 .kala-shop-title {
-  margin-bottom: 0.5rem;
+  font-family: var(--kala-font-primary);
+  font-size: clamp(2.3rem, 4.6vw, 3.65rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  margin: 0 0 0.85rem 0;
+}
+
+.kala-shop-title-dark {
+  color: var(--kala-black);
+}
+
+.kala-shop-title-accent {
+  color: var(--kala-orange);
 }
 
 .kala-shop-subtitle {
-  color: var(--kala-text-secondary);
-  max-width: 620px;
+  color: #4B5563;
+  font-family: var(--kala-font-primary);
+  font-size: clamp(0.925rem, 1.25vw, 1.05rem);
+  line-height: 1.55;
+  margin: 0 0 1.25rem 0;
+  max-width: 580px;
 }
 
-/* Controls: Search & Category Filters */
+.kala-shop-accent-bar {
+  width: 48px;
+  height: 3px;
+  background-color: var(--kala-orange);
+  border-radius: 2px;
+}
+
+/* Branded Packaging Visual Element */
+.kala-shop-branded-visual {
+  position: relative;
+  width: 320px;
+  height: 190px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  user-select: none;
+  pointer-events: none;
+}
+
+.kala-shop-visual-glow {
+  position: absolute;
+  right: -30px;
+  top: -40px;
+  width: 380px;
+  height: 270px;
+  background: radial-gradient(circle at 65% 45%, rgba(255, 255, 255, 0.95) 0%, rgba(244, 238, 228, 0.65) 50%, transparent 75%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.kala-shop-packaging-card {
+  position: relative;
+  width: 255px;
+  height: 175px;
+  transform: rotate(11deg) translate(10px, -5px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(253, 250, 246, 0.5) 60%, rgba(245, 239, 230, 0.35) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(160, 140, 120, 0.16), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 1.5rem;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.kala-shop-packaging-fold {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 2px rgba(180, 160, 140, 0.1);
+}
+
+.kala-shop-packaging-branding {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  z-index: 2;
+}
+
+.kala-shop-packaging-logo {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(217, 71, 0, 0.22));
+}
+
+.kala-shop-packaging-label-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.kala-shop-packaging-diamond {
+  color: var(--kala-orange);
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.kala-shop-packaging-brandname {
+  writing-mode: vertical-rl;
+  font-family: var(--kala-font-primary);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  color: var(--kala-black);
+  line-height: 1;
+}
+
+.kala-shop-packaging-sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, 0.45) 48%, transparent 62%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* 2. Controls: Category Tabs & Search Bar */
 .kala-shop-controls {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  padding-bottom: 1.5rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--kala-border);
+  align-items: stretch;
 }
 
 @media (min-width: 768px) {
@@ -44,15 +207,14 @@
   }
 }
 
-/* Category Filter Tabs */
 .kala-category-tabs {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding-bottom: 4px;
+  padding-bottom: 2px;
 }
 
 .kala-category-tabs::-webkit-scrollbar {
@@ -60,40 +222,44 @@
 }
 
 .kala-category-tab {
-  background: transparent;
-  border: 1px solid var(--kala-border);
-  color: var(--kala-black);
+  background: var(--kala-white);
+  border: 1px solid #E5E0D8;
+  color: #1A1A1A;
   font-family: var(--kala-font-primary);
   font-size: 0.8125rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 0.65rem 1.25rem;
-  min-height: 44px;
+  padding: 0.6rem 1.45rem;
+  min-height: 42px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
   transition: all var(--kala-transition-fast);
 }
 
 .kala-category-tab:hover {
   border-color: var(--kala-black);
+  background-color: #FAF9F6;
+  color: #000000;
 }
 
 .kala-category-tab.active {
   background-color: var(--kala-black);
   color: var(--kala-white);
   border-color: var(--kala-black);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
 }
 
 /* Search Box */
 .kala-shop-search-wrap {
   position: relative;
   width: 100%;
-  max-width: 380px;
+  max-width: 330px;
 }
 
 @media (max-width: 768px) {
@@ -104,20 +270,22 @@
 
 .kala-shop-search-input {
   width: 100%;
-  min-height: 44px;
+  min-height: 42px;
   font-family: var(--kala-font-primary);
   font-size: 0.875rem;
-  padding: 0.65rem 2.5rem 0.65rem 1rem;
-  border: 1px solid var(--kala-border);
-  border-radius: 4px;
+  padding: 0.6rem 2.6rem 0.6rem 1.15rem;
+  border: 1px solid #E5E0D8;
+  border-radius: 6px;
   background-color: var(--kala-white);
   color: var(--kala-black);
   outline: none;
-  transition: border-color var(--kala-transition-fast);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: border-color var(--kala-transition-fast), box-shadow var(--kala-transition-fast);
 }
 
 .kala-shop-search-input:focus {
   border-color: var(--kala-orange);
+  box-shadow: 0 0 0 2px rgba(217, 71, 0, 0.12);
 }
 
 .kala-shop-search-icon {
@@ -125,7 +293,7 @@
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--kala-text-secondary);
+  color: #9CA3AF;
   pointer-events: none;
 }
 
@@ -136,7 +304,7 @@
   transform: translateY(-50%);
   background: transparent;
   border: none;
-  color: var(--kala-text-secondary);
+  color: #6B7280;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -146,6 +314,43 @@
 
 .kala-search-clear-btn:hover {
   color: var(--kala-black);
+}
+
+/* 3. Products Container Area */
+.kala-shop-products-container {
+  padding-top: clamp(1.5rem, 2.5vw, 2.25rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+/* Responsive Refinements */
+@media (max-width: 992px) {
+  .kala-shop-branded-visual {
+    width: 250px;
+    height: 160px;
+  }
+  .kala-shop-packaging-card {
+    width: 215px;
+    height: 150px;
+    padding: 1rem;
+  }
+  .kala-shop-packaging-logo {
+    width: 75px;
+    height: 75px;
+  }
+}
+
+@media (max-width: 768px) {
+  .kala-shop-intro-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .kala-shop-branded-visual {
+    display: none;
+  }
+  .kala-shop-title {
+    font-size: clamp(2.1rem, 7vw, 2.8rem);
+  }
 }
 
 /* Meta Row (Product Count) */

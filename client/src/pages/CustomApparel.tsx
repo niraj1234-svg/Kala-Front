@@ -3,6 +3,7 @@ import { PRODUCTS } from '../data/products'
 import { saveCustomRequest } from '../types/requests'
 import { createCustomRequest } from '../services/customRequestApi'
 import type { CustomRequestInput } from '../services/customRequestApi'
+import HowItWorks from '../components/HowItWorks'
 import '../styles/CustomApparel.css'
 
 interface SubmittedDisplay {
@@ -238,29 +239,6 @@ export const CustomApparel: React.FC = () => {
     },
   ]
 
-  const howItWorksSteps = [
-    {
-      num: '01',
-      title: 'CHOOSE',
-      desc: 'Choose your apparel type, silhouette, and base color specification.',
-    },
-    {
-      num: '02',
-      title: 'DESIGN',
-      desc: 'Share your artwork, logo or design idea with our studio design team.',
-    },
-    {
-      num: '03',
-      title: 'PRODUCE',
-      desc: 'KALA handles precision printing, embroidery, and rigorous quality inspection.',
-    },
-    {
-      num: '04',
-      title: 'DELIVER',
-      desc: 'Your custom apparel is prepared, packaged and delivered to your doorstep.',
-    },
-  ]
-
   const customerInputs = [
     'Existing Design',
     'Official Logo',
@@ -409,28 +387,12 @@ export const CustomApparel: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. HOW IT WORKS SECTION */}
-      <section className="kala-container kala-custom-section">
-        <div className="kala-section-header center">
-          <p className="kala-label" style={{ color: 'var(--kala-orange)', marginBottom: '0.5rem' }}>
-            THE PROCESS
-          </p>
-          <h2 className="kala-section-title">HOW IT WORKS</h2>
-          <p className="kala-section-subtitle" style={{ margin: '0 auto' }}>
-            A streamlined 4-step journey from your creative concept to finished luxury apparel.
-          </p>
-        </div>
-
-        <div className="kala-steps-grid">
-          {howItWorksSteps.map((step) => (
-            <div key={step.num} className="kala-step-card">
-              <div className="kala-step-num">{step.num}</div>
-              <h3 className="kala-step-title">{step.title}</h3>
-              <p className="kala-step-desc">{step.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* 3. HOW IT WORKS / THE PROCESS (Redesigned Editorial Streetwear Flow) */}
+      <HowItWorks
+        onPickStyle={scrollToCategories}
+        onShareIdea={() => scrollToForm()}
+        onGetStarted={() => scrollToForm()}
+      />
 
       {/* 4. DESIGN WITH KALA */}
       <section className="kala-container kala-custom-section">

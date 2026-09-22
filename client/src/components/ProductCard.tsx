@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import type { Product } from '../data/products'
 import { useWishlist } from '../context/WishlistContext'
+import ProductRatingBadge from './ProductRatingBadge'
 import '../styles/ProductCard.css'
 
 interface ProductCardProps {
@@ -28,6 +29,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className="kala-product-image"
             loading="lazy"
           />
+          <ProductRatingBadge productId={product.id} productName={product.name} />
           <button
             type="button"
             className={`kala-card-wishlist-btn ${isWishlisted ? 'active' : ''}`}

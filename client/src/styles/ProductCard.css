@@ -76,7 +76,7 @@
 
 .kala-card-badge {
   position: absolute;
-  bottom: 12px;
+  top: 12px;
   left: 12px;
   background-color: var(--kala-black);
   color: var(--kala-white);
@@ -85,6 +85,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 4px 8px;
+  z-index: 2;
 }
 
 .kala-product-info {
@@ -180,7 +181,7 @@
   .kala-card-badge {
     font-size: 0.6rem;
     padding: 2px 5px;
-    bottom: 6px;
+    top: 6px;
     left: 6px;
   }
 }

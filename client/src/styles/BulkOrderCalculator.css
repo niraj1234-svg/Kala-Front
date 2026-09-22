@@ -1,0 +1,718 @@
+/* ==========================================================================
+   KALA BULK ORDER CALCULATOR STYLES
+   Editorial Custom Apparel Bulk Estimation Tool
+   ========================================================================== */
+
+.kala-bulk-calculator-section {
+  width: 100%;
+  background-color: #FAF8F5;
+  background: linear-gradient(180deg, #FBF9F6 0%, #F7F4EE 100%);
+  padding: clamp(3rem, 5.5vw, 5.5rem) 0;
+  border-top: 1px solid #ECE7DE;
+  border-bottom: 1px solid #ECE7DE;
+  position: relative;
+}
+
+/* Header & Eyebrow */
+.kala-bulk-header-wrap {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto clamp(2rem, 3.5vw, 3rem);
+}
+
+.kala-bulk-eyebrow-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 0.65rem;
+}
+
+.kala-bulk-eyebrow-line {
+  width: 28px;
+  height: 1px;
+  background-color: #CBD5E1;
+}
+
+.kala-bulk-eyebrow {
+  font-family: var(--kala-font-primary);
+  font-size: 0.775rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6B7280;
+}
+
+.kala-bulk-main-heading {
+  font-family: var(--kala-font-primary);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 850;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+  color: var(--kala-black);
+  margin: 0 0 0.85rem 0;
+}
+
+.kala-bulk-heading-accent {
+  color: #C07A48;
+  color: var(--kala-orange);
+}
+
+.kala-bulk-supporting-text {
+  font-family: var(--kala-font-primary);
+  font-size: clamp(0.925rem, 1.2vw, 1.025rem);
+  line-height: 1.55;
+  color: #6B7280;
+  margin: 0;
+}
+
+/* Main Two-Column Card */
+.kala-bulk-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02);
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  padding: 1.25rem;
+  gap: 1.75rem;
+  overflow: hidden;
+}
+
+/* LEFT PANEL: Product Visual Showcase */
+.kala-bulk-left-panel {
+  background: #EAEAEF;
+  border-radius: 18px;
+  padding: 1.75rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.kala-bulk-left-title-row {
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.kala-bulk-product-title {
+  font-family: var(--kala-font-primary);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--kala-black);
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.01em;
+}
+
+.kala-bulk-starting-price {
+  font-family: var(--kala-font-primary);
+  font-size: 0.9rem;
+  color: #6B7280;
+  margin: 0;
+}
+
+.kala-bulk-starting-price-val {
+  font-weight: 700;
+  color: #C07A48;
+  color: var(--kala-orange);
+}
+
+/* Product Peek Slider Stage */
+.kala-bulk-slider-stage {
+  position: relative;
+  width: 100%;
+  height: 290px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem 0;
+  overflow: hidden;
+}
+
+.kala-bulk-active-card {
+  width: 220px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kala-bulk-active-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.14));
+  user-select: none;
+}
+
+.kala-bulk-peek-card {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 140px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.38;
+  filter: blur(0.5px);
+  cursor: pointer;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 1;
+}
+
+.kala-bulk-peek-card:hover {
+  opacity: 0.65;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.kala-bulk-peek-prev {
+  left: -20px;
+}
+
+.kala-bulk-peek-next {
+  right: -20px;
+}
+
+.kala-bulk-peek-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  user-select: none;
+}
+
+/* Navigation Controls (Arrows + Dots) */
+.kala-bulk-slider-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.kala-bulk-nav-arrows {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kala-bulk-arrow-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  color: var(--kala-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.kala-bulk-arrow-btn:hover {
+  background-color: var(--kala-black);
+  color: #FFFFFF;
+  border-color: var(--kala-black);
+  transform: scale(1.08);
+}
+
+.kala-bulk-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kala-bulk-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #CBD5E1;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: width 0.25s ease, background-color 0.25s ease, border-radius 0.25s ease;
+}
+
+.kala-bulk-dot.active {
+  width: 18px;
+  border-radius: 4px;
+  background: var(--kala-black);
+}
+
+/* Feature Icons Row */
+.kala-bulk-features-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.kala-bulk-feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748B;
+  line-height: 1.25;
+}
+
+.kala-bulk-feature-icon {
+  color: #475569;
+  flex-shrink: 0;
+}
+
+/* RIGHT PANEL: Order Configuration Area */
+.kala-bulk-right-panel {
+  padding: 0.75rem 1rem 0.75rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.kala-bulk-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.kala-bulk-field-label {
+  font-family: var(--kala-font-primary);
+  font-size: 0.925rem;
+  font-weight: 700;
+  color: var(--kala-black);
+  letter-spacing: -0.01em;
+}
+
+/* 1. Select Product Dropdown */
+.kala-bulk-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border: 1px solid #E5E2DD;
+  border-radius: 8px;
+  height: 48px;
+  padding: 0 12px;
+  transition: border-color var(--kala-transition-fast), box-shadow var(--kala-transition-fast);
+}
+
+.kala-bulk-select-wrap:focus-within {
+  border-color: var(--kala-orange);
+  box-shadow: 0 0 0 2px rgba(217, 71, 0, 0.12);
+}
+
+.kala-bulk-select-thumb {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  background: #F3F3F5;
+  border-radius: 4px;
+  padding: 2px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.kala-bulk-select {
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--kala-font-primary);
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: var(--kala-black);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 28px;
+}
+
+.kala-bulk-select-chevron {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+}
+
+/* 2. Quantity Row & Perk Badge */
+.kala-bulk-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.kala-bulk-qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kala-bulk-qty-btn {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #E5E2DD;
+  border-radius: 8px;
+  background: #FFFFFF;
+  color: var(--kala-black);
+  font-size: 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--kala-transition-fast);
+}
+
+.kala-bulk-qty-btn:hover:not(:disabled) {
+  border-color: var(--kala-black);
+  background: #F8F8FA;
+}
+
+.kala-bulk-qty-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.kala-bulk-qty-input {
+  width: 68px;
+  height: 42px;
+  border: 1px solid #E5E2DD;
+  border-radius: 8px;
+  text-align: center;
+  font-family: var(--kala-font-primary);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--kala-black);
+  outline: none;
+  transition: border-color var(--kala-transition-fast);
+}
+
+.kala-bulk-qty-input:focus {
+  border-color: var(--kala-orange);
+}
+
+/* Hide spin arrows in number input */
+.kala-bulk-qty-input::-webkit-outer-spin-button,
+.kala-bulk-qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.kala-bulk-qty-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.kala-bulk-tier-perk-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FDF4EC;
+  border: 1px solid #FBE3CF;
+  border-radius: 10px;
+  padding: 8px 14px;
+  flex: 1;
+}
+
+.kala-bulk-perk-icon {
+  color: #C07A48;
+  color: var(--kala-orange);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.kala-bulk-perk-text {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--kala-font-primary);
+  font-size: 0.775rem;
+  line-height: 1.25;
+  color: #9A3412;
+}
+
+.kala-bulk-perk-text strong {
+  font-weight: 700;
+  color: #7C2D12;
+}
+
+/* 3. Customization Options Grid */
+.kala-bulk-custom-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.kala-bulk-custom-btn {
+  height: 44px;
+  border: 1px solid #E5E2DD;
+  border-radius: 8px;
+  background: #FFFFFF;
+  color: var(--kala-black);
+  font-family: var(--kala-font-primary);
+  font-size: 0.825rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all var(--kala-transition-fast);
+  white-space: nowrap;
+  padding: 0 8px;
+}
+
+.kala-bulk-custom-btn:hover {
+  border-color: #CBD5E1;
+  background: #FAF9F6;
+}
+
+.kala-bulk-custom-btn.active {
+  background: #FDF6F0;
+  border: 1.5px solid var(--kala-orange);
+  color: var(--kala-black);
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(217, 71, 0, 0.12);
+}
+
+.kala-bulk-custom-icon {
+  color: #64748B;
+  flex-shrink: 0;
+}
+
+.kala-bulk-custom-btn.active .kala-bulk-custom-icon {
+  color: var(--kala-orange);
+}
+
+/* 4. Price Breakup Tiers Grid */
+.kala-bulk-tiers-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.kala-bulk-tier-card {
+  border: 1px solid #E5E2DD;
+  border-radius: 8px;
+  background: #FFFFFF;
+  padding: 9px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  transition: all var(--kala-transition-fast);
+}
+
+.kala-bulk-tier-card:hover {
+  border-color: #CBD5E1;
+  background: #FAF9F6;
+}
+
+.kala-bulk-tier-card.active {
+  background: #FDF6F0;
+  border: 1.5px solid var(--kala-orange);
+  box-shadow: 0 2px 8px rgba(217, 71, 0, 0.15);
+}
+
+.kala-bulk-tier-qty {
+  font-family: var(--kala-font-primary);
+  font-size: 0.725rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.kala-bulk-tier-card.active .kala-bulk-tier-qty {
+  color: #9A3412;
+  font-weight: 600;
+}
+
+.kala-bulk-tier-price {
+  font-family: var(--kala-font-primary);
+  font-size: 0.95rem;
+  font-weight: 750;
+  color: var(--kala-black);
+}
+
+.kala-bulk-tier-card.active .kala-bulk-tier-price {
+  color: #7C2D12;
+}
+
+/* 5. Highlighted Calculation Box */
+.kala-bulk-estimate-box {
+  background: #F8F8FA;
+  border: 1px solid #E5E5E8;
+  border-radius: 12px;
+  padding: 1.15rem 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kala-bulk-estimate-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-bulk-estimate-label {
+  font-family: var(--kala-font-primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748B;
+  letter-spacing: 0.01em;
+}
+
+.kala-bulk-estimate-value,
+.kala-bulk-estimate-total {
+  font-family: var(--kala-font-primary);
+  font-size: clamp(1.65rem, 2.5vw, 2.15rem);
+  font-weight: 850;
+  color: var(--kala-black);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-top: 3px;
+}
+
+.kala-bulk-estimate-divider {
+  width: 1px;
+  height: 48px;
+  background: #E2E8F0;
+}
+
+.kala-bulk-estimate-pieces {
+  font-family: var(--kala-font-primary);
+  font-size: 0.775rem;
+  color: #64748B;
+  margin-top: 2px;
+}
+
+/* 6. CTA Button */
+.kala-bulk-cta-btn {
+  width: 100%;
+  height: 48px;
+  border-radius: 8px;
+  background: var(--kala-black);
+  color: #FFFFFF;
+  border: none;
+  font-family: var(--kala-font-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: all var(--kala-transition-fast);
+}
+
+.kala-bulk-cta-btn:hover {
+  background: var(--kala-orange);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(217, 71, 0, 0.35);
+}
+
+.kala-bulk-cta-btn:active {
+  transform: translateY(0);
+}
+
+/* Small Pricing Disclaimer */
+.kala-bulk-disclaimer {
+  text-align: center;
+  font-family: var(--kala-font-primary);
+  font-size: 0.775rem;
+  color: #888888;
+  margin: 1.25rem 0 0 0;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (320px to 1440px)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .kala-bulk-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.15rem;
+  }
+  .kala-bulk-right-panel {
+    padding: 0;
+  }
+  .kala-bulk-slider-stage {
+    height: 260px;
+  }
+  .kala-bulk-active-card {
+    width: 200px;
+    height: 240px;
+  }
+}
+
+@media (max-width: 640px) {
+  .kala-bulk-card {
+    border-radius: 18px;
+    padding: 0.85rem;
+  }
+  .kala-bulk-left-panel {
+    padding: 1.25rem 0.85rem 1.15rem;
+  }
+  .kala-bulk-slider-stage {
+    height: 220px;
+  }
+  .kala-bulk-active-card {
+    width: 170px;
+    height: 200px;
+  }
+  .kala-bulk-peek-card {
+    display: none; /* Hide peeking cards on mobile to avoid clutter */
+  }
+  .kala-bulk-qty-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .kala-bulk-custom-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .kala-bulk-custom-btn {
+    justify-content: flex-start;
+    padding: 0 14px;
+  }
+  .kala-bulk-tiers-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+  }
+  .kala-bulk-tier-card {
+    padding: 6px 2px;
+  }
+  .kala-bulk-tier-qty {
+    font-size: 0.65rem;
+  }
+  .kala-bulk-tier-price {
+    font-size: 0.8rem;
+  }
+  .kala-bulk-estimate-box {
+    padding: 1rem 1.25rem;
+  }
+  .kala-bulk-features-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .kala-bulk-tiers-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

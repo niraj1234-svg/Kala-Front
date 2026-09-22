@@ -4,6 +4,9 @@ import { fetchProducts } from '../services/productApi'
 import type { Product } from '../data/products'
 import { useWishlist } from '../context/WishlistContext'
 import { useCart } from '../context/CartContext'
+import HeroCarousel from '../components/HeroCarousel'
+import ProductRatingBadge from '../components/ProductRatingBadge'
+import BulkOrderCalculator from '../components/BulkOrderCalculator'
 import '../styles/Home.css'
 
 export const Home: React.FC = () => {
@@ -77,32 +80,9 @@ export const Home: React.FC = () => {
   return (
     <main className="kala-home" id="main-content">
       {/* ====================================================================
-          1. HERO SECTION (Minimalist, Visual, Streetwear Aesthetic)
+          1. HERO SECTION (Cinematic 4-Image Infinite Carousel)
           ==================================================================== */}
-      <section className="kala-hero-section" aria-label="KALA Streetwear">
-        <div className="kala-hero-bg-media">
-          <img
-            src="/home/hero-banner.jpg"
-            alt="KALA Streetwear Model"
-            className="kala-hero-bg-img"
-            loading="eager"
-            fetchPriority="high"
-          />
-          <div className="kala-hero-vignette" aria-hidden="true" />
-        </div>
-
-        <div className="kala-hero-container">
-          <div className="kala-hero-text-wrap">
-            <h1 className="kala-hero-title">
-              WEAR YOUR<br />
-              <span className="kala-hero-title-accent">STORY</span>
-            </h1>
-            <p className="kala-hero-subtitle">
-              APPAREL &times; IDENTITY &times; YOU
-            </p>
-          </div>
-        </div>
-      </section>
+      <HeroCarousel />
 
       {/* ====================================================================
           2. TWO VISUAL CARDS: CUSTOM APPAREL & BUSINESS BRANDING
@@ -182,7 +162,12 @@ export const Home: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          3. FEATURED PRODUCTS (Clean Visual Row)
+          3. BULK ORDER CALCULATOR (Instant Custom Apparel Estimation Tool)
+          ==================================================================== */}
+      <BulkOrderCalculator />
+
+      {/* ====================================================================
+          4. FEATURED PRODUCTS (Clean Visual Row)
           ==================================================================== */}
       <section className="kala-featured-section" aria-labelledby="featured-heading">
         <div className="kala-featured-container">
@@ -227,6 +212,7 @@ export const Home: React.FC = () => {
                           className="kala-clean-product-img"
                           loading="lazy"
                         />
+                        <ProductRatingBadge productId={product.id} productName={product.name} />
                         <button
                           type="button"
                           className={`kala-clean-wishlist-btn ${wishlisted ? 'active' : ''}`}
