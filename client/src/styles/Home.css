@@ -455,9 +455,12 @@
   font-weight: 600;
   color: #111111;
   margin: 0 0 0.25rem 0;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.25;
+  min-height: 2.5em;
 }
 
 .kala-clean-product-price {
@@ -528,99 +531,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   5. CINEMATIC STATEMENT BANNER (From Reference Image 2)
-   -------------------------------------------------------------------------- */
-.kala-statement-banner-section {
-  position: relative;
-  width: 100%;
-  min-height: clamp(380px, 48vh, 520px);
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  background-color: #0A0A0C;
-}
-
-.kala-statement-bg-media {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.kala-statement-bg-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
-  display: block;
-}
-
-.kala-statement-overlay {
-  position: absolute;
-  inset: 0;
-  background: 
-    linear-gradient(to right, rgba(10, 10, 12, 0.25) 0%, rgba(10, 10, 12, 0.45) 45%, rgba(10, 10, 12, 0.85) 75%, rgba(10, 10, 12, 0.96) 100%),
-    linear-gradient(to bottom, rgba(10, 10, 12, 0.3) 0%, transparent 30%, transparent 70%, rgba(10, 10, 12, 0.5) 100%);
-}
-
-.kala-statement-container {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: 0 clamp(1.25rem, 4vw, 3.5rem);
-  display: flex;
-  justify-content: flex-end;
-}
-
-.kala-statement-content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  max-width: 480px;
-}
-
-.kala-statement-title {
-  font-family: var(--kala-font-primary);
-  font-size: clamp(2.6rem, 5.2vw, 4.4rem);
-  font-weight: 900;
-  line-height: 0.94;
-  letter-spacing: -0.03em;
-  color: #FFFFFF;
-  text-transform: uppercase;
-  margin: 0 0 1.25rem 0;
-}
-
-.kala-statement-underline {
-  width: 64px;
-  height: 3.5px;
-  background-color: #FFFFFF;
-  border-radius: 2px;
-}
-
-/* --------------------------------------------------------------------------
-   6. BRAND STATEMENT SUB-BAR (From Reference Image 2)
-   -------------------------------------------------------------------------- */
-.kala-tagline-bar-section {
-  background-color: #070709;
-  padding: clamp(1.35rem, 2.2vw, 2rem) 1rem;
-  text-align: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.kala-tagline-bar-text {
-  font-size: clamp(0.72rem, 0.9vw, 0.86rem);
-  font-weight: 600;
-  letter-spacing: 0.28em;
-  color: rgba(255, 255, 255, 0.72);
-  text-transform: uppercase;
-  margin: 0;
-}
-
-/* --------------------------------------------------------------------------
-   7. CONTACT US SECTION (Clean, Minimal, 4-Option Contact Hub)
+   5. CONTACT US SECTION (Clean, Minimal, 4-Option Contact Hub)
    -------------------------------------------------------------------------- */
 .kala-contact-section {
   padding: clamp(2.75rem, 5vw, 4.5rem) 0;
@@ -888,6 +799,11 @@
   .kala-clean-product-name {
     font-size: 0.825rem;
     line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.5em;
   }
 
   .kala-clean-product-price {
@@ -900,11 +816,13 @@
     min-width: 36px;
   }
 
-  /* Trust Bar: 2x2 Grid */
+  /* Trust Bar: 3 Guarantees */
   .kala-trust-bar-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
   /* Contact Us: 2-Column Layout */
@@ -929,24 +847,6 @@
     min-height: 44px;
     font-size: 0.78rem;
     letter-spacing: 0.06em;
-  }
-
-  .kala-statement-banner-section {
-    min-height: 320px;
-    justify-content: flex-start;
-  }
-
-  .kala-statement-container {
-    justify-content: flex-start;
-  }
-
-  .kala-statement-content {
-    max-width: 100%;
-  }
-
-  .kala-statement-overlay {
-    background: 
-      linear-gradient(to right, rgba(10, 10, 12, 0.85) 0%, rgba(10, 10, 12, 0.7) 100%);
   }
 
   .kala-floating-whatsapp {
@@ -1007,11 +907,6 @@
   .kala-trust-icon {
     width: 18px;
     height: 18px;
-  }
-
-  .kala-tagline-bar-text {
-    letter-spacing: 0.14em;
-    font-size: 0.7rem;
   }
 }
 

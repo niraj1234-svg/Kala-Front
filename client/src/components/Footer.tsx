@@ -7,24 +7,17 @@ export const Footer: React.FC = () => {
   return (
     <footer className="kala-footer" role="contentinfo">
       <div className="kala-container kala-footer-container">
-        {/* Brand Column */}
+        {/* Brand / Logo */}
         <div className="kala-footer-brand-col">
           <Link to="/" className="kala-footer-logo" aria-label="KALA — Home">
             <img src={logoImg} alt="KALA" className="kala-footer-logo-img" />
             <span className="kala-footer-logo-text">KALA</span>
           </Link>
-          <p className="kala-footer-tagline">
-            Wear your story. Custom apparel &amp; brand merchandise crafted for India.
-          </p>
-          <div className="kala-footer-badge">
-            <span className="kala-footer-badge-dot" aria-hidden="true" />
-            <span>Pan-India Delivery</span>
-          </div>
         </div>
 
-        {/* Essential Navigation Column */}
+        {/* Essential Navigation Links */}
         <div className="kala-footer-nav-col">
-          <h4 className="kala-footer-heading">NAVIGATION</h4>
+          <h4 className="kala-footer-heading">SHOP</h4>
           <ul className="kala-footer-links">
             <li>
               <Link to="/shop" className="kala-footer-link">Shop</Link>
@@ -35,19 +28,19 @@ export const Footer: React.FC = () => {
             <li>
               <Link to="/business-branding" className="kala-footer-link">Business Branding</Link>
             </li>
+          </ul>
+        </div>
+
+        {/* Company & Contact Links */}
+        <div className="kala-footer-nav-col">
+          <h4 className="kala-footer-heading">CONNECT</h4>
+          <ul className="kala-footer-links">
             <li>
               <Link to="/about" className="kala-footer-link">About</Link>
             </li>
             <li>
               <a href="/#contact" className="kala-footer-link">Contact</a>
             </li>
-          </ul>
-        </div>
-
-        {/* Connect / Social Column */}
-        <div className="kala-footer-nav-col">
-          <h4 className="kala-footer-heading">CONNECT</h4>
-          <ul className="kala-footer-links">
             <li>
               <a
                 href="https://www.instagram.com/kala_originals/"

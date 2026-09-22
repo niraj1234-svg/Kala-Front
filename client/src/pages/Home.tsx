@@ -25,8 +25,8 @@ export const Home: React.FC = () => {
       .then((data) => {
         if (isMounted) {
           if (data && data.length > 0) {
-            // Display top 5 curated products across categories matching reference design
-            setFeaturedProducts(data.slice(0, 5))
+            // Display curated products across categories matching reference design
+            setFeaturedProducts(data.slice(0, 6))
           } else {
             setFeaturedProducts([])
           }
@@ -100,10 +100,6 @@ export const Home: React.FC = () => {
             <p className="kala-hero-subtitle">
               APPAREL &times; IDENTITY &times; YOU
             </p>
-          </div>
-
-          <div className="kala-hero-script-wrap" aria-hidden="true">
-            <span className="kala-hero-script">More Than Apparel</span>
           </div>
         </div>
       </section>
@@ -191,10 +187,10 @@ export const Home: React.FC = () => {
       <section className="kala-featured-section" aria-labelledby="featured-heading">
         <div className="kala-featured-container">
           <div className="kala-featured-header-row">
-            <h2 id="featured-heading" className="kala-featured-heading">Featured Products</h2>
+            <h2 id="featured-heading" className="kala-featured-heading">FEATURED PRODUCTS</h2>
             <div className="kala-featured-divider" aria-hidden="true" />
             <Link to="/shop" className="kala-featured-view-all">
-              <span>View All</span>
+              <span>VIEW ALL</span>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
@@ -287,53 +283,43 @@ export const Home: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          4. SERVICE / TRUST SECTION (Minimal Row)
+          4. SERVICE / TRUST SECTION (Strictly 3 Core Guarantees)
           ==================================================================== */}
       <section className="kala-trust-bar-section" aria-label="Trust & Guarantees">
         <div className="kala-trust-bar-container">
           <div className="kala-trust-item">
             <svg className="kala-trust-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <rect x="1" y="3" width="15" height="13" />
-              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+              <polygon points="16 8 20 8 23 11 23 16 16 16 8" />
               <circle cx="5.5" cy="18.5" r="2.5" />
               <circle cx="18.5" cy="18.5" r="2.5" />
             </svg>
-            <span className="kala-trust-text">Reliable Delivery</span>
+            <span className="kala-trust-text">PAN-INDIA DELIVERY</span>
           </div>
 
           <div className="kala-trust-item">
             <svg className="kala-trust-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
-            <span className="kala-trust-text">Secure Payments</span>
+            <span className="kala-trust-text">SECURE PAYMENTS</span>
           </div>
 
           <div className="kala-trust-item">
             <svg className="kala-trust-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
             </svg>
-            <span className="kala-trust-text">Premium Quality</span>
-          </div>
-
-          <div className="kala-trust-item">
-            <svg className="kala-trust-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            <span className="kala-trust-text">Trusted by Teams</span>
+            <span className="kala-trust-text">PREMIUM QUALITY</span>
           </div>
         </div>
       </section>
 
       {/* ====================================================================
-          5. CONTACT US SECTION (Mobile-First 4-Option Contact Hub)
+          5. CONTACT KALA SECTION (Direct Clickable Channels)
           ==================================================================== */}
       <section className="kala-contact-section" id="contact" aria-labelledby="contact-heading">
         <div className="kala-contact-container">
           <div className="kala-contact-header">
-            <h2 id="contact-heading" className="kala-contact-heading">CONTACT US</h2>
+            <h2 id="contact-heading" className="kala-contact-heading">CONTACT KALA</h2>
             <div className="kala-contact-divider" aria-hidden="true" />
           </div>
 
@@ -442,41 +428,6 @@ export const Home: React.FC = () => {
             </a>
           </div>
         </div>
-      </section>
-
-      {/* ====================================================================
-          6. CINEMATIC STATEMENT BANNER
-          ==================================================================== */}
-      <section className="kala-statement-banner-section" aria-label="Brand Philosophy">
-        <div className="kala-statement-bg-media">
-          <img
-            src="/home/statement-banner.jpg"
-            alt="KALA Apparel Silhouette"
-            className="kala-statement-bg-img"
-            loading="lazy"
-          />
-          <div className="kala-statement-overlay" aria-hidden="true" />
-        </div>
-
-        <div className="kala-statement-container">
-          <div className="kala-statement-content">
-            <h2 className="kala-statement-title">
-              MORE<br />
-              THAN<br />
-              APPAREL
-            </h2>
-            <div className="kala-statement-underline" aria-hidden="true" />
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          7. BRAND STATEMENT SUB-BAR
-          ==================================================================== */}
-      <section className="kala-tagline-bar-section" aria-label="Brand Philosophy Tagline">
-        <p className="kala-tagline-bar-text">
-          APPAREL &times; TEAMS &times; BRANDS &times; YOU
-        </p>
       </section>
 
       {/* ====================================================================
