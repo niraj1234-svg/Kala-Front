@@ -7,7 +7,7 @@ export const SEED_PRODUCTS = [
     id: 'streetwear-oversized-acid-tee',
     name: 'KALA Raw Acid-Wash Oversized Tee',
     category: 'Streetwear',
-    price: 399,
+    price: 1,
     image: 'Streetwear 01.png',
     description: 'Premium 280 GSM oversized cotton tee.',
     available: true,

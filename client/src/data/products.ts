@@ -107,7 +107,7 @@ export const PRODUCTS: Product[] = [
     id: 'streetwear-oversized-acid-tee',
     name: 'KALA Raw Acid-Wash Oversized Tee',
     category: 'Streetwear',
-    price: 399,
+    price: 1,
     image: getProductImage('Streetwear 01.png'),
     description: 'Premium 280 GSM oversized cotton tee.',
     available: true,
