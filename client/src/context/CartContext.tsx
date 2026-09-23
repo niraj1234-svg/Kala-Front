@@ -26,8 +26,8 @@ export interface CartContextType {
     size: string,
     quantity: number
   ) => void
-  removeFromCart: (productId: string, size: string) => void
-  updateQuantity: (productId: string, size: string, quantity: number) => void
+  removeFromCart: (productId: string, size: string, image?: string) => void
+  updateQuantity: (productId: string, size: string, quantity: number, image?: string) => void
   clearCart: () => void
 }
 
@@ -199,7 +199,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setCartItems((prevItems) => {
       const existingIndex = prevItems.findIndex(
-        (item) => item.productId === product.id && item.size === size
+        (item) => item.productId === product.id && item.size === size && (!item.image || item.image === product.image)
       )
 
       if (existingIndex > -1) {
@@ -238,10 +238,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
-  const removeFromCart = (productId: string, size: string) => {
+  const removeFromCart = (productId: string, size: string, image?: string) => {
     setCartItems((prevItems) =>
       prevItems.filter(
-        (item) => !(item.productId === productId && item.size === size)
+        (item) => !(item.productId === productId && item.size === size && (!image || item.image === image))
       )
     )
 
@@ -253,9 +253,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
-  const updateQuantity = (productId: string, size: string, quantity: number) => {
+  const updateQuantity = (productId: string, size: string, quantity: number, image?: string) => {
     if (quantity <= 0) {
-      removeFromCart(productId, size)
+      removeFromCart(productId, size, image)
       return
     }
 
@@ -263,7 +263,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setCartItems((prevItems) =>
       prevItems.map((item) => {
-        if (item.productId === productId && item.size === size) {
+        if (item.productId === productId && item.size === size && (!image || item.image === image)) {
           return { ...item, quantity: clampedQuantity }
         }
         return item

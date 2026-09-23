@@ -116,15 +116,6 @@ export const SEED_PRODUCTS = [
     available: true,
   },
   {
-    id: 'gymwear-seamless-muscle-tank-02',
-    name: 'KALA Core Seamless Muscle Tank',
-    category: 'Gymwear',
-    price: 499,
-    image: 'gymwear02.png',
-    description: 'Drop-armhole sweat-wicking seamless muscle tank.',
-    available: true,
-  },
-  {
     id: 'gymwear-tapered-jogger-03',
     name: 'KALA Precision Tapered Training Jogger',
     category: 'Gymwear',
@@ -143,15 +134,6 @@ export const SEED_PRODUCTS = [
     available: true,
   },
   {
-    id: 'gymwear-oversized-pump-cover-05',
-    name: 'KALA Heavy Pump Cover Tee',
-    category: 'Gymwear',
-    price: 599,
-    image: 'Gymwear-05.png',
-    description: 'Heavyweight 300 GSM boxy cotton pump cover tee.',
-    available: true,
-  },
-  {
     id: 'gymwear-dynamic-stretch-shorts-06',
     name: 'KALA 5-Inch Dynamic Training Shorts',
     category: 'Gymwear',
@@ -159,6 +141,18 @@ export const SEED_PRODUCTS = [
     image: 'Gymwear06.png',
     description: '5-inch stretch training shorts with compression liner.',
     available: true,
+    variants: [
+      {
+        color: '#000000',
+        colorName: 'Black',
+        image: 'Gymwear06.png',
+      },
+      {
+        color: '#FFFFFF',
+        colorName: 'White',
+        image: 'Gymwear-05.png',
+      },
+    ],
   },
   {
     id: 'gymwear-hybrid-longsleeve-07',
@@ -195,11 +189,22 @@ export const SEED_PRODUCTS = [
  */
 export const syncProductPrices = async () => {
   try {
+    // Safely remove duplicate legacy cards if present
+    await Product.deleteOne({ id: 'gymwear-oversized-pump-cover-05' })
+    await Product.deleteOne({ id: 'gymwear-seamless-muscle-tank-02' })
+
     let updatedCount = 0
     for (const item of SEED_PRODUCTS) {
+      const updateData: any = {
+        price: item.price,
+        description: item.description,
+      }
+      if ((item as any).variants) {
+        updateData.variants = (item as any).variants
+      }
       const res = await Product.updateOne(
         { id: item.id },
-        { $set: { price: item.price, description: item.description } }
+        { $set: updateData }
       )
       if (res.matchedCount > 0) {
         updatedCount++

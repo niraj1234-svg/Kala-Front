@@ -1,0 +1,774 @@
+/* ==========================================================================
+   KALA PREMIUM FLOATING SEARCH OVERLAY STYLES
+   Minimal Luxury + Modern Streetwear Aesthetic
+   ========================================================================== */
+
+/* 1. Backdrop Overlay */
+.kala-search-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(12, 12, 14, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 3rem) 1rem;
+  overflow-y: auto;
+  animation: kalaSearchFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes kalaSearchFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 2. Floating Glass Panel */
+.kala-search-modal-panel {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.16),
+              0 4px 20px rgba(0, 0, 0, 0.04),
+              0 0 45px rgba(242, 92, 5, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: auto 0;
+  animation: kalaSearchSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  max-height: calc(100vh - clamp(2rem, 8vw, 6rem));
+}
+
+@keyframes kalaSearchSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 3. Search Bar Header Container */
+.kala-search-modal-header {
+  padding: 1.25rem 1.25rem 0.85rem;
+  border-bottom: 1px solid #ECE7E1;
+  background: #FFFFFF;
+}
+
+/* Small "Search KALA" Branding Tag */
+.kala-search-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+  padding: 0 0.25rem;
+}
+
+.kala-search-brand-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.725rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #F25C05;
+}
+
+.kala-search-brand-sparkle {
+  color: #F25C05;
+  animation: kalaSparklePulse 2.5s ease-in-out infinite;
+}
+
+@keyframes kalaSparklePulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.15) rotate(15deg);
+    opacity: 1;
+  }
+}
+
+.kala-search-quick-hint {
+  font-family: var(--kala-font-primary);
+  font-size: 0.75rem;
+  color: #8C8883;
+}
+
+/* Search Input Box (60-68px height) */
+.kala-search-input-box {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: #F7F5F2;
+  border: 1.5px solid #E5E1D8;
+  border-radius: 18px;
+  height: 64px;
+  padding: 0 1rem 0 0.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.kala-search-input-box:focus-within {
+  background: #FFFFFF;
+  border-color: #F25C05;
+  box-shadow: 0 0 0 3px rgba(242, 92, 5, 0.15), 0 4px 16px rgba(242, 92, 5, 0.08);
+}
+
+/* Orange Square Search Icon */
+.kala-search-icon-square {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+  background: #F25C05;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(242, 92, 5, 0.28);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.kala-search-input-box:focus-within .kala-search-icon-square {
+  transform: scale(1.03);
+}
+
+.kala-search-main-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--kala-font-primary);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #111111;
+  outline: none;
+  padding: 0;
+  min-width: 0;
+}
+
+.kala-search-main-input::placeholder {
+  color: #9CA3AF;
+  font-weight: 450;
+}
+
+/* Search Action Controls on Right */
+.kala-search-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.kala-search-clear-action {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #E5E1D8;
+  color: #4B5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.kala-search-clear-action:hover {
+  background: #D1D5DB;
+  color: #111111;
+}
+
+/* ESC Key Pill Button */
+.kala-search-esc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-family: var(--kala-font-mono);
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: #6B7280;
+  cursor: pointer;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.18s ease;
+}
+
+.kala-search-esc-btn:hover {
+  background: #F3F4F6;
+  border-color: #9CA3AF;
+  color: #111111;
+  transform: translateY(-1px);
+}
+
+/* 4. Popular Categories Row */
+.kala-search-categories-bar {
+  padding: 0.85rem 1.25rem 0.95rem;
+  border-bottom: 1px solid #F1EFEA;
+  background: #FAF8F5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.kala-search-section-label {
+  font-family: var(--kala-font-primary);
+  font-size: 0.725rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8C8883;
+}
+
+.kala-search-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.kala-search-chips-row::-webkit-scrollbar {
+  display: none;
+}
+
+.kala-search-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FFFFFF;
+  border: 1px solid #E5E1D8;
+  border-radius: 20px;
+  padding: 6px 13px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: #1F2937;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease,
+              box-shadow 0.2s ease,
+              color 0.2s ease;
+}
+
+.kala-search-chip:hover {
+  transform: translateY(-4px);
+  border-color: #F25C05;
+  color: #F25C05;
+  box-shadow: 0 6px 16px rgba(242, 92, 5, 0.18);
+}
+
+.kala-search-chip.active {
+  background: #FFF7ED;
+  border-color: #F25C05;
+  color: #F25C05;
+}
+
+.kala-search-chip-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 5. Scrollable Body Content */
+.kala-search-modal-body {
+  padding: 1.25rem;
+  overflow-y: auto;
+  max-height: 480px;
+  overscroll-behavior: contain;
+}
+
+/* 6. Recent Searches Section */
+.kala-search-recent-box {
+  margin-bottom: 0.5rem;
+}
+
+.kala-search-recent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.kala-search-recent-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.8rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4B5563;
+}
+
+.kala-search-clear-all-btn {
+  background: none;
+  border: none;
+  font-family: var(--kala-font-primary);
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: #8C8883;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color 0.15s ease;
+}
+
+.kala-search-clear-all-btn:hover {
+  color: #DC2626;
+  text-decoration: underline;
+}
+
+.kala-search-recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.kala-search-recent-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.85rem;
+  background: #FAF8F5;
+  border: 1px solid #ECE7E1;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  animation: kalaRecentItemIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes kalaRecentItemIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kala-search-recent-item:hover {
+  background: #FFFFFF;
+  border-color: #F25C05;
+  transform: translateX(3px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.kala-search-recent-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.9rem;
+  font-weight: 550;
+  color: #1F2937;
+  flex: 1;
+  text-align: left;
+}
+
+.kala-search-recent-clock {
+  color: #9CA3AF;
+  flex-shrink: 0;
+}
+
+.kala-search-recent-item:hover .kala-search-recent-clock {
+  color: #F25C05;
+}
+
+.kala-search-recent-remove {
+  background: none;
+  border: none;
+  color: #9CA3AF;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.kala-search-recent-remove:hover {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+/* 7. Empty State (When no history and query is empty) */
+.kala-search-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.5rem 1rem 2rem;
+}
+
+.kala-search-empty-illustration {
+  width: 90px;
+  height: 90px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #FFF7ED 0%, #FAF8F5 100%);
+  border: 1px solid #FED7AA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #F25C05;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 10px 24px rgba(242, 92, 5, 0.1);
+}
+
+.kala-search-empty-title {
+  font-family: var(--kala-font-primary);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #111111;
+  margin: 0 0 0.35rem;
+}
+
+.kala-search-empty-desc {
+  font-family: var(--kala-font-primary);
+  font-size: 0.88rem;
+  color: #6B7280;
+  max-width: 360px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 8. Live Results Section */
+.kala-search-results-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-search-results-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+  padding: 0 0.25rem;
+}
+
+.kala-search-results-count {
+  font-family: var(--kala-font-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6B7280;
+}
+
+.kala-search-view-all-btn {
+  background: none;
+  border: none;
+  font-family: var(--kala-font-primary);
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: #F25C05;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.15s ease;
+}
+
+.kala-search-view-all-btn:hover {
+  text-decoration: underline;
+  transform: translateX(2px);
+}
+
+.kala-search-results-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.kala-search-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: #FFFFFF;
+  border: 1px solid #ECE7E1;
+  border-radius: 14px;
+  cursor: pointer;
+  gap: 1rem;
+  transition: background 0.18s ease,
+              border-color 0.18s ease,
+              transform 0.18s ease,
+              box-shadow 0.18s ease;
+}
+
+.kala-search-card:hover {
+  background: #FFFBF7;
+  border-color: #F25C05;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(242, 92, 5, 0.25);
+}
+
+.kala-search-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.kala-search-thumb-wrap {
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
+  background: #F3F3F5;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.kala-search-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 3px;
+}
+
+.kala-search-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.kala-search-cat-badge {
+  display: inline-block;
+  font-family: var(--kala-font-primary);
+  font-size: 0.675rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6B7280;
+  line-height: 1;
+}
+
+.kala-search-product-name {
+  font-family: var(--kala-font-primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Matching Text Highlight */
+.kala-search-highlight {
+  background-color: rgba(242, 92, 5, 0.16);
+  color: #C2410C;
+  font-weight: 800;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+.kala-search-card-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.kala-search-price-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.kala-search-price {
+  font-family: var(--kala-font-primary);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #111111;
+}
+
+.kala-search-status-dot {
+  font-family: var(--kala-font-primary);
+  font-size: 0.675rem;
+  font-weight: 600;
+}
+
+.kala-search-status-dot.in-stock {
+  color: #16A34A;
+}
+
+.kala-search-status-dot.sold-out {
+  color: #DC2626;
+}
+
+/* Hover Reveals Arrow */
+.kala-search-arrow-box {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #F3F4F6;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  opacity: 0.6;
+}
+
+.kala-search-card:hover .kala-search-arrow-box {
+  background: #F25C05;
+  color: #FFFFFF;
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+/* 9. No Matches State */
+.kala-search-no-matches {
+  text-align: center;
+  padding: 2.5rem 1rem;
+}
+
+.kala-search-no-matches-title {
+  font-family: var(--kala-font-primary);
+  font-size: 1.15rem;
+  font-weight: 750;
+  color: #111111;
+  margin: 0 0 0.5rem;
+}
+
+.kala-search-no-matches-hint {
+  font-family: var(--kala-font-primary);
+  font-size: 0.85rem;
+  color: #6B7280;
+  margin: 0 0 1.25rem;
+}
+
+.kala-search-browse-shop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #111111;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  padding: 9px 18px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.kala-search-browse-shop-btn:hover {
+  background: #F25C05;
+  transform: translateY(-1px);
+}
+
+/* 10. Mobile Responsiveness */
+@media (max-width: 640px) {
+  .kala-search-overlay-backdrop {
+    padding: 0.75rem 0.5rem;
+    align-items: flex-start;
+  }
+
+  .kala-search-modal-panel {
+    border-radius: 20px;
+    max-height: calc(100vh - 1.5rem);
+  }
+
+  .kala-search-modal-header {
+    padding: 1rem 0.85rem 0.75rem;
+  }
+
+  .kala-search-input-box {
+    height: 56px;
+    border-radius: 14px;
+    padding: 0 0.75rem 0 0.5rem;
+    gap: 0.65rem;
+  }
+
+  .kala-search-icon-square {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 10px;
+  }
+
+  .kala-search-main-input {
+    font-size: 0.95rem;
+  }
+
+  .kala-search-esc-btn {
+    display: none; /* Mobile users use close icon or outside tap */
+  }
+
+  .kala-search-categories-bar {
+    padding: 0.65rem 0.85rem 0.75rem;
+  }
+
+  .kala-search-modal-body {
+    padding: 0.85rem;
+  }
+
+  .kala-search-card {
+    padding: 0.65rem 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .kala-search-thumb-wrap {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+
+  .kala-search-product-name {
+    font-size: 0.875rem;
+  }
+
+  .kala-search-price {
+    font-size: 0.875rem;
+  }
+
+  .kala-search-arrow-box {
+    display: none;
+  }
+}

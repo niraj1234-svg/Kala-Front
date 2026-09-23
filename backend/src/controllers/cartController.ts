@@ -80,7 +80,9 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
     // Pull authoritative product data from MongoDB if available
     const dbProduct = await Product.findOne({ id: cleanProductId })
     const resolvedName = dbProduct?.name || (typeof name === 'string' ? name.trim() : cleanProductId)
-    const resolvedImage = dbProduct?.image || (typeof image === 'string' ? image.trim() : '/favicon.png')
+    const resolvedImage = (typeof image === 'string' && image.trim())
+      ? image.trim()
+      : (dbProduct?.image || '/favicon.png')
     const resolvedPrice = typeof dbProduct?.price === 'number' ? dbProduct.price : (typeof price === 'number' && price >= 0 ? price : 0)
 
     let cart = await Cart.findOne({ userId })
@@ -92,7 +94,7 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
     }
 
     const existingIndex = cart.items.findIndex(
-      (item) => item.productId === cleanProductId && item.size === cleanSize
+      (item) => item.productId === cleanProductId && item.size === cleanSize && item.image === resolvedImage
     )
 
     if (existingIndex > -1) {

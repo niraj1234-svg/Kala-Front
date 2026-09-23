@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import { getProductImage } from '../data/products'
 import '../styles/BulkOrderCalculator.css'
 
@@ -93,19 +94,12 @@ const CUSTOMIZATION_OPTIONS: { id: CustomizationType; label: string; icon: strin
   { id: 'Custom Design', label: 'Custom Design', icon: 'edit' },
 ]
 
-const TIERS = [
-  { key: '10-24', range: '10 - 24', min: 10, max: 24 },
-  { key: '25-49', range: '25 - 49', min: 25, max: 49 },
-  { key: '50-99', range: '50 - 99', min: 50, max: 99 },
-  { key: '100-249', range: '100 - 249', min: 100, max: 249 },
-  { key: '250+', range: '250+', min: 250, max: Infinity },
-] as const
-
 export const BulkOrderCalculator: React.FC = () => {
   const [selectedProductIndex, setSelectedProductIndex] = useState<number>(0)
   const [quantity, setQuantity] = useState<number>(50)
   const [customization, setCustomization] = useState<CustomizationType>('Front + Back')
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
 
   const currentProduct = BULK_PRODUCTS[selectedProductIndex]
 
@@ -165,10 +159,6 @@ export const BulkOrderCalculator: React.FC = () => {
     })
   }
 
-  const handleTierClick = (minQty: number) => {
-    setQuantity(minQty)
-  }
-
   const handleCtaClick = () => {
     const params = new URLSearchParams({
       product: currentProduct.name,
@@ -196,9 +186,6 @@ export const BulkOrderCalculator: React.FC = () => {
           <h2 id="bulk-calc-heading" className="kala-bulk-main-heading">
             Calculate Your <span className="kala-bulk-heading-accent">Bulk Order</span>
           </h2>
-          <p className="kala-bulk-supporting-text">
-            Get an instant estimate for custom apparel. Choose your product, quantity and customization to see your estimated total.
-          </p>
         </div>
 
         {/* Main 2-Column Calculator Card */}
@@ -252,48 +239,28 @@ export const BulkOrderCalculator: React.FC = () => {
                   loading="lazy"
                 />
               </div>
-            </div>
 
-            {/* Slider Navigation Arrows & Dots */}
-            <div className="kala-bulk-slider-controls">
-              <div className="kala-bulk-nav-arrows">
-                <button
-                  type="button"
-                  className="kala-bulk-arrow-btn"
-                  onClick={handlePrevProduct}
-                  aria-label="Previous apparel product"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <line x1="19" y1="12" x2="5" y2="12" />
-                    <polyline points="12 19 5 12 12 5" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  className="kala-bulk-arrow-btn"
-                  onClick={handleNextProduct}
-                  aria-label="Next apparel product"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12 5 19 12 12 19" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="kala-bulk-dots" role="tablist" aria-label="Product selection">
-                {BULK_PRODUCTS.map((prod, idx) => (
-                  <button
-                    key={prod.id}
-                    type="button"
-                    role="tab"
-                    className={`kala-bulk-dot ${idx === selectedProductIndex ? 'active' : ''}`}
-                    aria-label={`Select ${prod.name}`}
-                    aria-selected={idx === selectedProductIndex}
-                    onClick={() => setSelectedProductIndex(idx)}
-                  />
-                ))}
-              </div>
+              {/* Slider Navigation Chevrons inside Stage */}
+              <button
+                type="button"
+                className="kala-bulk-arrow-btn kala-bulk-arrow-prev"
+                onClick={handlePrevProduct}
+                aria-label="Previous apparel product"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                className="kala-bulk-arrow-btn kala-bulk-arrow-next"
+                onClick={handleNextProduct}
+                aria-label="Next apparel product"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
             </div>
 
             {/* Feature Icons Row */}
@@ -336,11 +303,37 @@ export const BulkOrderCalculator: React.FC = () => {
 
           {/* RIGHT SIDE: Order Configuration Area */}
           <div className="kala-bulk-right-panel">
-            {/* 1. Select Product Dropdown */}
+            {/* 1. Select Product Dropdown & Top-Right Sign In Control */}
             <div className="kala-bulk-field-group">
-              <label htmlFor="bulk-product-select" className="kala-bulk-field-label">
-                1. Select Product
-              </label>
+              <div className="kala-bulk-field-header-row">
+                <label htmlFor="bulk-product-select" className="kala-bulk-field-label">
+                  1. Select Product
+                </label>
+                <button
+                  type="button"
+                  className="kala-bulk-signin-btn"
+                  onClick={() => navigate('/account')}
+                  aria-label={isAuthenticated ? 'Go to Account' : 'Sign In'}
+                  title={isAuthenticated ? 'Account' : 'Sign In'}
+                >
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.1"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                    className="kala-bulk-signin-icon"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  <span>{isAuthenticated ? 'Account' : 'Sign In'}</span>
+                </button>
+              </div>
               <div className="kala-bulk-select-wrap">
                 <img
                   src={currentProduct.image}
@@ -455,57 +448,22 @@ export const BulkOrderCalculator: React.FC = () => {
               </div>
             </div>
 
-            {/* 4. Price Breakup Tiers */}
-            <div className="kala-bulk-field-group">
-              <span className="kala-bulk-field-label">4. Price Breakup</span>
-              <div className="kala-bulk-tiers-grid">
-                {TIERS.map((tier) => {
-                  const isActive = activeTierKey === tier.key
-                  const price = currentProduct.tierPrices[tier.key]
-                  const displayPrice = typeof price === 'number' ? `₹${price}` : price
-
-                  return (
-                    <button
-                      key={tier.key}
-                      type="button"
-                      className={`kala-bulk-tier-card ${isActive ? 'active' : ''}`}
-                      onClick={() => handleTierClick(tier.min)}
-                      title={`Select ${tier.range} tier (${tier.min} pieces)`}
-                    >
-                      <span className="kala-bulk-tier-qty">{tier.range}</span>
-                      <span className="kala-bulk-tier-price">{displayPrice}</span>
-                    </button>
-                  )
-                })}
-              </div>
+            {/* Estimated Total Horizontal Card */}
+            <div className="kala-bulk-estimate-card">
+              <span className="kala-bulk-estimate-label">Estimated Total</span>
+              <span className="kala-bulk-estimate-total">
+                {isCustomQuoteTier ? 'Custom Tier' : `₹${estimatedTotal.toLocaleString('en-IN')}`}
+              </span>
             </div>
 
-            {/* 5. Highlighted Calculation Box */}
-            <div className="kala-bulk-estimate-box">
-              <div className="kala-bulk-estimate-col">
-                <span className="kala-bulk-estimate-label">Estimated Price / Piece</span>
-                <span className="kala-bulk-estimate-value">
-                  {isCustomQuoteTier ? 'Get Quote' : `₹${estimatedPricePerPiece}`}
-                </span>
-              </div>
-              <div className="kala-bulk-estimate-divider" aria-hidden="true" />
-              <div className="kala-bulk-estimate-col">
-                <span className="kala-bulk-estimate-label">Estimated Total</span>
-                <span className="kala-bulk-estimate-total">
-                  {isCustomQuoteTier ? 'Custom Tier' : `₹${estimatedTotal.toLocaleString('en-IN')}`}
-                </span>
-                <span className="kala-bulk-estimate-pieces">({quantity} pieces)</span>
-              </div>
-            </div>
-
-            {/* 6. CTA Button */}
+            {/* Request Bulk Quote CTA Button */}
             <button
               type="button"
               className="kala-bulk-cta-btn"
               onClick={handleCtaClick}
             >
               <span>Request Bulk Quote</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg className="kala-bulk-cta-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
               </svg>

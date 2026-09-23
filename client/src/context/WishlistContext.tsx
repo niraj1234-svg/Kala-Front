@@ -25,9 +25,12 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (stored) {
         const parsed = JSON.parse(stored)
         if (Array.isArray(parsed)) {
-          // Filter out any IDs that don't exist in product catalog
+          // Filter out any IDs that don't exist in product catalog, mapping any legacy duplicate IDs
           const validProductIds = new Set(PRODUCTS.map((p) => p.id))
-          return parsed.filter((id) => typeof id === 'string' && validProductIds.has(id))
+          return parsed
+            .map((id) => (id === 'gymwear-oversized-pump-cover-05' ? 'gymwear-dynamic-stretch-shorts-06' : id))
+            .filter((id) => typeof id === 'string' && validProductIds.has(id))
+            .filter((id, index, arr) => arr.indexOf(id) === index)
         }
       }
     } catch (err) {

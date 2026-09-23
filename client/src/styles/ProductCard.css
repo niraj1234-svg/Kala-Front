@@ -38,40 +38,208 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform 0.4s ease, opacity 0.15s ease-in-out;
+  opacity: 1;
 }
 
 .kala-product-card:hover .kala-product-image {
   transform: scale(1.03);
 }
 
+.kala-product-image.is-fading {
+  opacity: 0.15;
+}
+
+/* Favorite / Wishlist Button */
 .kala-card-wishlist-btn {
   position: absolute;
   top: 12px;
   right: 12px;
   width: 36px;
   height: 36px;
-  background-color: rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(4px);
-  border: 1px solid var(--kala-border);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--kala-black);
+  color: #111111;
   cursor: pointer;
   z-index: 2;
-  transition: color var(--kala-transition-fast), background-color var(--kala-transition-fast), border-color var(--kala-transition-fast);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s ease,
+              border-color 0.25s ease,
+              background-color 0.25s ease,
+              color 0.2s ease;
 }
 
+/* Hover: Subtle KALA-orange glow around circle & scale up (~1.05) */
 .kala-card-wishlist-btn:hover {
   background-color: #ffffff;
   color: var(--kala-orange);
-  border-color: var(--kala-orange);
+  border-color: rgba(233, 75, 0, 0.45);
+  transform: scale(1.05);
+  box-shadow: 0 0 14px rgba(233, 75, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+/* Active / Favorited state: filled orange heart visible */
 .kala-card-wishlist-btn.active {
   color: var(--kala-orange);
   background-color: #ffffff;
+  border-color: rgba(233, 75, 0, 0.35);
+}
+
+.kala-card-wishlist-btn.active:hover {
+  border-color: rgba(233, 75, 0, 0.6);
+  box-shadow: 0 0 16px rgba(233, 75, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Click press animation */
+.kala-card-wishlist-btn:active {
+  transform: scale(0.92);
+}
+
+/* Burst animation when favorited */
+.kala-card-wishlist-btn.burst {
+  animation: kalaHeartPress 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.kala-card-wishlist-btn.burst .kala-wishlist-heart-svg {
+  animation: kalaHeartBeat 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Small orange pulse / ripple around the button */
+.kala-card-wishlist-btn::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid var(--kala-orange);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.8);
+}
+
+.kala-card-wishlist-btn.burst::after {
+  animation: kalaHeartRipple 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes kalaHeartPress {
+  0% {
+    transform: scale(1.05);
+  }
+  25% {
+    transform: scale(0.88);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  80% {
+    transform: scale(0.96);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes kalaHeartBeat {
+  0% {
+    transform: scale(0.8);
+  }
+  45% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes kalaHeartRipple {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1.65);
+    opacity: 0;
+  }
+}
+
+/* Tiny Heart Particles */
+.kala-heart-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.kala-heart-particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.kala-heart-particle.p1 {
+  animation: kalaParticleFloat1 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.kala-heart-particle.p2 {
+  animation: kalaParticleFloat2 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.kala-heart-particle.p3 {
+  animation: kalaParticleFloat3 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes kalaParticleFloat1 {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  30% {
+    transform: translate(-14px, -18px) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-22px, -28px) scale(0.4);
+    opacity: 0;
+  }
+}
+
+@keyframes kalaParticleFloat2 {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  30% {
+    transform: translate(12px, -18px) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(22px, -28px) scale(0.4);
+    opacity: 0;
+  }
+}
+
+@keyframes kalaParticleFloat3 {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  30% {
+    transform: translate(14px, 10px) scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(24px, 18px) scale(0.35);
+    opacity: 0;
+  }
 }
 
 .kala-card-badge {
@@ -116,6 +284,40 @@
   overflow: hidden;
 }
 
+/* Color Variant Swatches */
+.kala-card-swatches {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+  padding: 2px 0;
+}
+
+.kala-card-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+  transition: transform var(--kala-transition-fast), box-shadow var(--kala-transition-fast);
+  background-clip: padding-box;
+}
+
+.kala-card-swatch:hover {
+  transform: scale(1.15);
+}
+
+.kala-card-swatch.swatch-white {
+  border: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.kala-card-swatch.selected {
+  box-shadow: 0 0 0 2px var(--kala-white), 0 0 0 4px var(--kala-orange);
+}
+
 .kala-product-price-row {
   display: flex;
   align-items: center;
@@ -137,6 +339,33 @@
   color: var(--kala-text-secondary);
 }
 
+/* Add to Cart Button in Card Price Row */
+.kala-card-cart-btn {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 8px;
+  background-color: #111111;
+  color: #FFFFFF;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--kala-transition-fast, 0.2s ease), transform var(--kala-transition-fast, 0.2s ease);
+  flex-shrink: 0;
+  outline: none;
+}
+
+.kala-card-cart-btn:hover {
+  background-color: var(--kala-orange);
+  transform: scale(1.08);
+}
+
+.kala-card-cart-btn:active {
+  transform: scale(0.94);
+}
+
 /* Mobile Responsive Optimization for 2-Column Grids */
 @media (max-width: 640px) {
   .kala-product-info {
@@ -152,6 +381,32 @@
     font-size: 0.8125rem;
     line-height: 1.25;
     margin-bottom: 0.35rem;
+  }
+
+  .kala-card-swatches {
+    gap: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .kala-card-swatch {
+    width: 15px;
+    height: 15px;
+  }
+
+  .kala-card-swatch.selected {
+    box-shadow: 0 0 0 1.5px var(--kala-white), 0 0 0 3px var(--kala-orange);
+  }
+
+  .kala-card-cart-btn {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    border-radius: 6px;
+  }
+
+  .kala-card-cart-btn svg {
+    width: 13px;
+    height: 13px;
   }
 
   .kala-product-price-row {

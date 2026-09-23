@@ -14,6 +14,12 @@ export function getProductImage(filename: string): string {
   return imageMap[path] || imageMap[decodeURIComponent(path)] || path
 }
 
+export interface ProductColorVariant {
+  color: string
+  colorName: string
+  image: string
+}
+
 export interface Product {
   id: string
   name: string
@@ -23,6 +29,7 @@ export interface Product {
   images?: string[]
   description: string
   available: boolean
+  variants?: ProductColorVariant[]
 }
 
 export interface ProductHighlight {
@@ -216,15 +223,6 @@ export const PRODUCTS: Product[] = [
     available: true,
   },
   {
-    id: 'gymwear-seamless-muscle-tank-02',
-    name: 'KALA Core Seamless Muscle Tank',
-    category: 'Gymwear',
-    price: 499,
-    image: getProductImage('gymwear02.png'),
-    description: 'Drop-armhole sweat-wicking seamless muscle tank.',
-    available: true,
-  },
-  {
     id: 'gymwear-tapered-jogger-03',
     name: 'KALA Precision Tapered Training Jogger',
     category: 'Gymwear',
@@ -243,15 +241,6 @@ export const PRODUCTS: Product[] = [
     available: true,
   },
   {
-    id: 'gymwear-oversized-pump-cover-05',
-    name: 'KALA Heavy Pump Cover Tee',
-    category: 'Gymwear',
-    price: 599,
-    image: getProductImage('Gymwear-05.png'),
-    description: 'Heavyweight 300 GSM boxy cotton pump cover tee.',
-    available: true,
-  },
-  {
     id: 'gymwear-dynamic-stretch-shorts-06',
     name: 'KALA 5-Inch Dynamic Training Shorts',
     category: 'Gymwear',
@@ -259,6 +248,18 @@ export const PRODUCTS: Product[] = [
     image: getProductImage('Gymwear06.png'),
     description: '5-inch stretch training shorts with compression liner.',
     available: true,
+    variants: [
+      {
+        color: '#000000',
+        colorName: 'Black',
+        image: getProductImage('Gymwear06.png'),
+      },
+      {
+        color: '#FFFFFF',
+        colorName: 'White',
+        image: getProductImage('Gymwear-05.png'),
+      },
+    ],
   },
   {
     id: 'gymwear-hybrid-longsleeve-07',

@@ -1,5 +1,11 @@
 import mongoose, { Document, Schema } from 'mongoose'
 
+export interface IProductVariant {
+  color: string
+  colorName: string
+  image: string
+}
+
 export interface IProduct extends Document {
   id: string
   name: string
@@ -8,6 +14,7 @@ export interface IProduct extends Document {
   image: string
   description: string
   available: boolean
+  variants?: IProductVariant[]
   createdAt: Date
   updatedAt: Date
 }
@@ -51,6 +58,13 @@ const ProductSchema = new Schema<IProduct>(
       type: Boolean,
       default: true,
     },
+    variants: [
+      {
+        color: { type: String, trim: true },
+        colorName: { type: String, trim: true },
+        image: { type: String, trim: true },
+      },
+    ],
   },
   {
     timestamps: true,

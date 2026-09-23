@@ -389,13 +389,13 @@ export const CustomApparel: React.FC = () => {
 
   return (
     <main className="kala-custom-page">
-      {/* 1. HERO SECTION (Editorial Streetwear Studio) */}
+      {/* 1. HERO SECTION (Latest Approved KALA Concept) */}
       <section className="kala-hero-editorial-section" aria-labelledby="custom-hero-title">
         <div className="kala-hero-editorial-container">
           <div className="kala-hero-editorial-grid">
-            {/* Left Column: Typography, CTAs, Feature Strip, Doodle Stamp */}
+            {/* Left Column: Typography, Supporting Text, CTAs */}
             <div className="kala-hero-left-content">
-              {/* Eyebrow with line */}
+              {/* Eyebrow with horizontal line */}
               <div className="kala-hero-eyebrow-row">
                 <span className="kala-hero-eyebrow-badge">CUSTOM STUDIO</span>
                 <span className="kala-hero-eyebrow-rule" aria-hidden="true" />
@@ -404,33 +404,13 @@ export const CustomApparel: React.FC = () => {
               {/* Main Heading */}
               <h1 id="custom-hero-title" className="kala-hero-display-title">
                 MAKE IT<br />
-                <span className="kala-hero-yours-word">
-                  YOURS.
-                  <svg className="kala-hero-underline-svg" viewBox="0 0 220 18" fill="none" aria-hidden="true">
-                    <path d="M4 12C60 5 165 6 216 12" stroke="#111111" strokeWidth="4" strokeLinecap="round" />
-                  </svg>
-                </span>
+                <span className="kala-hero-yours-word">YOURS.</span>
               </h1>
 
-              {/* Description */}
+              {/* Short Supporting Text */}
               <p className="kala-hero-desc-text">
-                Create custom apparel designed around your team, community, event, brand, or personal style. Engineered with KALA luxury fabrics, heavyweight cotton, and precision garment finishes.
+                Custom apparel for your team, event or brand.
               </p>
-
-              {/* Mobile Apparel Visual (Shown strictly in mobile stack order between description & buttons) */}
-              <div className="kala-hero-mobile-apparel-stage" aria-hidden="true">
-                <div className="kala-hero-mobile-shirt-wrap">
-                  <img
-                    src="/custom-apparel/kala-hero-black-tee.jpg"
-                    alt="KALA Custom Studio Streetwear T-Shirt"
-                    className="kala-hero-mobile-shirt-img"
-                    loading="eager"
-                  />
-                  <div className="kala-hero-mobile-banner">
-                    <span>APPAREL THAT BUILDS COMMUNITIES</span>
-                  </div>
-                </div>
-              </div>
 
               {/* CTAs */}
               <div className="kala-hero-buttons-row">
@@ -447,7 +427,7 @@ export const CustomApparel: React.FC = () => {
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
-                      strokeWidth="2"
+                      strokeWidth="2.2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       aria-hidden="true"
@@ -487,7 +467,7 @@ export const CustomApparel: React.FC = () => {
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
-                      strokeWidth="1.9"
+                      strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       aria-hidden="true"
@@ -513,170 +493,34 @@ export const CustomApparel: React.FC = () => {
                   </svg>
                 </button>
               </div>
-
-              {/* 4-Item Feature Strip */}
-              <div className="kala-hero-strip">
-                <div className="kala-strip-item">
-                  <svg className="kala-strip-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" />
-                  </svg>
-                  <div className="kala-strip-text">
-                    <span className="kala-strip-word">PREMIUM</span>
-                    <span className="kala-strip-word">FABRICS</span>
-                  </div>
-                </div>
-                <div className="kala-strip-sep" aria-hidden="true" />
-                <div className="kala-strip-item">
-                  <svg className="kala-strip-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M12 20h9" />
-                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                  </svg>
-                  <div className="kala-strip-text">
-                    <span className="kala-strip-word">FULL</span>
-                    <span className="kala-strip-word">CUSTOMIZATION</span>
-                  </div>
-                </div>
-                <div className="kala-strip-sep" aria-hidden="true" />
-                <div className="kala-strip-item">
-                  <svg className="kala-strip-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                  </svg>
-                  <div className="kala-strip-text">
-                    <span className="kala-strip-word">LOW MOQ</span>
-                    <span className="kala-strip-word">FLEXIBILITY</span>
-                  </div>
-                </div>
-                <div className="kala-strip-sep" aria-hidden="true" />
-                <div className="kala-strip-item">
-                  <svg className="kala-strip-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    <path d="M9 12l2 2 4-4" />
-                  </svg>
-                  <div className="kala-strip-text">
-                    <span className="kala-strip-word">STUDIO</span>
-                    <span className="kala-strip-word">SUPPORT</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Circled Doodle Stamp: YOUR IDEA. OUR CRAFT. */}
-              <div className="kala-hero-stamp-wrap" aria-hidden="true">
-                <div className="kala-hero-stamp-content">
-                  <span className="kala-stamp-l1">YOUR IDEA.</span>
-                  <span className="kala-stamp-l2">OUR CRAFT.</span>
-                </div>
-                <svg className="kala-stamp-ring-svg" viewBox="0 0 170 76" fill="none">
-                  <ellipse cx="85" cy="38" rx="80" ry="32" stroke="#E05305" strokeWidth="2.4" strokeDasharray="3 2" transform="rotate(-6 85 38)" />
-                </svg>
-              </div>
             </div>
 
-            {/* Right Column: Editorial Streetwear Collage Composition */}
-            <div className="kala-hero-right-collage" aria-hidden="true">
-              {/* Layered concrete poster background */}
-              <div className="kala-collage-poster-board">
-                <div className="kala-poster-tape tape-tl" />
-                <div className="kala-poster-tape tape-tr" />
-              </div>
-
-              {/* Main Oversized Black Streetwear T-shirt */}
-              <div className="kala-collage-shirt-center">
-                <img
-                  src="/custom-apparel/kala-hero-black-tee.jpg"
-                  alt="KALA Custom Studio Streetwear Heavyweight T-Shirt"
-                  className="kala-collage-shirt-img"
-                  loading="eager"
-                />
-              </div>
-
-              {/* Top-Left Pinned Note: CUSTOM DESIGNS FOR REAL PEOPLE */}
-              <div className="kala-collage-pinned-card">
-                <div className="kala-card-orange-tape" />
-                <span className="kala-card-txt">CUSTOM</span>
-                <span className="kala-card-txt">DESIGNS</span>
-                <span className="kala-card-txt">FOR REAL</span>
-                <span className="kala-card-txt">PEOPLE</span>
-                <svg className="kala-card-crown-doodle" width="24" height="20" viewBox="0 0 40 32" fill="none">
-                  <path d="M6 22L3 8L14 14L20 4L26 14L37 8L34 22Z" stroke="#111111" strokeWidth="2.8" strokeLinejoin="round" />
-                  <circle cx="3" cy="8" r="1.8" fill="#111111" />
-                  <circle cx="20" cy="4" r="1.8" fill="#111111" />
-                  <circle cx="37" cy="8" r="1.8" fill="#111111" />
-                </svg>
-              </div>
-
-              {/* Top-Right Graffiti: TEAMS EVENTS BRANDS COMMUNITIES */}
-              <div className="kala-collage-graffiti-box">
-                <div className="kala-graffiti-sparks">
-                  <svg width="20" height="12" viewBox="0 0 20 12" fill="none">
-                    <path d="M3 10L1 2M10 10L10 1M16 10L19 3" stroke="#E05305" strokeWidth="2.4" strokeLinecap="round" />
-                  </svg>
-                </div>
-                <span className="kala-g-line">TEAMS</span>
-                <span className="kala-g-line">EVENTS</span>
-                <span className="kala-g-line">BRANDS</span>
-                <span className="kala-g-line">COMMUNITIES</span>
-                <svg className="kala-g-crown" width="28" height="22" viewBox="0 0 40 32" fill="none">
-                  <path d="M6 22L3 8L14 14L20 4L26 14L37 8L34 22Z" stroke="#111111" strokeWidth="2.8" strokeLinejoin="round" />
-                  <circle cx="3" cy="8" r="1.8" fill="#111111" />
-                  <circle cx="20" cy="4" r="1.8" fill="#111111" />
-                  <circle cx="37" cy="8" r="1.8" fill="#111111" />
-                </svg>
-              </div>
-
-              {/* Right Stack of 3 Polaroid Detail Cards */}
-              <div className="kala-collage-polaroids">
-                {/* Polaroid 1 */}
-                <div className="kala-polaroid pol-1">
-                  <div className="kala-polaroid-frame">
-                    <div className="kala-detail-thumb thumb-woven">
-                      <span className="kala-woven-label">KALA</span>
-                    </div>
+            {/* Right Column: Floating 3D T-Shirt Scene */}
+            <div className="kala-hero-right-stage" aria-hidden="true">
+              <div className="kala-hero-floating-scene">
+                {/* Floating T-shirt with Halo, Orbit Ring & Callouts */}
+                <div className="kala-hero-shirt-floater">
+                  <div className="kala-hero-shirt-scaler">
+                    <img
+                      src="/custom-apparel/kala-custom-hero-floating.png"
+                      alt="KALA Custom Studio Floating Streetwear T-Shirt"
+                      className="kala-hero-floating-shirt-img"
+                      loading="eager"
+                    />
                   </div>
-                  <span className="kala-polaroid-caption">PREMIUM QUALITY</span>
                 </div>
 
-                {/* Polaroid 2 */}
-                <div className="kala-polaroid pol-2">
-                  <div className="kala-polaroid-frame">
-                    <div className="kala-detail-thumb thumb-tag">
-                      <svg width="22" height="16" viewBox="0 0 40 32" fill="none">
-                        <path d="M6 22L3 8L14 14L20 4L26 14L37 8L34 22Z" stroke="#111111" strokeWidth="2.4" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                  </div>
-                  <span className="kala-polaroid-caption">YOUR BRAND HERE</span>
-                </div>
-
-                {/* Polaroid 3 */}
-                <div className="kala-polaroid pol-3">
-                  <div className="kala-polaroid-frame">
-                    <div className="kala-detail-thumb thumb-print">
-                      <svg width="28" height="20" viewBox="0 0 40 32" fill="none">
-                        <path d="M6 22L3 8L14 14L20 4L26 14L37 8L34 22Z" stroke="#FFFFFF" strokeWidth="2.6" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                  </div>
-                  <span className="kala-polaroid-caption">DETAILS THAT MATTER</span>
-                </div>
+                {/* Soft Contact Floor Shadow */}
+                <div className="kala-hero-floor-shadow" />
               </div>
-
-              {/* Bottom-Left Horizontal Orange Tape Banner */}
-              <div className="kala-collage-orange-banner">
-                <div className="kala-ob-tape-edge" />
-                <span className="kala-ob-text">APPAREL THAT BUILDS COMMUNITIES</span>
-              </div>
-
-              {/* Far-Right Vertical Orange Tape */}
-              <div className="kala-collage-tape-vertical">
-                <span className="kala-vt-title">KALA</span>
-                <span className="kala-vt-info">EST. 2024</span>
-                <span className="kala-vt-info">FOR REAL PEOPLE</span>
-                <span className="kala-vt-barcode">||||||||||||||||||</span>
-              </div>
-
-              {/* Faint Background Graffiti Watermark */}
-              <div className="kala-collage-bg-watermark">KALA</div>
             </div>
+          </div>
+
+          {/* Bottom Pagination Dots */}
+          <div className="kala-hero-dots-row" aria-hidden="true">
+            <span className="kala-hero-dot active" />
+            <span className="kala-hero-dot" />
+            <span className="kala-hero-dot" />
           </div>
         </div>
       </section>

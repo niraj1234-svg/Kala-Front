@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext'
 import HeroCarousel from '../components/HeroCarousel'
 import ProductRatingBadge from '../components/ProductRatingBadge'
 import BulkOrderCalculator from '../components/BulkOrderCalculator'
+import { flyToCart } from '../utils/cartAnimation'
 import '../styles/Home.css'
 
 export const Home: React.FC = () => {
@@ -52,7 +53,7 @@ export const Home: React.FC = () => {
     }
   }, [])
 
-  const handleQuickAdd = (e: React.MouseEvent, product: Product) => {
+  const handleQuickAdd = (e: React.MouseEvent<HTMLButtonElement>, product: Product) => {
     e.preventDefault()
     e.stopPropagation()
     addToCart(
@@ -69,6 +70,15 @@ export const Home: React.FC = () => {
     setTimeout(() => {
       setAddedProductId((current) => (current === product.id ? null : current))
     }, 1800)
+
+    // Trigger premium flying-product animation to Navbar cart icon
+    const card = (e.currentTarget as HTMLElement).closest('.kala-clean-product-card')
+    const img = card?.querySelector<HTMLImageElement>('.kala-clean-product-img')
+    flyToCart({
+      sourceElement: img || null,
+      imageSrc: product.image,
+      productName: product.name,
+    })
   }
 
   const handleWishlistClick = (e: React.MouseEvent, productId: string) => {

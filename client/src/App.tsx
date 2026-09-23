@@ -38,6 +38,7 @@ import AdminRoute from './components/admin/AdminRoute'
 import AdminLayout from './components/admin/AdminLayout'
 import NotFound from './pages/NotFound'
 import ScrollToTop from './components/ScrollToTop'
+import CartToast from './components/CartToast'
 import './App.css'
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
             <div className={`kala-app ${isAdminPath ? 'kala-admin-app' : ''}`}>
               {!isAdminPath && <Navbar />}
               {!isAdminPath && <AuthPromptModal />}
+              {!isAdminPath && <CartToast />}
               <div className={isAdminPath ? 'kala-admin-app-content' : 'kala-main-content'}>
                 <Routes>
                   {/* Customer Storefront Routes */}

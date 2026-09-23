@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect, useRef } from 'react'
+import { Link, NavLink } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
-import { fetchProducts } from '../services/productApi'
-import type { Product } from '../data/products'
+import { useWishlist } from '../context/WishlistContext'
+import SearchModal from './SearchModal'
 import logoImg from '../assets/logo.png'
 import '../styles/Navbar.css'
 
@@ -21,81 +21,43 @@ const NAV_ROUTES: NavRoute[] = [
 export const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false)
   const { cartCount } = useCart()
-
+  const { wishlistCount } = useWishlist()
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
-  const [searchQuery, setSearchQuery] = useState<string>('')
-  const [catalogProducts, setCatalogProducts] = useState<Product[]>([])
-  const [isLoadingProducts, setIsLoadingProducts] = useState<boolean>(false)
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const searchContainerRef = useRef<HTMLDivElement>(null)
-  const navigate = useNavigate()
+  const [isCartBumping, setIsCartBumping] = useState<boolean>(false)
+  const [isWishlistBumping, setIsWishlistBumping] = useState<boolean>(false)
+  const prevWishlistCountRef = useRef<number>(wishlistCount)
 
-  // Fetch catalog on first search open
+  // Trigger subtle pop/scale animation whenever wishlist count changes
   useEffect(() => {
-    if (isSearchOpen && catalogProducts.length === 0) {
-      setIsLoadingProducts(true)
-      fetchProducts()
-        .then((items) => {
-          if (items && items.length > 0) {
-            setCatalogProducts(items)
-          }
-        })
-        .catch((err) => {
-          console.warn('[Navbar] Failed to load products for search:', err)
-        })
-        .finally(() => {
-          setIsLoadingProducts(false)
-        })
+    if (prevWishlistCountRef.current !== wishlistCount) {
+      prevWishlistCountRef.current = wishlistCount
+      setIsWishlistBumping(true)
+      const timer = setTimeout(() => setIsWishlistBumping(false), 450)
+      return () => clearTimeout(timer)
     }
-    if (isSearchOpen) {
-      setTimeout(() => {
-        searchInputRef.current?.focus()
-      }, 50)
+  }, [wishlistCount])
+
+  // Listen for cart-pop animation impact
+  useEffect(() => {
+    const handleCartPop = () => {
+      setIsCartBumping(true)
+      setTimeout(() => setIsCartBumping(false), 500)
     }
-  }, [isSearchOpen, catalogProducts.length])
 
-  // Filter products by case-insensitive query on name, category, description
-  const searchResults = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase()
-    if (!q) return []
-    return catalogProducts.filter((product) => {
-      const nameMatch = product.name.toLowerCase().includes(q)
-      const catMatch = product.category.toLowerCase().includes(q)
-      const descMatch = product.description.toLowerCase().includes(q)
-      return nameMatch || catMatch || descMatch
-    })
-  }, [searchQuery, catalogProducts])
+    window.addEventListener('kala:cart-pop', handleCartPop)
+    return () => window.removeEventListener('kala:cart-pop', handleCartPop)
+  }, [])
 
-  // Close search or mobile menu on Escape key press
+  // Close mobile menu on Escape key press
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (isSearchOpen) {
-          setIsSearchOpen(false)
-        }
-        if (isMobileMenuOpen) {
-          setIsMobileMenuOpen(false)
-        }
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isSearchOpen, isMobileMenuOpen])
-
-  // Click outside to close search overlay
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        isSearchOpen &&
-        searchContainerRef.current &&
-        !searchContainerRef.current.contains(e.target as Node)
-      ) {
-        setIsSearchOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [isSearchOpen])
+  }, [isMobileMenuOpen])
 
   // Prevent background scrolling when mobile menu is open
   useEffect(() => {
@@ -111,22 +73,6 @@ export const Navbar: React.FC = () => {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false)
-  }
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const q = searchQuery.trim()
-    if (q) {
-      navigate(`/shop?search=${encodeURIComponent(q)}`)
-      setIsSearchOpen(false)
-      setSearchQuery('')
-    }
-  }
-
-  const handleSelectProduct = (productId: string) => {
-    navigate(`/product/${productId}`)
-    setIsSearchOpen(false)
-    setSearchQuery('')
   }
 
   return (
@@ -193,8 +139,8 @@ export const Navbar: React.FC = () => {
             {/* Wishlist / Heart Icon */}
             <Link
               to="/wishlist"
-              className="kala-icon-btn"
-              aria-label="View wishlist"
+              className={`kala-icon-btn ${isWishlistBumping ? 'wishlist-pop' : ''}`}
+              aria-label={`View wishlist${wishlistCount > 0 ? `, ${wishlistCount} items` : ''}`}
               title="Wishlist"
               onClick={closeMobileMenu}
             >
@@ -211,6 +157,11 @@ export const Navbar: React.FC = () => {
               >
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
+              {wishlistCount > 0 && (
+                <span className={`kala-cart-badge kala-wishlist-badge ${isWishlistBumping ? 'badge-bounce' : ''}`} aria-hidden="true">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
 
             {/* User Account Icon */}
@@ -240,7 +191,8 @@ export const Navbar: React.FC = () => {
             {/* Cart / Shopping Bag Icon */}
             <Link
               to="/cart"
-              className="kala-icon-btn"
+              className={`kala-icon-btn ${isCartBumping ? 'cart-pop' : ''}`}
+              data-cart-target="true"
               aria-label={`Shopping bag, ${cartCount} items`}
               title="Bag"
               onClick={closeMobileMenu}
@@ -260,7 +212,14 @@ export const Navbar: React.FC = () => {
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
-              <span className="kala-cart-badge" aria-hidden="true">{cartCount}</span>
+              {cartCount > 0 && (
+                <span
+                  className={`kala-cart-badge ${isCartBumping ? 'badge-bounce' : ''}`}
+                  aria-hidden="true"
+                >
+                  {cartCount}
+                </span>
+              )}
             </Link>
           </div>
 
@@ -383,10 +342,35 @@ export const Navbar: React.FC = () => {
           </Link>
 
           <div className="kala-mobile-icons-row">
+            <button
+              type="button"
+              className="kala-icon-btn"
+              aria-label="Search collection"
+              title="Search"
+              onClick={() => {
+                closeMobileMenu()
+                setIsSearchOpen(true)
+              }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
             <Link
               to="/wishlist"
-              className="kala-icon-btn"
-              aria-label="Wishlist"
+              className={`kala-icon-btn ${isWishlistBumping ? 'wishlist-pop' : ''}`}
+              aria-label={`Wishlist${wishlistCount > 0 ? `, ${wishlistCount} items` : ''}`}
               title="Wishlist"
               onClick={closeMobileMenu}
             >
@@ -401,6 +385,11 @@ export const Navbar: React.FC = () => {
               >
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
+              {wishlistCount > 0 && (
+                <span className={`kala-cart-badge kala-wishlist-badge ${isWishlistBumping ? 'badge-bounce' : ''}`} aria-hidden="true">
+                  {wishlistCount}
+                </span>
+              )}
             </Link>
             <Link
               to="/account"
@@ -426,156 +415,11 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* 5. SEARCH OVERLAY & RESULTS PANEL */}
-      {isSearchOpen && (
-        <div
-          className="kala-search-backdrop"
-          aria-hidden="true"
-          onClick={() => setIsSearchOpen(false)}
-        />
-      )}
-      <div
-        ref={searchContainerRef}
-        className={`kala-search-panel ${isSearchOpen ? 'open' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Search KALA products"
-      >
-        <div className="kala-container kala-search-container">
-          <form className="kala-search-form" onSubmit={handleSearchSubmit} role="search">
-            <span className="kala-search-input-icon" aria-hidden="true">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="11" cy="11" r="7" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-            </span>
-            <input
-              ref={searchInputRef}
-              type="search"
-              className="kala-search-input"
-              placeholder="Search products, styles, categories (e.g. hoodie, gaming, gym, oversized)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Search products"
-              autoComplete="off"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                className="kala-search-clear-btn"
-                onClick={() => setSearchQuery('')}
-                aria-label="Clear search query"
-              >
-                ✕
-              </button>
-            )}
-            <button
-              type="button"
-              className="kala-search-close-btn"
-              onClick={() => setIsSearchOpen(false)}
-              aria-label="Close search"
-            >
-              ESC ✕
-            </button>
-          </form>
-
-          {/* Search Dropdown Results */}
-          {searchQuery.trim() && (
-            <div className="kala-search-results-box" role="region" aria-label="Search results">
-              {isLoadingProducts && (
-                <div className="kala-search-status">Loading catalog...</div>
-              )}
-
-              {!isLoadingProducts && searchResults.length > 0 && (
-                <>
-                  <div className="kala-search-results-meta">
-                    <span>
-                      Found {searchResults.length} {searchResults.length === 1 ? 'match' : 'matches'}
-                    </span>
-                    <button
-                      type="button"
-                      className="kala-search-view-all-link"
-                      onClick={() => {
-                        navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`)
-                        setIsSearchOpen(false)
-                        setSearchQuery('')
-                      }}
-                    >
-                      View all in Shop →
-                    </button>
-                  </div>
-                  <ul className="kala-search-results-list" role="listbox">
-                    {searchResults.slice(0, 6).map((product) => (
-                      <li key={product.id} role="option" aria-selected="false">
-                        <button
-                          type="button"
-                          className="kala-search-result-item"
-                          onClick={() => handleSelectProduct(product.id)}
-                        >
-                          <div className="kala-search-thumb-wrap">
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              className="kala-search-thumb"
-                            />
-                          </div>
-                          <div className="kala-search-item-info">
-                            <span className="kala-search-item-cat">{product.category}</span>
-                            <span className="kala-search-item-name">{product.name}</span>
-                          </div>
-                          <div className="kala-search-item-meta">
-                            <span className="kala-search-item-price">
-                              ₹{product.price.toLocaleString('en-IN')}
-                            </span>
-                            <span
-                              className={`kala-search-item-status ${
-                                product.available ? 'in-stock' : 'sold-out'
-                              }`}
-                            >
-                              {product.available ? 'In Stock' : 'Sold Out'}
-                            </span>
-                          </div>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-
-              {!isLoadingProducts && searchResults.length === 0 && (
-                <div className="kala-search-empty">
-                  <p className="kala-search-empty-text">
-                    No products found matching "<strong>{searchQuery}</strong>".
-                  </p>
-                  <p className="kala-search-empty-hint">
-                    Try searching for <em>hoodie</em>, <em>gaming</em>, <em>gym</em>, or <em>oversized</em>.
-                  </p>
-                  <button
-                    type="button"
-                    className="kala-btn kala-btn-secondary kala-search-browse-btn"
-                    onClick={() => {
-                      navigate('/shop')
-                      setIsSearchOpen(false)
-                      setSearchQuery('')
-                    }}
-                  >
-                    Browse All Products
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+      {/* 5. FLOATING PREMIUM SEARCH OVERLAY */}
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </header>
   )
 }

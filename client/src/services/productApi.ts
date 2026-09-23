@@ -26,6 +26,34 @@ function normalizeApiProduct(p: any): Product {
     })
   }
 
+  let resolvedVariants = undefined
+  if (Array.isArray(p.variants) && p.variants.length > 0) {
+    resolvedVariants = p.variants.map((v: any) => {
+      let f = v.image || ''
+      if (f.startsWith('/images/')) {
+        f = f.replace('/images/', '')
+      }
+      return {
+        color: v.color,
+        colorName: v.colorName,
+        image: getProductImage(f),
+      }
+    })
+  } else if (p.id === 'gymwear-dynamic-stretch-shorts-06') {
+    resolvedVariants = [
+      {
+        color: '#000000',
+        colorName: 'Black',
+        image: getProductImage('Gymwear06.png'),
+      },
+      {
+        color: '#FFFFFF',
+        colorName: 'White',
+        image: getProductImage('Gymwear-05.png'),
+      },
+    ]
+  }
+
   return {
     id: p.id,
     name: p.name,
@@ -35,6 +63,7 @@ function normalizeApiProduct(p: any): Product {
     images: resolvedImages,
     description: p.description,
     available: p.available ?? true,
+    variants: resolvedVariants,
   }
 }
 
@@ -63,7 +92,13 @@ export async function fetchProducts(category?: string): Promise<Product[]> {
 
     const data = await response.json()
     if (data && Array.isArray(data.products)) {
-      return data.products.map(normalizeApiProduct)
+      return data.products
+        .filter(
+          (item: any) =>
+            item.id !== 'gymwear-oversized-pump-cover-05' &&
+            item.id !== 'gymwear-seamless-muscle-tank-02'
+        )
+        .map(normalizeApiProduct)
     }
 
     throw new Error('Unexpected API response format')
@@ -81,11 +116,12 @@ export async function fetchProducts(category?: string): Promise<Product[]> {
  * Falls back to local catalog if the API is offline.
  */
 export async function fetchProductById(id: string): Promise<Product | null> {
+  const targetId = id === 'gymwear-oversized-pump-cover-05' ? 'gymwear-dynamic-stretch-shorts-06' : id
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 3500)
 
-    const response = await fetch(`${API_BASE_URL}/products/${encodeURIComponent(id)}`, {
+    const response = await fetch(`${API_BASE_URL}/products/${encodeURIComponent(targetId)}`, {
       signal: controller.signal,
     })
     clearTimeout(timeoutId)
@@ -105,7 +141,7 @@ export async function fetchProductById(id: string): Promise<Product | null> {
 
     return null
   } catch (error) {
-    console.warn(`[ProductApi] Single product fetch for '${id}' failed, using local fallback:`, error)
-    return PRODUCTS.find((p) => p.id === id) || null
+    console.warn(`[ProductApi] Single product fetch for '${targetId}' failed, using local fallback:`, error)
+    return PRODUCTS.find((p) => p.id === targetId) || null
   }
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { PRODUCTS, getProductHighlights } from '../data/products'
-import type { Product } from '../data/products'
+import type { Product, ProductColorVariant } from '../data/products'
 import { fetchProductById } from '../services/productApi'
 import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext'
@@ -13,6 +13,8 @@ const AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 
 export const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>()
+  const [searchParams] = useSearchParams()
+  const initialColorParam = searchParams.get('color')
   const navigate = useNavigate()
   const { addToCart } = useCart()
   const { isInWishlist, toggleWishlist } = useWishlist()
@@ -22,7 +24,31 @@ export const ProductDetails: React.FC = () => {
     return PRODUCTS.find((p) => p.id === id) || null
   })
 
-  const [activeImage, setActiveImage] = useState<string>('')
+  const [selectedVariant, setSelectedVariant] = useState<ProductColorVariant | null>(() => {
+    const p = PRODUCTS.find((prod) => prod.id === id)
+    if (!p?.variants || p.variants.length === 0) return null
+    if (initialColorParam) {
+      const match = p.variants.find(
+        (v) => v.colorName.toLowerCase() === initialColorParam.toLowerCase()
+      )
+      if (match) return match
+    }
+    return p.variants[0]
+  })
+
+  const [activeImage, setActiveImage] = useState<string>(() => {
+    const p = PRODUCTS.find((prod) => prod.id === id)
+    if (p?.variants && p.variants.length > 0) {
+      if (initialColorParam) {
+        const match = p.variants.find(
+          (v) => v.colorName.toLowerCase() === initialColorParam.toLowerCase()
+        )
+        if (match) return match.image
+      }
+      return p.variants[0].image
+    }
+    return p?.image || ''
+  })
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [quantity, setQuantity] = useState<number>(1)
   const [sizeError, setSizeError] = useState<string>('')
@@ -38,21 +64,34 @@ export const ProductDetails: React.FC = () => {
     fetchProductById(id).then((liveProduct) => {
       if (isMounted && liveProduct) {
         setProduct(liveProduct)
-        setActiveImage(liveProduct.image)
+        if (liveProduct.variants && liveProduct.variants.length > 0) {
+          const match = initialColorParam
+            ? liveProduct.variants.find(
+                (v) => v.colorName.toLowerCase() === initialColorParam.toLowerCase()
+              )
+            : null
+          const chosen = match || liveProduct.variants[0]
+          setSelectedVariant(chosen)
+          setActiveImage(chosen.image)
+        } else {
+          setActiveImage(liveProduct.image)
+        }
       }
     })
 
     return () => {
       isMounted = false
     }
-  }, [id])
+  }, [id, initialColorParam])
 
   // Sync activeImage whenever product initial load or update occurs
   useEffect(() => {
-    if (product && !activeImage) {
+    if (selectedVariant) {
+      setActiveImage(selectedVariant.image)
+    } else if (product && !activeImage) {
       setActiveImage(product.image)
     }
-  }, [product, activeImage])
+  }, [product, selectedVariant, activeImage])
 
   // 1. PRODUCT NOT FOUND STATE
   if (!product) {
@@ -98,7 +137,11 @@ export const ProductDetails: React.FC = () => {
     }
 
     setSizeError('')
-    addToCart(product, selectedSize, quantity)
+    const cartProduct = {
+      ...product,
+      image: selectedVariant?.image || activeImage || product.image,
+    }
+    addToCart(cartProduct, selectedSize, quantity)
 
     if (!isAuthenticated) {
       navigate('/account?redirect=/checkout&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.')
@@ -116,13 +159,22 @@ export const ProductDetails: React.FC = () => {
     }
 
     setSizeError('')
-    addToCart(product, selectedSize, quantity)
+    const cartProduct = {
+      ...product,
+      image: selectedVariant?.image || activeImage || product.image,
+    }
+    addToCart(cartProduct, selectedSize, quantity)
     setAddedNotification(true)
 
     // Reset notification after 3 seconds
     setTimeout(() => {
       setAddedNotification(false)
     }, 3000)
+  }
+
+  const handleColorSelect = (variant: ProductColorVariant) => {
+    setSelectedVariant(variant)
+    setActiveImage(variant.image)
   }
 
   const handleSizeSelect = (size: string) => {
@@ -216,6 +268,39 @@ export const ProductDetails: React.FC = () => {
 
           {/* Short 1-line description */}
           <p className="kala-details-description">{product.description}</p>
+
+          {/* Color Variant Selector */}
+          {product.variants && product.variants.length > 0 && (
+            <div className="kala-details-color-section">
+              <span className="kala-section-label">Color</span>
+              <div className="kala-details-color-options" role="radiogroup" aria-label="Select color">
+                {product.variants.map((v) => {
+                  const isSelected = selectedVariant?.colorName === v.colorName
+                  const isWhite =
+                    v.colorName.toLowerCase() === 'white' || v.color.toLowerCase() === '#ffffff'
+                  return (
+                    <button
+                      key={v.colorName}
+                      type="button"
+                      role="radio"
+                      aria-checked={isSelected}
+                      className={`kala-details-color-btn ${isSelected ? 'selected' : ''}`}
+                      onClick={() => handleColorSelect(v)}
+                      aria-label={`${v.colorName} color`}
+                    >
+                      <span
+                        className={`kala-details-color-circle ${isSelected ? 'selected' : ''} ${
+                          isWhite ? 'is-white' : ''
+                        }`}
+                        style={{ backgroundColor: v.color }}
+                      />
+                      <span className="kala-details-color-name">{v.colorName}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Size Selector */}
           <div className="kala-size-section">

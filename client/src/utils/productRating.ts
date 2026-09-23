@@ -34,6 +34,7 @@ const PRODUCT_METRIC_MAP: Record<string, ProductRatingMetric> = {
   'gymwear-tapered-jogger-03': { rating: 4, purchaseCount: '4.4k' },
   'gymwear-endurance-dryfit-tee-04': { rating: 4, purchaseCount: '3.1k' },
   'gymwear-oversized-pump-cover-05': { rating: 4, purchaseCount: '4.9k' },
+  'gymwear-dynamic-stretch-shorts-06': { rating: 4, purchaseCount: '2.8k' },
   'gymwear-athletic-shorts-06': { rating: 4, purchaseCount: '2.7k' },
   'gymwear-stringer-vest-07': { rating: 4, purchaseCount: '3.6k' },
   'gymwear-power-lifting-tee-08': { rating: 4, purchaseCount: '4.3k' },
