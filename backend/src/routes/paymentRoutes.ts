@@ -8,15 +8,13 @@ export const paymentRouter = Router()
 /**
  * POST /api/create-order
  * Creates a Razorpay order with amount in paise, currency, and receipt.
- * Requires authenticated customer.
  */
-paymentRouter.post('/create-order', orderLimiter, requireAuth, createRazorpayOrder)
+paymentRouter.post('/create-order', orderLimiter, createRazorpayOrder)
 
 /**
  * POST /api/verify-payment
  * Verifies Razorpay HMAC-SHA256 signature and confirms order payment.
- * Requires authenticated customer.
  */
-paymentRouter.post('/verify-payment', orderLimiter, requireAuth, verifyRazorpayPayment)
+paymentRouter.post('/verify-payment', orderLimiter, verifyRazorpayPayment)
 
 export default paymentRouter
