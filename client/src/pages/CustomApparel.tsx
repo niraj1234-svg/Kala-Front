@@ -186,8 +186,6 @@ export const CustomApparel: React.FC = () => {
   }
 
   // Visual Assets from PRODUCTS
-  const heroImage = PRODUCTS.find((p) => p.id === 'gaming-pro-arena-warmup-04')?.image || PRODUCTS[0]?.image
-
   const categories = [
     {
       id: 'custom-t-shirts',
@@ -239,116 +237,446 @@ export const CustomApparel: React.FC = () => {
     },
   ]
 
-  const customerInputs = [
-    'Existing Design',
-    'Official Logo',
-    'Original Artwork',
-    'Reference Image',
-    'Team / Squad Name',
-    'College / Campus Name',
-    'Brand Identity',
-    'Custom Typography',
+  const designOptions = [
+    {
+      id: 'existing-design',
+      title: 'EXISTING DESIGN',
+      desc: 'Use your ready design files.',
+      type: 'image',
+      image: '/custom-apparel/kala-card-black-tee.jpg',
+    },
+    {
+      id: 'official-logo',
+      title: 'OFFICIAL LOGO',
+      desc: 'Use your official logo/brand assets.',
+      type: 'logo',
+    },
+    {
+      id: 'original-artwork',
+      title: 'ORIGINAL ARTWORK',
+      desc: 'Share your hand-drawn ideas or concepts.',
+      type: 'artwork',
+    },
+    {
+      id: 'reference-image',
+      title: 'REFERENCE IMAGE',
+      desc: 'Share reference images you like.',
+      type: 'reference',
+    },
+    {
+      id: 'team-squad-name',
+      title: 'TEAM / SQUAD NAME',
+      desc: 'Add your team or squad name.',
+      type: 'team',
+    },
+    {
+      id: 'college-campus-name',
+      title: 'COLLEGE / CAMPUS NAME',
+      desc: 'Add your college or campus name.',
+      type: 'campus',
+    },
+    {
+      id: 'brand-identity',
+      title: 'BRAND IDENTITY',
+      desc: 'Share your brand style and preferences.',
+      type: 'brand',
+    },
+    {
+      id: 'custom-typography',
+      title: 'CUSTOM TYPOGRAPHY',
+      desc: 'Use custom fonts or text styles.',
+      type: 'typography',
+    },
   ]
+
+  const renderDesignOptionIcon = (type: string, image?: string) => {
+    switch (type) {
+      case 'image':
+        return (
+          <div className="kala-studio-card-icon-wrap is-image">
+            <svg className="kala-studio-card-spark-tl" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M2 11L6 8M5 4L8 6" stroke="#E05305" strokeWidth="2.4" strokeLinecap="round" />
+            </svg>
+            <img src={image} alt="T-Shirt design" className="kala-studio-card-img" loading="lazy" />
+          </div>
+        )
+      case 'logo':
+        return (
+          <div className="kala-studio-card-icon-wrap is-logo">
+            <svg width="46" height="40" viewBox="0 0 54 44" fill="none" aria-hidden="true">
+              <path d="M10 24L7 11L19 17L27 6L35 17L47 11L44 24Z" stroke="#111111" strokeWidth="2.4" strokeLinejoin="round" fill="none" />
+              <circle cx="7" cy="11" r="1.8" fill="#111111" />
+              <circle cx="27" cy="6" r="1.8" fill="#111111" />
+              <circle cx="47" cy="11" r="1.8" fill="#111111" />
+              <ellipse cx="27" cy="24" rx="17" ry="2.8" stroke="#111111" strokeWidth="2" />
+              <text x="27" y="39" textAnchor="middle" fontFamily="'Caveat', cursive, sans-serif" fontSize="16" fontWeight="700" fill="#111111" letterSpacing="0.05em">KALA</text>
+            </svg>
+          </div>
+        )
+      case 'artwork':
+        return (
+          <div className="kala-studio-card-icon-wrap is-artwork">
+            <svg width="44" height="40" viewBox="0 0 46 44" fill="none" aria-hidden="true">
+              <path d="M5 12L9 15M2 23L7 23M5 34L9 31M41 12L37 15M44 23L39 23M41 34L37 31M23 4L23 9" stroke="#E05305" strokeWidth="2.2" strokeLinecap="round" />
+              <path d="M16 22C14 19 13.5 16 16 12C18.5 8 27.5 8 30 12C32.5 16 32 19 30 22C28.5 24.5 28 27 28 29H18C18 27 17.5 24.5 16 22Z" stroke="#111111" strokeWidth="2.4" strokeLinejoin="round" fill="none" />
+              <path d="M19 32H27M21 35H25" stroke="#111111" strokeWidth="2.2" strokeLinecap="round" />
+            </svg>
+          </div>
+        )
+      case 'reference':
+        return (
+          <div className="kala-studio-card-icon-wrap is-reference">
+            <svg width="46" height="42" viewBox="0 0 52 46" fill="none" aria-hidden="true">
+              <rect x="4" y="6" width="30" height="34" rx="2" transform="rotate(-7 4 6)" stroke="#111111" strokeWidth="2.2" fill="#FFFFFF" />
+              <rect x="18" y="4" width="30" height="36" rx="2" transform="rotate(6 18 4)" stroke="#111111" strokeWidth="2.2" fill="#FFFFFF" />
+              <path d="M22 26L28 17L33 23L37 19L44 28" stroke="#111111" strokeWidth="2" strokeLinejoin="round" fill="none" />
+              <circle cx="39" cy="13" r="2" fill="#E05305" />
+              <rect x="25" y="1" width="14" height="5.5" rx="1" fill="#E05305" opacity="0.85" transform="rotate(6 25 1)" />
+            </svg>
+          </div>
+        )
+      case 'team':
+        return (
+          <div className="kala-studio-card-icon-wrap is-team">
+            <svg width="46" height="40" viewBox="0 0 50 44" fill="none" aria-hidden="true">
+              <path d="M22 5L24 1M28 5L30 1" stroke="#E05305" strokeWidth="2" strokeLinecap="round" />
+              <circle cx="25" cy="13" r="4.5" stroke="#111111" strokeWidth="2.2" fill="none" />
+              <path d="M17 26C17 21.5 19.5 19.5 25 19.5C30.5 19.5 33 21.5 33 26" stroke="#111111" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+              <circle cx="12" cy="18" r="3.5" stroke="#111111" strokeWidth="2" fill="none" />
+              <path d="M5 30C5 26.5 8 24.5 13 24.5" stroke="#111111" strokeWidth="2" strokeLinecap="round" fill="none" />
+              <circle cx="38" cy="18" r="3.5" stroke="#111111" strokeWidth="2" fill="none" />
+              <path d="M45 30C45 26.5 42 24.5 37 24.5" stroke="#111111" strokeWidth="2" strokeLinecap="round" fill="none" />
+            </svg>
+          </div>
+        )
+      case 'campus':
+        return (
+          <div className="kala-studio-card-icon-wrap is-campus">
+            <svg width="46" height="40" viewBox="0 0 50 44" fill="none" aria-hidden="true">
+              <path d="M25 2V10M25 2L31 5L25 7" stroke="#E05305" strokeWidth="2" strokeLinejoin="round" fill="#E05305" />
+              <path d="M20 10H30V15H20V10Z" stroke="#111111" strokeWidth="1.9" fill="none" />
+              <path d="M12 20L25 13L38 20H12Z" stroke="#111111" strokeWidth="2.2" strokeLinejoin="round" fill="none" />
+              <path d="M15 20V32M21 20V32M29 20V32M35 20V32" stroke="#111111" strokeWidth="2" />
+              <path d="M9 32H41V36H9V32Z" stroke="#111111" strokeWidth="2.2" fill="none" />
+            </svg>
+          </div>
+        )
+      case 'brand':
+        return (
+          <div className="kala-studio-card-icon-wrap is-brand">
+            <svg width="44" height="40" viewBox="0 0 48 44" fill="none" aria-hidden="true">
+              <path d="M5 9L10 7M8 14L13 13" stroke="#E05305" strokeWidth="2.2" strokeLinecap="round" />
+              <path d="M23 7L37 21C38 22 38 24 37 25L28 34C27 35 25 35 24 34L10 20V7H23Z" stroke="#111111" strokeWidth="2.2" strokeLinejoin="round" fill="none" />
+              <circle cx="15" cy="12" r="2.2" stroke="#111111" strokeWidth="1.9" fill="none" />
+              <path d="M13 10C11 6 8 6 6 8" stroke="#E05305" strokeWidth="1.9" strokeLinecap="round" />
+            </svg>
+          </div>
+        )
+      case 'typography':
+        return (
+          <div className="kala-studio-card-icon-wrap is-typography">
+            <svg width="46" height="40" viewBox="0 0 50 44" fill="none" aria-hidden="true">
+              <text x="6" y="30" fontFamily="'Inter', Georgia, serif" fontSize="28" fontWeight="900" fill="#111111">A</text>
+              <text x="29" y="30" fontFamily="'Inter', sans-serif" fontSize="22" fontWeight="800" fill="#111111">a</text>
+              <path d="M5 36C17 34 32 34 44 36" stroke="#E05305" strokeWidth="3.5" strokeLinecap="round" />
+            </svg>
+          </div>
+        )
+      default:
+        return null
+    }
+  }
 
   return (
     <main className="kala-custom-page">
-      {/* 1. HERO SECTION */}
-      <section className="kala-container">
-        <div className="kala-custom-hero">
-          <div className="kala-custom-hero-content">
-            <p className="kala-label kala-custom-hero-badge">CUSTOM STUDIO</p>
-            <h1 className="kala-custom-hero-title">MAKE IT YOURS.</h1>
-            <p className="kala-custom-hero-desc">
-              Create custom apparel designed around your team, community, event, brand, or personal style.
-              Engineered with KALA luxury fabrics, heavyweight cotton, and precision garment finishes.
-            </p>
-            <div className="kala-custom-hero-ctas">
-              <button
-                type="button"
-                className="kala-custom-cta-btn kala-custom-cta-primary"
-                onClick={() => scrollToForm()}
-              >
-                <span className="kala-custom-cta-content">
+      {/* 1. HERO SECTION (Editorial Streetwear Studio) */}
+      <section className="kala-hero-editorial-section" aria-labelledby="custom-hero-title">
+        <div className="kala-hero-editorial-container">
+          <div className="kala-hero-editorial-grid">
+            {/* Left Column: Typography, CTAs, Feature Strip, Doodle Stamp */}
+            <div className="kala-hero-left-content">
+              {/* Eyebrow with line */}
+              <div className="kala-hero-eyebrow-row">
+                <span className="kala-hero-eyebrow-badge">CUSTOM STUDIO</span>
+                <span className="kala-hero-eyebrow-rule" aria-hidden="true" />
+              </div>
+
+              {/* Main Heading */}
+              <h1 id="custom-hero-title" className="kala-hero-display-title">
+                MAKE IT<br />
+                <span className="kala-hero-yours-word">
+                  YOURS.
+                  <svg className="kala-hero-underline-svg" viewBox="0 0 220 18" fill="none" aria-hidden="true">
+                    <path d="M4 12C60 5 165 6 216 12" stroke="#111111" strokeWidth="4" strokeLinecap="round" />
+                  </svg>
+                </span>
+              </h1>
+
+              {/* Description */}
+              <p className="kala-hero-desc-text">
+                Create custom apparel designed around your team, community, event, brand, or personal style. Engineered with KALA luxury fabrics, heavyweight cotton, and precision garment finishes.
+              </p>
+
+              {/* Mobile Apparel Visual (Shown strictly in mobile stack order between description & buttons) */}
+              <div className="kala-hero-mobile-apparel-stage" aria-hidden="true">
+                <div className="kala-hero-mobile-shirt-wrap">
+                  <img
+                    src="/custom-apparel/kala-hero-black-tee.jpg"
+                    alt="KALA Custom Studio Streetwear T-Shirt"
+                    className="kala-hero-mobile-shirt-img"
+                    loading="eager"
+                  />
+                  <div className="kala-hero-mobile-banner">
+                    <span>APPAREL THAT BUILDS COMMUNITIES</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTAs */}
+              <div className="kala-hero-buttons-row">
+                <button
+                  type="button"
+                  className="kala-hero-cta-btn kala-hero-cta-primary"
+                  onClick={() => scrollToForm()}
+                >
+                  <span className="kala-hero-btn-inner">
+                    <svg
+                      className="kala-hero-btn-icon"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 20h9" />
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                    </svg>
+                    <span>START YOUR DESIGN</span>
+                  </span>
                   <svg
-                    className="kala-custom-cta-icon"
-                    width="18"
-                    height="18"
+                    className="kala-hero-btn-arrow"
+                    width="16"
+                    height="16"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2"
+                    strokeWidth="2.4"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     aria-hidden="true"
                   >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  className="kala-hero-cta-btn kala-hero-cta-secondary"
+                  onClick={scrollToCategories}
+                >
+                  <span className="kala-hero-btn-inner">
+                    <svg
+                      className="kala-hero-btn-icon"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.9"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" />
+                    </svg>
+                    <span>VIEW APPAREL</span>
+                  </span>
+                  <svg
+                    className="kala-hero-btn-arrow"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* 4-Item Feature Strip */}
+              <div className="kala-hero-strip">
+                <div className="kala-strip-item">
+                  <svg className="kala-strip-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" />
+                  </svg>
+                  <div className="kala-strip-text">
+                    <span className="kala-strip-word">PREMIUM</span>
+                    <span className="kala-strip-word">FABRICS</span>
+                  </div>
+                </div>
+                <div className="kala-strip-sep" aria-hidden="true" />
+                <div className="kala-strip-item">
+                  <svg className="kala-strip-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M12 20h9" />
                     <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                   </svg>
-                  <span>START YOUR DESIGN</span>
-                </span>
-                <svg
-                  className="kala-custom-cta-arrow"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                className="kala-custom-cta-btn kala-custom-cta-secondary"
-                onClick={scrollToCategories}
-              >
-                <span className="kala-custom-cta-content">
-                  <svg
-                    className="kala-custom-cta-icon"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.9"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" />
+                  <div className="kala-strip-text">
+                    <span className="kala-strip-word">FULL</span>
+                    <span className="kala-strip-word">CUSTOMIZATION</span>
+                  </div>
+                </div>
+                <div className="kala-strip-sep" aria-hidden="true" />
+                <div className="kala-strip-item">
+                  <svg className="kala-strip-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                   </svg>
-                  <span>VIEW APPAREL</span>
-                </span>
-                <svg
-                  className="kala-custom-cta-arrow"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </button>
-            </div>
-          </div>
+                  <div className="kala-strip-text">
+                    <span className="kala-strip-word">LOW MOQ</span>
+                    <span className="kala-strip-word">FLEXIBILITY</span>
+                  </div>
+                </div>
+                <div className="kala-strip-sep" aria-hidden="true" />
+                <div className="kala-strip-item">
+                  <svg className="kala-strip-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
+                  <div className="kala-strip-text">
+                    <span className="kala-strip-word">STUDIO</span>
+                    <span className="kala-strip-word">SUPPORT</span>
+                  </div>
+                </div>
+              </div>
 
-          <div className="kala-custom-hero-visual">
-            <img
-              src={heroImage}
-              alt="KALA Custom Studio apparel showcase"
-              loading="eager"
-            />
+              {/* Circled Doodle Stamp: YOUR IDEA. OUR CRAFT. */}
+              <div className="kala-hero-stamp-wrap" aria-hidden="true">
+                <div className="kala-hero-stamp-content">
+                  <span className="kala-stamp-l1">YOUR IDEA.</span>
+                  <span className="kala-stamp-l2">OUR CRAFT.</span>
+                </div>
+                <svg className="kala-stamp-ring-svg" viewBox="0 0 170 76" fill="none">
+                  <ellipse cx="85" cy="38" rx="80" ry="32" stroke="#E05305" strokeWidth="2.4" strokeDasharray="3 2" transform="rotate(-6 85 38)" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Right Column: Editorial Streetwear Collage Composition */}
+            <div className="kala-hero-right-collage" aria-hidden="true">
+              {/* Layered concrete poster background */}
+              <div className="kala-collage-poster-board">
+                <div className="kala-poster-tape tape-tl" />
+                <div className="kala-poster-tape tape-tr" />
+              </div>
+
+              {/* Main Oversized Black Streetwear T-shirt */}
+              <div className="kala-collage-shirt-center">
+                <img
+                  src="/custom-apparel/kala-hero-black-tee.jpg"
+                  alt="KALA Custom Studio Streetwear Heavyweight T-Shirt"
+                  className="kala-collage-shirt-img"
+                  loading="eager"
+                />
+              </div>
+
+              {/* Top-Left Pinned Note: CUSTOM DESIGNS FOR REAL PEOPLE */}
+              <div className="kala-collage-pinned-card">
+                <div className="kala-card-orange-tape" />
+                <span className="kala-card-txt">CUSTOM</span>
+                <span className="kala-card-txt">DESIGNS</span>
+                <span className="kala-card-txt">FOR REAL</span>
+                <span className="kala-card-txt">PEOPLE</span>
+                <svg className="kala-card-crown-doodle" width="24" height="20" viewBox="0 0 40 32" fill="none">
+                  <path d="M6 22L3 8L14 14L20 4L26 14L37 8L34 22Z" stroke="#111111" strokeWidth="2.8" strokeLinejoin="round" />
+                  <circle cx="3" cy="8" r="1.8" fill="#111111" />
+                  <circle cx="20" cy="4" r="1.8" fill="#111111" />
+                  <circle cx="37" cy="8" r="1.8" fill="#111111" />
+                </svg>
+              </div>
+
+              {/* Top-Right Graffiti: TEAMS EVENTS BRANDS COMMUNITIES */}
+              <div className="kala-collage-graffiti-box">
+                <div className="kala-graffiti-sparks">
+                  <svg width="20" height="12" viewBox="0 0 20 12" fill="none">
+                    <path d="M3 10L1 2M10 10L10 1M16 10L19 3" stroke="#E05305" strokeWidth="2.4" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <span className="kala-g-line">TEAMS</span>
+                <span className="kala-g-line">EVENTS</span>
+                <span className="kala-g-line">BRANDS</span>
+                <span className="kala-g-line">COMMUNITIES</span>
+                <svg className="kala-g-crown" width="28" height="22" viewBox="0 0 40 32" fill="none">
+                  <path d="M6 22L3 8L14 14L20 4L26 14L37 8L34 22Z" stroke="#111111" strokeWidth="2.8" strokeLinejoin="round" />
+                  <circle cx="3" cy="8" r="1.8" fill="#111111" />
+                  <circle cx="20" cy="4" r="1.8" fill="#111111" />
+                  <circle cx="37" cy="8" r="1.8" fill="#111111" />
+                </svg>
+              </div>
+
+              {/* Right Stack of 3 Polaroid Detail Cards */}
+              <div className="kala-collage-polaroids">
+                {/* Polaroid 1 */}
+                <div className="kala-polaroid pol-1">
+                  <div className="kala-polaroid-frame">
+                    <div className="kala-detail-thumb thumb-woven">
+                      <span className="kala-woven-label">KALA</span>
+                    </div>
+                  </div>
+                  <span className="kala-polaroid-caption">PREMIUM QUALITY</span>
+                </div>
+
+                {/* Polaroid 2 */}
+                <div className="kala-polaroid pol-2">
+                  <div className="kala-polaroid-frame">
+                    <div className="kala-detail-thumb thumb-tag">
+                      <svg width="22" height="16" viewBox="0 0 40 32" fill="none">
+                        <path d="M6 22L3 8L14 14L20 4L26 14L37 8L34 22Z" stroke="#111111" strokeWidth="2.4" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  </div>
+                  <span className="kala-polaroid-caption">YOUR BRAND HERE</span>
+                </div>
+
+                {/* Polaroid 3 */}
+                <div className="kala-polaroid pol-3">
+                  <div className="kala-polaroid-frame">
+                    <div className="kala-detail-thumb thumb-print">
+                      <svg width="28" height="20" viewBox="0 0 40 32" fill="none">
+                        <path d="M6 22L3 8L14 14L20 4L26 14L37 8L34 22Z" stroke="#FFFFFF" strokeWidth="2.6" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  </div>
+                  <span className="kala-polaroid-caption">DETAILS THAT MATTER</span>
+                </div>
+              </div>
+
+              {/* Bottom-Left Horizontal Orange Tape Banner */}
+              <div className="kala-collage-orange-banner">
+                <div className="kala-ob-tape-edge" />
+                <span className="kala-ob-text">APPAREL THAT BUILDS COMMUNITIES</span>
+              </div>
+
+              {/* Far-Right Vertical Orange Tape */}
+              <div className="kala-collage-tape-vertical">
+                <span className="kala-vt-title">KALA</span>
+                <span className="kala-vt-info">EST. 2024</span>
+                <span className="kala-vt-info">FOR REAL PEOPLE</span>
+                <span className="kala-vt-barcode">||||||||||||||||||</span>
+              </div>
+
+              {/* Faint Background Graffiti Watermark */}
+              <div className="kala-collage-bg-watermark">KALA</div>
+            </div>
           </div>
         </div>
       </section>
@@ -394,65 +722,164 @@ export const CustomApparel: React.FC = () => {
         onGetStarted={() => scrollToForm()}
       />
 
-      {/* 4. DESIGN WITH KALA */}
-      <section className="kala-container kala-custom-section">
-        <div className="kala-section-header">
-          <p className="kala-label" style={{ color: 'var(--kala-orange)', marginBottom: '0.5rem' }}>
-            YOUR CREATIVE ASSETS
-          </p>
-          <h2 className="kala-section-title">DESIGN WITH KALA</h2>
-          <p className="kala-section-subtitle">
-            Whether you have finalized vector files or just a rough sketch, our studio works with whatever you have.
-          </p>
-        </div>
-
-        <div className="kala-design-features-grid">
-          {customerInputs.map((item) => (
-            <div key={item} className="kala-design-feature-pill">
-              {item}
+      {/* 4. DESIGN WITH KALA (Editorial Streetwear Studio) */}
+      <section className="kala-studio-section" aria-labelledby="design-with-kala-title">
+        <div className="kala-studio-container">
+          {/* Header Block & Upper Right Visual */}
+          <div className="kala-studio-header-wrap">
+            <div className="kala-studio-header-left">
+              <div className="kala-studio-eyebrow-row">
+                <span className="kala-studio-eyebrow">BRING YOUR IDEAS TO LIFE</span>
+                <span className="kala-studio-eyebrow-dash" aria-hidden="true" />
+              </div>
+              <h2 id="design-with-kala-title" className="kala-studio-title">
+                DESIGN WITH{' '}
+                <span className="kala-studio-kala-highlight">
+                  KALA
+                  <svg className="kala-studio-title-underline" viewBox="0 0 160 16" fill="none" aria-hidden="true">
+                    <path d="M3 11C45 5 115 5 157 11" stroke="#111111" strokeWidth="3.4" strokeLinecap="round" />
+                  </svg>
+                </span>
+              </h2>
+              <p className="kala-studio-desc">
+                Whether you have finalized vector files or just a rough sketch, our studio works with whatever you have.
+              </p>
             </div>
-          ))}
-        </div>
 
-        <div className="kala-custom-order-cta-wrap">
-          <button
-            type="button"
-            className="kala-custom-cta-btn kala-custom-cta-primary"
-            onClick={() => scrollToForm()}
-          >
-            <span className="kala-custom-cta-content">
-              <svg
-                className="kala-custom-cta-icon"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.9"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" />
+            {/* Desktop Upper Badge: YOUR VISION OUR CRAFT */}
+            <div className="kala-studio-badge kala-badge-vision" aria-hidden="true">
+              <div className="kala-badge-spark-top">
+                <svg width="22" height="12" viewBox="0 0 22 12" fill="none">
+                  <path d="M3 10L1 2M11 10L11 1M18 10L21 3" stroke="#E05305" strokeWidth="2.2" strokeLinecap="round" />
+                </svg>
+              </div>
+              <span className="kala-badge-text">YOUR</span>
+              <span className="kala-badge-text">VISION</span>
+              <span className="kala-badge-text">OUR CRAFT</span>
+              <svg className="kala-badge-brush-curve" viewBox="0 0 120 14" fill="none">
+                <path d="M2 9C40 4 85 5 118 8" stroke="#E05305" strokeWidth="3.4" strokeLinecap="round" />
               </svg>
-              <span>START A CUSTOM ORDER</span>
-            </span>
-            <svg
-              className="kala-custom-cta-arrow"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
-          </button>
+            </div>
+
+            {/* Upper Right Apparel Visual */}
+            <div className="kala-studio-apparel-stage" aria-hidden="true">
+              <img
+                src="/custom-apparel/kala-editorial-tee.jpg"
+                alt="KALA Custom Studio Heavyweight Apparel"
+                className="kala-studio-apparel-img"
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+          {/* Cards Grid */}
+          <div className="kala-studio-cards-row">
+            {designOptions.map((item) => (
+              <div
+                key={item.id}
+                className="kala-studio-card"
+                onClick={() => scrollToForm()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    scrollToForm()
+                  }
+                }}
+                aria-label={`${item.title}: ${item.desc}. Click to start custom order.`}
+              >
+                <div className="kala-studio-card-icon-slot">
+                  {renderDesignOptionIcon(item.type, item.image)}
+                </div>
+                <div className="kala-studio-card-content">
+                  <h3 className="kala-studio-card-heading">{item.title}</h3>
+                  <p className="kala-studio-card-text">{item.desc}</p>
+                </div>
+                <div className="kala-studio-card-foot">
+                  <span className="kala-studio-card-circle-arrow" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom Area: CTA, Trust Badges, and Lower Right Badge */}
+          <div className="kala-studio-bottom-wrap">
+            <div className="kala-studio-cta-group">
+              <button
+                type="button"
+                className="kala-studio-primary-cta"
+                onClick={() => scrollToForm()}
+              >
+                <span className="kala-studio-cta-inner">
+                  <svg
+                    className="kala-studio-cta-shirt"
+                    width="19"
+                    height="19"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.9"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" />
+                  </svg>
+                  <span>START A CUSTOM ORDER</span>
+                </span>
+                <svg
+                  className="kala-studio-cta-chevron"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </button>
+
+              <div className="kala-studio-trust-row">
+                <span className="kala-trust-item">
+                  <svg className="kala-trust-shield-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E05305" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
+                  Fast Response
+                </span>
+                <span className="kala-trust-pipe" aria-hidden="true">|</span>
+                <span className="kala-trust-item">Expert Design Support</span>
+                <span className="kala-trust-pipe" aria-hidden="true">|</span>
+                <span className="kala-trust-item">High Quality Output</span>
+              </div>
+            </div>
+
+            {/* Desktop Lower Right Badge: FROM CONCEPT TO CULTURE */}
+            <div className="kala-studio-badge kala-badge-concept" aria-hidden="true">
+              <div className="kala-badge-spark-tr">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M4 16L15 4M16 12L18 8M9 18L13 16" stroke="#E05305" strokeWidth="2.2" strokeLinecap="round" />
+                </svg>
+              </div>
+              <span className="kala-badge-text">FROM</span>
+              <span className="kala-badge-text">CONCEPT</span>
+              <span className="kala-badge-text">TO CULTURE</span>
+              <svg className="kala-badge-brush-curve stroke-wide" viewBox="0 0 140 14" fill="none">
+                <path d="M2 9C40 4 100 5 137 9" stroke="#E05305" strokeWidth="3.6" strokeLinecap="round" />
+              </svg>
+            </div>
+          </div>
         </div>
       </section>
 

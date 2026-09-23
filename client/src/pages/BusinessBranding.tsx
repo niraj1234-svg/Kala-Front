@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { PRODUCTS } from '../data/products'
 import { saveBusinessRequest } from '../types/requests'
 import {
   createBusinessRequest,
@@ -158,9 +157,7 @@ export const BusinessBranding: React.FC = () => {
     setSubmittedQuote(null)
   }
 
-  // Real Image from PRODUCTS
-  const heroImage = PRODUCTS.find((p) => p.id === 'streetwear-monochrome-sweatshirt')?.image || PRODUCTS[4]?.image
-
+  // Business Solutions Data
   const solutions = [
     {
       id: 'corporate-merch',
@@ -223,25 +220,68 @@ export const BusinessBranding: React.FC = () => {
 
   return (
     <main className="kala-business-page">
-      {/* 1. HERO SECTION */}
-      <section className="kala-container">
-        <div className="kala-business-hero">
-          <div className="kala-business-hero-content">
-            <p className="kala-label kala-business-hero-badge">CORPORATE & MERCH</p>
-            <h1 className="kala-business-hero-title">BRAND IT. WEAR IT.</h1>
-            <p className="kala-business-hero-desc">
-              Custom apparel and merchandise built for teams, companies, events, communities and growing brands.
-              From startup launch kits to multi-thousand piece corporate rollouts.
-            </p>
-            <div className="kala-business-hero-ctas">
-              <button
-                type="button"
-                className="kala-cta-btn kala-cta-primary"
-                onClick={() => scrollToForm()}
-              >
-                <span className="kala-cta-content">
-                  <span className="kala-cta-icon" aria-hidden="true">
+      {/* 1. HERO SECTION (Editorial Corporate Streetwear) */}
+      <section className="kala-business-editorial-section" aria-labelledby="business-hero-title">
+        <div className="kala-business-editorial-container">
+          <div className="kala-business-editorial-grid">
+            {/* Left Column: Typography, Annotation, CTAs, Feature Strip */}
+            <div className="kala-business-left-content">
+              {/* Eyebrow with line */}
+              <div className="kala-b-eyebrow-row">
+                <span className="kala-b-eyebrow-badge">CORPORATE & MERCH</span>
+                <span className="kala-b-eyebrow-rule" aria-hidden="true" />
+              </div>
+
+              {/* Main Heading */}
+              <h1 id="business-hero-title" className="kala-b-display-title">
+                BRAND IT.<br />
+                <span className="kala-b-wear-word">
+                  WEAR IT.
+                  <svg className="kala-b-underline-svg" viewBox="0 0 240 18" fill="none" aria-hidden="true">
+                    <path d="M4 12C65 5 180 6 236 12" stroke="#111111" strokeWidth="4" strokeLinecap="round" />
+                  </svg>
+                </span>
+              </h1>
+
+              {/* Description */}
+              <p className="kala-b-desc-text">
+                Custom apparel and merchandise built for teams, companies, events, communities and growing brands. From startup launch kits to multi-thousand piece corporate rollouts.
+              </p>
+
+              {/* Mobile Apparel Visual (Shown strictly in mobile stack order between description & category/buttons) */}
+              <div className="kala-b-mobile-apparel-stage" aria-hidden="true">
+                <div className="kala-b-mobile-frame">
+                  <img
+                    src="/business-branding/kala-corporate-tee.jpg"
+                    alt="KALA Corporate Streetwear T-Shirt"
+                    className="kala-b-mobile-shirt-img"
+                    loading="eager"
+                  />
+                  <div className="kala-b-mobile-banner">
+                    <span>APPAREL FOR REAL IMPACT</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Category Stack (Shown on mobile above buttons) */}
+              <div className="kala-b-mobile-categories-row" aria-hidden="true">
+                <span className="kala-b-mob-cat-chip">🏢 Startups</span>
+                <span className="kala-b-mob-cat-chip">🎓 Colleges</span>
+                <span className="kala-b-mob-cat-chip">📅 Events</span>
+                <span className="kala-b-mob-cat-chip">💼 Businesses</span>
+                <span className="kala-b-mob-cat-chip">🏆 Sports Teams</span>
+              </div>
+
+              {/* CTAs */}
+              <div className="kala-b-buttons-row">
+                <button
+                  type="button"
+                  className="kala-b-cta-btn kala-b-cta-primary"
+                  onClick={() => scrollToForm()}
+                >
+                  <span className="kala-b-btn-inner">
                     <svg
+                      className="kala-b-btn-icon"
                       width="18"
                       height="18"
                       viewBox="0 0 24 24"
@@ -250,38 +290,38 @@ export const BusinessBranding: React.FC = () => {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
+                      aria-hidden="true"
                     >
                       <path d="M12 20h9" />
                       <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                     </svg>
+                    <span>REQUEST A QUOTE</span>
                   </span>
-                  <span>REQUEST A QUOTE</span>
-                </span>
-                <span className="kala-cta-arrow" aria-hidden="true">
                   <svg
+                    className="kala-b-btn-arrow"
                     width="16"
                     height="16"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2.2"
+                    strokeWidth="2.4"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    aria-hidden="true"
                   >
                     <line x1="5" y1="12" x2="19" y2="12" />
                     <polyline points="12 5 19 12 12 19" />
                   </svg>
-                </span>
-              </button>
+                </button>
 
-              <button
-                type="button"
-                className="kala-cta-btn kala-cta-secondary"
-                onClick={scrollToSolutions}
-              >
-                <span className="kala-cta-content">
-                  <span className="kala-cta-icon" aria-hidden="true">
+                <button
+                  type="button"
+                  className="kala-b-cta-btn kala-b-cta-secondary"
+                  onClick={scrollToSolutions}
+                >
+                  <span className="kala-b-btn-inner">
                     <svg
+                      className="kala-b-btn-icon"
                       width="18"
                       height="18"
                       viewBox="0 0 24 24"
@@ -290,37 +330,217 @@ export const BusinessBranding: React.FC = () => {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
+                      aria-hidden="true"
                     >
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
+                    <span>EXPLORE MERCH</span>
                   </span>
-                  <span>EXPLORE MERCH</span>
-                </span>
-                <span className="kala-cta-arrow" aria-hidden="true">
                   <svg
+                    className="kala-b-btn-arrow"
                     width="16"
                     height="16"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2.2"
+                    strokeWidth="2.4"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    aria-hidden="true"
                   >
                     <line x1="5" y1="12" x2="19" y2="12" />
                     <polyline points="12 5 19 12 12 19" />
                   </svg>
-                </span>
-              </button>
-            </div>
-          </div>
+                </button>
+              </div>
 
-          <div className="kala-business-hero-visual">
-            <img
-              src={heroImage}
-              alt="KALA Corporate and Business Branding apparel"
-              loading="eager"
-            />
+              {/* 4-Item Feature Strip */}
+              <div className="kala-b-strip">
+                <div className="kala-b-strip-item">
+                  <svg className="kala-b-strip-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                  <div className="kala-b-strip-text">
+                    <span className="kala-b-strip-word">FOR TEAMS</span>
+                    <span className="kala-b-strip-word">& COMPANIES</span>
+                  </div>
+                </div>
+                <div className="kala-b-strip-sep" aria-hidden="true" />
+                <div className="kala-b-strip-item">
+                  <svg className="kala-b-strip-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                    <line x1="12" y1="22.08" x2="12" y2="12" />
+                  </svg>
+                  <div className="kala-b-strip-text">
+                    <span className="kala-b-strip-word">CUSTOM</span>
+                    <span className="kala-b-strip-word">DESIGNS</span>
+                  </div>
+                </div>
+                <div className="kala-b-strip-sep" aria-hidden="true" />
+                <div className="kala-b-strip-item">
+                  <svg className="kala-b-strip-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                    <line x1="7" y1="7" x2="7.01" y2="7" />
+                  </svg>
+                  <div className="kala-b-strip-text">
+                    <span className="kala-b-strip-word">BULK ORDERS</span>
+                    <span className="kala-b-strip-word">& BEST PRICING</span>
+                  </div>
+                </div>
+                <div className="kala-b-strip-sep" aria-hidden="true" />
+                <div className="kala-b-strip-item">
+                  <svg className="kala-b-strip-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="1" y="3" width="15" height="13" />
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                    <circle cx="5.5" cy="18.5" r="2.5" />
+                    <circle cx="18.5" cy="18.5" r="2.5" />
+                  </svg>
+                  <div className="kala-b-strip-text">
+                    <span className="kala-b-strip-word">PAN-INDIA</span>
+                    <span className="kala-b-strip-word">DELIVERY</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Editorial Corporate Streetwear Collage */}
+            <div className="kala-business-right-collage" aria-hidden="true">
+              {/* Vertical Orange Paint Splatter / Brush Stroke */}
+              <div className="kala-b-orange-splash" />
+
+              {/* Annotation between Heading & Collage */}
+              <div className="kala-b-annotation-mid">
+                <span className="kala-b-ann-line">TEAMS</span>
+                <span className="kala-b-ann-line">EVENTS</span>
+                <span className="kala-b-ann-line">BRANDS</span>
+                <span className="kala-b-ann-line">COMMUNITIES</span>
+                <svg className="kala-b-ann-curve" viewBox="0 0 90 12" fill="none">
+                  <path d="M2 8C28 4 62 4 88 8" stroke="#D94700" strokeWidth="3" strokeLinecap="round" />
+                </svg>
+              </div>
+
+              {/* Central White Board Frame with Main Black T-Shirt */}
+              <div className="kala-b-shirt-polaroid-frame">
+                <img
+                  src="/business-branding/kala-corporate-tee.jpg"
+                  alt="KALA Corporate Streetwear T-Shirt"
+                  className="kala-b-shirt-img"
+                  loading="eager"
+                />
+              </div>
+
+              {/* Left Overlapping Polaroid Detail Card */}
+              <div className="kala-b-detail-polaroid">
+                <div className="kala-b-polaroid-tape" />
+                <div className="kala-b-polaroid-inner">
+                  <img
+                    src="/business-branding/kala-corporate-detail.jpg"
+                    alt="KALA Apparel Fabric & Brand Detail"
+                    className="kala-b-polaroid-img"
+                    loading="eager"
+                  />
+                </div>
+                <div className="kala-b-polaroid-caption">
+                  <span>YOUR BRAND.</span>
+                  <span>OUR CRAFT.</span>
+                  <div className="kala-b-caption-spark">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M2 10L6 7M5 4L8 6" stroke="#D94700" strokeWidth="2.2" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                </div>
+                {/* Curved Arrow to Main Shirt */}
+                <div className="kala-b-arrow-connector">
+                  <svg width="40" height="28" viewBox="0 0 40 28" fill="none">
+                    <path d="M4 14C14 4 28 8 36 20" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" />
+                    <path d="M30 20L36 21L37 14" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Right Stack of 5 Compact Category Cards */}
+              <div className="kala-b-category-stack">
+                <div className="kala-b-cat-card">
+                  <svg className="kala-b-cat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 21h18M3 7v14M21 7v14M6 11h2M6 15h2M10 11h2M10 15h2M14 11h2M14 15h2M9 3h6v4H9z" />
+                  </svg>
+                  <span>Startups</span>
+                </div>
+                <div className="kala-b-cat-card">
+                  <svg className="kala-b-cat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                  <span>Colleges</span>
+                </div>
+                <div className="kala-b-cat-card">
+                  <svg className="kala-b-cat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  <span>Events</span>
+                </div>
+                <div className="kala-b-cat-card">
+                  <svg className="kala-b-cat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                  <span>Businesses</span>
+                </div>
+                <div className="kala-b-cat-card">
+                  <svg className="kala-b-cat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                    <path d="M4 22h16M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v3h10v-3c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34" />
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2z" />
+                  </svg>
+                  <span>Sports Teams</span>
+                </div>
+
+                {/* Double-ended Doodle Arrow */}
+                <div className="kala-b-cat-doodle-arrow">
+                  <svg width="26" height="16" viewBox="0 0 28 16" fill="none">
+                    <path d="M2 8C8 3 20 3 26 8" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" />
+                    <path d="M6 4L2 8L6 12M22 4L26 8L22 12" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Top-Right Marker: MORE THAN MERCH */}
+              <div className="kala-b-more-merch-box">
+                <div className="kala-b-mm-sparks">
+                  <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
+                    <path d="M3 10L1 2M8 10L10 2M14 10L17 3" stroke="#D94700" strokeWidth="2.2" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <span className="kala-b-mm-text">MORE</span>
+                <span className="kala-b-mm-text">THAN</span>
+                <span className="kala-b-mm-text">MERCH</span>
+                <svg className="kala-b-mm-stroke" viewBox="0 0 95 12" fill="none">
+                  <path d="M2 8C28 4 68 4 92 8" stroke="#D94700" strokeWidth="3.2" strokeLinecap="round" />
+                </svg>
+              </div>
+
+              {/* Bottom-Right Horizontal Orange Taped Banner */}
+              <div className="kala-b-bottom-banner">
+                <div className="kala-b-banner-sparks">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 14L13 2M14 10L16 6M7 16L11 14" stroke="#D94700" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <div className="kala-b-bb-text-wrap">
+                  <span className="kala-b-bb-sub">APPAREL</span>
+                  <span className="kala-b-bb-main">FOR REAL IMPACT</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
