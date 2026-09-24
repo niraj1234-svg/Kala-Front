@@ -168,8 +168,8 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({
                 </div>
                 <div className="kala-how-card-media" aria-hidden="true">
                   <img
-                    src="/how-it-works/step-2-tablet.png"
-                    alt="Design workspace tablet"
+                    src="/custom-apparel/kala-custom-hero-floating.png"
+                    alt="Custom apparel design"
                     className="kala-how-media-img kala-media-tablet"
                     loading="lazy"
                   />

@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { fetchMyOrders } from '../services/orderApi'
 import type { BackendOrder } from '../services/orderApi'
+import logoImg from '../assets/logo.png'
 import '../styles/Account.css'
 import '../styles/OrderTracking.css'
 
@@ -34,6 +35,9 @@ export const Account: React.FC = () => {
   // Login form state
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
+  const [showLoginPassword, setShowLoginPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(true)
+  const [forgotNotice, setForgotNotice] = useState(false)
   const [loginError, setLoginError] = useState('')
   const [isLoggingIn, setIsLoggingIn] = useState(false)
 
@@ -244,33 +248,28 @@ export const Account: React.FC = () => {
   // --------------------------------------------------------------------------
   if (!isAuthenticated || !currentUser) {
     return (
-      <main className="kala-container kala-account-page">
+      <main className="kala-auth-page-wrapper">
         <div className="kala-auth-card">
+          {/* Top Brand Header */}
+          <div className="kala-auth-brand-header">
+            <Link to="/" className="kala-auth-brand-logo-link" aria-label="KALA Home">
+              <img src={logoImg} alt="KALA" className="kala-auth-brand-logo" />
+            </Link>
+            <h2 className="kala-auth-brand-name">KALA</h2>
+            <span className="kala-auth-brand-tagline">WEAR YOUR STORY</span>
+          </div>
+
           {messageParam && (
             <div
               className="kala-auth-banner-notice"
               role="alert"
-              style={{
-                backgroundColor: 'rgba(234, 88, 12, 0.08)',
-                border: '1px solid var(--kala-orange)',
-                color: 'var(--kala-orange)',
-                padding: '0.9rem 1.25rem',
-                borderRadius: '6px',
-                marginBottom: '1.5rem',
-                fontSize: '0.9rem',
-                fontWeight: 600,
-                letterSpacing: '0.02em',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.6rem',
-                lineHeight: 1.4,
-              }}
             >
               <span>🔒</span>
               <span>{messageParam}</span>
             </div>
           )}
 
+          {/* Animated Tabs */}
           <div className="kala-auth-tabs" role="tablist">
             <button
               type="button"
@@ -298,11 +297,21 @@ export const Account: React.FC = () => {
             >
               CREATE ACCOUNT
             </button>
+            <div
+              className="kala-auth-tab-slider"
+              style={{
+                transform: activeTab === 'login' ? 'translateX(0%)' : 'translateX(100%)',
+              }}
+              aria-hidden="true"
+            />
           </div>
 
           {activeTab === 'login' ? (
-            <div>
-              <h1 className="kala-auth-title">Welcome Back</h1>
+            <div key="login-pane" className="kala-auth-form-pane">
+              <h1 className="kala-auth-title">
+                <span className="kala-auth-title-dark">Welcome </span>
+                <span className="kala-auth-title-orange">Back</span>
+              </h1>
               <p className="kala-auth-desc">Sign in to view your orders and account details.</p>
 
               {loginError && (
@@ -311,33 +320,94 @@ export const Account: React.FC = () => {
                 </div>
               )}
 
+              {forgotNotice && (
+                <div className="kala-auth-banner-info" role="status">
+                  <span>To reset your password, please contact support@kala.com with your registered email address.</span>
+                </div>
+              )}
+
               <form onSubmit={handleLoginSubmit} noValidate className="kala-auth-form">
                 <div className="kala-form-group">
                   <label htmlFor="loginEmail" className="kala-form-label">
                     Email Address *
                   </label>
-                  <input
-                    id="loginEmail"
-                    type="email"
-                    className="kala-form-input"
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                    autoComplete="email"
-                  />
+                  <div className="kala-input-with-icon">
+                    <span className="kala-input-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                      </svg>
+                    </span>
+                    <input
+                      id="loginEmail"
+                      type="email"
+                      className="kala-form-input has-icon"
+                      placeholder="Enter your email"
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      autoComplete="email"
+                    />
+                  </div>
                 </div>
 
                 <div className="kala-form-group">
                   <label htmlFor="loginPassword" className="kala-form-label">
                     Password *
                   </label>
-                  <input
-                    id="loginPassword"
-                    type="password"
-                    className="kala-form-input"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    autoComplete="current-password"
-                  />
+                  <div className="kala-input-with-icon">
+                    <span className="kala-input-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      </svg>
+                    </span>
+                    <input
+                      id="loginPassword"
+                      type={showLoginPassword ? 'text' : 'password'}
+                      className="kala-form-input has-icon has-toggle"
+                      placeholder="Enter your password"
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      className="kala-password-toggle-btn"
+                      onClick={() => setShowLoginPassword(!showLoginPassword)}
+                      aria-label={showLoginPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showLoginPassword ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="kala-auth-options-row">
+                  <label className="kala-remember-me-label">
+                    <input
+                      type="checkbox"
+                      className="kala-remember-checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                    />
+                    <span>Remember me</span>
+                  </label>
+                  <button
+                    type="button"
+                    className="kala-forgot-link"
+                    onClick={() => setForgotNotice((prev) => !prev)}
+                  >
+                    Forgot password?
+                  </button>
                 </div>
 
                 <button
@@ -345,13 +415,32 @@ export const Account: React.FC = () => {
                   className="kala-btn kala-btn-primary kala-auth-submit-btn"
                   disabled={isLoggingIn}
                 >
-                  {isLoggingIn ? 'LOGGING IN...' : 'LOG IN'}
+                  <span>{isLoggingIn ? 'LOGGING IN...' : 'LOG IN'}</span>
+                  <span className="kala-auth-submit-arrow">&rarr;</span>
                 </button>
               </form>
+
+              <div className="kala-auth-footer-switch">
+                <span>New to KALA?</span>{' '}
+                <button
+                  type="button"
+                  className="kala-auth-switch-btn"
+                  onClick={() => {
+                    setActiveTab('register')
+                    setLoginError('')
+                    setRegErrors({})
+                  }}
+                >
+                  Create an account
+                </button>
+              </div>
             </div>
           ) : (
-            <div>
-              <h1 className="kala-auth-title">Create Account</h1>
+            <div key="register-pane" className="kala-auth-form-pane">
+              <h1 className="kala-auth-title">
+                <span className="kala-auth-title-dark">Create Your </span>
+                <span className="kala-auth-title-orange">Account</span>
+              </h1>
               <p className="kala-auth-desc">Join KALA for personalized orders and saved items.</p>
 
               {regErrors.banner && (
@@ -360,15 +449,7 @@ export const Account: React.FC = () => {
                   {regErrors.banner.includes('already exists') && (
                     <button
                       type="button"
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'var(--kala-orange)',
-                        fontWeight: 700,
-                        textDecoration: 'underline',
-                        cursor: 'pointer',
-                        marginLeft: '0.5rem',
-                      }}
+                      className="kala-auth-switch-btn"
                       onClick={() => setActiveTab('login')}
                     >
                       Log in here
@@ -383,16 +464,25 @@ export const Account: React.FC = () => {
                     <label htmlFor="regFirstName" className="kala-form-label">
                       First Name *
                     </label>
-                    <input
-                      id="regFirstName"
-                      type="text"
-                      className={`kala-form-input ${regErrors.firstName ? 'error' : ''}`}
-                      value={regFirstName}
-                      onChange={(e) => {
-                        setRegFirstName(e.target.value)
-                        if (regErrors.firstName) setRegErrors((prev) => ({ ...prev, firstName: '' }))
-                      }}
-                    />
+                    <div className="kala-input-with-icon">
+                      <span className="kala-input-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                      </span>
+                      <input
+                        id="regFirstName"
+                        type="text"
+                        placeholder="First name"
+                        className={`kala-form-input has-icon ${regErrors.firstName ? 'error' : ''}`}
+                        value={regFirstName}
+                        onChange={(e) => {
+                          setRegFirstName(e.target.value)
+                          if (regErrors.firstName) setRegErrors((prev) => ({ ...prev, firstName: '' }))
+                        }}
+                      />
+                    </div>
                     {regErrors.firstName && (
                       <span className="kala-form-error">{regErrors.firstName}</span>
                     )}
@@ -402,16 +492,25 @@ export const Account: React.FC = () => {
                     <label htmlFor="regLastName" className="kala-form-label">
                       Last Name *
                     </label>
-                    <input
-                      id="regLastName"
-                      type="text"
-                      className={`kala-form-input ${regErrors.lastName ? 'error' : ''}`}
-                      value={regLastName}
-                      onChange={(e) => {
-                        setRegLastName(e.target.value)
-                        if (regErrors.lastName) setRegErrors((prev) => ({ ...prev, lastName: '' }))
-                      }}
-                    />
+                    <div className="kala-input-with-icon">
+                      <span className="kala-input-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                      </span>
+                      <input
+                        id="regLastName"
+                        type="text"
+                        placeholder="Last name"
+                        className={`kala-form-input has-icon ${regErrors.lastName ? 'error' : ''}`}
+                        value={regLastName}
+                        onChange={(e) => {
+                          setRegLastName(e.target.value)
+                          if (regErrors.lastName) setRegErrors((prev) => ({ ...prev, lastName: '' }))
+                        }}
+                      />
+                    </div>
                     {regErrors.lastName && (
                       <span className="kala-form-error">{regErrors.lastName}</span>
                     )}
@@ -422,16 +521,25 @@ export const Account: React.FC = () => {
                   <label htmlFor="regEmail" className="kala-form-label">
                     Email Address *
                   </label>
-                  <input
-                    id="regEmail"
-                    type="email"
-                    className={`kala-form-input ${regErrors.email ? 'error' : ''}`}
-                    value={regEmail}
-                    onChange={(e) => {
-                      setRegEmail(e.target.value)
-                      if (regErrors.email) setRegErrors((prev) => ({ ...prev, email: '' }))
-                    }}
-                  />
+                  <div className="kala-input-with-icon">
+                    <span className="kala-input-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                      </svg>
+                    </span>
+                    <input
+                      id="regEmail"
+                      type="email"
+                      placeholder="Enter your email"
+                      className={`kala-form-input has-icon ${regErrors.email ? 'error' : ''}`}
+                      value={regEmail}
+                      onChange={(e) => {
+                        setRegEmail(e.target.value)
+                        if (regErrors.email) setRegErrors((prev) => ({ ...prev, email: '' }))
+                      }}
+                    />
+                  </div>
                   {regErrors.email && (
                     <span className="kala-form-error">{regErrors.email}</span>
                   )}
@@ -441,17 +549,24 @@ export const Account: React.FC = () => {
                   <label htmlFor="regPhone" className="kala-form-label">
                     Phone Number (10 Digits) *
                   </label>
-                  <input
-                    id="regPhone"
-                    type="tel"
-                    placeholder="e.g. 9876543210 (10 digits)"
-                    className={`kala-form-input ${regErrors.phone ? 'error' : ''}`}
-                    value={regPhone}
-                    onChange={(e) => {
-                      setRegPhone(e.target.value)
-                      if (regErrors.phone) setRegErrors((prev) => ({ ...prev, phone: '' }))
-                    }}
-                  />
+                  <div className="kala-input-with-icon">
+                    <span className="kala-input-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                    </span>
+                    <input
+                      id="regPhone"
+                      type="tel"
+                      placeholder="e.g. 9876543210 (10 digits)"
+                      className={`kala-form-input has-icon ${regErrors.phone ? 'error' : ''}`}
+                      value={regPhone}
+                      onChange={(e) => {
+                        setRegPhone(e.target.value)
+                        if (regErrors.phone) setRegErrors((prev) => ({ ...prev, phone: '' }))
+                      }}
+                    />
+                  </div>
                   {regErrors.phone && (
                     <span className="kala-form-error">{regErrors.phone}</span>
                   )}
@@ -461,11 +576,18 @@ export const Account: React.FC = () => {
                   <label htmlFor="regPassword" className="kala-form-label">
                     Password (min 8 chars) *
                   </label>
-                  <div className="kala-password-input-wrap">
+                  <div className="kala-input-with-icon">
+                    <span className="kala-input-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      </svg>
+                    </span>
                     <input
                       id="regPassword"
                       type={showRegPassword ? 'text' : 'password'}
-                      className={`kala-form-input ${regErrors.password ? 'error' : ''}`}
+                      placeholder="Create a strong password"
+                      className={`kala-form-input has-icon has-toggle ${regErrors.password ? 'error' : ''}`}
                       value={regPassword}
                       onChange={(e) => {
                         setRegPassword(e.target.value)
@@ -540,11 +662,18 @@ export const Account: React.FC = () => {
                   <label htmlFor="regConfirmPassword" className="kala-form-label">
                     Confirm Password *
                   </label>
-                  <div className="kala-password-input-wrap">
+                  <div className="kala-input-with-icon">
+                    <span className="kala-input-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      </svg>
+                    </span>
                     <input
                       id="regConfirmPassword"
                       type={showRegConfirmPassword ? 'text' : 'password'}
-                      className={`kala-form-input ${regErrors.confirmPassword ? 'error' : ''}`}
+                      placeholder="Re-enter your password"
+                      className={`kala-form-input has-icon has-toggle ${regErrors.confirmPassword ? 'error' : ''}`}
                       value={regConfirmPassword}
                       onChange={(e) => {
                         setRegConfirmPassword(e.target.value)
@@ -580,9 +709,25 @@ export const Account: React.FC = () => {
                   className="kala-btn kala-btn-primary kala-auth-submit-btn"
                   disabled={isRegistering}
                 >
-                  {isRegistering ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
+                  <span>{isRegistering ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}</span>
+                  <span className="kala-auth-submit-arrow">&rarr;</span>
                 </button>
               </form>
+
+              <div className="kala-auth-footer-switch">
+                <span>Already have an account?</span>{' '}
+                <button
+                  type="button"
+                  className="kala-auth-switch-btn"
+                  onClick={() => {
+                    setActiveTab('login')
+                    setLoginError('')
+                    setRegErrors({})
+                  }}
+                >
+                  Log in
+                </button>
+              </div>
             </div>
           )}
         </div>

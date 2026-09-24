@@ -1,30 +1,105 @@
 /* ==========================================================================
-   KALA CUSTOMER ACCOUNT STYLES
+   KALA CUSTOMER ACCOUNT & AUTHENTICATION STYLES
    ========================================================================== */
 
-.kala-account-page {
-  padding-top: clamp(2rem, 4vw, 3.5rem);
-  padding-bottom: clamp(3rem, 6vw, 5rem);
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
 /* --------------------------------------------------------------------------
-   1. AUTHENTICATION (LOGIN / REGISTER) CONTAINER
+   1. AUTHENTICATION (LOGIN / REGISTER) PAGE & CARD
    -------------------------------------------------------------------------- */
-.kala-auth-card {
-  background-color: var(--kala-white);
-  border: 1px solid var(--kala-border);
-  padding: clamp(1.75rem, 4vw, 2.75rem);
-  max-width: 520px;
-  margin-left: auto;
-  margin-right: auto;
+@keyframes kalaCardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.kala-auth-tabs {
+@keyframes kalaFormSwitch {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kala-auth-page-wrapper {
+  min-height: calc(100vh - 76px);
   display: flex;
-  border-bottom: 2px solid var(--kala-border);
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2.5rem, 5vw, 4.5rem) 1.25rem;
+  background-color: #F8F4EE;
+  background-image: 
+    radial-gradient(circle at 50% 12%, rgba(232, 90, 42, 0.04) 0%, transparent 60%),
+    radial-gradient(circle at 85% 85%, rgba(0, 0, 0, 0.02) 0%, transparent 50%);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.kala-auth-card {
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 20px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
+  padding: clamp(2rem, 5vw, 2.75rem) clamp(1.5rem, 4vw, 2.5rem);
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  position: relative;
+  animation: kalaCardEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* KALA Brand Header */
+.kala-auth-brand-header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.kala-auth-brand-logo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.4rem;
+  text-decoration: none;
+}
+
+.kala-auth-brand-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+}
+
+.kala-auth-brand-name {
+  font-family: var(--kala-font-primary, 'Inter', sans-serif);
+  font-size: 1.45rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: #111111;
+  margin: 0 0 0.2rem 0;
+  line-height: 1.1;
+}
+
+.kala-auth-brand-tagline {
+  font-family: var(--kala-font-primary, 'Inter', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--kala-text-secondary, #777777);
+  display: block;
+}
+
+/* Tabs */
+.kala-auth-tabs {
+  position: relative;
+  display: flex;
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
   margin-bottom: 2rem;
 }
 
@@ -32,73 +107,336 @@
   flex: 1;
   background: transparent;
   border: none;
-  padding: 0.85rem;
-  font-family: var(--kala-font-primary);
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  padding: 0.85rem 0.5rem;
+  font-family: var(--kala-font-primary, 'Inter', sans-serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--kala-text-secondary);
+  color: #666666;
   cursor: pointer;
+  text-align: center;
+  transition: color 220ms ease;
   position: relative;
-  transition: color var(--kala-transition-fast);
+  outline: none;
 }
 
 .kala-auth-tab:hover {
-  color: var(--kala-black);
+  color: #111111;
 }
 
 .kala-auth-tab.active {
-  color: var(--kala-orange);
+  color: var(--kala-orange, #E85A2A);
+  font-weight: 800;
 }
 
-.kala-auth-tab.active::after {
-  content: '';
+.kala-auth-tab-slider {
   position: absolute;
-  bottom: -2px;
+  bottom: -1.5px;
   left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: var(--kala-orange);
+  width: 50%;
+  height: 2.5px;
+  background-color: var(--kala-orange, #E85A2A);
+  border-radius: 2px;
+  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Form Pane Switch Animation */
+.kala-auth-form-pane {
+  animation: kalaFormSwitch 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .kala-auth-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--kala-black);
-  margin-bottom: 0.5rem;
+  font-family: var(--kala-font-primary, 'Inter', sans-serif);
+  font-size: clamp(1.4rem, 2.5vw, 1.65rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 0.4rem 0;
+}
+
+.kala-auth-title-dark {
+  color: #111111;
+}
+
+.kala-auth-title-orange {
+  color: var(--kala-orange, #E85A2A);
 }
 
 .kala-auth-desc {
-  font-size: 0.875rem;
-  color: var(--kala-text-secondary);
-  margin-bottom: 1.75rem;
+  font-size: 0.9rem;
+  color: #666666;
+  line-height: 1.5;
+  margin: 0 0 1.5rem 0;
 }
 
 .kala-auth-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.2rem;
 }
 
+/* Inputs with Icons & Focus states */
+.kala-input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.kala-input-icon {
+  position: absolute;
+  left: 1rem;
+  color: #888888;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: color 200ms ease;
+  z-index: 1;
+}
+
+.kala-input-with-icon:focus-within .kala-input-icon {
+  color: var(--kala-orange, #E85A2A);
+}
+
+.kala-form-input {
+  width: 100%;
+  height: 48px;
+  border: 1.5px solid #E5E0D8;
+  border-radius: 12px;
+  background-color: #FFFFFF;
+  font-family: var(--kala-font-primary, 'Inter', sans-serif);
+  font-size: 0.92rem;
+  color: #111111;
+  padding: 0 1rem;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.kala-form-input.has-icon {
+  padding-left: 2.85rem;
+}
+
+.kala-form-input.has-toggle {
+  padding-right: 2.85rem;
+}
+
+.kala-form-input:focus {
+  border-color: var(--kala-orange, #E85A2A);
+  box-shadow: 0 0 0 3px rgba(232, 90, 42, 0.12);
+}
+
+.kala-form-input.error {
+  border-color: #DC2626;
+}
+
+.kala-form-input::placeholder {
+  color: #999999;
+}
+
+/* Password Toggle Button */
+.kala-password-toggle-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.35rem;
+  color: #888888;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: color 180ms ease, background-color 180ms ease;
+  z-index: 1;
+}
+
+.kala-password-toggle-btn:hover {
+  color: #111111;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Remember Me & Forgot Password */
+.kala-auth-options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: -0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.kala-remember-me-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #444444;
+  cursor: pointer;
+  user-select: none;
+}
+
+.kala-remember-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--kala-orange, #E85A2A);
+  cursor: pointer;
+}
+
+.kala-forgot-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--kala-orange, #E85A2A);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity 180ms ease;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.kala-forgot-link:hover {
+  opacity: 0.85;
+}
+
+/* Submit Button */
+.kala-auth-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  height: 50px;
+  border-radius: 12px;
+  background-color: var(--kala-orange, #E85A2A);
+  color: #FFFFFF;
+  font-family: var(--kala-font-primary, 'Inter', sans-serif);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 14px rgba(232, 90, 42, 0.2);
+}
+
+.kala-auth-submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(232, 90, 42, 0.28);
+  background-color: #D94700;
+}
+
+.kala-auth-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.kala-auth-submit-arrow {
+  font-size: 1.1rem;
+  transition: transform 200ms ease;
+}
+
+.kala-auth-submit-btn:hover:not(:disabled) .kala-auth-submit-arrow {
+  transform: translateX(3px);
+}
+
+/* Footer Switch */
+.kala-auth-footer-switch {
+  margin-top: 1.75rem;
+  text-align: center;
+  font-size: 0.88rem;
+  color: #666666;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 1.25rem;
+}
+
+.kala-auth-switch-btn {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--kala-orange, #E85A2A);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 180ms ease;
+}
+
+.kala-auth-switch-btn:hover {
+  opacity: 0.85;
+}
+
+/* Banners */
 .kala-auth-banner-error {
   background-color: #fef2f2;
   border: 1px solid #f87171;
   color: #b91c1c;
   padding: 0.75rem 1rem;
+  border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 1rem;
+  animation: kalaFormSwitch 250ms ease both;
 }
 
-.kala-auth-submit-btn {
-  width: 100%;
-  padding: 1rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-top: 0.75rem;
+.kala-auth-banner-info {
+  background-color: rgba(232, 90, 42, 0.08);
+  border: 1px solid rgba(232, 90, 42, 0.25);
+  color: #111111;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  margin-bottom: 1.25rem;
+  animation: kalaFormSwitch 250ms ease both;
+}
+
+.kala-auth-banner-notice {
+  background-color: rgba(234, 88, 12, 0.08);
+  border: 1px solid var(--kala-orange, #E85A2A);
+  color: var(--kala-orange, #E85A2A);
+  padding: 0.85rem 1.15rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  line-height: 1.4;
+  animation: kalaFormSwitch 250ms ease both;
+}
+
+/* Accessibility / Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .kala-auth-card,
+  .kala-auth-form-pane,
+  .kala-auth-tab-slider,
+  .kala-auth-submit-btn,
+  .kala-auth-submit-arrow,
+  .kala-auth-banner-info,
+  .kala-auth-banner-notice,
+  .kala-auth-banner-error {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+.kala-account-page {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* --------------------------------------------------------------------------
