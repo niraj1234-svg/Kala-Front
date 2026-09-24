@@ -230,198 +230,34 @@
   transform: translate(calc(var(--mouse-x, 0) * 3px), calc(var(--mouse-y, 0) * 3px)) scale(1.05);
 }
 
-/* 2. Orange Orbit System (Dual-layer: Back Arc z-index 1, Front Arc z-index 3) */
-.kala-hero-orbit-wrap {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  max-width: 640px;
-  height: 320px;
-  margin-top: -160px;
-  margin-left: -50%;
-  pointer-events: none;
-  animation: kalaHeroOrbitEntrance 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
-  transition: transform 0.25s ease-out, filter 0.6s ease;
-  transform: translate(calc(var(--mouse-x, 0) * 4px), calc(var(--mouse-y, 0) * 4px));
-}
 
-.kala-hero-orbit-back {
-  z-index: 1;
-  opacity: 0.65;
-}
-
-.kala-hero-orbit-front {
-  z-index: 3;
-  opacity: 0.95;
-}
-
-.kala-hero-floating-scene:hover .kala-hero-orbit-wrap {
-  filter: drop-shadow(0 0 10px rgba(233, 75, 0, 0.45));
-}
-
-.kala-hero-floating-scene:hover .kala-hero-orbit-back {
-  opacity: 0.85;
-}
-
-.kala-hero-floating-scene:hover .kala-hero-orbit-front {
-  opacity: 1;
-}
-
-.kala-hero-orbit-svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.kala-hero-orbit-path-back {
-  animation: kalaOrbitDashBack 16s linear infinite;
-}
-
-.kala-hero-orbit-path-front {
-  animation: kalaOrbitDashFront 16s linear infinite;
-}
-
-@keyframes kalaOrbitDashBack {
-  0% {
-    stroke-dashoffset: 0;
-  }
-  100% {
-    stroke-dashoffset: 96;
-  }
-}
-
-@keyframes kalaOrbitDashFront {
-  0% {
-    stroke-dashoffset: 0;
-  }
-  100% {
-    stroke-dashoffset: 96;
-  }
-}
-
-/* 360° VIEW Orbit Badge */
-.kala-hero-orbit-carrier {
-  position: absolute;
-  bottom: 18%;
-  left: 4%;
-  z-index: 4;
-  pointer-events: none;
-  animation: kalaHeroOrbitEntrance 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both;
-  transition: transform 0.25s ease-out;
-  transform: translate(calc(var(--mouse-x, 0) * 5px), calc(var(--mouse-y, 0) * 5px));
-}
-
-.kala-hero-360-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  background: rgba(18, 18, 18, 0.9);
-  border: 1.5px solid rgba(233, 75, 0, 0.45);
-  box-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.18), 0 0 12px rgba(233, 75, 0, 0.2);
-  border-radius: 9999px;
-  padding: 0.38rem 0.85rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  animation: kalaOrbitBadgePulse 4.5s ease-in-out infinite;
-}
-
-.kala-hero-floating-scene:hover .kala-hero-360-badge {
-  border-color: #E94B00;
-  box-shadow: 0 8px 28px -2px rgba(0, 0, 0, 0.22), 0 0 16px rgba(233, 75, 0, 0.4);
-  transform: scale(1.05);
-}
-
-.kala-hero-360-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: #E94B00;
-  box-shadow: 0 0 8px #E94B00;
-  animation: kalaBeaconPulse 2s ease-in-out infinite;
-}
-
-@keyframes kalaBeaconPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.35);
-    opacity: 0.75;
-  }
-}
-
-@keyframes kalaOrbitBadgePulse {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-3px);
-  }
-}
-
-.kala-hero-360-text-col {
-  display: flex;
-  align-items: baseline;
-  gap: 0.3rem;
-  line-height: 1;
-}
-
-.kala-hero-360-degree {
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: #FFFFFF;
-  letter-spacing: 0.04em;
-}
-
-.kala-hero-360-sub {
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: #E94B00;
-  letter-spacing: 0.1em;
-}
-
-/* 3. Floating & Tilting T-shirt Wrapper */
-.kala-hero-shirt-floater {
+/* 3. Floating T-shirt Wrapper with Subtle Normal Animation */
+.kala-hero-shirt-stage {
   position: relative;
   z-index: 2;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation:
-    kalaHeroShirtEntrance 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both,
-    kalaHeroFloat 5.2s ease-in-out infinite 1.15s;
-  will-change: transform;
+  animation: kalaHeroShirtEntrance 0.95s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+  will-change: transform, opacity;
   transition: transform 0.25s ease-out;
-  transform: translate(calc(var(--mouse-x, 0) * 8px), calc(var(--mouse-y, 0) * 8px));
+  transform: translate(calc(var(--mouse-x, 0) * 6px), calc(var(--mouse-y, 0) * 6px));
 }
 
-.kala-hero-shirt-tilter {
+.kala-hero-shirt-wrap {
   position: relative;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: kalaHeroTilt 5.8s ease-in-out infinite;
+  animation: subtleFloat 5s ease-in-out infinite 1.2s;
   will-change: transform;
+  transition: transform 0.4s ease;
 }
 
-.kala-hero-shirt-scaler {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
-  will-change: transform, filter;
-}
-
-.kala-hero-floating-scene:hover .kala-hero-shirt-scaler {
-  transform: scale(1.03) rotate(1deg);
-  filter: drop-shadow(0 20px 34px rgba(233, 75, 0, 0.12));
+.kala-hero-floating-scene:hover .kala-hero-shirt-wrap {
+  transform: scale(1.02);
 }
 
 .kala-hero-floating-shirt-img {
@@ -431,93 +267,52 @@
   object-fit: contain;
   display: block;
   pointer-events: none;
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.08));
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.1));
 }
 
-/* Floating Animation Keyframes (Requirement 4: 10–16px, 4.5–6s, ease-in-out) */
-@keyframes kalaHeroFloat {
+/* Subtle Floating Animation Keyframes (Requirement 4: 0 -> -6px -> 0, 5s ease-in-out) */
+@keyframes subtleFloat {
   0% {
-    transform: translateY(0px);
-  }
-  25% {
-    /* UP */
-    transform: translateY(-14px);
+    transform: translateY(0);
   }
   50% {
-    /* slightly down */
-    transform: translateY(3px);
-  }
-  75% {
-    /* back to center / slightly up */
-    transform: translateY(-7px);
+    transform: translateY(-6px);
   }
   100% {
-    transform: translateY(0px);
+    transform: translateY(0);
   }
 }
 
-/* Subtle Tilt Keyframes (Requirement 5: -2deg -> 0deg -> +2deg -> 0deg, 5-6s) */
-@keyframes kalaHeroTilt {
-  0% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(-2deg);
-  }
-  50% {
-    transform: rotate(0deg);
-  }
-  75% {
-    transform: rotate(2deg);
-  }
-  100% {
-    transform: rotate(0deg);
-  }
-}
-
-/* 4. Dynamic Soft Shadow (Requirement 6: Reacts to shirt's vertical movement) */
+/* 4. Dynamic Soft Shadow (Syncs with shirt's subtle float) */
 .kala-hero-floor-shadow {
   width: 62%;
-  height: 24px;
+  height: 22px;
   background: radial-gradient(ellipse at center, rgba(30, 20, 10, 0.28) 0%, rgba(30, 20, 10, 0.08) 50%, transparent 75%);
   border-radius: 50%;
   filter: blur(4px);
   margin-top: -10px;
-  animation: kalaHeroShadowBreathe 5.2s ease-in-out infinite 1.15s;
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: subtleShadowBreathe 5s ease-in-out infinite 1.2s;
+  transition: opacity 0.5s ease, transform 0.5s ease;
   will-change: transform, opacity;
   pointer-events: none;
   z-index: 1;
 }
 
 .kala-hero-floating-scene:hover .kala-hero-floor-shadow {
-  opacity: 0.44;
-  transform: scale(1.05);
+  opacity: 0.36;
+  transform: scale(1.03);
 }
 
-@keyframes kalaHeroShadowBreathe {
-  0% {
+@keyframes subtleShadowBreathe {
+  0%, 100% {
     transform: scale(1);
     opacity: 0.28;
-  }
-  25% {
-    /* Shirt moves UP -> shadow becomes slightly smaller & lighter */
-    transform: scale(0.85);
-    opacity: 0.16;
   }
   50% {
-    /* Shirt moves DOWN -> shadow becomes slightly larger & darker */
-    transform: scale(1.08);
-    opacity: 0.38;
-  }
-  75% {
-    /* Shirt back to center / slightly up */
-    transform: scale(0.92);
-    opacity: 0.22;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.28;
+    transform: scale(0.95);
+    opacity: 0.2;
   }
 }
 
@@ -531,9 +326,7 @@
   flex-direction: column;
   align-items: center;
   pointer-events: none;
-  animation:
-    kalaHeroCalloutEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.85s both,
-    kalaHeroCalloutFloat 5.2s ease-in-out infinite 1.65s;
+  animation: kalaHeroCalloutEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.85s both;
   transition: transform 0.25s ease-out;
   transform: translate(calc(var(--mouse-x, 0) * 4px), calc(var(--mouse-y, 0) * 4px));
 }
@@ -558,16 +351,7 @@
   filter: drop-shadow(0 2px 4px rgba(233, 75, 0, 0.25));
 }
 
-@keyframes kalaHeroCalloutFloat {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-4px) rotate(1deg);
-  }
-}
-
-/* Entrance Animation Keyframes (Requirement 11) */
+/* Entrance Animation Keyframes */
 @keyframes kalaHeroFadeSlideUp {
   0% {
     opacity: 0;
@@ -582,22 +366,11 @@
 @keyframes kalaHeroShirtEntrance {
   0% {
     opacity: 0;
-    transform: scale(0.94);
+    transform: translateY(20px) scale(0.97);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes kalaHeroOrbitEntrance {
-  0% {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -660,11 +433,6 @@
     top: 4%;
     right: 4%;
   }
-
-  .kala-hero-orbit-carrier {
-    bottom: 12%;
-    left: 4%;
-  }
 }
 
 @media (max-width: 640px) {
@@ -715,23 +483,6 @@
     width: 44px;
     height: 44px;
   }
-
-  .kala-hero-orbit-carrier {
-    bottom: 8%;
-    left: 2%;
-  }
-
-  .kala-hero-360-badge {
-    padding: 0.3rem 0.65rem;
-  }
-
-  .kala-hero-360-degree {
-    font-size: 0.6875rem;
-  }
-
-  .kala-hero-360-sub {
-    font-size: 0.58rem;
-  }
 }
 
 /* --------------------------------------------------------------------------
@@ -747,9 +498,8 @@
   .kala-hero-display-title,
   .kala-hero-desc-text,
   .kala-hero-buttons-row,
-  .kala-hero-shirt-floater,
-  .kala-hero-orbit-wrap,
-  .kala-hero-orbit-carrier,
+  .kala-hero-shirt-stage,
+  .kala-hero-shirt-wrap,
   .kala-hero-callout-wrap,
   .kala-hero-floor-shadow {
     animation: none !important;
@@ -757,16 +507,7 @@
     transform: none !important;
   }
 
-  .kala-hero-shirt-tilter,
-  .kala-hero-shirt-scaler,
-  .kala-hero-orbit-path-back,
-  .kala-hero-orbit-path-front,
-  .kala-hero-360-dot,
-  .kala-hero-360-badge {
-    animation: none !important;
-  }
-
-  .kala-hero-floating-scene:hover .kala-hero-shirt-scaler,
+  .kala-hero-floating-scene:hover .kala-hero-shirt-wrap,
   .kala-hero-floating-scene:hover .kala-hero-floor-shadow,
   .kala-hero-floating-scene:hover .kala-hero-halo {
     transform: none !important;
@@ -1570,7 +1311,7 @@
   background-color: #FFFFFF;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 12px;
-  padding: 1.15rem 1rem 0.85rem;
+  padding: 1.15rem 1rem 1.15rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1580,7 +1321,7 @@
               box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.28s ease;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-  min-height: 155px;
+  min-height: 140px;
   box-sizing: border-box;
   outline: none;
 }
@@ -1674,31 +1415,6 @@
   color: #666666;
   margin: 0;
   font-weight: 500;
-}
-
-.kala-studio-card-foot {
-  align-self: flex-end;
-  margin-top: 0.5rem;
-}
-
-.kala-studio-card-circle-arrow {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 1.5px solid #D94700;
-  background-color: #FFFFFF;
-  color: #D94700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.22s ease, color 0.22s ease, transform 0.22s ease;
-}
-
-.kala-studio-card:hover .kala-studio-card-circle-arrow,
-.kala-studio-card:focus-visible .kala-studio-card-circle-arrow {
-  background-color: #D94700;
-  color: #FFFFFF;
-  transform: scale(1.12) translateX(1px);
 }
 
 /* Bottom CTA & Trust Row */
@@ -1944,7 +1660,6 @@
 @media (prefers-reduced-motion: reduce) {
   .kala-studio-card,
   .kala-studio-apparel-img,
-  .kala-studio-card-circle-arrow,
   .kala-studio-primary-cta,
   .kala-studio-cta-chevron {
     transition: none !important;

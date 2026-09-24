@@ -148,21 +148,21 @@
 /* Hand-drawn curved connector arrows bridging desktop cards */
 .kala-how-connector {
   position: absolute;
-  top: -24px;
+  top: -22px;
   z-index: 5;
   pointer-events: none;
 }
 
 .kala-how-conn-1-2 {
-  left: calc(25% - 38px);
+  left: calc(25% - 45px);
 }
 
 .kala-how-conn-2-3 {
-  left: calc(50% - 38px);
+  left: calc(50% - 40px);
 }
 
 .kala-how-conn-3-4 {
-  left: calc(75% - 38px);
+  left: calc(75% - 35px);
 }
 
 /* 4 Cards Grid */
@@ -180,13 +180,16 @@
 
 .kala-how-card {
   background: #FFFFFF;
-  border: 1px solid rgba(224, 217, 207, 0.7);
-  border-radius: 16px;
+  border: 1px solid rgba(226, 220, 210, 0.75);
+  border-radius: 20px;
   box-shadow: 0 4px 20px rgba(30, 20, 10, 0.035);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
   position: relative;
   overflow: visible;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .kala-how-card:hover {
@@ -198,25 +201,32 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.35rem 1rem 1.35rem 1.25rem;
-  min-height: 205px;
+  padding: 1.5rem 1.15rem 1.5rem 1.4rem;
+  min-height: 220px;
+  height: 100%;
   box-sizing: border-box;
   gap: 0.75rem;
 }
 
 /* Left text side of card */
 .kala-how-card-text {
-  flex: 1 1 52%;
+  flex: 1 1 54%;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+.kala-how-card-top-content {
+  display: flex;
+  flex-direction: column;
 }
 
 .kala-how-card-num {
   display: block;
   color: #D94700;
-  font-size: 2rem;
+  font-size: 2.35rem;
   font-weight: 800;
   line-height: 1;
   margin-bottom: 0.35rem;
@@ -225,8 +235,8 @@
 
 .kala-how-card-title {
   color: #111111;
-  font-size: 1.08rem;
-  font-weight: 850;
+  font-size: 1.12rem;
+  font-weight: 900;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   margin: 0 0 0.5rem;
@@ -234,17 +244,17 @@
 }
 
 .kala-how-card-desc {
-  color: #635E58;
-  font-size: 0.8rem;
-  line-height: 1.45;
+  color: #5C5750;
+  font-size: 0.8125rem;
+  line-height: 1.5;
   margin: 0;
   font-weight: 400;
 }
 
 /* Right media visual side of card */
 .kala-how-card-media {
-  flex: 0 0 45%;
-  max-width: 48%;
+  flex: 0 0 44%;
+  max-width: 46%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -271,8 +281,11 @@
   max-width: 115px;
 }
 
-.kala-media-tablet {
-  max-width: 120px;
+.kala-media-floating-tee {
+  max-width: 125px;
+  max-height: 145px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.08));
 }
 
 .kala-media-press {
@@ -282,71 +295,6 @@
 
 .kala-media-box {
   max-width: 125px;
-}
-
-/* ==========================================================================
-   BUTTONS (CARDS 01, 02, 04)
-   ========================================================================== */
-
-.kala-how-card-action {
-  margin-top: 0.85rem;
-}
-
-.kala-how-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.72rem;
-  font-weight: 750;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.46rem 0.85rem;
-  border-radius: 9999px;
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  font-family: inherit;
-  line-height: 1;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  white-space: nowrap;
-}
-
-/* Dark pill button: PICK YOUR STYLE, GET STARTED */
-.kala-how-btn-dark {
-  background-color: #111111;
-  color: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-}
-
-.kala-how-btn-dark:hover {
-  background-color: #D94700;
-  color: #FFFFFF;
-  transform: translateX(2px);
-  box-shadow: 0 4px 12px rgba(217, 71, 0, 0.25);
-}
-
-/* Light outline pill button: SHARE YOUR IDEA */
-.kala-how-btn-light {
-  background-color: #FFFFFF;
-  color: #111111;
-  border: 1.5px solid #111111;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-.kala-how-btn-light:hover {
-  background-color: #111111;
-  color: #FFFFFF;
-  transform: translateX(2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.kala-how-btn svg {
-  transition: transform 0.2s ease;
-  flex-shrink: 0;
-}
-
-.kala-how-btn:hover svg {
-  transform: translateX(2px);
 }
 
 /* ==========================================================================
@@ -508,8 +456,7 @@
   .kala-how-card,
   .kala-how-note-img,
   .kala-how-graffiti-img,
-  .kala-how-media-img,
-  .kala-how-btn {
+  .kala-how-media-img {
     transition: none !important;
     transform: none !important;
   }

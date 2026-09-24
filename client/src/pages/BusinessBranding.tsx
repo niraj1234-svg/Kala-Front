@@ -174,15 +174,16 @@ export const BusinessBranding: React.FC = () => {
     setSubmittedQuote(null)
   }
 
-  // Business Solutions Visual Cards Data
+  // Business Solutions Visual Cards Data (Referencing high-res photography assets)
   const solutions = [
     {
       id: 'corporate-merch',
       num: '01',
       category: 'WORKPLACE',
-      title: 'CORPORATE MERCH',
-      image: '/business-branding/solution-card-01.jpg',
-      annotation: 'YOUR BRAND EVERYWHERE',
+      title: 'CORPORATE\nMERCH',
+      image: '/business-branding/card-01-corporate-merch.jpg',
+      annotationType: 'crown' as const,
+      annotationLines: [],
       orgType: 'Company',
       apparel: 'T-Shirts',
       isWide: false,
@@ -191,9 +192,10 @@ export const BusinessBranding: React.FC = () => {
       id: 'event-merch',
       num: '02',
       category: 'EXPERIENCES',
-      title: 'EVENT MERCH',
-      image: '/business-branding/solution-card-02.jpg',
-      annotation: 'MAKE EVENTS MEMORABLE',
+      title: 'EVENT\nMERCH',
+      image: '/business-branding/card-02-event-merch.jpg',
+      annotationType: 'note' as const,
+      annotationLines: ['MAKE', 'EVENTS', 'MEMORABLE'],
       orgType: 'Event',
       apparel: 'T-Shirts',
       isWide: false,
@@ -202,9 +204,10 @@ export const BusinessBranding: React.FC = () => {
       id: 'team-apparel',
       num: '03',
       category: 'ATHLETICS & ESPORTS',
-      title: 'TEAM APPAREL',
-      image: '/business-branding/solution-card-03.jpg',
-      annotation: 'PLAY TOGETHER',
+      title: 'TEAM\nAPPAREL',
+      image: '/business-branding/card-03-team-apparel.jpg',
+      annotationType: 'note' as const,
+      annotationLines: ['PLAY', 'TOGETHER'],
       orgType: 'Sports Team',
       apparel: 'Jerseys',
       isWide: false,
@@ -213,9 +216,10 @@ export const BusinessBranding: React.FC = () => {
       id: 'brand-merchandise',
       num: '04',
       category: 'RETAIL & PROMO',
-      title: 'BRAND MERCHANDISE',
-      image: '/business-branding/solution-card-04.jpg',
-      annotation: 'YOUR BRAND EVERYWHERE',
+      title: 'BRAND\nMERCHANDISE',
+      image: '/business-branding/card-04-brand-merchandise.jpg',
+      annotationType: 'note' as const,
+      annotationLines: ['YOUR', 'BRAND', 'EVERYWHERE'],
       orgType: 'Creator / Community',
       apparel: 'Hoodies',
       isWide: false,
@@ -224,9 +228,10 @@ export const BusinessBranding: React.FC = () => {
       id: 'college-university',
       num: '05',
       category: 'CAMPUS LIFE',
-      title: 'COLLEGE & UNIVERSITY',
-      image: '/business-branding/solution-card-05.jpg',
-      annotation: 'CAMPUS CULTURE',
+      title: 'COLLEGE &\nUNIVERSITY',
+      image: '/business-branding/card-05-college-university.jpg',
+      annotationType: 'note' as const,
+      annotationLines: ['CAMPUS', 'CULTURE'],
       orgType: 'College',
       apparel: 'Hoodies',
       isWide: true,
@@ -236,13 +241,69 @@ export const BusinessBranding: React.FC = () => {
       num: '06',
       category: 'FOUNDER SUITE',
       title: 'STARTUPS',
-      image: '/business-branding/solution-card-06.jpg',
-      annotation: 'IDEAS INTO IDENTITY',
+      image: '/business-branding/card-06-startups.jpg',
+      annotationType: 'note' as const,
+      annotationLines: ['IDEAS', 'INTO', 'IDENTITY'],
       orgType: 'Startup',
       apparel: 'Oversized T-Shirts',
       isWide: true,
     },
   ]
+
+  const renderSolutionIcon = (id: string) => {
+    switch (id) {
+      case 'corporate-merch':
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg>
+        )
+      case 'event-merch':
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+        )
+      case 'team-apparel':
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        )
+      case 'brand-merchandise':
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+            <line x1="7" y1="7" x2="7.01" y2="7" />
+          </svg>
+        )
+      case 'college-university':
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+          </svg>
+        )
+      case 'startups':
+        return (
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+            <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+            <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+            <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+          </svg>
+        )
+      default:
+        return null
+    }
+  }
 
   return (
     <main className="kala-business-page">
@@ -518,13 +579,13 @@ export const BusinessBranding: React.FC = () => {
       {/* 2. BUSINESS SOLUTIONS */}
       <section ref={solutionsRef} id="solutions" className="kala-solutions-section">
         <div className="kala-container">
-          {/* Header with visual typography, watermark, and handwritten annotation */}
+          {/* Header with visual typography and handwritten annotation (faded KALA watermark removed) */}
           <div className="kala-solutions-header-wrap">
             <div className="kala-solutions-header-left">
               <div className="kala-solutions-eyebrow">
-                <span className="kala-solutions-eyebrow-arrow">&rarr;</span>
+                <span className="kala-solutions-eyebrow-arrow" aria-hidden="true">&rarr;</span>
                 <span>BUSINESS SOLUTIONS</span>
-                <span className="kala-solutions-eyebrow-line"></span>
+                <span className="kala-solutions-eyebrow-arrow" aria-hidden="true">&larr;</span>
               </div>
               <h2 className="kala-solutions-heading">
                 <span className="kala-solutions-heading-dark">TAILORED APPAREL</span>
@@ -534,11 +595,6 @@ export const BusinessBranding: React.FC = () => {
               <p className="kala-solutions-subtext">
                 Custom apparel for teams, brands &amp; events.
               </p>
-            </div>
-
-            {/* Faint KALA background watermark */}
-            <div className="kala-solutions-watermark" aria-hidden="true">
-              KALA
             </div>
 
             {/* Handwritten-style annotation toward the right */}
@@ -574,15 +630,61 @@ export const BusinessBranding: React.FC = () => {
                 type="button"
                 className={`kala-sol-card ${item.isWide ? 'kala-sol-card-wide' : ''}`}
                 onClick={() => scrollToForm(item.orgType, item.apparel)}
-                aria-label={`Request custom apparel for ${item.title} (${item.category})`}
+                aria-label={`Request custom apparel for ${item.title.replace('\n', ' ')} (${item.category})`}
               >
-                <div className="kala-sol-card-media">
-                  <img
-                    src={item.image}
-                    alt={`${item.category}: ${item.title}`}
-                    className="kala-sol-card-img"
-                    loading="lazy"
-                  />
+                <div className="kala-sol-card-inner">
+                  {/* High-Resolution Product Photography Layer */}
+                  <div className="kala-sol-card-media">
+                    <img
+                      src={item.image}
+                      alt={`${item.category}: ${item.title.replace('\n', ' ')}`}
+                      className="kala-sol-card-img"
+                      loading={item.num === '01' || item.num === '02' ? 'eager' : 'lazy'}
+                      decoding="async"
+                    />
+                  </div>
+
+                  {/* Top-Left Content: Number, Category, Title */}
+                  <div className="kala-sol-card-header">
+                    <span className="kala-sol-card-num">{item.num}</span>
+                    <span className="kala-sol-card-cat">{item.category}</span>
+                    <h3 className="kala-sol-card-title">
+                      {item.title.split('\n').map((line, idx) => (
+                        <React.Fragment key={idx}>
+                          {line}
+                          {idx < item.title.split('\n').length - 1 && <br />}
+                        </React.Fragment>
+                      ))}
+                    </h3>
+                  </div>
+
+                  {/* Top-Right Annotation / Doodle */}
+                  {item.annotationType === 'crown' ? (
+                    <div className="kala-sol-card-crown" aria-hidden="true">
+                      <svg width="34" height="26" viewBox="0 0 40 30" fill="none">
+                        <path d="M4 22L7 10L16 16L20 6L24 16L33 10L36 22H4Z" stroke="#E94B00" strokeWidth="2.5" strokeLinejoin="round" fill="none" />
+                        <circle cx="7" cy="10" r="1.5" fill="#E94B00" />
+                        <circle cx="20" cy="6" r="1.5" fill="#E94B00" />
+                        <circle cx="33" cy="10" r="1.5" fill="#E94B00" />
+                      </svg>
+                    </div>
+                  ) : (
+                    <div className="kala-sol-card-note" aria-hidden="true">
+                      <div className="kala-sol-note-lines">
+                        {item.annotationLines.map((line, idx) => (
+                          <span key={idx}>{line}</span>
+                        ))}
+                      </div>
+                      <svg className="kala-sol-note-arrow" width="20" height="24" viewBox="0 0 24 28" fill="none">
+                        <path d="M18 2C11 7 4 14 9 22M9 22L4 20M9 22L12 17" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                  )}
+
+                  {/* Bottom-Left Category Icon */}
+                  <div className="kala-sol-card-icon-badge" aria-hidden="true">
+                    {renderSolutionIcon(item.id)}
+                  </div>
                 </div>
               </button>
             ))}

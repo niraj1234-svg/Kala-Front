@@ -509,64 +509,16 @@ export const CustomApparel: React.FC = () => {
                 {/* 1. Subtle Cream / Orange Circular Halo Glow */}
                 <div className="kala-hero-halo" aria-hidden="true" />
 
-                {/* 2. Orange Orbit Ring - Back Arc (behind shirt) */}
-                <div className="kala-hero-orbit-wrap kala-hero-orbit-back" aria-hidden="true">
-                  <svg
-                    className="kala-hero-orbit-svg"
-                    viewBox="0 0 640 320"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M 40,160 C 40,75 600,75 600,160"
-                      stroke="#E94B00"
-                      strokeWidth="1.8"
-                      strokeDasharray="6 6"
-                      className="kala-hero-orbit-path-back"
+                {/* 2. Floating T-shirt with Subtle Premium Entrance & Idle Motion */}
+                <div className="kala-hero-shirt-stage">
+                  <div className="kala-hero-shirt-wrap">
+                    <img
+                      src="/custom-apparel/kala-custom-hero-floating.png"
+                      alt="KALA Custom Studio Oversized Cotton T-Shirt"
+                      className="kala-hero-floating-shirt-img"
+                      loading="eager"
+                      decoding="async"
                     />
-                  </svg>
-                </div>
-
-                {/* 3. Floating & Tilting T-shirt Wrapper */}
-                <div className="kala-hero-shirt-floater">
-                  <div className="kala-hero-shirt-tilter">
-                    <div className="kala-hero-shirt-scaler">
-                      <img
-                        src="/custom-apparel/kala-custom-hero-floating.png"
-                        alt="KALA Custom Studio Oversized Cotton T-Shirt"
-                        className="kala-hero-floating-shirt-img"
-                        loading="eager"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* 4. Orange Orbit Ring - Front Arc (in front of shirt) */}
-                <div className="kala-hero-orbit-wrap kala-hero-orbit-front" aria-hidden="true">
-                  <svg
-                    className="kala-hero-orbit-svg"
-                    viewBox="0 0 640 320"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M 600,160 C 600,245 40,245 40,160"
-                      stroke="#E94B00"
-                      strokeWidth="2.2"
-                      strokeDasharray="8 6"
-                      className="kala-hero-orbit-path-front"
-                    />
-                  </svg>
-                </div>
-
-                {/* 5. Orbit 360° Rotating System with 360° VIEW Badge */}
-                <div className="kala-hero-orbit-carrier" aria-hidden="true">
-                  <div className="kala-hero-360-badge">
-                    <span className="kala-hero-360-dot" />
-                    <div className="kala-hero-360-text-col">
-                      <span className="kala-hero-360-degree">360°</span>
-                      <span className="kala-hero-360-sub">VIEW</span>
-                    </div>
                   </div>
                 </div>
 
@@ -808,11 +760,7 @@ export const CustomApparel: React.FC = () => {
       </section>
 
       {/* 3. HOW IT WORKS / THE PROCESS (Redesigned Editorial Streetwear Flow) */}
-      <HowItWorks
-        onPickStyle={scrollToCategories}
-        onShareIdea={() => scrollToForm()}
-        onGetStarted={() => scrollToForm()}
-      />
+      <HowItWorks onPickStyle={scrollToCategories} />
 
       {/* 4. DESIGN WITH KALA (Editorial Streetwear Studio) */}
       <section className="kala-studio-section" aria-labelledby="design-with-kala-title">
@@ -887,14 +835,6 @@ export const CustomApparel: React.FC = () => {
                 <div className="kala-studio-card-content">
                   <h3 className="kala-studio-card-heading">{item.title}</h3>
                   <p className="kala-studio-card-text">{item.desc}</p>
-                </div>
-                <div className="kala-studio-card-foot">
-                  <span className="kala-studio-card-circle-arrow" aria-hidden="true">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <polyline points="12 5 19 12 12 19" />
-                    </svg>
-                  </span>
                 </div>
               </div>
             ))}
