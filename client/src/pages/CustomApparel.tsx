@@ -640,82 +640,29 @@ export const CustomApparel: React.FC = () => {
                 >
                   {/* Card Visual Stage */}
                   <div className="kala-card-stage">
-                    {/* Creative Background Brush / Hand-drawn Accents matching reference mockup */}
+                    {/* Creative Background Brush / Auras */}
                     {cat.id === 'custom-t-shirts' && (
-                      <>
-                        <div className="kala-card-aura kala-aura-splash" aria-hidden="true" />
-                        <svg className="kala-card-crown-top-left" viewBox="0 0 40 30" fill="none" aria-hidden="true">
-                          <path d="M4 22L10 8L20 18L30 8L36 22H4Z" stroke="#E94B00" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <div className="kala-card-note kala-note-tee" aria-hidden="true">
-                          <span>YOUR</span>
-                          <span>DESIGN</span>
-                          <span>HERE</span>
-                          <svg width="22" height="26" viewBox="0 0 24 30" fill="none">
-                            <path d="M18 4C14 12 8 18 4 24M4 24L4 16M4 24L12 24" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </div>
-                      </>
+                      <div className="kala-card-aura kala-aura-splash" aria-hidden="true" />
                     )}
 
                     {cat.id === 'oversized-t-shirts' && (
-                      <>
-                        <div className="kala-card-aura kala-aura-glow" aria-hidden="true" />
-                        <div className="kala-card-note kala-note-oversized" aria-hidden="true">
-                          <span>BIGGER</span>
-                          <span>IDEAS</span>
-                          <svg width="20" height="26" viewBox="0 0 24 30" fill="none">
-                            <path d="M18 4C14 12 8 18 4 24M4 24L4 16M4 24L12 24" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </div>
-                      </>
+                      <div className="kala-card-aura kala-aura-glow" aria-hidden="true" />
                     )}
 
                     {cat.id === 'hoodies' && (
-                      <>
-                        <div className="kala-card-aura kala-aura-sun" aria-hidden="true" />
-                        <svg className="kala-card-crown-top-right" viewBox="0 0 40 30" fill="none" aria-hidden="true">
-                          <path d="M4 22L10 8L20 18L30 8L36 22H4Z" stroke="#E94B00" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </>
+                      <div className="kala-card-aura kala-aura-sun" aria-hidden="true" />
                     )}
 
                     {cat.id === 'jerseys' && (
-                      <>
-                        <div className="kala-card-aura kala-aura-slash" aria-hidden="true" />
-                        <div className="kala-card-note kala-note-jersey" aria-hidden="true">
-                          <span>FOR</span>
-                          <span>TEAMS</span>
-                          <span>&amp; EVENTS</span>
-                          <svg width="24" height="22" viewBox="0 0 28 24" fill="none">
-                            <path d="M24 16C16 14 10 10 4 6M4 6L11 6M4 6L6 13" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </div>
-                      </>
+                      <div className="kala-card-aura kala-aura-slash" aria-hidden="true" />
                     )}
 
                     {cat.id === 'tracksuits' && (
-                      <>
-                        <div className="kala-card-aura kala-aura-brush-wide" aria-hidden="true" />
-                        <div className="kala-card-note kala-note-tracksuit" aria-hidden="true">
-                          <span>TRAIN</span>
-                          <span>TOGETHER</span>
-                          <svg width="24" height="26" viewBox="0 0 28 30" fill="none">
-                            <path d="M6 6C12 12 18 18 22 24M22 24L15 24M22 24L22 17" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </div>
-                      </>
+                      <div className="kala-card-aura kala-aura-brush-wide" aria-hidden="true" />
                     )}
 
                     {cat.id === 'sportswear' && (
-                      <>
-                        <div className="kala-card-aura kala-aura-brush-wide" aria-hidden="true" />
-                        <div className="kala-card-sticky-card" aria-hidden="true">
-                          <span>MOVE</span>
-                          <span>CREATE</span>
-                          <span>REPEAT</span>
-                        </div>
-                      </>
+                      <div className="kala-card-aura kala-aura-brush-wide" aria-hidden="true" />
                     )}
 
                     {/* Product Image */}

@@ -847,36 +847,6 @@
   margin: 0;
 }
 
-/* Handwritten-style Annotation on the Right */
-.kala-solutions-annotation {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  transform: rotate(-4.5deg);
-  margin-bottom: 0.75rem;
-  user-select: none;
-  flex-shrink: 0;
-}
-
-.kala-solutions-annotation-items {
-  display: flex;
-  flex-direction: column;
-  font-family: 'Caveat', cursive, sans-serif;
-  font-size: clamp(1.2rem, 1.6vw, 1.45rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: 0.04em;
-  color: #111111;
-}
-
-.kala-solutions-annotation-stroke {
-  width: 110px;
-  height: 10px;
-  margin-top: 3px;
-  display: block;
-}
 
 /* 4 + 2 Grid Layout */
 .kala-solutions-visual-grid {
@@ -1001,43 +971,6 @@
   margin: 0;
 }
 
-/* Top-Right Annotations */
-.kala-sol-card-crown {
-  position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
-  z-index: 3;
-  pointer-events: none;
-  opacity: 0.95;
-}
-
-.kala-sol-card-note {
-  position: absolute;
-  top: 1rem;
-  right: 1.15rem;
-  z-index: 3;
-  pointer-events: none;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.kala-sol-note-lines {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  font-family: 'Caveat', cursive, sans-serif;
-  font-size: 1.05rem;
-  font-weight: 700;
-  line-height: 0.98;
-  color: #111111;
-  letter-spacing: 0.02em;
-}
-
-.kala-sol-note-arrow {
-  margin-top: 3px;
-  margin-right: 2px;
-}
 
 /* Bottom-Left Category Icon Badge */
 .kala-sol-card-icon-badge {
@@ -1086,10 +1019,6 @@
     gap: 1.25rem;
   }
 
-  .kala-solutions-annotation {
-    transform: rotate(-3deg);
-    margin-top: 0.25rem;
-  }
 
   .kala-solutions-visual-grid {
     grid-template-columns: 1fr;

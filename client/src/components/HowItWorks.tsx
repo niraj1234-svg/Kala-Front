@@ -13,19 +13,9 @@ export const HowItWorks: React.FC<HowItWorksProps> = () => {
     <section className="kala-how-section" aria-labelledby="how-it-works-title">
       <div className="kala-how-container">
         {/* ====================================================================
-            HEADER WITH EDITORIAL ACCENTS
+            HEADER
             ==================================================================== */}
         <div className="kala-how-header-wrap">
-          {/* Left: Taped crumpled paper "WEAR YOUR STORY" */}
-          <div className="kala-how-header-accent-left" aria-hidden="true">
-            <img
-              src="/how-it-works/header-note-left.png"
-              alt=""
-              className="kala-how-note-img"
-              loading="lazy"
-            />
-          </div>
-
           {/* Center: Eyebrow, Main Title, Subtitle */}
           <div className="kala-how-header-center">
             <span className="kala-how-eyebrow">THE PROCESS</span>
@@ -39,16 +29,6 @@ export const HowItWorks: React.FC<HowItWorksProps> = () => {
             <p className="kala-how-subtitle">
               A streamlined 4-step journey from your creative concept to finished luxury apparel.
             </p>
-          </div>
-
-          {/* Right: Graffiti "IDEAS INTO APPAREL" */}
-          <div className="kala-how-header-accent-right" aria-hidden="true">
-            <img
-              src="/how-it-works/header-graffiti-right.png"
-              alt=""
-              className="kala-how-graffiti-img"
-              loading="lazy"
-            />
           </div>
         </div>
 

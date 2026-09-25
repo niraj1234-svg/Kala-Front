@@ -182,8 +182,6 @@ export const BusinessBranding: React.FC = () => {
       category: 'WORKPLACE',
       title: 'CORPORATE\nMERCH',
       image: '/business-branding/card-01-corporate-merch.jpg',
-      annotationType: 'crown' as const,
-      annotationLines: [],
       orgType: 'Company',
       apparel: 'T-Shirts',
       isWide: false,
@@ -194,8 +192,6 @@ export const BusinessBranding: React.FC = () => {
       category: 'EXPERIENCES',
       title: 'EVENT\nMERCH',
       image: '/business-branding/card-02-event-merch.jpg',
-      annotationType: 'note' as const,
-      annotationLines: ['MAKE', 'EVENTS', 'MEMORABLE'],
       orgType: 'Event',
       apparel: 'T-Shirts',
       isWide: false,
@@ -206,8 +202,6 @@ export const BusinessBranding: React.FC = () => {
       category: 'ATHLETICS & ESPORTS',
       title: 'TEAM\nAPPAREL',
       image: '/business-branding/card-03-team-apparel.jpg',
-      annotationType: 'note' as const,
-      annotationLines: ['PLAY', 'TOGETHER'],
       orgType: 'Sports Team',
       apparel: 'Jerseys',
       isWide: false,
@@ -218,8 +212,6 @@ export const BusinessBranding: React.FC = () => {
       category: 'RETAIL & PROMO',
       title: 'BRAND\nMERCHANDISE',
       image: '/business-branding/card-04-brand-merchandise.jpg',
-      annotationType: 'note' as const,
-      annotationLines: ['YOUR', 'BRAND', 'EVERYWHERE'],
       orgType: 'Creator / Community',
       apparel: 'Hoodies',
       isWide: false,
@@ -230,8 +222,6 @@ export const BusinessBranding: React.FC = () => {
       category: 'CAMPUS LIFE',
       title: 'COLLEGE &\nUNIVERSITY',
       image: '/business-branding/card-05-college-university.jpg',
-      annotationType: 'note' as const,
-      annotationLines: ['CAMPUS', 'CULTURE'],
       orgType: 'College',
       apparel: 'Hoodies',
       isWide: true,
@@ -242,8 +232,6 @@ export const BusinessBranding: React.FC = () => {
       category: 'FOUNDER SUITE',
       title: 'STARTUPS',
       image: '/business-branding/card-06-startups.jpg',
-      annotationType: 'note' as const,
-      annotationLines: ['IDEAS', 'INTO', 'IDENTITY'],
       orgType: 'Startup',
       apparel: 'Oversized T-Shirts',
       isWide: true,
@@ -596,30 +584,6 @@ export const BusinessBranding: React.FC = () => {
                 Custom apparel for teams, brands &amp; events.
               </p>
             </div>
-
-            {/* Handwritten-style annotation toward the right */}
-            <div className="kala-solutions-annotation">
-              <div className="kala-solutions-annotation-items">
-                <span>TEAMS</span>
-                <span>BRANDS</span>
-                <span>EVENTS</span>
-                <span>COMMUNITIES</span>
-              </div>
-              <svg
-                className="kala-solutions-annotation-stroke"
-                viewBox="0 0 120 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  d="M3 9C35 4 80 4 117 8"
-                  stroke="#E85A2A"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
           </div>
 
           {/* 6 Visual Business Solution Cards (4 equal top row + 2 wide bottom row) */}
@@ -658,28 +622,6 @@ export const BusinessBranding: React.FC = () => {
                     </h3>
                   </div>
 
-                  {/* Top-Right Annotation / Doodle */}
-                  {item.annotationType === 'crown' ? (
-                    <div className="kala-sol-card-crown" aria-hidden="true">
-                      <svg width="34" height="26" viewBox="0 0 40 30" fill="none">
-                        <path d="M4 22L7 10L16 16L20 6L24 16L33 10L36 22H4Z" stroke="#E94B00" strokeWidth="2.5" strokeLinejoin="round" fill="none" />
-                        <circle cx="7" cy="10" r="1.5" fill="#E94B00" />
-                        <circle cx="20" cy="6" r="1.5" fill="#E94B00" />
-                        <circle cx="33" cy="10" r="1.5" fill="#E94B00" />
-                      </svg>
-                    </div>
-                  ) : (
-                    <div className="kala-sol-card-note" aria-hidden="true">
-                      <div className="kala-sol-note-lines">
-                        {item.annotationLines.map((line, idx) => (
-                          <span key={idx}>{line}</span>
-                        ))}
-                      </div>
-                      <svg className="kala-sol-note-arrow" width="20" height="24" viewBox="0 0 24 28" fill="none">
-                        <path d="M18 2C11 7 4 14 9 22M9 22L4 20M9 22L12 17" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                  )}
 
                   {/* Bottom-Left Category Icon */}
                   <div className="kala-sol-card-icon-badge" aria-hidden="true">
