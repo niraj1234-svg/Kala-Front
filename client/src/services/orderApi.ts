@@ -5,6 +5,10 @@ export interface OrderItemInput {
   productId: string
   size: string
   quantity: number
+  customization?: {
+    backText?: string
+    price?: number
+  }
 }
 
 export interface ValidateCouponPayload {
@@ -52,6 +56,10 @@ export interface BackendOrderItem {
   size: string
   quantity: number
   price: number
+  customization?: {
+    backText?: string
+    price?: number
+  }
 }
 
 export interface OrderTracking {

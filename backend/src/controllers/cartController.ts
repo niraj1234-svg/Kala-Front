@@ -61,7 +61,7 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    const { productId, size, quantity = 1, name, image, price } = req.body
+    const { productId, size, quantity = 1, name, image, price, customization } = req.body
 
     if (!productId || typeof productId !== 'string' || !productId.trim()) {
       res.status(400).json({ success: false, message: 'Valid productId is required.' })
@@ -83,7 +83,13 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
     const resolvedImage = (typeof image === 'string' && image.trim())
       ? image.trim()
       : (dbProduct?.image || '/favicon.png')
-    const resolvedPrice = typeof dbProduct?.price === 'number' ? dbProduct.price : (typeof price === 'number' && price >= 0 ? price : 0)
+
+    // Handle optional back custom text (+₹25)
+    const rawBackText = customization?.backText || (typeof req.body.backText === 'string' ? req.body.backText : '')
+    const cleanBackText = typeof rawBackText === 'string' && rawBackText.trim() ? rawBackText.trim().slice(0, 30) : ''
+    const customPrice = cleanBackText ? 25 : 0
+    const basePrice = typeof dbProduct?.price === 'number' ? dbProduct.price : (typeof price === 'number' && price >= 0 ? price : 0)
+    const resolvedPrice = basePrice + customPrice
 
     let cart = await Cart.findOne({ userId })
     if (!cart) {
@@ -94,7 +100,9 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
     }
 
     const existingIndex = cart.items.findIndex(
-      (item) => item.productId === cleanProductId && item.size === cleanSize && item.image === resolvedImage
+      (item) => item.productId === cleanProductId &&
+                item.size === cleanSize &&
+                (item.customization?.backText || '') === cleanBackText
     )
 
     if (existingIndex > -1) {
@@ -104,6 +112,9 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
       cart.items[existingIndex].name = resolvedName
       cart.items[existingIndex].image = resolvedImage
       cart.items[existingIndex].price = resolvedPrice
+      if (cleanBackText) {
+        cart.items[existingIndex].customization = { backText: cleanBackText, price: 25 }
+      }
     } else {
       cart.items.push({
         productId: cleanProductId,
@@ -112,6 +123,7 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
         price: resolvedPrice,
         size: cleanSize,
         quantity: parsedQty,
+        ...(cleanBackText ? { customization: { backText: cleanBackText, price: 25 } } : {}),
       })
     }
 
@@ -162,17 +174,31 @@ export const updateItemQuantity = async (req: Request, res: Response): Promise<v
       return
     }
 
-    // Match by _id, or by composite key, or by productId + size
+    const targetBackText = req.body?.backText !== undefined
+      ? String(req.body.backText).trim()
+      : (req.body?.customization?.backText !== undefined ? String(req.body.customization.backText).trim() : undefined)
+
+    // Match by _id, or by composite key, or by productId + size (+ backText)
     const matchIndex = cart.items.findIndex((item) => {
       if (item._id && item._id.toString() === itemId) return true
-      if (size && item.productId === itemId && item.size.toUpperCase() === String(size).trim().toUpperCase()) return true
       if (itemId.includes(':')) {
-        const [pId, sz] = itemId.split(':')
-        if (item.productId === pId && item.size.toUpperCase() === sz.toUpperCase()) return true
+        const parts = itemId.split(':')
+        if (parts.length >= 3) {
+          if (item.productId === parts[0] && item.size.toUpperCase() === parts[1].toUpperCase() && (item.customization?.backText || '') === parts.slice(2).join(':')) return true
+        } else if (parts.length === 2) {
+          if (item.productId === parts[0] && item.size.toUpperCase() === parts[1].toUpperCase() && (targetBackText === undefined || (item.customization?.backText || '') === targetBackText)) return true
+        }
       }
       if (itemId.includes('__')) {
-        const [pId, sz] = itemId.split('__')
-        if (item.productId === pId && item.size.toUpperCase() === sz.toUpperCase()) return true
+        const parts = itemId.split('__')
+        if (parts.length >= 3) {
+          if (item.productId === parts[0] && item.size.toUpperCase() === parts[1].toUpperCase() && (item.customization?.backText || '') === parts.slice(2).join('__')) return true
+        } else if (parts.length === 2) {
+          if (item.productId === parts[0] && item.size.toUpperCase() === parts[1].toUpperCase() && (targetBackText === undefined || (item.customization?.backText || '') === targetBackText)) return true
+        }
+      }
+      if (size && item.productId === itemId && item.size.toUpperCase() === String(size).trim().toUpperCase()) {
+        if (targetBackText === undefined || (item.customization?.backText || '') === targetBackText) return true
       }
       return false
     })
@@ -216,6 +242,9 @@ export const removeItem = async (req: Request, res: Response): Promise<void> => 
 
     const itemId = String(req.params.itemId || '').trim()
     const targetSize = (req.query.size as string) || (req.body?.size as string)
+    const targetBackText = req.query.backText !== undefined
+      ? String(req.query.backText).trim()
+      : (req.body?.backText !== undefined ? String(req.body.backText).trim() : undefined)
 
     const cart = await Cart.findOne({ userId })
     if (!cart || !cart.items || cart.items.length === 0) {
@@ -230,14 +259,24 @@ export const removeItem = async (req: Request, res: Response): Promise<void> => 
     const initialLength = cart.items.length
     cart.items = cart.items.filter((item) => {
       if (item._id && item._id.toString() === itemId) return false
-      if (targetSize && item.productId === itemId && item.size.toUpperCase() === targetSize.trim().toUpperCase()) return false
       if (itemId.includes(':')) {
-        const [pId, sz] = itemId.split(':')
-        if (item.productId === pId && item.size.toUpperCase() === sz.toUpperCase()) return false
+        const parts = itemId.split(':')
+        if (parts.length >= 3) {
+          if (item.productId === parts[0] && item.size.toUpperCase() === parts[1].toUpperCase() && (item.customization?.backText || '') === parts.slice(2).join(':')) return false
+        } else if (parts.length === 2) {
+          if (item.productId === parts[0] && item.size.toUpperCase() === parts[1].toUpperCase() && (targetBackText === undefined || (item.customization?.backText || '') === targetBackText)) return false
+        }
       }
       if (itemId.includes('__')) {
-        const [pId, sz] = itemId.split('__')
-        if (item.productId === pId && item.size.toUpperCase() === sz.toUpperCase()) return false
+        const parts = itemId.split('__')
+        if (parts.length >= 3) {
+          if (item.productId === parts[0] && item.size.toUpperCase() === parts[1].toUpperCase() && (item.customization?.backText || '') === parts.slice(2).join('__')) return false
+        } else if (parts.length === 2) {
+          if (item.productId === parts[0] && item.size.toUpperCase() === parts[1].toUpperCase() && (targetBackText === undefined || (item.customization?.backText || '') === targetBackText)) return false
+        }
+      }
+      if (targetSize && item.productId === itemId && item.size.toUpperCase() === targetSize.trim().toUpperCase()) {
+        if (targetBackText === undefined || (item.customization?.backText || '') === targetBackText) return false
       }
       return true
     })
@@ -316,7 +355,11 @@ export const syncCart = async (req: Request, res: Response): Promise<void> => {
 
       if (!productId || !size) continue
 
-      const key = `${productId}:${size}`
+      const rawBackText = rawItem.customization?.backText || (typeof rawItem.backText === 'string' ? rawItem.backText : '')
+      const cleanBackText = typeof rawBackText === 'string' && rawBackText.trim() ? rawBackText.trim().slice(0, 30) : ''
+      const customPrice = cleanBackText ? 25 : 0
+
+      const key = `${productId}:${size}:${cleanBackText}`
       const existing = consolidatedMap.get(key)
       if (existing) {
         existing.quantity = Math.min(existing.quantity + quantity, 10)
@@ -325,7 +368,8 @@ export const syncCart = async (req: Request, res: Response): Promise<void> => {
         const dbProduct = await Product.findOne({ id: productId })
         const resolvedName = dbProduct?.name || String(rawItem.name || productId).trim()
         const resolvedImage = dbProduct?.image || String(rawItem.image || '/favicon.png').trim()
-        const resolvedPrice = typeof dbProduct?.price === 'number' ? dbProduct.price : (typeof rawItem.price === 'number' && rawItem.price >= 0 ? rawItem.price : 0)
+        const basePrice = typeof dbProduct?.price === 'number' ? dbProduct.price : (typeof rawItem.price === 'number' && rawItem.price >= 0 ? rawItem.price : 0)
+        const resolvedPrice = basePrice + customPrice
 
         consolidatedMap.set(key, {
           productId,
@@ -334,6 +378,7 @@ export const syncCart = async (req: Request, res: Response): Promise<void> => {
           name: resolvedName,
           image: resolvedImage,
           price: resolvedPrice,
+          ...(cleanBackText ? { customization: { backText: cleanBackText, price: 25 } } : {}),
         })
       }
     }

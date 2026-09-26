@@ -12,6 +12,7 @@ export interface IProduct extends Document {
   category: 'Streetwear' | 'Gaming' | 'Gymwear'
   price: number
   image: string
+  images?: string[]
   description: string
   available: boolean
   variants?: IProductVariant[]
@@ -49,6 +50,7 @@ const ProductSchema = new Schema<IProduct>(
       required: true,
       trim: true,
     },
+    images: [{ type: String, trim: true }],
     description: {
       type: String,
       required: true,

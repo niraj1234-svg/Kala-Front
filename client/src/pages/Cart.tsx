@@ -49,7 +49,7 @@ export const Cart: React.FC = () => {
         <div className="kala-cart-items-list" role="list">
           {cartItems.map((item) => {
             const itemSubtotal = item.price * item.quantity
-            const itemKey = `${item.productId}-${item.size}-${item.image || ''}`
+            const itemKey = `${item.productId}-${item.size}-${item.customization?.backText || ''}-${item.image || ''}`
 
             return (
               <div key={itemKey} className="kala-cart-item" role="listitem">
@@ -72,7 +72,7 @@ export const Cart: React.FC = () => {
                     <button
                       type="button"
                       className="kala-cart-item-remove-btn"
-                      onClick={() => removeFromCart(item.productId, item.size, item.image)}
+                      onClick={() => removeFromCart(item.productId, item.size, item.image, item.customization?.backText)}
                       aria-label={`Remove ${item.name} size ${item.size} from cart`}
                     >
                       Remove
@@ -82,6 +82,14 @@ export const Cart: React.FC = () => {
                   <div className="kala-cart-item-size">
                     Size: <strong>{item.size}</strong>
                   </div>
+
+                  {item.customization?.backText && (
+                    <div className="kala-cart-item-customization">
+                      <span className="kala-cart-custom-label">Back Text:</span>
+                      <strong className="kala-cart-custom-value">"{item.customization.backText}"</strong>
+                      <span className="kala-cart-custom-fee">(+₹25)</span>
+                    </div>
+                  )}
 
                   <div className="kala-cart-item-price">
                     ₹{item.price.toLocaleString('en-IN')}
@@ -94,7 +102,7 @@ export const Cart: React.FC = () => {
                         type="button"
                         className="kala-qty-btn"
                         onClick={() =>
-                          updateQuantity(item.productId, item.size, item.quantity - 1, item.image)
+                          updateQuantity(item.productId, item.size, item.quantity - 1, item.image, item.customization?.backText)
                         }
                         disabled={item.quantity <= 1}
                         aria-label="Decrease quantity"
@@ -108,7 +116,7 @@ export const Cart: React.FC = () => {
                         type="button"
                         className="kala-qty-btn"
                         onClick={() =>
-                          updateQuantity(item.productId, item.size, item.quantity + 1, item.image)
+                          updateQuantity(item.productId, item.size, item.quantity + 1, item.image, item.customization?.backText)
                         }
                         disabled={item.quantity >= 10}
                         aria-label="Increase quantity"

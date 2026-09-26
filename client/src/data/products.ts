@@ -67,7 +67,9 @@ export function getProductHighlights(product: Product): ProductHighlight[] {
   }
 
   // 2. Fabric (derived from verified product description)
-  if (desc.includes('280 gsm') || name.includes('280 gsm')) {
+  if (desc.includes('220 gsm') || name.includes('220 gsm')) {
+    highlights.push({ label: 'Fabric', value: '220 GSM Premium Cotton' })
+  } else if (desc.includes('280 gsm') || name.includes('280 gsm')) {
     highlights.push({ label: 'Fabric', value: '280 GSM Cotton' })
   } else if (desc.includes('300 gsm') || name.includes('300 gsm')) {
     highlights.push({ label: 'Fabric', value: '300 GSM Cotton' })
@@ -93,7 +95,9 @@ export function getProductHighlights(product: Product): ProductHighlight[] {
   }
 
   // 4. Pattern
-  if (name.includes('acid-wash') || desc.includes('acid-wash')) {
+  if (name.includes('bihari') || desc.includes('bihari')) {
+    highlights.push({ label: 'Pattern', value: 'Cultural Graphic Print' })
+  } else if (name.includes('acid-wash') || desc.includes('acid-wash')) {
     highlights.push({ label: 'Pattern', value: 'Acid Wash' })
   } else if (name.includes('graphic') || desc.includes('graphic') || desc.includes('glitch')) {
     highlights.push({ label: 'Pattern', value: 'Graphic Print' })
@@ -109,6 +113,21 @@ export function getProductHighlights(product: Product): ProductHighlight[] {
 }
 
 export const PRODUCTS: Product[] = [
+  // KALA Bihari Story Premium T-Shirt (Featured First Product)
+  {
+    id: 'kala-bihari-story-premium-t-shirt',
+    name: 'KALA Bihari Story Premium T-Shirt',
+    category: 'Streetwear',
+    price: 400,
+    image: getProductImage('kala-bihari-story-front.png'),
+    images: [
+      getProductImage('kala-bihari-story-front.png'),
+      getProductImage('kala-bihari-story-back.png'),
+    ],
+    description: "A premium 220 GSM everyday T-shirt rooted in Bihar's culture and designed for modern streetwear. The forest-green finish, expressive artwork and comfortable construction make it an easy statement piece for everyday wear. Personalize the back with your own text for an additional ₹25.",
+    available: true,
+  },
+
   // Streetwear (6 items)
   {
     id: 'streetwear-oversized-acid-tee',

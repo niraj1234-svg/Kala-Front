@@ -2,6 +2,21 @@ import { Product } from '../models/Product'
 import { connectDB } from './db'
 
 export const SEED_PRODUCTS = [
+  // KALA Bihari Story Premium T-Shirt (Featured First Product)
+  {
+    id: 'kala-bihari-story-premium-t-shirt',
+    name: 'KALA Bihari Story Premium T-Shirt',
+    category: 'Streetwear',
+    price: 400,
+    image: 'kala-bihari-story-front.png',
+    images: [
+      'kala-bihari-story-front.png',
+      'kala-bihari-story-back.png',
+    ],
+    description: "A premium 220 GSM everyday T-shirt rooted in Bihar's culture and designed for modern streetwear. The forest-green finish, expressive artwork and comfortable construction make it an easy statement piece for everyday wear. Personalize the back with your own text for an additional ₹25.",
+    available: true,
+  },
+
   // Streetwear (6 items)
   {
     id: 'streetwear-oversized-acid-tee',
@@ -196,17 +211,28 @@ export const syncProductPrices = async () => {
     let updatedCount = 0
     for (const item of SEED_PRODUCTS) {
       const updateData: any = {
+        name: item.name,
+        category: item.category,
         price: item.price,
+        image: item.image,
         description: item.description,
+        available: item.available,
+      }
+      if ((item as any).images) {
+        updateData.images = (item as any).images
       }
       if ((item as any).variants) {
         updateData.variants = (item as any).variants
       }
       const res = await Product.updateOne(
         { id: item.id },
-        { $set: updateData }
+        {
+          $set: updateData,
+          $setOnInsert: { id: item.id, createdAt: item.id === 'kala-bihari-story-premium-t-shirt' ? new Date('2020-01-01') : new Date() },
+        },
+        { upsert: true }
       )
-      if (res.matchedCount > 0) {
+      if (res.matchedCount > 0 || res.upsertedCount > 0) {
         updatedCount++
       }
     }

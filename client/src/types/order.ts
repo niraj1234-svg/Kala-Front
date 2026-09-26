@@ -20,6 +20,10 @@ export interface OrderItem {
   quantity: number
   price: number
   image: string
+  customization?: {
+    backText?: string
+    price?: number
+  }
 }
 
 export interface Order {

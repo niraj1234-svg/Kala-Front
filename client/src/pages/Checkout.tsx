@@ -84,7 +84,7 @@ export const Checkout: React.FC = () => {
 
   // Cart mutation reactivity: automatically revalidate or invalidate coupon when cart changes
   const cartKey = JSON.stringify(
-    cartItems.map((it) => ({ id: it.productId, s: it.size, q: it.quantity }))
+    cartItems.map((it) => ({ id: it.productId, s: it.size, q: it.quantity, c: it.customization?.backText }))
   )
   const isInitialMount = useRef(true)
 
@@ -110,6 +110,7 @@ export const Checkout: React.FC = () => {
             productId: item.productId,
             size: item.size,
             quantity: item.quantity,
+            customization: item.customization,
           })),
         })
         if (!cancelled && res.success && res.coupon && res.pricing) {
@@ -273,6 +274,7 @@ export const Checkout: React.FC = () => {
           productId: item.productId,
           size: item.size,
           quantity: item.quantity,
+          customization: item.customization,
         })),
       })
 
@@ -348,6 +350,7 @@ export const Checkout: React.FC = () => {
         productId: item.productId,
         size: item.size,
         quantity: item.quantity,
+        customization: item.customization,
       })),
       ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
     }
@@ -435,6 +438,7 @@ export const Checkout: React.FC = () => {
                     quantity: it.quantity,
                     price: it.price,
                     image: it.image,
+                    customization: it.customization,
                   })),
                   subtotal: activeOrder.pricing.subtotal,
                   shipping: activeOrder.pricing.shipping,
@@ -704,6 +708,11 @@ export const Checkout: React.FC = () => {
                   <div className="kala-checkout-item-meta">
                     Size: {item.size} · Qty: {item.quantity}
                   </div>
+                  {item.customization?.backText && (
+                    <div className="kala-checkout-item-custom-text">
+                      Back Text: "{item.customization.backText}" (+₹25)
+                    </div>
+                  )}
                 </div>
                 <div className="kala-checkout-item-total">
                   ₹{(item.price * item.quantity).toLocaleString('en-IN')}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { PRODUCTS, getProductHighlights } from '../data/products'
+import { PRODUCTS, getProductHighlights, getProductImage } from '../data/products'
 import type { Product, ProductColorVariant } from '../data/products'
 import { fetchProductById } from '../services/productApi'
 import { useCart } from '../context/CartContext'
@@ -19,6 +19,8 @@ export const ProductDetails: React.FC = () => {
   const { addToCart } = useCart()
   const { isInWishlist, toggleWishlist } = useWishlist()
   const { isAuthenticated } = useAuth()
+
+  const [customBackText, setCustomBackText] = useState<string>('')
 
   const [product, setProduct] = useState<Product | null>(() => {
     return PRODUCTS.find((p) => p.id === id) || null
@@ -113,9 +115,19 @@ export const ProductDetails: React.FC = () => {
     )
   }
 
+  const supportsCustomBackText =
+    product.id === 'kala-bihari-story-premium-t-shirt' ||
+    product.name.toLowerCase().includes('bihari story')
+
+  const hasCustomText = Boolean(supportsCustomBackText && customBackText.trim().length > 0)
+  const customizationFee = hasCustomText ? 25 : 0
+  const displayPrice = product.price + customizationFee
+
   const galleryImages = (product.images && product.images.length > 0)
     ? product.images
-    : [product.image].filter(Boolean)
+    : product.id === 'kala-bihari-story-premium-t-shirt'
+      ? [product.image, getProductImage('kala-bihari-story-back.png')].filter(Boolean)
+      : [product.image].filter(Boolean)
 
   const highlights = getProductHighlights(product)
   const isWishlisted = isInWishlist(product.id)
@@ -141,7 +153,11 @@ export const ProductDetails: React.FC = () => {
       ...product,
       image: selectedVariant?.image || activeImage || product.image,
     }
-    addToCart(cartProduct, selectedSize, quantity)
+    const customizationData = hasCustomText
+      ? { backText: customBackText.trim().slice(0, 30), price: 25 }
+      : undefined
+
+    addToCart(cartProduct, selectedSize, quantity, customizationData)
 
     if (!isAuthenticated) {
       navigate('/account?redirect=/checkout&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.')
@@ -163,7 +179,11 @@ export const ProductDetails: React.FC = () => {
       ...product,
       image: selectedVariant?.image || activeImage || product.image,
     }
-    addToCart(cartProduct, selectedSize, quantity)
+    const customizationData = hasCustomText
+      ? { backText: customBackText.trim().slice(0, 30), price: 25 }
+      : undefined
+
+    addToCart(cartProduct, selectedSize, quantity, customizationData)
     setAddedNotification(true)
 
     // Reset notification after 3 seconds
@@ -220,17 +240,19 @@ export const ProductDetails: React.FC = () => {
             <div className="kala-gallery-thumbnails" role="tablist" aria-label="Product thumbnails">
               {galleryImages.map((imgUrl, idx) => {
                 const isCurrent = (activeImage || product.image) === imgUrl
+                const label = idx === 0 ? 'Front' : (idx === 1 ? 'Back' : `View ${idx + 1}`)
                 return (
                   <button
                     key={idx}
                     type="button"
                     role="tab"
                     aria-selected={isCurrent}
-                    aria-label={`View image ${idx + 1}`}
+                    aria-label={`View ${label}`}
                     className={`kala-gallery-thumb-btn ${isCurrent ? 'active' : ''}`}
                     onClick={() => setActiveImage(imgUrl)}
                   >
-                    <img src={imgUrl} alt={`${product.name} view ${idx + 1}`} />
+                    <img src={imgUrl} alt={`${product.name} ${label}`} />
+                    <span className="kala-gallery-thumb-tag">{label}</span>
                   </button>
                 )
               })}
@@ -252,8 +274,15 @@ export const ProductDetails: React.FC = () => {
           <h1 className="kala-details-title">{product.name}</h1>
 
           {/* Price */}
-          <div className="kala-details-price">
-            ₹{product.price.toLocaleString('en-IN')}
+          <div className="kala-details-price-wrap">
+            <div className="kala-details-price">
+              ₹{displayPrice.toLocaleString('en-IN')}
+            </div>
+            {hasCustomText && (
+              <span className="kala-custom-price-badge">
+                (₹{product.price} base + ₹25 back text)
+              </span>
+            )}
           </div>
 
           {/* Stock */}
@@ -266,8 +295,71 @@ export const ProductDetails: React.FC = () => {
             <span>{product.available ? 'In Stock' : 'Out of Stock'}</span>
           </div>
 
+          {/* Key Specifications (220 GSM, Premium Comfort, Durable, Comfortable Fit) */}
+          {supportsCustomBackText && (
+            <div className="kala-details-spec-pills" aria-label="Key specifications">
+              <span className="kala-spec-pill">220 GSM</span>
+              <span className="kala-spec-pill">Premium Comfort</span>
+              <span className="kala-spec-pill">Durable Fabric</span>
+              <span className="kala-spec-pill">Comfortable Fit</span>
+            </div>
+          )}
+
           {/* Short 1-line description */}
           <p className="kala-details-description">{product.description}</p>
+
+          {/* Special Customization: Back Custom Text (+₹25) */}
+          {supportsCustomBackText && (
+            <section className="kala-custom-back-box" aria-labelledby="custom-back-heading">
+              <div className="kala-custom-back-header">
+                <div className="kala-custom-back-title-row">
+                  <h3 id="custom-back-heading" className="kala-custom-back-title">
+                    BACK CUSTOM TEXT
+                  </h3>
+                  <span className="kala-custom-back-badge">+₹25</span>
+                </div>
+                <p className="kala-custom-back-desc">
+                  Add your own text to the back of the T-shirt
+                </p>
+              </div>
+
+              <div className="kala-custom-back-input-group">
+                <input
+                  type="text"
+                  maxLength={30}
+                  value={customBackText}
+                  onChange={(e) => setCustomBackText(e.target.value)}
+                  placeholder="Enter your custom back text..."
+                  className="kala-custom-back-input"
+                  aria-label="Enter custom back text"
+                />
+                <div className="kala-custom-back-meta">
+                  <span className="kala-custom-back-helper">Maximum 30 characters</span>
+                  <span className={`kala-custom-back-count ${customBackText.length >= 30 ? 'limit' : ''}`}>
+                    {customBackText.length}/30
+                  </span>
+                </div>
+              </div>
+
+              {hasCustomText && (
+                <div className="kala-custom-price-breakdown">
+                  <div className="kala-price-breakdown-row">
+                    <span>Base price</span>
+                    <span>₹{product.price.toLocaleString('en-IN')}</span>
+                  </div>
+                  <div className="kala-price-breakdown-row">
+                    <span>Back custom text</span>
+                    <span className="kala-price-breakdown-add">+₹25</span>
+                  </div>
+                  <div className="kala-price-breakdown-divider" />
+                  <div className="kala-price-breakdown-row total">
+                    <span>Total</span>
+                    <span>₹{displayPrice.toLocaleString('en-IN')}</span>
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
 
           {/* Color Variant Selector */}
           {product.variants && product.variants.length > 0 && (

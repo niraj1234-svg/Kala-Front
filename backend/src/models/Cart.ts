@@ -8,6 +8,10 @@ export interface ICartItem {
   price: number
   size: string
   quantity: number
+  customization?: {
+    backText?: string
+    price?: number
+  }
 }
 
 export interface ICart extends Document {
@@ -50,6 +54,14 @@ const CartItemSchema = new Schema<ICartItem>(
       min: 1,
       max: 10,
       default: 1,
+    },
+    customization: {
+      type: {
+        backText: { type: String, trim: true, maxlength: 30 },
+        price: { type: Number, default: 0 },
+      },
+      required: false,
+      _id: false,
     },
   },
   {

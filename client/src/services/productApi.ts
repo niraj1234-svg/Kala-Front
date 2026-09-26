@@ -92,13 +92,20 @@ export async function fetchProducts(category?: string): Promise<Product[]> {
 
     const data = await response.json()
     if (data && Array.isArray(data.products)) {
-      return data.products
+      const normalized = data.products
         .filter(
           (item: any) =>
             item.id !== 'gymwear-oversized-pump-cover-05' &&
             item.id !== 'gymwear-seamless-muscle-tank-02'
         )
         .map(normalizeApiProduct)
+
+      // Ensure KALA Bihari Story Premium T-Shirt is always the FIRST product
+      return normalized.sort((a: Product, b: Product) => {
+        if (a.id === 'kala-bihari-story-premium-t-shirt') return -1
+        if (b.id === 'kala-bihari-story-premium-t-shirt') return 1
+        return 0
+      })
     }
 
     throw new Error('Unexpected API response format')

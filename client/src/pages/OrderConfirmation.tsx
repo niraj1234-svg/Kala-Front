@@ -45,6 +45,7 @@ export const OrderConfirmation: React.FC = () => {
                 size: i.size,
                 quantity: i.quantity,
                 price: i.price,
+                customization: i.customization,
               })),
               pricing: {
                 subtotal: local.subtotal,
@@ -239,6 +240,11 @@ export const OrderConfirmation: React.FC = () => {
                   <div className="kala-order-item-meta">
                     Size: <strong>{item.size}</strong> · Qty: {item.quantity} · ₹{item.price.toLocaleString('en-IN')} each
                   </div>
+                  {item.customization?.backText && (
+                    <div className="kala-order-item-custom-text" style={{ marginTop: '0.35rem', fontSize: '0.8rem', color: '#1e3d2f', fontWeight: 600 }}>
+                      Back Text: "{item.customization.backText}" (+₹25)
+                    </div>
+                  )}
                 </div>
                 <div className="kala-order-item-total">
                   ₹{(item.price * item.quantity).toLocaleString('en-IN')}

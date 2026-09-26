@@ -107,7 +107,41 @@
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--kala-text-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.kala-cart-item-customization {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  background-color: rgba(30, 61, 47, 0.08);
+  border: 1px dashed rgba(30, 61, 47, 0.35);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8125rem;
   margin-bottom: 0.5rem;
+  width: fit-content;
+}
+
+.kala-cart-custom-label {
+  font-weight: 600;
+  color: var(--kala-text-secondary);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+}
+
+.kala-cart-custom-value {
+  color: #1e3d2f;
+  font-weight: 700;
+  font-family: inherit;
+}
+
+.kala-cart-custom-fee {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #166534;
 }
 
 .kala-cart-item-price {

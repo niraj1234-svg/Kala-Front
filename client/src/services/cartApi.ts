@@ -9,6 +9,10 @@ export interface ServerCartItem {
   price: number
   size: string
   quantity: number
+  customization?: {
+    backText?: string
+    price?: number
+  }
 }
 
 export interface ServerCartResponse {
@@ -60,6 +64,10 @@ export async function addServerCartItem(item: {
   price: number
   size: string
   quantity: number
+  customization?: {
+    backText?: string
+    price?: number
+  }
 }): Promise<ServerCartResponse | null> {
   const token = getAuthToken()
   if (!token) return null
@@ -92,20 +100,21 @@ export async function addServerCartItem(item: {
 export async function updateServerCartItemQty(
   productId: string,
   size: string,
-  quantity: number
+  quantity: number,
+  backText?: string
 ): Promise<ServerCartResponse | null> {
   const token = getAuthToken()
   if (!token) return null
 
   try {
-    const compositeId = `${productId}:${size}`
+    const compositeId = backText ? `${productId}:${size}:${backText}` : `${productId}:${size}`
     const res = await fetch(`${API_BASE_URL}/cart/items/${encodeURIComponent(compositeId)}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ quantity, size }),
+      body: JSON.stringify({ quantity, size, backText }),
     })
 
     if (!res.ok) {
@@ -125,15 +134,19 @@ export async function updateServerCartItemQty(
  */
 export async function removeServerCartItem(
   productId: string,
-  size: string
+  size: string,
+  backText?: string
 ): Promise<ServerCartResponse | null> {
   const token = getAuthToken()
   if (!token) return null
 
   try {
-    const compositeId = `${productId}:${size}`
+    const compositeId = backText ? `${productId}:${size}:${backText}` : `${productId}:${size}`
+    const queryParams = new URLSearchParams({ size })
+    if (backText) queryParams.set('backText', backText)
+
     const res = await fetch(
-      `${API_BASE_URL}/cart/items/${encodeURIComponent(compositeId)}?size=${encodeURIComponent(size)}`,
+      `${API_BASE_URL}/cart/items/${encodeURIComponent(compositeId)}?${queryParams.toString()}`,
       {
         method: 'DELETE',
         headers: {

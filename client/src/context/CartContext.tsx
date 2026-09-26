@@ -15,6 +15,10 @@ export interface CartItem {
   price: number
   size: string
   quantity: number
+  customization?: {
+    backText?: string
+    price?: number
+  }
 }
 
 export interface CartContextType {
@@ -24,10 +28,11 @@ export interface CartContextType {
   addToCart: (
     product: { id: string; name: string; image: string; price: number },
     size: string,
-    quantity: number
+    quantity: number,
+    customization?: { backText?: string; price?: number }
   ) => void
-  removeFromCart: (productId: string, size: string, image?: string) => void
-  updateQuantity: (productId: string, size: string, quantity: number, image?: string) => void
+  removeFromCart: (productId: string, size: string, image?: string, backText?: string) => void
+  updateQuantity: (productId: string, size: string, quantity: number, image?: string, backText?: string) => void
   clearCart: () => void
 }
 
@@ -136,6 +141,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
               price: it.price,
               size: it.size,
               quantity: it.quantity,
+              ...(it.customization ? { customization: it.customization } : {}),
             }))
             setCartItems(mappedItems)
             try {
@@ -191,15 +197,24 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const addToCart = (
     product: { id: string; name: string; image: string; price: number },
     size: string,
-    quantity: number
+    quantity: number,
+    customization?: { backText?: string; price?: number }
   ) => {
     if (!size || quantity <= 0) return
 
     const clampedQuantity = Math.min(quantity, 10)
+    const cleanBackText = customization?.backText?.trim().slice(0, 30) || ''
+    const customFee = cleanBackText ? 25 : 0
+    const finalUnitPrice = product.price + customFee
+    const finalCustomization = cleanBackText ? { backText: cleanBackText, price: 25 } : undefined
 
     setCartItems((prevItems) => {
       const existingIndex = prevItems.findIndex(
-        (item) => item.productId === product.id && item.size === size && (!item.image || item.image === product.image)
+        (item) =>
+          item.productId === product.id &&
+          item.size === size &&
+          (!item.image || item.image === product.image) &&
+          (item.customization?.backText || '') === cleanBackText
       )
 
       if (existingIndex > -1) {
@@ -208,6 +223,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updated[existingIndex] = {
           ...updated[existingIndex],
           quantity: Math.min(currentQty + clampedQuantity, 10),
+          price: finalUnitPrice,
+          ...(finalCustomization ? { customization: finalCustomization } : {}),
         }
         return updated
       } else {
@@ -215,9 +232,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           productId: product.id,
           name: product.name,
           image: product.image,
-          price: product.price,
+          price: finalUnitPrice,
           size,
           quantity: clampedQuantity,
+          ...(finalCustomization ? { customization: finalCustomization } : {}),
         }
         return [...prevItems, newItem]
       }
@@ -229,33 +247,46 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         productId: product.id,
         name: product.name,
         image: product.image,
-        price: product.price,
+        price: finalUnitPrice,
         size,
         quantity: clampedQuantity,
+        ...(finalCustomization ? { customization: finalCustomization } : {}),
       }).catch((err) => {
         console.warn('[CartContext] Failed to sync added item with server:', err)
       })
     }
   }
 
-  const removeFromCart = (productId: string, size: string, image?: string) => {
+  const removeFromCart = (productId: string, size: string, image?: string, backText?: string) => {
     setCartItems((prevItems) =>
       prevItems.filter(
-        (item) => !(item.productId === productId && item.size === size && (!image || item.image === image))
+        (item) =>
+          !(
+            item.productId === productId &&
+            item.size === size &&
+            (!image || item.image === image) &&
+            (backText === undefined || (item.customization?.backText || '') === backText)
+          )
       )
     )
 
     // If authenticated, persist deletion to MongoDB backend
     if (isAuthenticated && activeUserId) {
-      removeServerCartItem(productId, size).catch((err) => {
+      removeServerCartItem(productId, size, backText).catch((err) => {
         console.warn('[CartContext] Failed to sync removed item with server:', err)
       })
     }
   }
 
-  const updateQuantity = (productId: string, size: string, quantity: number, image?: string) => {
+  const updateQuantity = (
+    productId: string,
+    size: string,
+    quantity: number,
+    image?: string,
+    backText?: string
+  ) => {
     if (quantity <= 0) {
-      removeFromCart(productId, size, image)
+      removeFromCart(productId, size, image, backText)
       return
     }
 
@@ -263,7 +294,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setCartItems((prevItems) =>
       prevItems.map((item) => {
-        if (item.productId === productId && item.size === size && (!image || item.image === image)) {
+        if (
+          item.productId === productId &&
+          item.size === size &&
+          (!image || item.image === image) &&
+          (backText === undefined || (item.customization?.backText || '') === backText)
+        ) {
           return { ...item, quantity: clampedQuantity }
         }
         return item
@@ -272,7 +308,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // If authenticated, persist quantity change to MongoDB backend
     if (isAuthenticated && activeUserId) {
-      updateServerCartItemQty(productId, size, clampedQuantity).catch((err) => {
+      updateServerCartItemQty(productId, size, clampedQuantity, backText).catch((err) => {
         console.warn('[CartContext] Failed to sync quantity with server:', err)
       })
     }

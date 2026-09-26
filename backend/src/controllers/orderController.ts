@@ -198,13 +198,29 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     // 7. Construct Verified Items & NEVER Trust Frontend Price
     const verifiedItems = items.map((item) => {
       const dbProduct = productMap.get(item.productId.trim())!
+
+      // Authoritative back custom text validation & pricing
+      let customizationData: { backText: string; price: number } | undefined = undefined
+      let customPrice = 0
+
+      const rawBackText = item.customization?.backText || item.backText
+      if (typeof rawBackText === 'string' && rawBackText.trim().length > 0) {
+        const cleanBackText = rawBackText.trim().slice(0, 30)
+        customPrice = 25 // STRICT: Authoritative server-side ₹25 customization fee
+        customizationData = {
+          backText: cleanBackText,
+          price: 25,
+        }
+      }
+
       return {
         productId: dbProduct.id,
         name: dbProduct.name,
         image: dbProduct.image,
         size: item.size.toUpperCase(),
         quantity: Math.floor(Number(item.quantity)),
-        price: dbProduct.price, // STRICT: ALWAYS use verified DB price
+        price: dbProduct.price + customPrice, // STRICT: ALWAYS use verified DB base price + server custom fee
+        ...(customizationData ? { customization: customizationData } : {}),
       }
     })
 

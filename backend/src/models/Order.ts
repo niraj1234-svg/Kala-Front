@@ -7,6 +7,10 @@ export interface IOrderItem {
   size: string
   quantity: number
   price: number
+  customization?: {
+    backText?: string
+    price?: number
+  }
 }
 
 export interface ICustomer {
@@ -112,6 +116,14 @@ const OrderItemSchema = new Schema<IOrderItem>(
       type: Number,
       required: true,
       min: 0,
+    },
+    customization: {
+      type: {
+        backText: { type: String, trim: true, maxlength: 30 },
+        price: { type: Number, default: 0 },
+      },
+      required: false,
+      _id: false,
     },
   },
   { _id: false }
