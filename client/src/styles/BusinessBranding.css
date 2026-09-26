@@ -119,6 +119,14 @@
   margin-bottom: 0;
 }
 
+.kala-b-buttons-desktop {
+  display: flex;
+}
+
+.kala-b-buttons-mobile {
+  display: none !important;
+}
+
 .kala-b-cta-btn {
   display: inline-flex;
   align-items: center;
@@ -607,10 +615,10 @@
 
 @media (max-width: 767px) {
   .kala-business-editorial-section {
-    padding: clamp(2.5rem, 6vw, 3.5rem) 1rem clamp(3rem, 6vw, 4.5rem);
+    padding: clamp(2.5rem, 6vw, 3.5rem) 1rem clamp(2rem, 5vw, 2.5rem);
   }
   .kala-business-editorial-grid {
-    gap: 2.25rem;
+    gap: 2rem;
   }
   .kala-business-left-content {
     text-align: left;
@@ -624,15 +632,24 @@
   .kala-b-desc-text {
     margin-left: 0;
     margin-right: 0;
+    margin-bottom: 0.5rem;
   }
   .kala-b-display-title {
     font-size: clamp(2.35rem, 9vw, 3.25rem);
   }
-  .kala-b-buttons-row {
-    display: grid;
+
+  /* Desktop CTA hidden on mobile */
+  .kala-b-buttons-desktop {
+    display: none !important;
+  }
+
+  /* Mobile CTA: positioned directly underneath the complete hero visual */
+  .kala-b-buttons-mobile {
+    display: grid !important;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     width: 100%;
+    margin-top: 1.25rem;
     margin-bottom: 0;
     box-sizing: border-box;
   }
@@ -765,6 +782,7 @@
   .kala-business-right-collage {
     transform: scale(0.92);
     transform-origin: center top;
+    margin-bottom: -1rem;
   }
   .kala-b-buttons-row {
     gap: 10px;
@@ -978,9 +996,37 @@
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
+/* Subtle, naturally feathered contrast layer in upper-left text-safe area */
+.kala-sol-card-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 62% 48% at 0% 0%,
+    rgba(250, 246, 240, 0.96) 0%,
+    rgba(250, 246, 240, 0.88) 35%,
+    rgba(250, 246, 240, 0.45) 65%,
+    rgba(250, 246, 240, 0) 100%
+  );
+  transition: opacity 0.3s ease;
+}
+
 .kala-sol-card-wide .kala-sol-card-inner {
   aspect-ratio: 2.15 / 1;
   min-height: 310px;
+}
+
+/* Wide card (16:9) has more horizontal room */
+.kala-sol-card-wide .kala-sol-card-inner::before {
+  background: radial-gradient(
+    ellipse 42% 48% at 0% 0%,
+    rgba(250, 246, 240, 0.96) 0%,
+    rgba(250, 246, 240, 0.88) 32%,
+    rgba(250, 246, 240, 0.40) 60%,
+    rgba(250, 246, 240, 0) 100%
+  );
 }
 
 .kala-sol-card:hover .kala-sol-card-inner {
@@ -1003,35 +1049,44 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: 70% center;
   transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
+}
+
+.kala-sol-card-wide .kala-sol-card-img {
+  object-position: center center;
 }
 
 .kala-sol-card:hover .kala-sol-card-img {
   transform: scale(1.03);
 }
 
-/* Top-Left Header Overlay */
+/* Dedicated upper-left text-safe area */
 .kala-sol-card-header {
   position: absolute;
-  top: 1.25rem;
-  left: 1.25rem;
+  top: 1.35rem;
+  left: 1.35rem;
   z-index: 3;
-  pointer-events: none;
+  max-width: 58%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  pointer-events: none;
+}
+
+.kala-sol-card-wide .kala-sol-card-header {
+  max-width: 42%;
 }
 
 .kala-sol-card-num {
   font-family: var(--kala-font-primary);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 800;
   color: #E94B00;
   line-height: 1;
   margin-bottom: 0.35rem;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
 }
 
 .kala-sol-card-cat {
@@ -1040,28 +1095,30 @@
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #777777;
-  line-height: 1;
+  color: #555555;
+  line-height: 1.1;
   margin-bottom: 0.45rem;
 }
 
 .kala-sol-card-title {
   font-family: var(--kala-font-primary);
-  font-size: clamp(1.1rem, 1.35vw, 1.35rem);
+  font-size: clamp(1.1rem, 1.25vw, 1.32rem);
   font-weight: 900;
-  line-height: 1.1;
+  line-height: 1.05;
   letter-spacing: -0.025em;
   text-transform: uppercase;
   color: #111111;
   margin: 0;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  white-space: pre-line;
 }
-
 
 /* Bottom-Left Category Icon Badge */
 .kala-sol-card-icon-badge {
   position: absolute;
-  bottom: 1.15rem;
-  left: 1.15rem;
+  bottom: 1.25rem;
+  left: 1.25rem;
   z-index: 3;
   display: inline-flex;
   align-items: center;
@@ -1091,6 +1148,25 @@
     aspect-ratio: 1 / 1.05;
     min-height: 330px;
   }
+
+  .kala-sol-card-wide .kala-sol-card-inner::before {
+    background: radial-gradient(
+      ellipse 62% 48% at 0% 0%,
+      rgba(250, 246, 240, 0.96) 0%,
+      rgba(250, 246, 240, 0.88) 35%,
+      rgba(250, 246, 240, 0.45) 65%,
+      rgba(250, 246, 240, 0) 100%
+    );
+  }
+
+  .kala-sol-card-wide .kala-sol-card-header,
+  .kala-sol-card-header {
+    max-width: 58%;
+  }
+
+  .kala-sol-card-title {
+    font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+  }
 }
 
 @media (max-width: 640px) {
@@ -1104,7 +1180,6 @@
     gap: 1.25rem;
   }
 
-
   .kala-solutions-visual-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
@@ -1116,8 +1191,89 @@
 
   .kala-sol-card-inner,
   .kala-sol-card-wide .kala-sol-card-inner {
-    aspect-ratio: 1 / 1.05;
-    min-height: 320px;
+    aspect-ratio: 1 / 1;
+    min-height: 310px;
+    background-color: #FAF6F0;
+  }
+
+  /* Mobile Text-Safe Contrast Overlay */
+  .kala-sol-card-inner::before,
+  .kala-sol-card-wide .kala-sol-card-inner::before {
+    background: radial-gradient(
+      ellipse 65% 50% at 0% 0%,
+      rgba(250, 246, 240, 0.98) 0%,
+      rgba(250, 246, 240, 0.92) 38%,
+      rgba(250, 246, 240, 0.45) 68%,
+      transparent 100%
+    );
+  }
+
+  .kala-sol-card-header,
+  .kala-sol-card-wide .kala-sol-card-header {
+    top: 1.25rem;
+    left: 1.25rem;
+    max-width: 65%;
+  }
+
+  .kala-sol-card-num {
+    font-size: 0.75rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+  }
+
+  .kala-sol-card-cat {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+  }
+
+  .kala-sol-card-title {
+    font-size: clamp(1.25rem, 5.2vw, 1.5rem);
+    font-weight: 900;
+    line-height: 1.04;
+  }
+
+  /* Mobile: Products shifted lower/center-right so text never touches product */
+  .kala-sol-card-img {
+    object-position: 85% 65%;
+    transform: scale(0.96) translate(4%, 5%);
+    transform-origin: 85% 65%;
+  }
+
+  .kala-sol-card-college-university .kala-sol-card-img {
+    object-position: 45% 65%;
+    transform: scale(0.92) translate(2%, 10%);
+    transform-origin: center center;
+  }
+
+  .kala-sol-card-startups .kala-sol-card-img {
+    object-position: 65% 55%;
+    transform: scale(0.94) translate(4%, 8%);
+    transform-origin: center center;
+  }
+
+  .kala-sol-card-icon-badge {
+    bottom: 1rem;
+    left: 1rem;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 360px) {
+  .kala-sol-card-header,
+  .kala-sol-card-wide .kala-sol-card-header {
+    top: 1rem;
+    left: 1rem;
+    max-width: 68%;
+  }
+  .kala-sol-card-title {
+    font-size: 1.2rem;
+  }
+  .kala-sol-card-inner,
+  .kala-sol-card-wide .kala-sol-card-inner {
+    min-height: 290px;
   }
 }
 

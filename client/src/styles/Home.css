@@ -745,14 +745,21 @@
     max-width: 100%;
   }
 
-  /* Custom Apparel & Business Branding: Image -> Title -> Short Line -> Action */
+  /* Custom Apparel & Business Branding: Tighten vertical rhythm & remove excessive empty space on mobile */
+  .kala-split-cards-section {
+    padding-top: clamp(1.5rem, 3.5vw, 2.25rem);
+    padding-bottom: clamp(1.5rem, 3.5vw, 2.25rem);
+  }
+
   .kala-split-cards-grid {
     grid-template-columns: 1fr;
-    gap: 1.25rem;
+    gap: 1.5rem;
+    padding: 0 clamp(1rem, 3.5vw, 1.5rem);
   }
 
   .kala-split-card {
     flex-direction: column;
+    height: auto;
     min-height: auto;
     border-radius: 12px;
   }
@@ -760,30 +767,39 @@
   .kala-split-card-visual {
     order: 1;
     width: 100%;
-    height: 220px;
+    flex: none;
+    height: 200px;
   }
 
   .kala-split-card-content {
     order: 2;
-    padding: 1.35rem 1.15rem 1.5rem;
+    flex: none;
+    height: auto;
+    justify-content: flex-start;
+    padding: 1.25rem 1.15rem 1.25rem;
   }
 
   .kala-split-card-title {
     font-size: 1.45rem;
     line-height: 1.1;
-    margin-bottom: 0.35rem;
+    margin: 0 0 0.85rem 0;
   }
 
   .kala-split-card-desc {
     font-size: 0.9rem;
-    margin-bottom: 1.25rem;
+    line-height: 1.45;
+    margin: 0 0 1.6rem 0;
     max-width: 100%;
+  }
+
+  .kala-split-card-action {
+    margin-top: 0;
   }
 
   .kala-split-card-btn {
     width: 100%;
     justify-content: center;
-    min-height: 46px;
+    min-height: 44px;
   }
 
   /* Featured Products: Compact 2-Column Grid */
@@ -868,16 +884,21 @@
   }
 
   .kala-split-card-visual {
-    height: 190px;
+    height: 180px;
+  }
+
+  .kala-split-card-content {
+    padding: 1.15rem 1rem 1.15rem;
   }
 
   .kala-split-card-title {
     font-size: 1.35rem;
+    margin-bottom: 0.75rem;
   }
 
   .kala-split-card-desc {
     font-size: 0.85rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .kala-clean-product-media {
@@ -912,6 +933,28 @@
 
 /* Extra Small Screens (320px - 350px): Single Column Contact & Zero Horizontal Scroll */
 @media (max-width: 350px) {
+  .kala-split-cards-grid {
+    gap: 1.25rem;
+  }
+
+  .kala-split-card-visual {
+    height: 160px;
+  }
+
+  .kala-split-card-content {
+    padding: 1rem 0.85rem 1.05rem;
+  }
+
+  .kala-split-card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .kala-split-card-desc {
+    font-size: 0.82rem;
+    margin-bottom: 1.35rem;
+  }
+
   .kala-contact-grid {
     grid-template-columns: 1fr;
     gap: 0.65rem;

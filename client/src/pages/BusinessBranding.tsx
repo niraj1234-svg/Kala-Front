@@ -394,6 +394,89 @@ export const BusinessBranding: React.FC = () => {
     }
   }
 
+  const renderCtaButtons = (extraClass = '') => (
+    <div className={`kala-b-buttons-row ${extraClass}`.trim()}>
+      <button
+        type="button"
+        className="kala-b-cta-btn kala-b-cta-primary"
+        onClick={() => scrollToForm()}
+      >
+        <span className="kala-b-btn-inner">
+          <svg
+            className="kala-b-btn-icon"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+          </svg>
+          <span>REQUEST A QUOTE</span>
+        </span>
+        <svg
+          className="kala-b-btn-arrow"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        className="kala-b-cta-btn kala-b-cta-secondary"
+        onClick={scrollToSolutions}
+      >
+        <span className="kala-b-btn-inner">
+          <svg
+            className="kala-b-btn-icon"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+          <span>EXPLORE MERCH</span>
+        </span>
+        <svg
+          className="kala-b-btn-arrow"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
+      </button>
+    </div>
+  )
+
   return (
     <main className="kala-business-page">
       {/* 1. HERO SECTION (Editorial Corporate Streetwear) */}
@@ -430,87 +513,8 @@ export const BusinessBranding: React.FC = () => {
                 Custom apparel for teams, brands &amp; events.
               </p>
 
-              {/* CTAs */}
-              <div className="kala-b-buttons-row">
-                <button
-                  type="button"
-                  className="kala-b-cta-btn kala-b-cta-primary"
-                  onClick={() => scrollToForm()}
-                >
-                  <span className="kala-b-btn-inner">
-                    <svg
-                      className="kala-b-btn-icon"
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M12 20h9" />
-                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                    </svg>
-                    <span>REQUEST A QUOTE</span>
-                  </span>
-                  <svg
-                    className="kala-b-btn-arrow"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12 5 19 12 12 19" />
-                  </svg>
-                </button>
-
-                <button
-                  type="button"
-                  className="kala-b-cta-btn kala-b-cta-secondary"
-                  onClick={scrollToSolutions}
-                >
-                  <span className="kala-b-btn-inner">
-                    <svg
-                      className="kala-b-btn-icon"
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                    </svg>
-                    <span>EXPLORE MERCH</span>
-                  </span>
-                  <svg
-                    className="kala-b-btn-arrow"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12 5 19 12 12 19" />
-                  </svg>
-                </button>
-              </div>
+              {/* Desktop / Tablet CTAs */}
+              {renderCtaButtons('kala-b-buttons-desktop')}
             </div>
 
             {/* Right Column: Editorial Corporate Streetwear Collage */}
@@ -662,6 +666,9 @@ export const BusinessBranding: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Mobile CTA Buttons: Naturally follows the complete hero artwork on mobile */}
+          {renderCtaButtons('kala-b-buttons-mobile')}
         </div>
       </section>
 
@@ -693,7 +700,7 @@ export const BusinessBranding: React.FC = () => {
               <button
                 key={item.id}
                 type="button"
-                className={`kala-sol-card ${item.isWide ? 'kala-sol-card-wide' : ''}`}
+                className={`kala-sol-card ${item.isWide ? 'kala-sol-card-wide' : ''} kala-sol-card-${item.id}`}
                 onClick={() => scrollToForm(item.orgType, item.apparel)}
                 aria-label={`Request custom apparel for ${item.title.replace('\n', ' ')} (${item.category})`}
               >
