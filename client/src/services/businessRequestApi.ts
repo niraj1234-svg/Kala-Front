@@ -6,11 +6,17 @@ export interface BusinessRequestInput {
   email: string
   phone: string
   organizationType: string
-  apparelRequired: string
-  quantity: string
-  requiredBy: string
-  brandingRequirements: string
+  apparelRequired?: string
+  apparelTypes?: string[]
+  quantity?: string
+  estimatedQuantity?: string
+  requiredBy?: string
+  brandingRequirements?: string
+  discussionTopics?: string[]
   details?: string
+  projectDetails?: string
+  preferredMeetingMethod?: string
+  preferredMeetingTime?: string
 }
 
 export interface BackendBusinessRequest {
@@ -21,10 +27,16 @@ export interface BackendBusinessRequest {
   phone: string
   organizationType: string
   apparelRequired: string
+  apparelTypes?: string[]
   quantity: string
-  requiredBy: string
+  estimatedQuantity?: string
+  requiredBy?: string
   brandingRequirements: string
+  discussionTopics?: string[]
   details?: string
+  projectDetails?: string
+  preferredMeetingMethod?: string
+  preferredMeetingTime?: string
   status: string
   createdAt: string
   updatedAt?: string

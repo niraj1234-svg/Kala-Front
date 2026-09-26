@@ -25,11 +25,17 @@ export const createBusinessRequest = async (req: Request, res: Response) => {
       email,
       phone,
       organizationType,
+      apparelTypes,
       apparelRequired,
+      estimatedQuantity,
       quantity,
-      requiredBy,
+      discussionTopics,
       brandingRequirements,
+      projectDetails,
       details,
+      preferredMeetingMethod,
+      preferredMeetingTime,
+      requiredBy,
     } = req.body
 
     // 1. Validate Required Fields
@@ -67,21 +73,58 @@ export const createBusinessRequest = async (req: Request, res: Response) => {
       return
     }
 
-    if (!requiredBy || typeof requiredBy !== 'string' || !requiredBy.trim()) {
+    // Resolve apparel categories
+    const resolvedApparelTypes: string[] = Array.isArray(apparelTypes)
+      ? apparelTypes.filter((t: any) => typeof t === 'string' && t.trim())
+      : typeof apparelRequired === 'string' && apparelRequired.trim()
+      ? [apparelRequired.trim()]
+      : []
+
+    if (resolvedApparelTypes.length === 0) {
       res.status(400).json({
         success: false,
-        message: 'Invalid request: Target delivery deadline is required.',
+        message: 'Invalid request: Please select at least one apparel category of interest.',
       })
       return
     }
 
-    if (!quantity || typeof quantity !== 'string' || !quantity.trim()) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid request: Estimated quantity is required.',
-      })
-      return
-    }
+    const resolvedApparelRequired = resolvedApparelTypes.join(', ')
+    const resolvedQuantity =
+      (typeof estimatedQuantity === 'string' && estimatedQuantity.trim()) ||
+      (typeof quantity === 'string' && quantity.trim()) ||
+      '51–100'
+
+    const resolvedTopics: string[] = Array.isArray(discussionTopics)
+      ? discussionTopics.filter((t: any) => typeof t === 'string' && t.trim())
+      : typeof brandingRequirements === 'string' && brandingRequirements.trim()
+      ? [brandingRequirements.trim()]
+      : []
+
+    const resolvedBranding =
+      resolvedTopics.join(', ') ||
+      (typeof brandingRequirements === 'string' && brandingRequirements.trim()
+        ? brandingRequirements.trim()
+        : 'Logo / Brand Printing')
+
+    const resolvedDetails =
+      (typeof projectDetails === 'string' && projectDetails.trim()) ||
+      (typeof details === 'string' && details.trim()) ||
+      ''
+
+    const resolvedMeetingMethod =
+      typeof preferredMeetingMethod === 'string' && preferredMeetingMethod.trim()
+        ? preferredMeetingMethod.trim()
+        : 'Phone Call'
+
+    const resolvedMeetingTime =
+      typeof preferredMeetingTime === 'string' && preferredMeetingTime.trim()
+        ? preferredMeetingTime.trim()
+        : 'Anytime'
+
+    const resolvedRequiredBy =
+      typeof requiredBy === 'string' && requiredBy.trim()
+        ? requiredBy.trim()
+        : 'To be discussed in meeting'
 
     // 2. Generate Unique Backend Request ID
     let requestId = generateBusinessRequestId()
@@ -102,23 +145,23 @@ export const createBusinessRequest = async (req: Request, res: Response) => {
         typeof organizationType === 'string' && organizationType.trim()
           ? organizationType.trim()
           : 'Company',
-      apparelRequired:
-        typeof apparelRequired === 'string' && apparelRequired.trim()
-          ? apparelRequired.trim()
-          : 'T-Shirts',
-      quantity: quantity.trim(),
-      requiredBy: requiredBy.trim(),
-      brandingRequirements:
-        typeof brandingRequirements === 'string' && brandingRequirements.trim()
-          ? brandingRequirements.trim()
-          : 'Logo',
-      details: typeof details === 'string' ? details.trim() : '',
+      apparelRequired: resolvedApparelRequired,
+      apparelTypes: resolvedApparelTypes,
+      quantity: resolvedQuantity,
+      estimatedQuantity: resolvedQuantity,
+      requiredBy: resolvedRequiredBy,
+      brandingRequirements: resolvedBranding,
+      discussionTopics: resolvedTopics,
+      details: resolvedDetails,
+      projectDetails: resolvedDetails,
+      preferredMeetingMethod: resolvedMeetingMethod,
+      preferredMeetingTime: resolvedMeetingTime,
       status: 'pending',
     })
 
     res.status(201).json({
       success: true,
-      message: 'Business branding request submitted successfully',
+      message: 'Business branding meeting request submitted successfully',
       requestId: newRequest.requestId,
       request: newRequest,
     })

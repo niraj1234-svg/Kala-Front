@@ -1128,6 +1128,197 @@
   box-sizing: border-box;
 }
 
+/* Meeting Form Purpose Header */
+.kala-b2b-form-header {
+  margin-bottom: 1.85rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #ECE8E1;
+}
+
+.kala-b2b-form-main-title {
+  font-family: var(--kala-font-primary);
+  font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.45rem 0;
+}
+
+.kala-b2b-form-main-subtitle {
+  font-family: var(--kala-font-primary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #64748B;
+  margin: 0;
+}
+
+/* Multi-Select Pill Groups (Apparel & Discussion Topics) */
+.kala-b2b-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.4rem;
+}
+
+.kala-b2b-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.95rem;
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 9999px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kala-b2b-pill-btn:hover {
+  background-color: #F1F5F9;
+  border-color: #CBD5E1;
+  color: #0F172A;
+}
+
+.kala-b2b-pill-btn.active {
+  background-color: #FFF5EE;
+  border-color: #E85A2A;
+  color: #D44D1E;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(232, 90, 42, 0.15);
+}
+
+.kala-b2b-pill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background-color: #E2E8F0;
+  color: #64748B;
+  transition: all 0.2s ease;
+}
+
+.kala-b2b-pill-btn.active .kala-b2b-pill-icon {
+  background-color: #E85A2A;
+  color: #FFFFFF;
+}
+
+/* Preferred Meeting Method Options */
+.kala-b2b-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+  margin-top: 0.35rem;
+}
+
+.kala-b2b-method-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.85rem 0.5rem;
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.kala-b2b-method-card:hover {
+  background-color: #F1F5F9;
+  border-color: #CBD5E1;
+}
+
+.kala-b2b-method-card.active {
+  background-color: #FFF5EE;
+  border-color: #E85A2A;
+  box-shadow: 0 2px 6px rgba(232, 90, 42, 0.12);
+}
+
+.kala-b2b-method-icon {
+  color: #64748B;
+  transition: color 0.2s ease;
+}
+
+.kala-b2b-method-card.active .kala-b2b-method-icon {
+  color: #E85A2A;
+}
+
+.kala-b2b-method-title {
+  font-family: var(--kala-font-primary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #334155;
+  transition: color 0.2s ease;
+}
+
+.kala-b2b-method-card.active .kala-b2b-method-title {
+  color: #D44D1E;
+}
+
+/* Helper Note */
+.kala-b2b-field-note {
+  font-family: var(--kala-font-primary);
+  font-size: 0.75rem;
+  color: #64748B;
+  margin-top: 0.35rem;
+  line-height: 1.4;
+}
+
+/* Success Card details */
+.kala-meeting-details-box {
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.kala-meeting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid #EEF2F6;
+  font-size: 0.85rem;
+}
+
+.kala-meeting-row:last-child {
+  border-bottom: none;
+}
+
+.kala-meeting-label {
+  color: #64748B;
+}
+
+.kala-meeting-val {
+  font-weight: 600;
+  color: #0F172A;
+  text-align: right;
+  max-width: 60%;
+}
+
+.kala-meeting-soon-banner {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  background-color: #FFF5EE;
+  color: #D44D1E;
+  border: 1px solid #FDBA74;
+  border-radius: 9999px;
+  font-size: 0.825rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
 /* Form Sections */
 .kala-b2b-form-section {
   margin-bottom: 1.85rem;
@@ -1475,6 +1666,10 @@
 
   .kala-b2b-quote-card {
     padding: 1.5rem 1.25rem;
+  }
+
+  .kala-b2b-methods-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

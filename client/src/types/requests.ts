@@ -24,10 +24,14 @@ export interface BusinessQuoteRequest {
   organizationType: string
   apparelRequired: string
   quantity: string
-  requiredBy: string
+  requiredBy?: string
   brandingRequirements: string
   details?: string
-  status: 'Quote Requested'
+  apparelTypes?: string[]
+  discussionTopics?: string[]
+  preferredMeetingMethod?: string
+  preferredMeetingTime?: string
+  status: 'Quote Requested' | 'Meeting Requested'
 }
 
 const CUSTOM_REQUESTS_KEY = 'kala_custom_requests'
