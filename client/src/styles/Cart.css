@@ -166,6 +166,11 @@
   color: var(--kala-black);
 }
 
+.kala-qty-btn.kala-qty-btn-remove:hover {
+  color: #dc2626;
+  background-color: rgba(220, 38, 38, 0.08);
+}
+
 /* Order Summary Box */
 .kala-cart-summary {
   background-color: var(--kala-white);

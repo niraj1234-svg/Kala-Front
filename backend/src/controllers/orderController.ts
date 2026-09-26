@@ -371,7 +371,14 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
     // 10. Shipping & Authoritative Total Calculation
     // Consistent KALA Shipping Policy: subtotal >= 2000 -> free shipping, else 99
-    const shipping = subtotal >= 2000 ? 0 : 99
+    // Promotional / free shipping items (e.g. streetwear-oversized-acid-tee) have 0 shipping charges
+    const hasFreeShipping =
+      subtotal >= 2000 ||
+      items.some((item) => {
+        const dbProd = productMap.get(item.productId.trim())
+        return dbProd?.freeShipping === true || item.productId.trim() === 'streetwear-oversized-acid-tee'
+      })
+    const shipping = hasFreeShipping ? 0 : 99
     const total = subtotal - discountAmount + shipping
 
     // 11. Generate Unique Order ID

@@ -114,7 +114,7 @@ export const Navbar: React.FC = () => {
             {/* Search Button */}
             <button
               type="button"
-              className={`kala-icon-btn ${isSearchOpen ? 'active' : ''}`}
+              className={`kala-icon-btn kala-nav-search-btn ${isSearchOpen ? 'active' : ''}`}
               aria-label={isSearchOpen ? 'Close search' : 'Search collection'}
               aria-expanded={isSearchOpen}
               title="Search"
@@ -139,7 +139,7 @@ export const Navbar: React.FC = () => {
             {/* Wishlist / Heart Icon */}
             <Link
               to="/wishlist"
-              className={`kala-icon-btn ${isWishlistBumping ? 'wishlist-pop' : ''}`}
+              className={`kala-icon-btn kala-nav-wishlist-btn ${isWishlistBumping ? 'wishlist-pop' : ''}`}
               aria-label={`View wishlist${wishlistCount > 0 ? `, ${wishlistCount} items` : ''}`}
               title="Wishlist"
               onClick={closeMobileMenu}
@@ -167,7 +167,7 @@ export const Navbar: React.FC = () => {
             {/* User Account Icon */}
             <Link
               to="/account"
-              className="kala-icon-btn"
+              className="kala-icon-btn kala-nav-account-btn"
               aria-label="User account"
               title="Account"
               onClick={closeMobileMenu}

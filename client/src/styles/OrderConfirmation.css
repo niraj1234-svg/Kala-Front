@@ -197,10 +197,6 @@
 }
 
 /* Footer Action */
-.kala-confirmation-footer {
-  text-align: center;
-}
-
 .kala-confirmation-shop-btn {
   display: inline-flex;
   padding: 1rem 2.5rem;
@@ -208,4 +204,60 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .kala-confirmation-page {
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+  }
+
+  .kala-confirmation-card {
+    padding: 1.25rem 1rem;
+    border-radius: 12px;
+  }
+
+  .kala-confirmation-title {
+    font-size: 1.65rem;
+  }
+
+  .kala-confirmation-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .kala-order-id-box {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    font-size: 0.8125rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .kala-order-info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .kala-order-item-row {
+    gap: 0.75rem;
+  }
+
+  .kala-order-item-img {
+    width: 50px;
+    height: 62px;
+  }
+
+  .kala-order-item-name {
+    font-size: 0.85rem;
+  }
+
+  .kala-order-totals {
+    padding: 1rem;
+  }
+
+  .kala-confirmation-shop-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
 }

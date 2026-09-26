@@ -56,9 +56,14 @@
   gap: 1.25rem;
 }
 
-@media (min-width: 550px) {
+/* Expand into 2 or 3 columns only on desktop/tablet (>= 768px). Mobile remains single-column. */
+@media (min-width: 768px) {
   .kala-form-grid.two-col {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .kala-form-grid.three-col {
+    grid-template-columns: 1fr 1fr 1fr;
   }
 }
 
@@ -385,10 +390,10 @@
 }
 
 /* Mobile Responsive Optimization */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .kala-checkout-page {
     padding-top: 1.25rem;
-    padding-bottom: 2.5rem;
+    padding-bottom: 3rem;
   }
 
   .kala-checkout-layout {
@@ -397,42 +402,72 @@
 
   .kala-checkout-section,
   .kala-checkout-summary {
-    padding: 1.15rem 1rem;
+    padding: 1.25rem 1rem;
+    border-radius: 10px;
+  }
+
+  .kala-checkout-section-title,
+  .kala-checkout-summary-title {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.65rem;
   }
 
   .kala-form-input {
-    min-height: 44px;
+    min-height: 48px;
     font-size: 16px;
-    border-radius: 4px;
+    padding: 0.85rem 1rem;
+    border-radius: 6px;
   }
 
   .kala-coupon-input {
-    min-height: 44px;
+    min-height: 48px;
     font-size: 16px;
-    border-radius: 4px;
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
   }
 
   .kala-coupon-apply-btn {
-    min-height: 44px;
-    padding: 0.65rem 1rem;
-    border-radius: 4px;
+    min-height: 48px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
   }
 
   .kala-place-order-btn {
-    min-height: 50px;
-    font-size: 0.9rem;
+    min-height: 52px;
+    font-size: 0.95rem;
     margin-top: 1.25rem;
+    border-radius: 8px;
   }
 
   .kala-checkout-item-img {
-    width: 48px;
-    height: 60px;
+    width: 52px;
+    height: 65px;
+    border-radius: 4px;
+  }
+
+  .kala-checkout-item-name {
+    font-size: 0.8125rem;
   }
 }
 
 @media (max-width: 350px) {
   .kala-checkout-section,
   .kala-checkout-summary {
-    padding: 1rem 0.75rem;
+    padding: 1rem 0.65rem;
+  }
+
+  .kala-checkout-item {
+    gap: 0.65rem;
+  }
+
+  .kala-coupon-input-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .kala-coupon-apply-btn {
+    width: 100%;
   }
 }

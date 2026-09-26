@@ -26,6 +26,7 @@ export const SEED_PRODUCTS = [
     image: 'Streetwear 01.png',
     description: 'Premium 280 GSM oversized cotton tee.',
     available: true,
+    freeShipping: true,
   },
   {
     id: 'streetwear-heavyweight-hoodie-onyx',
@@ -223,6 +224,9 @@ export const syncProductPrices = async () => {
       }
       if ((item as any).variants) {
         updateData.variants = (item as any).variants
+      }
+      if ((item as any).freeShipping !== undefined) {
+        updateData.freeShipping = (item as any).freeShipping
       }
       const res = await Product.updateOne(
         { id: item.id },

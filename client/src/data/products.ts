@@ -30,6 +30,7 @@ export interface Product {
   description: string
   available: boolean
   variants?: ProductColorVariant[]
+  freeShipping?: boolean
 }
 
 export interface ProductHighlight {
@@ -137,6 +138,7 @@ export const PRODUCTS: Product[] = [
     image: getProductImage('Streetwear 01.png'),
     description: 'Premium 280 GSM oversized cotton tee.',
     available: true,
+    freeShipping: true,
   },
   {
     id: 'streetwear-heavyweight-hoodie-onyx',

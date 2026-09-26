@@ -286,7 +286,14 @@ export const validateCustomerCoupon = async (
     discount = Math.max(0, Math.round(discount))
 
     // 15. Shipping Rule (Consistent KALA Shipping Policy: subtotal >= 2000 -> 0, else 99)
-    const shipping = subtotal >= 2000 ? 0 : 99
+    // Promotional / free shipping items (e.g. streetwear-oversized-acid-tee) have 0 shipping charges
+    const hasFreeShipping =
+      subtotal >= 2000 ||
+      items.some((item: { productId: string }) => {
+        const dbProd = productMap.get(item.productId.trim())
+        return dbProd?.freeShipping === true || item.productId.trim() === 'streetwear-oversized-acid-tee'
+      })
+    const shipping = hasFreeShipping ? 0 : 99
     const discountedSubtotal = subtotal - discount
     const total = discountedSubtotal + shipping
 

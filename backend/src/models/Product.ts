@@ -16,6 +16,7 @@ export interface IProduct extends Document {
   description: string
   available: boolean
   variants?: IProductVariant[]
+  freeShipping?: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -59,6 +60,10 @@ const ProductSchema = new Schema<IProduct>(
     available: {
       type: Boolean,
       default: true,
+    },
+    freeShipping: {
+      type: Boolean,
+      default: false,
     },
     variants: [
       {

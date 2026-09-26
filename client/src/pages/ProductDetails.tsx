@@ -527,7 +527,11 @@ export const ProductDetails: React.FC = () => {
           <div className="kala-details-services">
             <div className="kala-service-pill">
               <span className="kala-service-icon" aria-hidden="true">🚚</span>
-              <span className="kala-service-text">Pan-India Delivery</span>
+              <span className="kala-service-text">
+                {product.freeShipping || product.id === 'streetwear-oversized-acid-tee'
+                  ? 'Free Delivery'
+                  : 'Pan-India Delivery'}
+              </span>
             </div>
             <div className="kala-service-pill">
               <span className="kala-service-icon" aria-hidden="true">🛡</span>
@@ -560,6 +564,46 @@ export const ProductDetails: React.FC = () => {
 
       {/* Customer Reviews & Ratings Section */}
       <ProductReviewsSection productId={product.id} />
+
+      {/* Mobile Sticky Add to Cart Bottom Bar (<= 768px) */}
+      <aside className="kala-mobile-sticky-bar" aria-label="Quick purchase actions">
+        <div className="kala-mobile-sticky-inner">
+          <div className="kala-mobile-sticky-info">
+            <span className="kala-mobile-sticky-name">{product.name}</span>
+            <div className="kala-mobile-sticky-meta">
+              <span className="kala-mobile-sticky-price">₹{displayPrice.toLocaleString('en-IN')}</span>
+              {selectedSize && (
+                <span className="kala-mobile-sticky-size">Size: {selectedSize}</span>
+              )}
+            </div>
+          </div>
+          <button
+            type="button"
+            className="kala-mobile-sticky-btn"
+            onClick={() => {
+              if (!selectedSize) {
+                const sizeEl = document.querySelector('.kala-size-section')
+                if (sizeEl) {
+                  sizeEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                }
+                setSizeError('Please select a size')
+                return
+              }
+              handleAddToCart()
+            }}
+            disabled={!product.available}
+          >
+            {product.available ? (
+              <>
+                <span>ADD TO CART</span>
+                <span className="kala-sticky-arrow" aria-hidden="true">→</span>
+              </>
+            ) : (
+              'OUT OF STOCK'
+            )}
+          </button>
+        </div>
+      </aside>
     </main>
   )
 }

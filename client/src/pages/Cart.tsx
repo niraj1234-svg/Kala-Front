@@ -2,12 +2,21 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { PRODUCTS } from '../data/products'
 import '../styles/Cart.css'
 
 export const Cart: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
   const { cartItems, cartCount, cartSubtotal, removeFromCart, updateQuantity } = useCart()
+
+  const hasFreeShipping =
+    cartSubtotal >= 2000 ||
+    cartItems.some((item) => {
+      if (item.productId === 'streetwear-oversized-acid-tee') return true
+      const p = PRODUCTS.find((prod) => prod.id === item.productId)
+      return p?.freeShipping ?? false
+    })
 
   const handleProceedToCheckout = () => {
     if (!isAuthenticated) {
@@ -100,12 +109,12 @@ export const Cart: React.FC = () => {
                     <div className="kala-qty-controls" aria-label={`Quantity for ${item.name}`}>
                       <button
                         type="button"
-                        className="kala-qty-btn"
+                        className={`kala-qty-btn ${item.quantity === 1 ? 'kala-qty-btn-remove' : ''}`}
                         onClick={() =>
                           updateQuantity(item.productId, item.size, item.quantity - 1, item.image, item.customization?.backText)
                         }
-                        disabled={item.quantity <= 1}
-                        aria-label="Decrease quantity"
+                        aria-label={item.quantity === 1 ? `Remove ${item.name} from cart` : 'Decrease quantity'}
+                        title={item.quantity === 1 ? 'Remove from cart' : 'Decrease quantity'}
                       >
                         −
                       </button>
@@ -147,7 +156,9 @@ export const Cart: React.FC = () => {
 
           <div className="kala-summary-row">
             <span>Shipping</span>
-            <span>Calculated at checkout</span>
+            <span style={hasFreeShipping ? { color: '#16a34a', fontWeight: 600 } : undefined}>
+              {hasFreeShipping ? 'FREE' : 'Calculated at checkout'}
+            </span>
           </div>
 
           <div className="kala-summary-row total">

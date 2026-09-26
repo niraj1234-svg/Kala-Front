@@ -7,6 +7,7 @@ import type { CreateOrderPayload, ValidateCouponResponse } from '../services/ord
 import { createRazorpayOrder, verifyRazorpayPayment, loadRazorpayScript } from '../services/paymentApi'
 import type { RazorpayOptions, RazorpaySuccessResponse, RazorpayErrorResponse } from '../types/razorpay'
 import { saveOrder } from '../types/order'
+import { PRODUCTS } from '../data/products'
 import '../styles/Checkout.css'
 
 interface FormData {
@@ -171,7 +172,12 @@ export const Checkout: React.FC = () => {
   }
 
   // Pricing calculations (Server is ultimate authority; frontend displays responsive values)
-  const baseShippingCost = cartSubtotal >= 2000 ? 0 : 99
+  const hasFreeShippingItem = cartItems.some((item) => {
+    if (item.productId === 'streetwear-oversized-acid-tee') return true
+    const p = PRODUCTS.find((prod) => prod.id === item.productId)
+    return p?.freeShipping ?? false
+  })
+  const baseShippingCost = cartSubtotal >= 2000 || hasFreeShippingItem ? 0 : 99
   const displaySubtotal = appliedCoupon ? appliedCoupon.subtotal : cartSubtotal
   const displayDiscount = appliedCoupon ? appliedCoupon.discount : 0
   const displayShipping = appliedCoupon ? appliedCoupon.shipping : baseShippingCost

@@ -501,10 +501,13 @@
 /* Responsive Styles */
 @media (max-width: 860px) {
   .kala-details-gallery {
+    display: flex;
     flex-direction: column;
+    gap: 0.85rem;
   }
 
   .kala-details-main-image-card {
+    order: 1;
     max-height: 420px;
     display: flex;
     align-items: center;
@@ -517,17 +520,18 @@
   }
 
   .kala-gallery-thumbnails {
+    order: 2;
     flex-direction: row;
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.35rem;
-    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    gap: 0.65rem;
   }
 
   .kala-gallery-thumb-btn {
-    width: 56px;
-    height: 70px;
+    width: 60px;
+    height: 75px;
     flex-shrink: 0;
   }
 
@@ -813,5 +817,119 @@
   font-size: 0.9375rem;
   font-weight: 700;
   color: var(--kala-black);
+}
+
+/* ==========================================================================
+   MOBILE STICKY ADD TO CART BOTTOM BAR
+   ========================================================================== */
+.kala-mobile-sticky-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .kala-details-page {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .kala-mobile-sticky-bar {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--kala-border);
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    z-index: 900;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .kala-mobile-sticky-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .kala-mobile-sticky-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .kala-mobile-sticky-name {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--kala-black);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.25;
+  }
+
+  .kala-mobile-sticky-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2px;
+  }
+
+  .kala-mobile-sticky-price {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--kala-orange);
+  }
+
+  .kala-mobile-sticky-size {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--kala-text-secondary);
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .kala-mobile-sticky-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: var(--kala-orange);
+    color: var(--kala-white);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--kala-font-primary);
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.8rem 1.4rem;
+    min-height: 46px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(217, 71, 0, 0.28);
+    transition: background-color var(--kala-transition-fast), transform var(--kala-transition-fast);
+  }
+
+  .kala-mobile-sticky-btn:active {
+    transform: scale(0.96);
+  }
+
+  .kala-mobile-sticky-btn:disabled {
+    background-color: #9CA3AF;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .kala-sticky-arrow {
+    font-size: 0.95rem;
+    line-height: 1;
+    transition: transform 0.2s ease;
+  }
 }
 
