@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { createOrder, validateCoupon } from '../services/orderApi'
@@ -8,6 +8,7 @@ import { createRazorpayOrder, verifyRazorpayPayment, loadRazorpayScript } from '
 import type { RazorpayOptions, RazorpaySuccessResponse, RazorpayErrorResponse } from '../types/razorpay'
 import { saveOrder } from '../types/order'
 import { PRODUCTS } from '../data/products'
+import { ContactVerification } from '../components/checkout/ContactVerification'
 import '../styles/Checkout.css'
 
 interface FormData {
@@ -26,8 +27,39 @@ type FormErrors = Partial<Record<keyof FormData, string>>
 
 export const Checkout: React.FC = () => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const isBundleCheckout = searchParams.get('bundle') === 'true'
+
+  const [activeBundle] = useState<any>(() => {
+    try {
+      const raw = sessionStorage.getItem('kala_active_bundle')
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (parsed && Array.isArray(parsed.items) && parsed.items.length > 0) {
+          return parsed
+        }
+      }
+    } catch {}
+    return null
+  })
+
   const { cartItems, cartCount, cartSubtotal, clearCart } = useCart()
   const { currentUser, isAuthenticated, isLoading } = useAuth()
+
+  // Normalize items array: either bundle items or standard cartItems
+  const checkoutItems = useMemo(() => {
+    if (isBundleCheckout && activeBundle) {
+      return activeBundle.items.map((it: any) => ({
+        productId: it.productId,
+        name: it.name,
+        size: it.size,
+        quantity: 1,
+        price: Math.round(activeBundle.price / activeBundle.slotCount),
+        image: it.image,
+      }))
+    }
+    return cartItems
+  }, [isBundleCheckout, activeBundle, cartItems])
 
   const [formData, setFormData] = useState<FormData>(() => ({
     firstName: currentUser?.firstName || '',
@@ -57,16 +89,39 @@ export const Checkout: React.FC = () => {
   // Authentication guard: redirect to login if unauthenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      navigate('/account?redirect=/checkout&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.', {
+      const redirectUrl = isBundleCheckout ? '/checkout?bundle=true' : '/checkout'
+      navigate(`/account?redirect=${encodeURIComponent(redirectUrl)}&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.`, {
         replace: true,
       })
     }
-  }, [isLoading, isAuthenticated, navigate])
+  }, [isLoading, isAuthenticated, navigate, isBundleCheckout])
 
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [orderError, setOrderError] = useState<string | null>(null)
   const [pendingOrderId, setPendingOrderId] = useState<string | null>(null)
+
+  // OTP Contact Verification State
+  const [isContactVerified, setIsContactVerified] = useState<boolean>(false)
+  const [verificationToken, setVerificationToken] = useState<string | null>(null)
+  const [verifiedContact, setVerifiedContact] = useState<{
+    type: 'phone' | 'email'
+    target: string
+  } | null>(null)
+
+  const handleVerificationSuccess = (token: string, contact: { type: 'phone' | 'email'; target: string }) => {
+    setIsContactVerified(true)
+    setVerificationToken(token)
+    setVerifiedContact(contact)
+    setOrderError(null)
+  }
+
+  const handleResetVerification = () => {
+    setIsContactVerified(false)
+    setVerificationToken(null)
+    setVerifiedContact(null)
+    setPendingOrderId(null)
+  }
 
   // Coupon state
   const [couponInput, setCouponInput] = useState<string>('')
@@ -83,14 +138,14 @@ export const Checkout: React.FC = () => {
   const [couponError, setCouponError] = useState<string | null>(null)
   const [couponSuccess, setCouponSuccess] = useState<string | null>(null)
 
-  // Cart mutation reactivity: automatically revalidate or invalidate coupon when cart changes
+  // Cart / Bundle mutation reactivity: automatically revalidate or invalidate coupon when items change
   const cartKey = JSON.stringify(
-    cartItems.map((it) => ({ id: it.productId, s: it.size, q: it.quantity, c: it.customization?.backText }))
+    checkoutItems.map((it: any) => ({ id: it.productId, s: it.size, q: it.quantity, c: it.customization?.backText }))
   )
   const isInitialMount = useRef(true)
 
   useEffect(() => {
-    // Reset pending order if cart items change so new order matches latest cart
+    // Reset pending order if items change so new order matches latest items
     setPendingOrderId(null)
   }, [cartKey])
 
@@ -107,12 +162,13 @@ export const Checkout: React.FC = () => {
       try {
         const res: ValidateCouponResponse = await validateCoupon({
           code: appliedCoupon.code,
-          items: cartItems.map((item) => ({
+          items: checkoutItems.map((item: any) => ({
             productId: item.productId,
             size: item.size,
             quantity: item.quantity,
             customization: item.customization,
           })),
+          ...(isBundleCheckout && activeBundle ? { bundleType: activeBundle.type } : {}),
         })
         if (!cancelled && res.success && res.coupon && res.pricing) {
           setAppliedCoupon({
@@ -154,8 +210,24 @@ export const Checkout: React.FC = () => {
     return null
   }
 
-  // Empty cart protection
-  if (cartItems.length === 0) {
+  // Empty checkout guard
+  if (isBundleCheckout && (!activeBundle || !activeBundle.items || activeBundle.items.length === 0)) {
+    return (
+      <main className="kala-container kala-checkout-page">
+        <div className="kala-cart-empty">
+          <h1 className="kala-cart-empty-title">NO ACTIVE BUNDLE FOUND</h1>
+          <p className="kala-cart-empty-desc">
+            Your bundle session has expired or is empty. Please select an offer and complete your T-shirt stack before checkout.
+          </p>
+          <Link to="/bundle" className="kala-btn kala-btn-primary">
+            BUILD T-SHIRT STACK
+          </Link>
+        </div>
+      </main>
+    )
+  }
+
+  if (!isBundleCheckout && cartItems.length === 0) {
     return (
       <main className="kala-container kala-checkout-page">
         <div className="kala-cart-empty">
@@ -172,22 +244,28 @@ export const Checkout: React.FC = () => {
   }
 
   // Pricing calculations (Server is ultimate authority; frontend displays responsive values)
-  const hasFreeShippingItem = cartItems.some((item) => {
+  const hasFreeShippingItem = checkoutItems.some((item: any) => {
     if (item.productId === 'streetwear-oversized-acid-tee') return true
     const p = PRODUCTS.find((prod) => prod.id === item.productId)
     return p?.freeShipping ?? false
   })
-  const baseShippingCost = cartSubtotal >= 2000 || hasFreeShippingItem ? 0 : 99
-  const displaySubtotal = appliedCoupon ? appliedCoupon.subtotal : cartSubtotal
+  const baseSubtotal = isBundleCheckout && activeBundle ? activeBundle.price : cartSubtotal
+  const baseShippingCost = isBundleCheckout ? 99 : (baseSubtotal >= 2000 || hasFreeShippingItem ? 0 : 99)
+  const displaySubtotal = appliedCoupon ? appliedCoupon.subtotal : baseSubtotal
   const displayDiscount = appliedCoupon ? appliedCoupon.discount : 0
   const displayShipping = appliedCoupon ? appliedCoupon.shipping : baseShippingCost
   const displayTotal = appliedCoupon
     ? appliedCoupon.total
-    : cartSubtotal + baseShippingCost
+    : baseSubtotal + baseShippingCost
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+
+    // If customer changes their phone or email after verification, reset verification
+    if (isContactVerified && (name === 'phone' || name === 'email')) {
+      handleResetVerification()
+    }
 
     // Clear error for field being edited
     if (errors[name as keyof FormData]) {
@@ -249,6 +327,12 @@ export const Checkout: React.FC = () => {
       newErrors.pinCode = 'PIN code is required.'
     } else if (!pinRegex.test(formData.pinCode.trim())) {
       newErrors.pinCode = 'Please enter a valid 6-digit Indian PIN code.'
+    }
+
+    // 9. Contact OTP Verification Check
+    if (!isContactVerified || !verificationToken) {
+      setOrderError('Please verify your contact details via OTP before proceeding to payment.')
+      return false
     }
 
     setErrors(newErrors)
@@ -325,12 +409,17 @@ export const Checkout: React.FC = () => {
       return
     }
 
+    if (!isContactVerified || !verificationToken) {
+      setOrderError('Please verify your contact details via OTP before proceeding to payment.')
+      return
+    }
+
     if (!validateForm()) {
       return
     }
 
-    // Verify every cart item has size
-    const hasInvalidItem = cartItems.some((item) => !item.size)
+    // Verify every item has size
+    const hasInvalidItem = checkoutItems.some((item: any) => !item.size)
     if (hasInvalidItem) {
       setOrderError('One or more items in your cart is missing a size selection.')
       return
@@ -340,6 +429,7 @@ export const Checkout: React.FC = () => {
 
     // Construct server-safe payload (server authoritatively calculates discount & total)
     const payload: CreateOrderPayload = {
+      verificationToken: verificationToken,
       customer: {
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
@@ -352,12 +442,14 @@ export const Checkout: React.FC = () => {
         state: formData.state.trim(),
         pincode: formData.pinCode.trim(),
       },
-      items: cartItems.map((item) => ({
+      items: checkoutItems.map((item: any) => ({
         productId: item.productId,
         size: item.size,
+        color: item.color,
         quantity: item.quantity,
         customization: item.customization,
       })),
+      ...(isBundleCheckout && activeBundle ? { bundleType: activeBundle.type } : {}),
       ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
     }
 
@@ -457,7 +549,11 @@ export const Checkout: React.FC = () => {
             }
 
             // Clear cart ONLY after successful payment verification
-            clearCart()
+            if (isBundleCheckout) {
+              sessionStorage.removeItem('kala_active_bundle')
+            } else {
+              clearCart()
+            }
             setPendingOrderId(null)
 
             // Navigate to confirmation page
@@ -596,7 +692,20 @@ export const Checkout: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 2: Shipping Address */}
+          {/* Section 2: Contact Verification via OTP */}
+          <ContactVerification
+            phone={formData.phone}
+            email={formData.email}
+            onPhoneChange={(p) => setFormData((prev) => ({ ...prev, phone: p }))}
+            onEmailChange={(e) => setFormData((prev) => ({ ...prev, email: e }))}
+            isVerified={isContactVerified}
+            verificationToken={verificationToken}
+            verifiedContact={verifiedContact}
+            onVerificationSuccess={handleVerificationSuccess}
+            onResetVerification={handleResetVerification}
+          />
+
+          {/* Section 3: Shipping Address */}
           <section className="kala-checkout-section" aria-labelledby="shipping-heading">
             <h2 id="shipping-heading" className="kala-checkout-section-title">
               SHIPPING ADDRESS
@@ -692,13 +801,26 @@ export const Checkout: React.FC = () => {
         {/* Right Side: Order Summary */}
         <aside className="kala-checkout-summary" aria-label="Order summary">
           <h2 className="kala-checkout-summary-title">
-            ORDER SUMMARY ({cartCount})
+            ORDER SUMMARY ({isBundleCheckout && activeBundle ? `${activeBundle.slotCount} T-SHIRTS` : cartCount})
           </h2>
 
+          {isBundleCheckout && activeBundle && (
+            <div className="kala-checkout-bundle-banner">
+              <div className="kala-checkout-bundle-top">
+                <span className="kala-checkout-bundle-pill">EVENT OFFER</span>
+                <Link to={`/bundle?offer=${activeBundle.slotCount}`} className="kala-checkout-bundle-edit-link">
+                  Edit Stack ✎
+                </Link>
+              </div>
+              <div className="kala-checkout-bundle-name">{activeBundle.name}</div>
+              <div className="kala-checkout-bundle-rate">Special Offer: ₹{activeBundle.price} for {activeBundle.slotCount} T-Shirts</div>
+            </div>
+          )}
+
           <div className="kala-checkout-items-list" role="list">
-            {cartItems.map((item) => (
+            {checkoutItems.map((item: any, idx: number) => (
               <div
-                key={`${item.productId}-${item.size}`}
+                key={`${item.productId}-${item.size}-${idx}`}
                 className="kala-checkout-item"
                 role="listitem"
               >
@@ -712,7 +834,7 @@ export const Checkout: React.FC = () => {
                     {item.name}
                   </div>
                   <div className="kala-checkout-item-meta">
-                    Size: {item.size} · Qty: {item.quantity}
+                    Size: <strong>{item.size}</strong> · Qty: {item.quantity}
                   </div>
                   {item.customization?.backText && (
                     <div className="kala-checkout-item-custom-text">
@@ -721,7 +843,11 @@ export const Checkout: React.FC = () => {
                   )}
                 </div>
                 <div className="kala-checkout-item-total">
-                  ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                  {isBundleCheckout ? (
+                    <span style={{ fontSize: '0.72rem', color: '#1B8344', fontWeight: 800 }}>BUNDLE ITEM</span>
+                  ) : (
+                    `₹${(item.price * item.quantity).toLocaleString('en-IN')}`
+                  )}
                 </div>
               </div>
             ))}
@@ -836,15 +962,24 @@ export const Checkout: React.FC = () => {
 
           <button
             type="submit"
-            disabled={isSubmitting}
-            className="kala-btn kala-btn-primary kala-place-order-btn"
+            disabled={isSubmitting || !isContactVerified}
+            className={`kala-btn kala-btn-primary kala-place-order-btn ${!isContactVerified ? 'unverified' : ''}`}
           >
             {isSubmitting
               ? 'PROCESSING PAYMENT...'
-              : pendingOrderId && orderError
-                ? `RETRY PAYMENT (₹${displayTotal.toLocaleString('en-IN')})`
-                : `PAY ₹${displayTotal.toLocaleString('en-IN')} VIA RAZORPAY`}
+              : !isContactVerified
+                ? 'VERIFY CONTACT TO PAY'
+                : pendingOrderId && orderError
+                  ? `RETRY PAYMENT (₹${displayTotal.toLocaleString('en-IN')})`
+                  : `PROCEED TO PAYMENT (₹${displayTotal.toLocaleString('en-IN')}) →`}
           </button>
+
+          {!isContactVerified && (
+            <div className="kala-verification-notice">
+              <span>🔒</span>
+              <span>Verify your mobile or email via OTP to enable payment</span>
+            </div>
+          )}
 
           <div
             style={{

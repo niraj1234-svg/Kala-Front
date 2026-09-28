@@ -24,9 +24,20 @@ export const createBusinessRequest = async (req: Request, res: Response) => {
       organization,
       email,
       phone,
+      mobile,
       organizationType,
       apparelTypes,
       apparelRequired,
+      apparelCategory,
+      color,
+      customization,
+      approxQuantity,
+      requirement,
+      artworkData,
+      contactMethod,
+      meetingDate,
+      meetingTime,
+      meetingLocation,
       estimatedQuantity,
       quantity,
       discussionTopics,
@@ -36,7 +47,11 @@ export const createBusinessRequest = async (req: Request, res: Response) => {
       preferredMeetingMethod,
       preferredMeetingTime,
       requiredBy,
+      bulkOrderDetails,
     } = req.body
+
+    const resolvedPhone = ((mobile || phone) as string | undefined)?.trim()
+    const resolvedContactMethod = (contactMethod || preferredMeetingMethod || 'Phone Call').trim()
 
     // 1. Validate Required Fields
     if (!name || typeof name !== 'string' || !name.trim()) {
@@ -47,84 +62,95 @@ export const createBusinessRequest = async (req: Request, res: Response) => {
       return
     }
 
-    if (!organization || typeof organization !== 'string' || !organization.trim()) {
+    const isCallRequest = resolvedContactMethod.toLowerCase().includes('call')
+
+    // Organization is required unless it's a direct phone callback request where customer might be an individual
+    const resolvedOrganization = (organization && typeof organization === 'string' && organization.trim())
+      ? organization.trim()
+      : isCallRequest ? 'Team / Individual' : ''
+
+    if (!resolvedOrganization) {
       res.status(400).json({
         success: false,
-        message: 'Invalid request: Company or organization name is required.',
+        message: 'Invalid request: Company, college, or team name is required.',
       })
       return
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!email || typeof email !== 'string' || !emailRegex.test(email.trim())) {
+    let resolvedEmail = typeof email === 'string' && email.trim() ? email.trim().toLowerCase() : ''
+    if (!isCallRequest && (!resolvedEmail || !emailRegex.test(resolvedEmail))) {
       res.status(400).json({
         success: false,
-        message: 'Invalid request: A valid work or contact email is required.',
+        message: 'Invalid request: A valid contact email is required.',
       })
       return
+    } else if (isCallRequest && !resolvedEmail) {
+      resolvedEmail = `${resolvedPhone?.replace(/[^0-9]/g, '') || 'inquiry'}@call.kala.internal`
     }
 
     const phoneRegex = /^[0-9+\s-]{7,15}$/
-    if (!phone || typeof phone !== 'string' || !phoneRegex.test(phone.trim())) {
+    if (!resolvedPhone || !phoneRegex.test(resolvedPhone)) {
       res.status(400).json({
         success: false,
-        message: 'Invalid request: A valid phone number (7-15 digits) is required.',
+        message: 'Invalid request: A valid mobile number (7-15 digits) is required.',
       })
       return
     }
 
-    // Resolve apparel categories
-    const resolvedApparelTypes: string[] = Array.isArray(apparelTypes)
+    // Resolve apparel category
+    const resolvedApparelTypes: string[] = Array.isArray(apparelTypes) && apparelTypes.length > 0
       ? apparelTypes.filter((t: any) => typeof t === 'string' && t.trim())
+      : typeof apparelCategory === 'string' && apparelCategory.trim()
+      ? [apparelCategory.trim()]
       : typeof apparelRequired === 'string' && apparelRequired.trim()
       ? [apparelRequired.trim()]
-      : []
-
-    if (resolvedApparelTypes.length === 0) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid request: Please select at least one apparel category of interest.',
-      })
-      return
-    }
+      : ['T-Shirts']
 
     const resolvedApparelRequired = resolvedApparelTypes.join(', ')
     const resolvedQuantity =
+      (typeof approxQuantity === 'string' && approxQuantity.trim()) ||
       (typeof estimatedQuantity === 'string' && estimatedQuantity.trim()) ||
       (typeof quantity === 'string' && quantity.trim()) ||
-      '51–100'
-
-    const resolvedTopics: string[] = Array.isArray(discussionTopics)
-      ? discussionTopics.filter((t: any) => typeof t === 'string' && t.trim())
-      : typeof brandingRequirements === 'string' && brandingRequirements.trim()
-      ? [brandingRequirements.trim()]
-      : []
+      '50'
 
     const resolvedBranding =
-      resolvedTopics.join(', ') ||
-      (typeof brandingRequirements === 'string' && brandingRequirements.trim()
-        ? brandingRequirements.trim()
-        : 'Logo / Brand Printing')
+      (typeof customization === 'string' && customization.trim()) ||
+      (Array.isArray(discussionTopics) && discussionTopics.length > 0 ? discussionTopics.join(', ') : '') ||
+      (typeof brandingRequirements === 'string' && brandingRequirements.trim()) ||
+      'Custom Print'
 
     const resolvedDetails =
+      (typeof requirement === 'string' && requirement.trim()) ||
       (typeof projectDetails === 'string' && projectDetails.trim()) ||
       (typeof details === 'string' && details.trim()) ||
       ''
 
-    const resolvedMeetingMethod =
-      typeof preferredMeetingMethod === 'string' && preferredMeetingMethod.trim()
-        ? preferredMeetingMethod.trim()
-        : 'Phone Call'
-
     const resolvedMeetingTime =
-      typeof preferredMeetingTime === 'string' && preferredMeetingTime.trim()
-        ? preferredMeetingTime.trim()
-        : 'Anytime'
+      (typeof meetingTime === 'string' && meetingTime.trim()) ||
+      (typeof preferredMeetingTime === 'string' && preferredMeetingTime.trim()) ||
+      'Anytime'
 
-    const resolvedRequiredBy =
-      typeof requiredBy === 'string' && requiredBy.trim()
-        ? requiredBy.trim()
-        : 'To be discussed in meeting'
+    const resolvedMeetingDate =
+      (typeof meetingDate === 'string' && meetingDate.trim()) || ''
+
+    // Prevent double booking for scheduled meetings and calls
+    if (resolvedMeetingDate && resolvedMeetingTime && resolvedMeetingTime !== 'Anytime') {
+      const existingSlot = await BusinessRequest.findOne({
+        contactMethod: resolvedContactMethod,
+        meetingDate: resolvedMeetingDate,
+        meetingTime: resolvedMeetingTime,
+        status: { $in: ['pending', 'confirmed'] },
+      })
+
+      if (existingSlot) {
+        res.status(409).json({
+          success: false,
+          message: 'The selected time slot has already been booked. Please choose an alternate slot or chat with us on WhatsApp.',
+        })
+        return
+      }
+    }
 
     // 2. Generate Unique Backend Request ID
     let requestId = generateBusinessRequestId()
@@ -138,9 +164,9 @@ export const createBusinessRequest = async (req: Request, res: Response) => {
     const newRequest = await BusinessRequest.create({
       requestId,
       name: name.trim(),
-      organization: organization.trim(),
-      email: email.trim().toLowerCase(),
-      phone: phone.trim(),
+      organization: resolvedOrganization,
+      email: resolvedEmail,
+      phone: resolvedPhone,
       organizationType:
         typeof organizationType === 'string' && organizationType.trim()
           ? organizationType.trim()
@@ -149,19 +175,33 @@ export const createBusinessRequest = async (req: Request, res: Response) => {
       apparelTypes: resolvedApparelTypes,
       quantity: resolvedQuantity,
       estimatedQuantity: resolvedQuantity,
-      requiredBy: resolvedRequiredBy,
+      requiredBy: requiredBy ? String(requiredBy).trim() : 'To be discussed',
       brandingRequirements: resolvedBranding,
-      discussionTopics: resolvedTopics,
+      discussionTopics: Array.isArray(discussionTopics) ? discussionTopics : [resolvedBranding],
       details: resolvedDetails,
       projectDetails: resolvedDetails,
-      preferredMeetingMethod: resolvedMeetingMethod,
+      preferredMeetingMethod: resolvedContactMethod,
       preferredMeetingTime: resolvedMeetingTime,
-      status: 'pending',
+      contactMethod: resolvedContactMethod,
+      meetingDate: resolvedMeetingDate,
+      meetingTime: resolvedMeetingTime,
+      meetingLocation: meetingLocation ? String(meetingLocation).trim() : (resolvedContactMethod.includes('Bilaspur') || resolvedContactMethod.includes('In-Person') ? 'Bilaspur, Chhattisgarh' : undefined),
+      apparelCategory: resolvedApparelTypes[0] || 'T-Shirts',
+      color: color ? String(color).trim() : 'Black',
+      customization: resolvedBranding,
+      approxQuantity: resolvedQuantity,
+      requirement: resolvedDetails,
+      artworkData: artworkData ? String(artworkData) : undefined,
+      bulkOrderDetails:
+        bulkOrderDetails && typeof bulkOrderDetails === 'object'
+          ? bulkOrderDetails
+          : undefined,
+      status: resolvedMeetingDate ? 'confirmed' : 'pending',
     })
 
     res.status(201).json({
       success: true,
-      message: 'Business branding meeting request submitted successfully',
+      message: 'Your business request has been received successfully.',
       requestId: newRequest.requestId,
       request: newRequest,
     })
@@ -170,6 +210,42 @@ export const createBusinessRequest = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: 'Server error while processing business branding request',
+    })
+  }
+}
+
+// GET /api/business-requests/booked-slots
+export const getBookedSlots = async (req: Request, res: Response) => {
+  try {
+    const { method, date } = req.query
+    const query: any = {
+      status: { $in: ['pending', 'confirmed'] },
+      meetingDate: { $exists: true, $ne: '' },
+      meetingTime: { $exists: true, $ne: '' },
+    }
+    if (method && typeof method === 'string') {
+      query.contactMethod = method.trim()
+    }
+    if (date && typeof date === 'string') {
+      query.meetingDate = date.trim()
+    }
+
+    const bookings = await BusinessRequest.find(query).select(
+      'contactMethod meetingDate meetingTime status'
+    )
+    res.status(200).json({
+      success: true,
+      bookedSlots: bookings.map((b) => ({
+        contactMethod: b.contactMethod,
+        meetingDate: b.meetingDate,
+        meetingTime: b.meetingTime,
+      })),
+    })
+  } catch (error: any) {
+    console.error('[BusinessRequestController] getBookedSlots error:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Server error retrieving booked slots',
     })
   }
 }

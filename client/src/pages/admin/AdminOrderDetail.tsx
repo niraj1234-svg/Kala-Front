@@ -13,7 +13,9 @@ const STATUS_OPTIONS: AdminOrderStatus[] = [
   'pending',
   'confirmed',
   'processing',
+  'packed',
   'shipped',
+  'out_for_delivery',
   'delivered',
   'cancelled',
 ]

@@ -193,6 +193,52 @@ export const OrderConfirmation: React.FC = () => {
           </div>
         </header>
 
+        {/* Bundle Event Highlight */}
+        {order.bundle && (
+          <div
+            className="kala-confirmation-bundle-banner"
+            style={{
+              background: '#FFF8F3',
+              border: '1.5px solid #D94700',
+              borderRadius: '10px',
+              padding: '1rem 1.25rem',
+              marginBottom: '1.75rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '0.75rem',
+            }}
+          >
+            <div>
+              <span
+                style={{
+                  fontSize: '0.68rem',
+                  fontWeight: 800,
+                  color: '#D94700',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  display: 'block',
+                  marginBottom: '0.2rem',
+                }}
+              >
+                SPECIAL EVENT BUNDLE
+              </span>
+              <strong style={{ fontSize: '1.15rem', color: '#111111', textTransform: 'uppercase' }}>
+                {order.bundle.name} ({order.bundle.slotCount} T-Shirts)
+              </strong>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <span style={{ fontSize: '0.72rem', color: '#777782', display: 'block', fontWeight: 700 }}>
+                BUNDLE PRICE
+              </span>
+              <span style={{ fontSize: '1.35rem', fontWeight: 900, color: '#D94700' }}>
+                ₹{order.bundle.price}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Customer & Shipping Details */}
         <div className="kala-order-info-grid">
           <div className="kala-order-info-block">
@@ -205,17 +251,30 @@ export const OrderConfirmation: React.FC = () => {
               </p>
               <p>{order.customer.email}</p>
               <p>{order.customer.phone}</p>
+              {order.contactVerified && (
+                <div style={{ marginTop: '0.6rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', background: '#DCFCE7', color: '#14532D', padding: '0.2rem 0.6rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 800 }}>
+                  <span>✓</span>
+                  <span>
+                    Verified via {order.verifiedContactType === 'phone' ? 'Mobile OTP' : 'Email OTP'}
+                    {order.verifiedContactTarget ? ` (${order.verifiedContactTarget})` : ''}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
           <div className="kala-order-info-block">
-            <h2 className="kala-order-info-title">SHIPPING ADDRESS</h2>
+            <h2 className="kala-order-info-title">SHIPPING & DELIVERY</h2>
             <div className="kala-order-info-text">
               <p>{order.shippingAddress.address}</p>
               <p>
                 {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode}
               </p>
               <p>India</p>
+              <div style={{ marginTop: '0.65rem', padding: '0.45rem 0.75rem', background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: '6px', fontSize: '0.8rem' }}>
+                <span style={{ color: '#4B5563' }}>Estimated Delivery: </span>
+                <strong style={{ color: '#111111' }}>3–5 Business Days</strong>
+              </div>
             </div>
           </div>
         </div>
@@ -277,7 +336,10 @@ export const OrderConfirmation: React.FC = () => {
               RETURN TO CHECKOUT TO PAY
             </Link>
           )}
-          <Link to="/shop" className={`kala-btn ${order.status === 'pending' ? 'kala-btn-secondary' : 'kala-btn-primary'} kala-confirmation-shop-btn`}>
+          <Link to={`/account/orders/${order.orderId}`} className="kala-btn kala-btn-secondary kala-confirmation-shop-btn">
+            TRACK ORDER
+          </Link>
+          <Link to="/shop" className="kala-btn kala-btn-primary kala-confirmation-shop-btn">
             CONTINUE SHOPPING
           </Link>
         </footer>

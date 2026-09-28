@@ -4,6 +4,7 @@ import { API_BASE_URL } from '../config/api'
 export interface OrderItemInput {
   productId: string
   size: string
+  color?: string
   quantity: number
   customization?: {
     backText?: string
@@ -14,6 +15,7 @@ export interface OrderItemInput {
 export interface ValidateCouponPayload {
   code: string
   items: OrderItemInput[]
+  bundleType?: string
 }
 
 export interface ValidateCouponResponse {
@@ -32,7 +34,15 @@ export interface ValidateCouponResponse {
   message?: string
 }
 
+export interface OrderBundleInfo {
+  type: string
+  name: string
+  price: number
+  slotCount: number
+}
+
 export interface CreateOrderPayload {
+  verificationToken: string
   customer: {
     firstName: string
     lastName: string
@@ -47,6 +57,8 @@ export interface CreateOrderPayload {
   }
   items: OrderItemInput[]
   couponCode?: string
+  bundleType?: string
+  bundle?: OrderBundleInfo
 }
 
 export interface BackendOrderItem {
@@ -54,6 +66,7 @@ export interface BackendOrderItem {
   name: string
   image: string
   size: string
+  color?: string
   quantity: number
   price: number
   customization?: {
@@ -77,17 +90,22 @@ export interface OrderStatusHistoryItem {
 export interface BackendOrder {
   orderId: string
   userId?: string
+  customerName?: string
   customer: {
     firstName: string
     lastName: string
     email: string
     phone: string
   }
+  contactVerified?: boolean
+  verifiedContactType?: 'phone' | 'email'
+  verifiedContactTarget?: string
   shippingAddress: {
     address: string
     city: string
     state: string
     pincode: string
+    landmark?: string
   }
   items: BackendOrderItem[]
   pricing: {
@@ -96,6 +114,7 @@ export interface BackendOrder {
     shipping: number
     total: number
   }
+  bundle?: OrderBundleInfo
   coupon?: {
     code: string
     discountType: 'percentage' | 'fixed'

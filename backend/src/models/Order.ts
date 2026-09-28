@@ -5,6 +5,7 @@ export interface IOrderItem {
   name: string
   image: string
   size: string
+  color?: string
   quantity: number
   price: number
   customization?: {
@@ -25,6 +26,7 @@ export interface IShippingAddress {
   city: string
   state: string
   pincode: string
+  landmark?: string
 }
 
 export interface IOrderCoupon {
@@ -45,7 +47,9 @@ export type OrderStatus =
   | 'pending'
   | 'confirmed'
   | 'processing'
+  | 'packed'
   | 'shipped'
+  | 'out_for_delivery'
   | 'delivered'
   | 'cancelled'
 
@@ -59,6 +63,7 @@ export interface IOrderStatusHistory {
   status: OrderStatus
   changedAt: Date
   note?: string
+  changedBy?: string
 }
 
 export interface IOrderPayment {
@@ -70,13 +75,25 @@ export interface IOrderPayment {
   paidAt?: Date
 }
 
+export interface IOrderBundle {
+  type: string
+  name: string
+  price: number
+  slotCount: number
+}
+
 export interface IOrder extends Document {
   orderId: string
   userId?: string
+  customerName?: string
   customer: ICustomer
+  contactVerified?: boolean
+  verifiedContactType?: 'phone' | 'email'
+  verifiedContactTarget?: string
   shippingAddress: IShippingAddress
   items: IOrderItem[]
   pricing: IPricing
+  bundle?: IOrderBundle
   coupon?: IOrderCoupon
   payment?: IOrderPayment
   status: OrderStatus
@@ -106,6 +123,11 @@ const OrderItemSchema = new Schema<IOrderItem>(
       type: String,
       required: true,
       trim: true,
+    },
+    color: {
+      type: String,
+      trim: true,
+      default: '',
     },
     quantity: {
       type: Number,
@@ -179,6 +201,11 @@ const ShippingAddressSchema = new Schema<IShippingAddress>(
       required: true,
       trim: true,
     },
+    landmark: {
+      type: String,
+      trim: true,
+      default: '',
+    },
   },
   { _id: false }
 )
@@ -209,6 +236,16 @@ const PricingSchema = new Schema<IPricing>(
   { _id: false }
 )
 
+const BundleSchema = new Schema(
+  {
+    type: { type: String, trim: true },
+    name: { type: String, trim: true },
+    price: { type: Number, min: 0 },
+    slotCount: { type: Number, min: 1 },
+  },
+  { _id: false }
+)
+
 const OrderSchema = new Schema<IOrder>(
   {
     orderId: {
@@ -224,9 +261,26 @@ const OrderSchema = new Schema<IOrder>(
       trim: true,
       index: true,
     },
+    customerName: {
+      type: String,
+      trim: true,
+    },
     customer: {
       type: CustomerSchema,
       required: true,
+    },
+    contactVerified: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    verifiedContactType: {
+      type: String,
+      enum: ['phone', 'email'],
+    },
+    verifiedContactTarget: {
+      type: String,
+      trim: true,
     },
     shippingAddress: {
       type: ShippingAddressSchema,
@@ -243,6 +297,10 @@ const OrderSchema = new Schema<IOrder>(
     pricing: {
       type: PricingSchema,
       required: true,
+    },
+    bundle: {
+      type: BundleSchema,
+      default: undefined,
     },
     coupon: {
       type: {
@@ -273,7 +331,9 @@ const OrderSchema = new Schema<IOrder>(
         'pending',
         'confirmed',
         'processing',
+        'packed',
         'shipped',
+        'out_for_delivery',
         'delivered',
         'cancelled',
       ],
@@ -299,7 +359,9 @@ const OrderSchema = new Schema<IOrder>(
               'pending',
               'confirmed',
               'processing',
+              'packed',
               'shipped',
+              'out_for_delivery',
               'delivered',
               'cancelled',
             ],
@@ -313,6 +375,11 @@ const OrderSchema = new Schema<IOrder>(
             trim: true,
             default: '',
           },
+          changedBy: {
+            type: String,
+            trim: true,
+            default: 'Admin',
+          },
         },
       ],
       required: false,
@@ -324,8 +391,11 @@ const OrderSchema = new Schema<IOrder>(
   }
 )
 
-// Index on coupon.code for fast per-customer and coupon usage queries
+// Index definitions for high-performance order retrieval
 OrderSchema.index({ 'coupon.code': 1 })
+OrderSchema.index({ 'payment.razorpayPaymentId': 1 })
+OrderSchema.index({ 'payment.razorpayOrderId': 1 })
+OrderSchema.index({ createdAt: -1 })
 
 export const Order = mongoose.model<IOrder>('Order', OrderSchema)
 export default Order

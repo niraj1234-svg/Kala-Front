@@ -4,6 +4,7 @@ import { Order } from '../models/Order'
 import { Product } from '../models/Product'
 import { Coupon } from '../models/Coupon'
 import { AuthenticatedUser } from '../middleware/authMiddleware'
+import { validateVerificationToken } from '../services/otpService'
 import mongoose from 'mongoose'
 
 const VALID_SIZES = ['S', 'M', 'L', 'XL', 'XXL']
@@ -103,7 +104,53 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     const authenticatedUserId = auth.user.userId
     const authenticatedEmail = auth.user.email.trim().toLowerCase()
 
-    const { customer, shippingAddress, items, couponCode } = req.body
+    const { customer, shippingAddress, items, couponCode, bundleType, bundle } = req.body
+
+    // 0.1 Validate Bundle if Present (Authoritative Server-Side Pricing)
+    const BUNDLE_CONFIG: Record<string, { name: string; price: number; requiredCount: number }> = {
+      '2_TSHIRT': { name: '2 T-Shirts Bundle', price: 499, requiredCount: 2 },
+      '3_TSHIRT': { name: '3 T-Shirts Bundle', price: 699, requiredCount: 3 },
+      '5_TSHIRT': { name: '5 T-Shirts Bundle', price: 999, requiredCount: 5 },
+    }
+
+    const rawBundleType = bundleType || bundle?.type
+    let bundleData: { type: string; name: string; price: number; slotCount: number } | undefined = undefined
+
+    if (rawBundleType) {
+      const normalizedType = String(rawBundleType).trim().toUpperCase()
+      const config = BUNDLE_CONFIG[normalizedType]
+      if (!config) {
+        res.status(400).json({
+          success: false,
+          message: `Invalid bundle type '${rawBundleType}'. Supported bundles: 2_TSHIRT, 3_TSHIRT, 5_TSHIRT.`,
+        })
+        return
+      }
+
+      if (!items || !Array.isArray(items)) {
+        res.status(400).json({
+          success: false,
+          message: 'Invalid order data: Bundle must contain items.',
+        })
+        return
+      }
+
+      const totalBundleItems = items.reduce((sum: number, it: any) => sum + (Number(it.quantity) || 1), 0)
+      if (totalBundleItems !== config.requiredCount) {
+        res.status(400).json({
+          success: false,
+          message: `Invalid bundle quantity: ${config.name} requires exactly ${config.requiredCount} T-shirts, but ${totalBundleItems} were provided.`,
+        })
+        return
+      }
+
+      bundleData = {
+        type: normalizedType,
+        name: config.name,
+        price: config.price,
+        slotCount: config.requiredCount,
+      }
+    }
 
     // 1. Validate Customer Information
     if (
@@ -115,6 +162,48 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       res.status(400).json({
         success: false,
         message: 'Invalid order data: Complete customer information (firstName, lastName, phone) is required.',
+      })
+      return
+    }
+
+    // 1.1 Mandatory Contact OTP Verification (Security Rule: never trust frontend state)
+    const { verificationToken } = req.body
+    if (!verificationToken || typeof verificationToken !== 'string' || !verificationToken.trim()) {
+      res.status(403).json({
+        success: false,
+        message: 'Contact verification required: Please verify your mobile number or email via OTP before placing your order.',
+      })
+      return
+    }
+
+    const tokenValidation = await validateVerificationToken(verificationToken)
+    if (!tokenValidation.valid || !tokenValidation.type || !tokenValidation.target) {
+      res.status(403).json({
+        success: false,
+        message: tokenValidation.message || 'Contact verification is invalid or expired. Please re-verify your contact details.',
+      })
+      return
+    }
+
+    // Verify token contact target matches order customer details
+    const customerPhoneDigits = customer.phone.replace(/\D/g, '').slice(-10)
+    const customerEmailNorm = (customer.email || authenticatedEmail).trim().toLowerCase()
+    const verifiedTargetNorm = tokenValidation.target.trim().toLowerCase()
+    const verifiedTargetDigits = tokenValidation.target.replace(/\D/g, '').slice(-10)
+
+    const isPhoneMatched =
+      tokenValidation.type === 'phone' &&
+      verifiedTargetDigits.length >= 10 &&
+      customerPhoneDigits === verifiedTargetDigits
+
+    const isEmailMatched =
+      tokenValidation.type === 'email' &&
+      (customerEmailNorm === verifiedTargetNorm || authenticatedEmail === verifiedTargetNorm)
+
+    if (!isPhoneMatched && !isEmailMatched) {
+      res.status(403).json({
+        success: false,
+        message: 'The verified contact does not match the customer details entered for this order. Please verify your contact information.',
       })
       return
     }
@@ -213,22 +302,28 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         }
       }
 
+      // Proportional unit price in bundle mode vs standard catalog price
+      const unitPrice = bundleData
+        ? Math.round(bundleData.price / bundleData.slotCount)
+        : dbProduct.price + customPrice
+
       return {
         productId: dbProduct.id,
         name: dbProduct.name,
         image: dbProduct.image,
         size: item.size.toUpperCase(),
+        color: typeof item.color === 'string' ? item.color.trim() : '',
         quantity: Math.floor(Number(item.quantity)),
-        price: dbProduct.price + customPrice, // STRICT: ALWAYS use verified DB base price + server custom fee
+        price: unitPrice, // STRICT: ALWAYS authoritative server-side pricing
         ...(customizationData ? { customization: customizationData } : {}),
       }
     })
 
     // 8. Calculate Authoritative Subtotal on Server
-    const subtotal = verifiedItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    )
+    // CRITICAL SECURITY: Never trust frontend price. Bundle price is authoritatively set by server config.
+    const subtotal = bundleData
+      ? bundleData.price
+      : verifiedItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
     // 9. Process Coupon if Provided (Never trust frontend discount or pricing)
     let discountAmount = 0
@@ -394,12 +489,16 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       const newOrder = await Order.create({
         orderId,
         userId: authenticatedUserId,
+        customerName: `${customer.firstName.trim()} ${customer.lastName.trim()}`,
         customer: {
           firstName: customer.firstName.trim(),
           lastName: customer.lastName.trim(),
           email: authenticatedEmail,
           phone: customer.phone.trim(),
         },
+        contactVerified: true,
+        verifiedContactType: tokenValidation.type,
+        verifiedContactTarget: tokenValidation.target,
         shippingAddress: {
           address: shippingAddress.address.trim(),
           city: shippingAddress.city.trim(),
@@ -413,6 +512,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
           shipping,
           total,
         },
+        ...(bundleData ? { bundle: bundleData } : {}),
         ...(couponSnapshot ? { coupon: couponSnapshot } : {}),
         status: 'pending',
         statusHistory: [

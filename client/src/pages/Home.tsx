@@ -4,7 +4,7 @@ import { fetchProducts } from '../services/productApi'
 import type { Product } from '../data/products'
 import { useWishlist } from '../context/WishlistContext'
 import { useCart } from '../context/CartContext'
-import HeroCarousel from '../components/HeroCarousel'
+import NewEventsSection from '../components/NewEventsSection'
 import ProductRatingBadge from '../components/ProductRatingBadge'
 import BulkOrderCalculator from '../components/BulkOrderCalculator'
 import { flyToCart } from '../utils/cartAnimation'
@@ -90,9 +90,9 @@ export const Home: React.FC = () => {
   return (
     <main className="kala-home" id="main-content">
       {/* ====================================================================
-          1. HERO SECTION (Cinematic 4-Image Infinite Carousel)
+          1. NEW EVENTS & FEATURED OFFERS SECTION
           ==================================================================== */}
-      <HeroCarousel />
+      <NewEventsSection />
 
       {/* ====================================================================
           2. TWO VISUAL CARDS: CUSTOM APPAREL & BUSINESS BRANDING

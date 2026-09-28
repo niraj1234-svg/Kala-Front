@@ -2,6 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose'
 
 export type BusinessRequestStatus =
   | 'pending'
+  | 'confirmed'
   | 'contacted'
   | 'quoted'
   | 'approved'
@@ -26,6 +27,24 @@ export interface IBusinessRequest extends Document {
   projectDetails?: string
   preferredMeetingMethod?: string
   preferredMeetingTime?: string
+  contactMethod?: string
+  meetingDate?: string
+  meetingTime?: string
+  meetingLocation?: string
+  apparelCategory?: string
+  color?: string
+  customization?: string
+  approxQuantity?: string
+  requirement?: string
+  artworkData?: string
+  bulkOrderDetails?: {
+    category?: string
+    color?: string
+    sizes?: Record<string, number>
+    printPosition?: string
+    estimatedTotal?: number
+    artworkName?: string
+  }
   status: BusinessRequestStatus
   createdAt: Date
   updatedAt: Date
@@ -122,11 +141,56 @@ const BusinessRequestSchema = new Schema<IBusinessRequest>(
       trim: true,
       default: 'Anytime',
     },
+    contactMethod: {
+      type: String,
+      trim: true,
+    },
+    meetingDate: {
+      type: String,
+      trim: true,
+    },
+    meetingTime: {
+      type: String,
+      trim: true,
+    },
+    meetingLocation: {
+      type: String,
+      trim: true,
+    },
+    apparelCategory: {
+      type: String,
+      trim: true,
+    },
+    color: {
+      type: String,
+      trim: true,
+    },
+    customization: {
+      type: String,
+      trim: true,
+    },
+    approxQuantity: {
+      type: String,
+      trim: true,
+    },
+    requirement: {
+      type: String,
+      trim: true,
+    },
+    artworkData: {
+      type: String,
+      trim: true,
+    },
+    bulkOrderDetails: {
+      type: Schema.Types.Mixed,
+      default: undefined,
+    },
     status: {
       type: String,
       required: true,
       enum: [
         'pending',
+        'confirmed',
         'contacted',
         'quoted',
         'approved',

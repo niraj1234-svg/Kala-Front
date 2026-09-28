@@ -3,6 +3,7 @@ import crypto from 'crypto'
 import { getRazorpayClient, getRazorpayKeySecret } from '../config/razorpay'
 import { Order } from '../models/Order'
 import { getAuthenticatedUser, AuthResult } from '../middleware/authMiddleware'
+import { sendOrderPaidNotifications } from '../services/notificationService'
 
 /**
  * Verifies that the requester has legitimate ownership over the KALA order.
@@ -102,6 +103,14 @@ export const createRazorpayOrder = async (req: Request, res: Response): Promise<
         res.status(400).json({
           success: false,
           message: 'This order has already been paid and confirmed.',
+        })
+        return
+      }
+
+      if (existingOrder.contactVerified === false) {
+        res.status(403).json({
+          success: false,
+          message: 'Cannot initialize payment: Contact details must be verified via OTP before payment.',
         })
         return
       }
@@ -317,9 +326,13 @@ export const verifyRazorpayPayment = async (req: Request, res: Response): Promis
             changedAt: new Date(),
             note: `Payment verified via Razorpay Standard Checkout (Payment ID: ${razorpay_payment_id.trim()})`,
           })
-
           await order.save()
           console.log(`[PaymentController] Order ${cleanOrderId} marked as paid & confirmed.`)
+
+          // Dispatch customer confirmation and admin new order notifications
+          sendOrderPaidNotifications(order).catch((notifErr) => {
+            console.error('[PaymentController] sendOrderPaidNotifications error:', notifErr)
+          })
         }
       }
     }
@@ -337,5 +350,89 @@ export const verifyRazorpayPayment = async (req: Request, res: Response): Promis
       success: false,
       message: error?.message || 'Server error during payment verification.',
     })
+  }
+}
+
+/**
+ * POST /api/payment/webhook
+ * Razorpay server-to-server webhook endpoint with signature verification and idempotency.
+ */
+export const handleRazorpayWebhook = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET?.trim()
+    const receivedSignature = req.headers['x-razorpay-signature'] as string | undefined
+
+    // 1. Verify webhook signature if secret is configured
+    if (webhookSecret && receivedSignature) {
+      const payloadString = JSON.stringify(req.body)
+      const expectedSignature = crypto
+        .createHmac('sha256', webhookSecret)
+        .update(payloadString)
+        .digest('hex')
+
+      if (receivedSignature !== expectedSignature) {
+        console.warn('[PaymentController] Webhook signature verification failed.')
+        res.status(400).json({ success: false, message: 'Invalid webhook signature.' })
+        return
+      }
+    }
+
+    const event = req.body?.event
+    const paymentEntity = req.body?.payload?.payment?.entity
+    const orderEntity = req.body?.payload?.order?.entity
+
+    console.log(`[PaymentController] Webhook received: ${event}`)
+
+    if (event === 'payment.captured' || event === 'order.paid') {
+      const razorpayOrderId = paymentEntity?.order_id || orderEntity?.id
+      const razorpayPaymentId = paymentEntity?.id
+      const internalOrderId =
+        paymentEntity?.notes?.orderId ||
+        orderEntity?.notes?.orderId
+
+      let order = null
+      if (internalOrderId) {
+        order = await Order.findOne({ orderId: internalOrderId })
+      } else if (razorpayOrderId) {
+        order = await Order.findOne({ 'payment.razorpayOrderId': razorpayOrderId })
+      }
+
+      if (order) {
+        if (order.payment?.status !== 'paid') {
+          order.status = 'confirmed'
+          order.payment = {
+            ...(order.payment || {}),
+            method: 'razorpay',
+            razorpayOrderId: razorpayOrderId || order.payment?.razorpayOrderId,
+            razorpayPaymentId: razorpayPaymentId || order.payment?.razorpayPaymentId,
+            status: 'paid',
+            paidAt: new Date(),
+          }
+
+          if (!order.statusHistory) {
+            order.statusHistory = []
+          }
+          order.statusHistory.push({
+            status: 'confirmed',
+            changedAt: new Date(),
+            note: `Payment confirmed via Razorpay Webhook (${event})`,
+            changedBy: 'Razorpay Webhook',
+          })
+
+          await order.save()
+          console.log(`[PaymentController] Webhook marked order ${order.orderId} as paid & confirmed.`)
+        }
+
+        // Idempotent notifications (will not send duplicates if already sent)
+        sendOrderPaidNotifications(order).catch((err) => {
+          console.error('[PaymentController] Webhook notification dispatch error:', err)
+        })
+      }
+    }
+
+    res.status(200).json({ status: 'ok' })
+  } catch (error: any) {
+    console.error('[PaymentController] handleRazorpayWebhook error:', error)
+    res.status(500).json({ status: 'error', message: 'Webhook processing error' })
   }
 }

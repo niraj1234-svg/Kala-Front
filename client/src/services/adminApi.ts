@@ -62,7 +62,9 @@ export type AdminOrderStatus =
   | 'pending'
   | 'confirmed'
   | 'processing'
+  | 'packed'
   | 'shipped'
+  | 'out_for_delivery'
   | 'delivered'
   | 'cancelled'
 
@@ -70,6 +72,7 @@ export interface AdminOrderStatusHistory {
   status: AdminOrderStatus
   changedAt: string
   note?: string
+  changedBy?: string
 }
 
 export interface AdminOrder {
@@ -79,6 +82,13 @@ export interface AdminOrder {
   shippingAddress: AdminShippingAddress
   items: AdminOrderItem[]
   pricing: AdminPricing
+  payment?: {
+    method?: string
+    razorpayOrderId?: string
+    razorpayPaymentId?: string
+    status?: 'pending' | 'paid' | 'failed'
+    paidAt?: string
+  }
   status: AdminOrderStatus
   tracking?: AdminOrderTracking
   statusHistory?: AdminOrderStatusHistory[]

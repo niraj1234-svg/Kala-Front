@@ -1,0 +1,1442 @@
+/* ==========================================================================
+   KALA BUSINESS / CUSTOM APPAREL INQUIRY SECTION
+   Clean, Professional, Trustworthy B2B Apparel Sourcing Interface
+   ========================================================================== */
+
+.kala-biz-inquiry-section {
+  position: relative;
+  width: 100%;
+  background-color: #FAF9F6;
+  padding: clamp(2rem, 4vw, 3.5rem) 0 clamp(2.5rem, 5vw, 4.25rem) 0;
+  border-top: 1px solid #ECEAE4;
+  border-bottom: 1px solid #ECEAE4;
+}
+
+.kala-biz-container {
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   1. SECTION HEADER
+   -------------------------------------------------------------------------- */
+.kala-biz-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto clamp(1.5rem, 3vw, 2.5rem) auto;
+}
+
+.kala-biz-eyebrow-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.22rem 0.75rem;
+  background-color: rgba(217, 71, 0, 0.08);
+  border: 1px solid rgba(217, 71, 0, 0.2);
+  border-radius: 9999px;
+  margin-bottom: 0.5rem;
+}
+
+.kala-biz-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #D94700;
+  flex-shrink: 0;
+}
+
+.kala-biz-eyebrow {
+  font-family: var(--kala-font-primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #D94700;
+}
+
+.kala-biz-heading {
+  font-family: var(--kala-font-primary);
+  font-size: clamp(1.4rem, 2.8vw, 2.25rem);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: #111111;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem 0;
+}
+
+.kala-biz-subheading {
+  font-family: var(--kala-font-primary);
+  font-size: clamp(0.85rem, 1.2vw, 0.98rem);
+  line-height: 1.5;
+  color: #4B5563;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   2. MAIN STAGE CARD (2-Column Desktop Layout)
+   -------------------------------------------------------------------------- */
+.kala-biz-main-card {
+  background-color: #FFFFFF;
+  border: 1.5px solid #E5E2DD;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  align-items: stretch;
+}
+
+/* LEFT PANEL (Product Preview Stage) */
+.kala-biz-left-panel {
+  background: #F7F5F0;
+  border-right: 1.5px solid #EAE7E1;
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-biz-preview-card {
+  position: sticky;
+  top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.kala-biz-preview-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.kala-biz-preview-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: #111111;
+  color: #FFFFFF;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+}
+
+.kala-biz-preview-price {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #D94700;
+  background: rgba(217, 71, 0, 0.08);
+  border: 1px solid rgba(217, 71, 0, 0.2);
+  padding: 0.22rem 0.6rem;
+  border-radius: 6px;
+}
+
+.kala-biz-preview-image-stage {
+  position: relative;
+  background: #FFFFFF;
+  border: 1.5px solid #E5E2DD;
+  border-radius: 12px;
+  min-height: 280px;
+  max-height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  overflow: hidden;
+}
+
+.kala-biz-preview-img {
+  max-width: 90%;
+  max-height: 280px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.08));
+  transition: transform 0.25s ease;
+}
+
+.kala-biz-preview-image-stage:hover .kala-biz-preview-img {
+  transform: scale(1.03);
+}
+
+.kala-biz-preview-color-indicator {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #E5E2DD;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.kala-biz-preview-color-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.kala-biz-preview-color-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #374151;
+  text-transform: capitalize;
+}
+
+.kala-biz-view-toggle {
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #E5E2DD;
+  border-radius: 9999px;
+  padding: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.kala-biz-toggle-btn {
+  padding: 0.22rem 0.6rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #6B7280;
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.kala-biz-toggle-btn.active {
+  background: #111111;
+  color: #FFFFFF;
+}
+
+/* RIGHT PANEL (Configuration Controls & Contact Form) */
+.kala-biz-right-panel {
+  padding: 1.75rem clamp(1.25rem, 3vw, 2.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* Field Common Labels */
+.kala-biz-field-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--kala-font-primary);
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #111111;
+  margin-bottom: 0.65rem;
+}
+
+.kala-biz-step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #D94700;
+  color: #FFFFFF;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.kala-biz-selected-hint {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.kala-biz-optional-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* --------------------------------------------------------------------------
+   3. APPAREL CATEGORY SELECTOR (3 Compact Cards)
+   -------------------------------------------------------------------------- */
+.kala-biz-category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.kala-biz-cat-card {
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 0.75rem 0.85rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.kala-biz-cat-card:hover {
+  background: #FFFFFF;
+  border-color: #D94700;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(217, 71, 0, 0.08);
+}
+
+.kala-biz-cat-card.active {
+  background: #FFF7F2;
+  border-color: #D94700;
+  box-shadow: 0 0 0 1px #D94700;
+}
+
+.kala-biz-cat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kala-biz-cat-name {
+  font-family: var(--kala-font-primary);
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #111111;
+  text-transform: uppercase;
+}
+
+.kala-biz-cat-radio {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid #D1D5DB;
+  background: #FFFFFF;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.kala-biz-cat-card.active .kala-biz-cat-radio {
+  border-color: #D94700;
+  background: #D94700;
+}
+
+.kala-biz-cat-card.active .kala-biz-cat-radio::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #FFFFFF;
+}
+
+.kala-biz-cat-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.kala-biz-price-prefix {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+}
+
+.kala-biz-price-val {
+  font-family: var(--kala-font-primary);
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #111111;
+}
+
+.kala-biz-cat-card.active .kala-biz-price-val {
+  color: #D94700;
+}
+
+.kala-biz-price-unit {
+  font-size: 0.68rem;
+  color: #6B7280;
+  font-weight: 600;
+}
+
+/* Info Box Below Category Cards */
+.kala-biz-info-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+}
+
+.kala-biz-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+  font-size: 0.75rem;
+  color: #111111;
+}
+
+.kala-biz-info-price {
+  font-weight: 800;
+  color: #D94700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.kala-biz-feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.kala-biz-feature-item {
+  font-size: 0.75rem;
+  color: #4B5563;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.kala-biz-check-bullet {
+  color: #D94700;
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+   4. COLOR SELECTOR
+   -------------------------------------------------------------------------- */
+.kala-biz-color-circles-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.kala-biz-circle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid transparent;
+  padding: 2px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.kala-biz-circle-btn:hover {
+  transform: scale(1.08);
+}
+
+.kala-biz-circle-btn.selected {
+  border-color: #D94700;
+}
+
+.kala-circle-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.kala-circle-inner.white {
+  background: #FFFFFF;
+  border: 1.5px solid #D1D5DB;
+}
+
+.kala-circle-inner.black {
+  background: #111111;
+  border: 1.5px solid #374151;
+}
+
+.kala-circle-inner.other-gradient {
+  background: linear-gradient(135deg, #D94700 0%, #EA580C 100%);
+  border: 1.5px solid transparent;
+}
+
+.kala-circle-plus-symbol {
+  color: #FFFFFF;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.kala-circle-check-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 900;
+  display: none;
+}
+
+.kala-biz-circle-btn.white.selected .kala-circle-check-icon {
+  display: block;
+  color: #111111;
+}
+
+.kala-biz-circle-btn.black.selected .kala-circle-check-icon {
+  display: block;
+  color: #FFFFFF;
+}
+
+.kala-biz-color-name-text {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #374151;
+  margin-left: 0.25rem;
+}
+
+/* Other Custom Color Palette */
+.kala-biz-other-palette {
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: kalaFadeDown 0.2s ease-out forwards;
+}
+
+@keyframes kalaFadeDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.kala-biz-palette-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+}
+
+.kala-biz-palette-active-name {
+  color: #D94700;
+}
+
+.kala-biz-palette-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.kala-biz-swatch-item {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+  padding: 0;
+}
+
+.kala-biz-swatch-item:hover {
+  transform: scale(1.15);
+}
+
+.kala-biz-swatch-item.active {
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #D94700;
+}
+
+.kala-swatch-tick {
+  color: #FFFFFF;
+  font-size: 0.65rem;
+  font-weight: 900;
+}
+
+/* --------------------------------------------------------------------------
+   5. CUSTOMIZATION SELECTOR (3 Cards & File Upload)
+   -------------------------------------------------------------------------- */
+.kala-biz-custom-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.kala-biz-custom-card {
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.kala-biz-custom-card:hover {
+  background: #FFFFFF;
+  border-color: #D94700;
+}
+
+.kala-biz-custom-card.active {
+  background: #FFF7F2;
+  border-color: #D94700;
+  box-shadow: 0 0 0 1px #D94700;
+}
+
+.kala-biz-custom-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kala-biz-custom-title {
+  font-family: var(--kala-font-primary);
+  font-size: 0.825rem;
+  font-weight: 800;
+  color: #111111;
+}
+
+.kala-biz-custom-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid #D1D5DB;
+  background: #FFFFFF;
+}
+
+.kala-biz-custom-card.active .kala-biz-custom-dot {
+  border-color: #D94700;
+  background: #D94700;
+}
+
+.kala-biz-custom-desc {
+  font-size: 0.68rem;
+  color: #6B7280;
+  line-height: 1.3;
+}
+
+/* Upload Box */
+.kala-biz-upload-wrap {
+  margin-top: 0.4rem;
+}
+
+.kala-biz-hidden-file-input {
+  display: none;
+}
+
+.kala-biz-upload-box {
+  background: #FFFBF7;
+  border: 1.5px dashed #D94700;
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.kala-biz-upload-info {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.kala-biz-upload-icon {
+  font-size: 1.25rem;
+}
+
+.kala-biz-upload-info strong {
+  font-size: 0.78rem;
+  color: #111111;
+  display: block;
+}
+
+.kala-biz-upload-hint {
+  font-size: 0.68rem;
+  color: #6B7280;
+}
+
+.kala-biz-upload-btn {
+  background: #111111;
+  color: #FFFFFF;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.kala-biz-upload-btn:hover {
+  background: #D94700;
+}
+
+/* --------------------------------------------------------------------------
+   6. APPROXIMATE QUANTITY & REQUIREMENT
+   -------------------------------------------------------------------------- */
+.kala-biz-req-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.kala-biz-field-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-biz-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.kala-biz-qty-chips {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.kala-biz-qty-chip {
+  background: #F3F4F6;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kala-biz-qty-chip:hover {
+  background: #FFFFFF;
+  border-color: #D94700;
+  color: #111111;
+}
+
+.kala-biz-qty-chip.active {
+  background: #111111;
+  border-color: #111111;
+  color: #FFFFFF;
+}
+
+.kala-biz-qty-custom-wrap {
+  flex: 1;
+  min-width: 140px;
+}
+
+.kala-biz-qty-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.45rem 0.75rem;
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #111111;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.kala-biz-qty-input:focus {
+  border-color: #D94700;
+}
+
+.kala-biz-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.65rem 0.85rem;
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 0.825rem;
+  color: #111111;
+  font-family: inherit;
+  line-height: 1.4;
+  outline: none;
+  resize: vertical;
+  min-height: 70px;
+  transition: border-color 0.2s ease;
+}
+
+.kala-biz-textarea:focus {
+  border-color: #D94700;
+}
+
+/* --------------------------------------------------------------------------
+   7. CONTACT SECTION & 4 OPTIONS
+   -------------------------------------------------------------------------- */
+.kala-biz-contact-section {
+  border-top: 1.5px solid #F3F4F6;
+  padding-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-biz-contact-header {
+  margin-bottom: 0.85rem;
+}
+
+.kala-biz-contact-title {
+  font-family: var(--kala-font-primary);
+  font-size: 1.05rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: #111111;
+  margin: 0 0 0.2rem 0;
+}
+
+.kala-biz-contact-subtitle {
+  font-size: 0.78rem;
+  color: #6B7280;
+  margin: 0;
+}
+
+.kala-biz-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.kala-biz-contact-btn {
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 0.75rem 0.95rem;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.kala-biz-contact-btn:hover {
+  background: #F9FAFB;
+  border-color: #111111;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.kala-biz-contact-btn.whatsapp {
+  border-color: #A7F3D0;
+  background: #F0FDF4;
+}
+
+.kala-biz-contact-btn.whatsapp:hover {
+  background: #DCFCE7;
+  border-color: #25D366;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.15);
+}
+
+.kala-biz-btn-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.kala-biz-btn-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-biz-btn-label {
+  font-family: var(--kala-font-primary);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #111111;
+  line-height: 1.2;
+}
+
+.kala-biz-btn-note {
+  font-size: 0.68rem;
+  color: #6B7280;
+}
+
+.kala-biz-options-summary {
+  font-family: var(--kala-font-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6B7280;
+  text-align: center;
+  margin: 0 0 0.85rem 0;
+  letter-spacing: 0.02em;
+}
+
+.kala-biz-disclaimer-wrap {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+}
+
+.kala-biz-disclaimer-text {
+  font-size: 0.72rem;
+  color: #6B7280;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   8. MEETING & CALLBACK MODAL
+   -------------------------------------------------------------------------- */
+.kala-biz-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(17, 17, 17, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  animation: kalaFadeIn 0.2s ease-out;
+}
+
+.kala-biz-modal-card {
+  background: #FFFFFF;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.kala-biz-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.85rem;
+  border-bottom: 1px solid #F3F4F6;
+  padding-bottom: 0.85rem;
+}
+
+.kala-biz-modal-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #D94700;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+}
+
+.kala-biz-modal-title {
+  font-family: var(--kala-font-primary);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #111111;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.kala-biz-modal-close {
+  background: #F3F4F6;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #6B7280;
+  transition: all 0.15s ease;
+}
+
+.kala-biz-modal-close:hover {
+  background: #111111;
+  color: #FFFFFF;
+}
+
+.kala-biz-modal-summary-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #4B5563;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  margin-bottom: 1.15rem;
+  flex-wrap: wrap;
+}
+
+.kala-biz-modal-summary-chip .dot {
+  color: #D1D5DB;
+}
+
+/* Modal Form Styles */
+.kala-biz-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.kala-biz-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-biz-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.kala-biz-form-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #111111;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+}
+
+.kala-biz-form-label .req {
+  color: #DC2626;
+}
+
+.kala-biz-ist-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #6B7280;
+}
+
+/* Date Pills Scroll Row */
+.kala-biz-dates-scroll-row {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+}
+
+.kala-biz-date-pill {
+  flex: 0 0 auto;
+  min-width: 64px;
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 0.45rem 0.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kala-biz-date-pill:hover {
+  border-color: #D94700;
+}
+
+.kala-biz-date-pill.active {
+  background: #111111;
+  border-color: #111111;
+  color: #FFFFFF;
+}
+
+.kala-biz-date-pill .day-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6B7280;
+}
+
+.kala-biz-date-pill.active .day-name {
+  color: #D1D5DB;
+}
+
+.kala-biz-date-pill .date-num {
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0.1rem 0;
+}
+
+.kala-biz-date-pill .month-name {
+  font-size: 0.65rem;
+  color: #6B7280;
+}
+
+.kala-biz-date-pill.active .month-name {
+  color: #E5E7EB;
+}
+
+/* Time Slots Grid */
+.kala-biz-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.kala-biz-slot-btn {
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kala-biz-slot-btn:hover:not(.booked) {
+  border-color: #D94700;
+  background: #FFFFFF;
+}
+
+.kala-biz-slot-btn.active {
+  background: #FFF7F2;
+  border-color: #D94700;
+  box-shadow: 0 0 0 1px #D94700;
+}
+
+.kala-biz-slot-btn.booked {
+  background: #F3F4F6;
+  border-color: #E5E7EB;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.kala-biz-slot-btn .slot-time {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #111111;
+}
+
+.kala-biz-slot-btn .slot-status {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #15803D;
+  text-transform: uppercase;
+}
+
+.kala-biz-slot-btn.booked .slot-status {
+  color: #9CA3AF;
+}
+
+/* No Slots Box */
+.kala-biz-no-slots-box {
+  background: #FEF2F2;
+  border: 1px solid #FEE2E2;
+  border-radius: 8px;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.kala-biz-no-slots-box p {
+  font-size: 0.78rem;
+  color: #991B1B;
+  margin: 0 0 0.5rem 0;
+}
+
+.kala-biz-whatsapp-fallback-btn {
+  display: inline-block;
+  background: #25D366;
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+}
+
+/* Customer Inputs Grid */
+.kala-biz-customer-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.kala-biz-input-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-biz-text-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.75rem;
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 6px;
+  font-size: 0.825rem;
+  color: #111111;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.kala-biz-text-input:focus {
+  border-color: #D94700;
+}
+
+.kala-biz-text-input.has-error,
+.kala-biz-textarea.has-error {
+  border-color: #DC2626;
+  background: #FEF2F2;
+}
+
+.kala-biz-form-error {
+  font-size: 0.68rem;
+  color: #DC2626;
+  margin: 0.25rem 0 0 0;
+  font-weight: 600;
+}
+
+.kala-biz-server-error-banner {
+  background: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  color: #B91C1C;
+  font-size: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.kala-biz-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.kala-biz-btn-cancel {
+  background: #F3F4F6;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 6px;
+  color: #374151;
+  padding: 0.6rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.kala-biz-btn-cancel:hover {
+  background: #E5E7EB;
+}
+
+.kala-biz-submit-btn {
+  background: #D94700;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.825rem;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.kala-biz-submit-btn:hover {
+  background: #BA3E00;
+  transform: translateY(-1px);
+}
+
+.kala-biz-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Modal Success Confirmation Screen */
+.kala-biz-modal-success {
+  text-align: center;
+  padding: 1.5rem 0.5rem;
+}
+
+.kala-biz-success-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #DCFCE7;
+  color: #15803D;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin: 0 auto 1rem auto;
+}
+
+.kala-biz-success-title {
+  font-family: var(--kala-font-primary);
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #111111;
+  margin: 0 0 0.35rem 0;
+  text-transform: uppercase;
+}
+
+.kala-biz-success-sub {
+  font-size: 0.85rem;
+  color: #4B5563;
+  margin: 0 0 1.25rem 0;
+}
+
+.kala-biz-confirmed-details-card {
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 0.85rem 1.15rem;
+  margin: 0 auto 1.25rem auto;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.kala-biz-detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.kala-biz-detail-row .label {
+  color: #6B7280;
+  font-weight: 600;
+}
+
+.kala-biz-detail-row .val {
+  color: #111111;
+  font-weight: 800;
+}
+
+.kala-biz-meet-notice {
+  font-size: 0.78rem;
+  color: #4B5563;
+  background: #EFF6FF;
+  border: 1px solid #DBEAFE;
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  margin: 0 0 1.25rem 0;
+}
+
+.kala-biz-modal-done-btn {
+  padding: 0.65rem 2rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   9. RESPONSIVE BREAKPOINTS (Mobile & Tablet)
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .kala-biz-main-card {
+    grid-template-columns: 1fr;
+  }
+
+  .kala-biz-left-panel {
+    border-right: none;
+    border-bottom: 1.5px solid #EAE7E1;
+    padding: 1.25rem;
+  }
+
+  .kala-biz-preview-card {
+    position: static;
+  }
+
+  .kala-biz-preview-image-stage {
+    min-height: 240px;
+    max-height: 260px;
+  }
+
+  .kala-biz-preview-img {
+    max-height: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .kala-biz-inquiry-section {
+    padding: 1.5rem 0 2.25rem 0;
+  }
+
+  .kala-biz-right-panel {
+    padding: 1.25rem 1rem;
+    gap: 1.35rem;
+  }
+
+  .kala-biz-category-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .kala-biz-cat-card {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .kala-biz-custom-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+
+  .kala-biz-contact-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .kala-biz-customer-inputs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kala-biz-slots-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kala-biz-qty-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { createRazorpayOrder, verifyRazorpayPayment } from '../controllers/paymentController'
+import { createRazorpayOrder, verifyRazorpayPayment, handleRazorpayWebhook } from '../controllers/paymentController'
 import { orderLimiter } from '../middleware/rateLimiter'
 import { requireAuth } from '../middleware/authMiddleware'
 
@@ -16,5 +16,12 @@ paymentRouter.post('/create-order', orderLimiter, createRazorpayOrder)
  * Verifies Razorpay HMAC-SHA256 signature and confirms order payment.
  */
 paymentRouter.post('/verify-payment', orderLimiter, verifyRazorpayPayment)
+
+/**
+ * POST /api/payment/webhook and /payment-webhook
+ * Verified server-to-server webhook from Razorpay for authoritative payment capture & order confirmation.
+ */
+paymentRouter.post('/webhook', handleRazorpayWebhook)
+paymentRouter.post('/payment-webhook', handleRazorpayWebhook)
 
 export default paymentRouter

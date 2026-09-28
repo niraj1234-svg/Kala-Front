@@ -1,12 +1,15 @@
 import { Request, Response } from 'express'
 import { FilterQuery } from 'mongoose'
 import { Order, IOrder, OrderStatus } from '../models/Order'
+import { sendOrderStatusUpdateNotification } from '../services/notificationService'
 
 const ALLOWED_ORDER_STATUSES: OrderStatus[] = [
   'pending',
   'confirmed',
   'processing',
+  'packed',
   'shipped',
+  'out_for_delivery',
   'delivered',
   'cancelled',
 ]
@@ -249,10 +252,12 @@ export const updateAdminOrderStatus = async (req: Request, res: Response): Promi
     }
 
     // 3. Append Status History Entry with Server Timestamp
+    const changedBy = (req as any).user?.email || (req as any).user?.name || 'Admin'
     const historyEntry = {
       status: normalizedStatus as OrderStatus,
       changedAt: new Date(),
       note: typeof note === 'string' && note.trim() ? note.trim() : `Status updated to ${normalizedStatus}`,
+      changedBy,
     }
 
     updateQuery.$push = {
@@ -272,6 +277,11 @@ export const updateAdminOrderStatus = async (req: Request, res: Response): Promi
       })
       return
     }
+
+    // Dispatch status update notification to customer (idempotent, fail-safe)
+    sendOrderStatusUpdateNotification(updatedOrder, order.status, normalizedStatus).catch((notifErr) => {
+      console.error('[AdminOrderController] sendOrderStatusUpdateNotification error:', notifErr)
+    })
 
     res.status(200).json({
       success: true,

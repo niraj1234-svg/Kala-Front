@@ -23,6 +23,8 @@ import reviewRouter from './routes/reviewRoutes'
 import adminReviewRouter from './routes/adminReviewRoutes'
 import paymentRouter from './routes/paymentRoutes'
 import cartRouter from './routes/cartRoutes'
+import otpRouter from './routes/otpRoutes'
+import visitorRouter from './routes/visitorRoutes'
 
 // Validate required environment configuration at startup
 validateEnv()
@@ -86,8 +88,11 @@ app.use('/api/coupons', orderLimiter, customerCouponRouter)
 app.use('/api/reviews', reviewLimiter, reviewRouter)
 app.use('/api/custom-requests', inquiryLimiter, customRequestRouter)
 app.use('/api/business-requests', inquiryLimiter, businessRequestRouter)
+app.use('/api/business/inquiries', inquiryLimiter, businessRequestRouter)
 app.use('/api/auth', authLimiter, authRouter)
 app.use('/api/cart', cartRouter)
+app.use('/api/otp', otpRouter)
+app.use('/api/visitors', visitorRouter)
 app.use('/api', paymentRouter)
 app.use('/api/payment', paymentRouter)
 

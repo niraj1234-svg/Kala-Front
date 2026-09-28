@@ -22,6 +22,7 @@ const ALLOWED_CUSTOM_REQUEST_STATUSES: CustomRequestStatus[] = [
 
 const ALLOWED_BUSINESS_REQUEST_STATUSES: BusinessRequestStatus[] = [
   'pending',
+  'confirmed',
   'contacted',
   'quoted',
   'approved',

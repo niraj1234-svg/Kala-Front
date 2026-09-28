@@ -17,6 +17,7 @@ export interface BusinessRequestInput {
   projectDetails?: string
   preferredMeetingMethod?: string
   preferredMeetingTime?: string
+  bulkOrderDetails?: any
 }
 
 export interface BackendBusinessRequest {
@@ -37,6 +38,7 @@ export interface BackendBusinessRequest {
   projectDetails?: string
   preferredMeetingMethod?: string
   preferredMeetingTime?: string
+  bulkOrderDetails?: any
   status: string
   createdAt: string
   updatedAt?: string

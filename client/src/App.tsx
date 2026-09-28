@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { CartProvider } from './context/CartContext'
 import { WishlistProvider } from './context/WishlistContext'
@@ -13,11 +14,14 @@ import BusinessBranding from './pages/BusinessBranding'
 import About from './pages/About'
 import Cart from './pages/Cart'
 import Account from './pages/Account'
-import AccountOrderDetail from './pages/AccountOrderDetail'
+import Orders from './pages/Orders'
+import OrderDetails from './pages/OrderDetails'
 import Wishlist from './pages/Wishlist'
 import ProductDetails from './pages/ProductDetails'
+import BundleBuilder from './pages/BundleBuilder'
 import Checkout from './pages/Checkout'
 import OrderConfirmation from './pages/OrderConfirmation'
+import { trackFirstVisit } from './services/visitorApi'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminOrders from './pages/admin/AdminOrders'
@@ -45,6 +49,11 @@ function App() {
   const location = useLocation()
   const isAdminPath = location.pathname.startsWith('/admin')
 
+  useEffect(() => {
+    // Record anonymous first visit to KALA (only sends once, rate-limited, idempotent)
+    trackFirstVisit()
+  }, [])
+
   return (
     <AuthProvider>
       <AdminProvider>
@@ -60,16 +69,20 @@ function App() {
                   {/* Customer Storefront Routes */}
                   <Route path="/" element={<Home />} />
                   <Route path="/shop" element={<Shop />} />
+                  <Route path="/bundle" element={<BundleBuilder />} />
                   <Route path="/product/:id" element={<ProductDetails />} />
                   <Route path="/custom-apparel" element={<CustomApparel />} />
                   <Route path="/business-branding" element={<BusinessBranding />} />
+                  <Route path="/bulk-order" element={<BusinessBranding />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
+                  <Route path="/orders" element={<Orders />} />
+                  <Route path="/orders/:orderId" element={<OrderDetails />} />
                   <Route path="/account" element={<Account />} />
                   <Route path="/login" element={<Account />} />
-                  <Route path="/account/orders/:orderId" element={<AccountOrderDetail />} />
+                  <Route path="/account/orders/:orderId" element={<OrderDetails />} />
                   <Route path="/wishlist" element={<Wishlist />} />
 
                   {/* Dedicated Admin Portal Routes */}

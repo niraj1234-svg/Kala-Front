@@ -94,7 +94,7 @@ export const validateCustomerCoupon = async (
       return
     }
 
-    const { code, items } = req.body
+    const { code, items, bundleType } = req.body
 
     // 2. Validate Coupon Code input
     if (!code || typeof code !== 'string' || !code.trim()) {
@@ -166,11 +166,27 @@ export const validateCustomerCoupon = async (
       }
     }
 
+    const BUNDLE_CONFIG: Record<string, number> = {
+      '2_TSHIRT': 499,
+      '3_TSHIRT': 699,
+      '5_TSHIRT': 999,
+    }
+
+    let bundlePrice: number | null = null
+    if (bundleType && typeof bundleType === 'string') {
+      const normalized = bundleType.trim().toUpperCase()
+      if (BUNDLE_CONFIG[normalized] !== undefined) {
+        bundlePrice = BUNDLE_CONFIG[normalized]
+      }
+    }
+
     // 7. Calculate Authoritative Subtotal
-    const subtotal = items.reduce((sum: number, item: { productId: string; quantity: number }) => {
-      const dbProduct = productMap.get(item.productId.trim())!
-      return sum + dbProduct.price * Math.floor(Number(item.quantity))
-    }, 0)
+    const subtotal = bundlePrice !== null
+      ? bundlePrice
+      : items.reduce((sum: number, item: { productId: string; quantity: number }) => {
+          const dbProduct = productMap.get(item.productId.trim())!
+          return sum + dbProduct.price * Math.floor(Number(item.quantity))
+        }, 0)
 
     // 8. Find Coupon by normalized uppercase code
     const cleanCode = code.trim().toUpperCase()

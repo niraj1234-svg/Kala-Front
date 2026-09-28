@@ -56,6 +56,7 @@ export const ProductDetails: React.FC = () => {
   const [sizeError, setSizeError] = useState<string>('')
   const [addedNotification, setAddedNotification] = useState<boolean>(false)
   const [shareFeedback, setShareFeedback] = useState<string>('')
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState<boolean>(false)
 
   // Scroll to top and fetch fresh product data on route change
   useEffect(() => {
@@ -131,6 +132,32 @@ export const ProductDetails: React.FC = () => {
 
   const highlights = getProductHighlights(product)
   const isWishlisted = isInWishlist(product.id)
+
+  const currentImgIndex = galleryImages.indexOf(activeImage || product.image)
+  const safeImgIndex = currentImgIndex >= 0 ? currentImgIndex : 0
+
+  const handlePrevImage = () => {
+    const prevIdx = (safeImgIndex - 1 + galleryImages.length) % galleryImages.length
+    setActiveImage(galleryImages[prevIdx])
+  }
+
+  const handleNextImage = () => {
+    const nextIdx = (safeImgIndex + 1) % galleryImages.length
+    setActiveImage(galleryImages[nextIdx])
+  }
+
+  // Single-line summary with optional expansion
+  const shortDescription = supportsCustomBackText
+    ? 'Premium 220 GSM Bihar-inspired streetwear T-shirt with expressive artwork and comfortable construction. Back customization +₹25.'
+    : (() => {
+        const sentences = product.description.split('. ')
+        if (sentences.length > 1) {
+          return sentences[0].endsWith('.') ? sentences[0] : `${sentences[0]}.`
+        }
+        return product.description
+      })()
+
+  const hasExpandableDescription = product.description.trim() !== shortDescription.trim()
 
   // Handle Quantity adjustments
   const handleIncreaseQty = () => {
@@ -234,38 +261,70 @@ export const ProductDetails: React.FC = () => {
   return (
     <main className="kala-container kala-details-page">
       <div className="kala-details-grid">
-        {/* Product Image Gallery */}
+        {/* Product Image Gallery: Prominent Main Image + Compact Horizontal Slider Below */}
         <div className="kala-details-gallery">
-          {galleryImages.length > 1 && (
-            <div className="kala-gallery-thumbnails" role="tablist" aria-label="Product thumbnails">
-              {galleryImages.map((imgUrl, idx) => {
-                const isCurrent = (activeImage || product.image) === imgUrl
-                const label = idx === 0 ? 'Front' : (idx === 1 ? 'Back' : `View ${idx + 1}`)
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    role="tab"
-                    aria-selected={isCurrent}
-                    aria-label={`View ${label}`}
-                    className={`kala-gallery-thumb-btn ${isCurrent ? 'active' : ''}`}
-                    onClick={() => setActiveImage(imgUrl)}
-                  >
-                    <img src={imgUrl} alt={`${product.name} ${label}`} />
-                    <span className="kala-gallery-thumb-tag">{label}</span>
-                  </button>
-                )
-              })}
-            </div>
-          )}
-
           <div className="kala-details-main-image-card">
             <img
               src={activeImage || product.image}
-              alt={product.name}
+              alt={`${product.name} — view ${safeImgIndex + 1}`}
               loading="eager"
             />
           </div>
+
+          {/* Compact Horizontal Slider / Selector Below Main Image */}
+          {galleryImages.length > 1 && (
+            <div className="kala-gallery-slider-bar" role="region" aria-label="Product image selector">
+              {/* Previous Arrow */}
+              <button
+                type="button"
+                className="kala-gallery-nav-btn prev"
+                onClick={handlePrevImage}
+                aria-label="Previous product image"
+                title="Previous image"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+
+              {/* Horizontal Thumbnails Row */}
+              <div className="kala-gallery-thumbnails-horizontal" role="tablist" aria-label="Product view options">
+                {galleryImages.map((imgUrl, idx) => {
+                  const isCurrent = (activeImage || product.image) === imgUrl
+                  const label = idx === 0 ? 'FRONT' : (idx === 1 ? 'BACK' : `VIEW ${idx + 1}`)
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      role="tab"
+                      aria-selected={isCurrent}
+                      aria-label={`View ${label} image`}
+                      className={`kala-gallery-thumb-chip ${isCurrent ? 'active' : ''}`}
+                      onClick={() => setActiveImage(imgUrl)}
+                    >
+                      <div className="kala-thumb-img-wrap">
+                        <img src={imgUrl} alt="" aria-hidden="true" />
+                      </div>
+                      <span className="kala-thumb-chip-label">{label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* Next Arrow */}
+              <button
+                type="button"
+                className="kala-gallery-nav-btn next"
+                onClick={handleNextImage}
+                aria-label="Next product image"
+                title="Next image"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Product Information */}
@@ -305,8 +364,22 @@ export const ProductDetails: React.FC = () => {
             </div>
           )}
 
-          {/* Short 1-line description */}
-          <p className="kala-details-description">{product.description}</p>
+          {/* Reduced 1-line description with optional expand/collapse */}
+          <div className="kala-details-desc-wrap">
+            <p className="kala-details-description">
+              <span>{isDescriptionExpanded ? product.description : shortDescription}</span>
+              {hasExpandableDescription && (
+                <button
+                  type="button"
+                  className="kala-desc-toggle-btn"
+                  onClick={() => setIsDescriptionExpanded((prev) => !prev)}
+                  aria-expanded={isDescriptionExpanded}
+                >
+                  {isDescriptionExpanded ? 'Read less' : 'Read more'}
+                </button>
+              )}
+            </p>
+          </div>
 
           {/* Special Customization: Back Custom Text (+₹25) */}
           {supportsCustomBackText && (
