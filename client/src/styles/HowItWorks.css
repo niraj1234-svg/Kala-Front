@@ -9,8 +9,8 @@
   background-image: 
     radial-gradient(circle at 10% 20%, rgba(217, 71, 0, 0.02) 0%, transparent 40%),
     radial-gradient(circle at 90% 80%, rgba(0, 0, 0, 0.015) 0%, transparent 40%);
-  padding: 5.5rem 1.5rem 6rem;
-  border-top: 1px solid rgba(226, 219, 209, 0.6);
+  padding: clamp(3rem, 5vw, 4.25rem) 1.5rem clamp(4rem, 6vw, 5.5rem);
+  border-top: none;
   border-bottom: 1px solid rgba(226, 219, 209, 0.6);
   overflow: hidden;
   box-sizing: border-box;

@@ -4,7 +4,6 @@ import {
   createBusinessRequest,
   type BackendBusinessRequest,
 } from '../services/businessRequestApi'
-import BulkOrderCalculator from '../components/BulkOrderCalculator'
 import '../styles/BusinessBranding.css'
 
 export const BusinessBranding: React.FC = () => {
@@ -742,9 +741,6 @@ export const BusinessBranding: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* 2.5 CALCULATE YOUR BULK ORDER (Interactive 3-Category Custom Apparel Tool) */}
-      <BulkOrderCalculator />
 
       {/* 3. BUSINESS QUOTE FORM (COMMERCIAL INQUIRY SPLIT LAYOUT) */}
       <section ref={formRef} id="quote-form" className="kala-b2b-quote-section">

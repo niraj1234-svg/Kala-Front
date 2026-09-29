@@ -650,10 +650,10 @@ export const ProductDetails: React.FC = () => {
           )}
 
           {/* Wishlist and Share Secondary Bar */}
-          <div className="kala-details-secondary-bar">
+          <div className="kala-details-secondary-bar kala-details-small-actions">
             <button
               type="button"
-              className={`kala-secondary-action-btn ${isWishlisted ? 'wishlisted' : ''}`}
+              className={`kala-secondary-action-btn kala-small-action-btn ${isWishlisted ? 'wishlisted active' : ''}`}
               onClick={() => toggleWishlist(product.id)}
               aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
             >
@@ -665,29 +665,35 @@ export const ProductDetails: React.FC = () => {
 
             <button
               type="button"
-              className="kala-secondary-action-btn"
+              className={`kala-secondary-action-btn kala-small-action-btn ${shareFeedback ? 'copied' : ''}`}
               onClick={handleShare}
               aria-label="Share this product"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="18" cy="5" r="3" />
-                <circle cx="6" cy="12" r="3" />
-                <circle cx="18" cy="19" r="3" />
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-              </svg>
+              {shareFeedback ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="18" cy="5" r="3" />
+                  <circle cx="6" cy="12" r="3" />
+                  <circle cx="18" cy="19" r="3" />
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                </svg>
+              )}
               <span>{shareFeedback || 'Share'}</span>
             </button>
           </div>
 
           {/* Highlights List */}
           {highlights.length > 0 && (
-            <div className="kala-details-highlights-section">
+            <div className="kala-details-highlights-section kala-product-highlights">
               <span className="kala-section-label">Product Features</span>
               <div className="kala-highlights-grid">
                 {highlights.map((h, i) => (
-                  <div key={i} className="kala-highlight-row">
-                    <span className="kala-highlight-label">{h.label}:</span>
+                  <div key={i} className="kala-highlight-row kala-highlight-item">
+                    <span className="kala-highlight-label">{h.label}</span>
                     <span className="kala-highlight-value">{h.value}</span>
                   </div>
                 ))}

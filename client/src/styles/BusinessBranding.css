@@ -877,7 +877,7 @@
   background-image: 
     radial-gradient(circle at 15% 20%, rgba(233, 75, 0, 0.03) 0%, transparent 50%),
     radial-gradient(circle at 85% 70%, rgba(0, 0, 0, 0.015) 0%, transparent 50%);
-  padding: clamp(4rem, 6.5vw, 6.5rem) 0;
+  padding: clamp(3.5rem, 5.5vw, 5.5rem) 0 clamp(2.5rem, 4vw, 3.75rem);
   border-bottom: 1px solid var(--kala-border, #E2DBD1);
   overflow: hidden;
 }
@@ -1171,7 +1171,7 @@
 
 @media (max-width: 640px) {
   .kala-solutions-section {
-    padding: 3.25rem 0;
+    padding: 3rem 0 2rem;
   }
 
   .kala-solutions-header-wrap {
@@ -1292,7 +1292,7 @@
 .kala-b2b-quote-section {
   position: relative;
   background-color: #FAF7F2;
-  padding: clamp(3.5rem, 6vw, 6rem) 1.5rem clamp(4rem, 7vw, 6.5rem);
+  padding: clamp(2.75rem, 4.5vw, 4rem) 1.5rem clamp(4rem, 7vw, 6.5rem);
   box-sizing: border-box;
   width: 100%;
 }

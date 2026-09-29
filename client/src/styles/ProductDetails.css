@@ -502,37 +502,119 @@
   transform: translateY(-1px);
 }
 
-/* Small Actions (Wishlist + Share) */
+/* Secondary Actions Bar (Wishlist + Share) */
+.kala-details-secondary-bar,
 .kala-details-small-actions {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  margin-bottom: 1.5rem;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
 }
 
+.kala-secondary-action-btn,
 .kala-small-action-btn {
+  flex: 1;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  background: transparent;
-  border: none;
+  min-height: 46px;
+  padding: 0.75rem 1rem;
+  background-color: #ffffff;
+  border: 1.5px solid var(--kala-border);
+  border-radius: 10px;
   font-family: var(--kala-font-primary);
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--kala-text-secondary);
-  cursor: pointer;
-  padding: 0.35rem 0.5rem;
-  border-radius: 6px;
-  transition: all var(--kala-transition-fast);
-}
-
-.kala-small-action-btn:hover {
+  letter-spacing: 0.02em;
   color: var(--kala-black);
-  background-color: rgba(17, 17, 17, 0.04);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: all var(--kala-transition-fast);
+  box-sizing: border-box;
 }
 
+.kala-secondary-action-btn svg,
+.kala-small-action-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, stroke 0.2s ease, fill 0.2s ease;
+}
+
+.kala-secondary-action-btn:hover,
+.kala-small-action-btn:hover {
+  background-color: #faf9f7;
+  border-color: var(--kala-black);
+  color: var(--kala-black);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.kala-secondary-action-btn:hover svg,
+.kala-small-action-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.kala-secondary-action-btn:active,
+.kala-small-action-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.kala-secondary-action-btn:focus-visible,
+.kala-small-action-btn:focus-visible {
+  outline: 2px solid var(--kala-orange);
+  outline-offset: 2px;
+}
+
+/* Wishlisted State */
+.kala-secondary-action-btn.wishlisted,
+.kala-secondary-action-btn.active,
+.kala-small-action-btn.wishlisted,
 .kala-small-action-btn.active {
+  background-color: #fff7ed;
+  border-color: #fdba74;
   color: var(--kala-orange);
+}
+
+.kala-secondary-action-btn.wishlisted svg,
+.kala-secondary-action-btn.active svg,
+.kala-small-action-btn.wishlisted svg,
+.kala-small-action-btn.active svg {
+  fill: var(--kala-orange);
+  stroke: var(--kala-orange);
+}
+
+.kala-secondary-action-btn.wishlisted:hover,
+.kala-secondary-action-btn.active:hover,
+.kala-small-action-btn.wishlisted:hover,
+.kala-small-action-btn.active:hover {
+  background-color: #ffedd5;
+  border-color: var(--kala-orange);
+}
+
+/* Share Copied State */
+.kala-secondary-action-btn.copied,
+.kala-small-action-btn.copied {
+  background-color: #ecfdf5;
+  border-color: #6ee7b7;
+  color: #047857;
+}
+
+.kala-secondary-action-btn.copied svg,
+.kala-small-action-btn.copied svg {
+  stroke: #047857;
+}
+
+.kala-secondary-action-btn.copied:hover,
+.kala-small-action-btn.copied:hover {
+  background-color: #d1fae5;
+  border-color: #34d399;
 }
 
 /* Service Row (Pan-India Delivery, Secure Payments, Premium Quality ONLY) */
@@ -563,18 +645,22 @@
 }
 
 /* Product Highlights Section */
+.kala-details-highlights-section,
 .kala-product-highlights {
-  margin-top: clamp(2.5rem, 5vw, 4rem);
-  padding-top: clamp(2rem, 4vw, 3rem);
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding-top: clamp(1.5rem, 3vw, 2.25rem);
   border-top: 1px solid var(--kala-border);
 }
 
+.kala-details-highlights-section .kala-section-label,
 .kala-highlights-title {
-  font-size: 1.125rem;
+  display: block;
+  font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--kala-black);
-  margin-bottom: 1.25rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kala-text-secondary);
+  margin-bottom: 1rem;
 }
 
 .kala-highlights-grid {
@@ -583,10 +669,11 @@
   gap: 1.25rem;
   background-color: #faf9f7;
   border: 1px solid var(--kala-border);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 1.5rem;
 }
 
+.kala-highlight-row,
 .kala-highlight-item {
   display: flex;
   flex-direction: column;
@@ -709,14 +796,23 @@
     width: 100%;
   }
 
+  .kala-details-secondary-bar,
   .kala-details-small-actions {
-    gap: 0.5rem;
-    flex-wrap: wrap;
+    gap: 0.625rem;
   }
 
+  .kala-secondary-action-btn,
   .kala-small-action-btn {
     min-height: 44px;
-    padding: 0.5rem 0.75rem;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.775rem;
+    gap: 0.4rem;
+  }
+
+  .kala-secondary-action-btn svg,
+  .kala-small-action-btn svg {
+    width: 16px;
+    height: 16px;
   }
 
   .kala-highlights-grid {
