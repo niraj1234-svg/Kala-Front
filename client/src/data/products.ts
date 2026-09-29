@@ -31,6 +31,8 @@ export interface Product {
   available: boolean
   variants?: ProductColorVariant[]
   freeShipping?: boolean
+  customPrintTextEnabled?: boolean
+  customPrintTextPrice?: number
 }
 
 export interface ProductHighlight {
@@ -127,6 +129,8 @@ export const PRODUCTS: Product[] = [
     ],
     description: "A premium 220 GSM everyday T-shirt rooted in Bihar's culture and designed for modern streetwear. The forest-green finish, expressive artwork and comfortable construction make it an easy statement piece for everyday wear. Personalize the back with your own text for an additional ₹25.",
     available: true,
+    customPrintTextEnabled: true,
+    customPrintTextPrice: 25,
   },
 
   // Streetwear (6 items)

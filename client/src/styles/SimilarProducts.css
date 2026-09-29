@@ -1,0 +1,461 @@
+/* ==========================================================================
+   KALA SIMILAR PRODUCTS CAROUSEL STYLES
+   ========================================================================== */
+
+.kala-similar-section {
+  width: 100%;
+  margin-top: clamp(2.5rem, 5vw, 4.5rem);
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  padding: 0;
+  position: relative;
+}
+
+/* Section Header */
+.kala-similar-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1.5px solid #ebe8e2;
+}
+
+.kala-similar-title-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.kala-similar-badge {
+  font-family: var(--kala-font-primary);
+  font-size: 0.6875rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--kala-orange);
+}
+
+.kala-similar-title {
+  font-family: var(--kala-font-primary);
+  font-size: clamp(1.25rem, 2.2vw, 1.65rem);
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  color: #111111;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.kala-similar-subtitle {
+  font-size: 0.8125rem;
+  color: var(--kala-text-secondary);
+  margin: 0;
+  margin-top: 0.15rem;
+}
+
+/* Header Navigation Arrows (Desktop) */
+.kala-similar-nav-arrows {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.kala-similar-arrow-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid var(--kala-border);
+  background: #ffffff;
+  color: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kala-similar-arrow-btn:hover:not(:disabled) {
+  border-color: var(--kala-orange);
+  color: var(--kala-orange);
+  background: #fff7ed;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(217, 71, 0, 0.14);
+}
+
+.kala-similar-arrow-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.kala-similar-arrow-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+}
+
+/* Carousel Viewport */
+.kala-similar-carousel-viewport {
+  position: relative;
+  width: 100%;
+}
+
+/* Floating Edge Navigation Overlays (Vertically Centered) */
+.kala-similar-edge-nav {
+  position: absolute;
+  top: 42%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid var(--kala-border);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(4px);
+  color: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kala-similar-edge-nav.prev {
+  left: -14px;
+}
+
+.kala-similar-edge-nav.next {
+  right: -14px;
+}
+
+.kala-similar-edge-nav:hover {
+  background: #ffffff;
+  border-color: var(--kala-orange);
+  color: var(--kala-orange);
+  box-shadow: 0 6px 18px rgba(217, 71, 0, 0.22);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.kala-similar-edge-nav:active {
+  transform: translateY(-50%) scale(0.94);
+}
+
+.kala-similar-edge-nav.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Scroll Track */
+.kala-similar-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 2px 14px 2px;
+  margin: 0;
+  scrollbar-width: none; /* Firefox */
+}
+
+.kala-similar-track::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+/* Individual Card (KALA Fashion Aesthetic) */
+.kala-similar-card {
+  flex: 0 0 215px;
+  max-width: 230px;
+  background-color: #ffffff;
+  border: 1.5px solid #e7e5e0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s ease,
+              border-color 0.25s ease;
+}
+
+.kala-similar-card:hover {
+  transform: translateY(-4px);
+  border-color: #111111;
+  box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.08);
+}
+
+.kala-similar-card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Image Container */
+.kala-similar-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 4.75;
+  background-color: #f3f1ed;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-similar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 0.85rem;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kala-similar-card:hover .kala-similar-img {
+  transform: scale(1.06);
+}
+
+/* Discount Badge */
+.kala-similar-discount-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #111111;
+  color: #ffffff;
+  font-family: var(--kala-font-primary);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 3px 7px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+}
+
+/* Wishlist Heart Button */
+.kala-similar-wish-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111111;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.kala-similar-wish-btn:hover {
+  background: #ffffff;
+  color: var(--kala-orange);
+  border-color: rgba(217, 71, 0, 0.4);
+  transform: scale(1.1);
+}
+
+.kala-similar-wish-btn.active {
+  color: var(--kala-orange);
+  background: #ffffff;
+}
+
+/* Card Body */
+.kala-similar-body {
+  padding: 0.85rem 0.95rem 1rem 0.95rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.kala-similar-cat-label {
+  font-size: 0.6875rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kala-text-secondary);
+  margin-bottom: 0.2rem;
+}
+
+.kala-similar-product-name {
+  font-family: var(--kala-font-primary);
+  font-size: 0.875rem;
+  font-weight: 750;
+  line-height: 1.35;
+  color: #111111;
+  margin: 0 0 0.5rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 2.35em;
+}
+
+/* Rating Row */
+.kala-similar-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.kala-similar-rating-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #f0fdfa;
+  color: #0f766e;
+  border: 1px solid rgba(13, 148, 136, 0.25);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.kala-similar-star-icon {
+  width: 9px;
+  height: 9px;
+}
+
+.kala-similar-rating-count {
+  font-size: 0.6875rem;
+  color: var(--kala-text-secondary);
+  font-weight: 500;
+}
+
+/* Price Row */
+.kala-similar-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-top: auto;
+  margin-bottom: 0.4rem;
+}
+
+.kala-similar-current-price {
+  font-family: var(--kala-font-primary);
+  font-size: 1.05rem;
+  font-weight: 850;
+  color: #111111;
+}
+
+.kala-similar-mrp-price {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+/* Shipping / Stock Row */
+.kala-similar-status-row {
+  display: flex;
+  align-items: center;
+  font-size: 0.7188rem;
+}
+
+.kala-similar-stock-badge.in-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #15803d;
+  font-weight: 600;
+}
+
+.kala-stock-dot-mini {
+  color: #16a34a;
+  font-size: 0.55rem;
+}
+
+.kala-similar-stock-badge.out-of-stock {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN BREAKPOINTS
+   ========================================================================== */
+
+/* Tablet (641px - 1024px) */
+@media (max-width: 1024px) {
+  .kala-similar-card {
+    flex: 0 0 195px;
+    max-width: 210px;
+  }
+
+  .kala-similar-edge-nav.prev {
+    left: -8px;
+  }
+
+  .kala-similar-edge-nav.next {
+    right: -8px;
+  }
+}
+
+/* Mobile (<= 640px) */
+@media (max-width: 640px) {
+  .kala-similar-section {
+    margin-top: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .kala-similar-header {
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.65rem;
+  }
+
+  .kala-similar-nav-arrows {
+    display: none; /* Hide header buttons on mobile, rely on swipe + edge buttons */
+  }
+
+  .kala-similar-edge-nav {
+    display: none; /* Pure touch swipeable on mobile */
+  }
+
+  .kala-similar-track {
+    gap: 12px;
+    padding-left: 2px;
+    padding-right: 12px;
+  }
+
+  .kala-similar-card {
+    flex: 0 0 162px;
+    max-width: 175px;
+    border-radius: 10px;
+  }
+
+  .kala-similar-img-wrap {
+    aspect-ratio: 1 / 1.15;
+  }
+
+  .kala-similar-img {
+    padding: 0.5rem;
+  }
+
+  .kala-similar-body {
+    padding: 0.65rem 0.75rem 0.85rem 0.75rem;
+  }
+
+  .kala-similar-product-name {
+    font-size: 0.8125rem;
+    min-height: 2.3em;
+  }
+
+  .kala-similar-current-price {
+    font-size: 0.9375rem;
+  }
+
+  .kala-similar-discount-badge {
+    font-size: 0.58rem;
+    padding: 2px 5px;
+  }
+}

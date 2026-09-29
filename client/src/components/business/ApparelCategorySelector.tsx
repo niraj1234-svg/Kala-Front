@@ -55,17 +55,19 @@ export const ApparelCategorySelector: React.FC<ApparelCategorySelectorProps> = (
         })}
       </div>
 
-      {/* Clean, Short Product Information for Selected Category */}
+      {/* Clean, Short Product Information for Selected Category (Requirement 1: Black Heading & Readable Text) */}
       <div className="kala-biz-info-box" aria-live="polite">
         <div className="kala-biz-info-header">
-          <strong>{activeCategory.name} Overview</strong>
-          <span className="kala-biz-info-price">{activeCategory.startingPriceLabel}</span>
+          <strong style={{ color: '#111111' }}>{activeCategory.name} Overview</strong>
+          <span className="kala-biz-info-price" style={{ color: '#D94700' }}>
+            Starting From ₹{activeCategory.startingPrice}/PC
+          </span>
         </div>
         <ul className="kala-biz-feature-list">
           {activeCategory.features.map((feature, idx) => (
-            <li key={idx} className="kala-biz-feature-item">
-              <span className="kala-biz-check-bullet" aria-hidden="true">•</span>
-              <span>{feature}</span>
+            <li key={idx} className="kala-biz-feature-item" style={{ color: '#1F2937' }}>
+              <span className="kala-biz-check-bullet" aria-hidden="true" style={{ color: '#D94700' }}>•</span>
+              <span style={{ color: '#1F2937' }}>{feature}</span>
             </li>
           ))}
         </ul>

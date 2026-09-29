@@ -69,9 +69,9 @@ app.use(
   })
 )
 
-// Request body size limits to protect against denial-of-service
-app.use(express.json({ limit: '1mb' }))
-app.use(express.urlencoded({ extended: true, limit: '1mb' }))
+// Request body size limits to accommodate custom apparel artwork designs and protect against denial-of-service
+app.use(express.json({ limit: '25mb' }))
+app.use(express.urlencoded({ extended: true, limit: '25mb' }))
 
 // Health Check Endpoint (Excluded from rate limiting)
 app.get('/api/health', (_req: Request, res: Response) => {

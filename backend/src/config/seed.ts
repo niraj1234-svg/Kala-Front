@@ -15,6 +15,37 @@ export const SEED_PRODUCTS = [
     ],
     description: "A premium 220 GSM everyday T-shirt rooted in Bihar's culture and designed for modern streetwear. The forest-green finish, expressive artwork and comfortable construction make it an easy statement piece for everyday wear. Personalize the back with your own text for an additional ₹25.",
     available: true,
+    customPrintTextEnabled: true,
+    customPrintTextPrice: 25,
+  },
+
+  // Custom Apparel Products (Customizer flow)
+  {
+    id: 'custom-t-shirt',
+    name: 'KALA Custom Printed T-Shirt',
+    category: 'Streetwear',
+    price: 349,
+    image: '/custom-apparel/kala-custom-hero-floating.png',
+    description: 'Custom printed heavyweight cotton T-shirt customized with your original artwork.',
+    available: true,
+  },
+  {
+    id: 'custom-hoodie',
+    name: 'KALA Custom Printed Hoodie',
+    category: 'Streetwear',
+    price: 699,
+    image: 'Streetwear -02.png',
+    description: 'Custom printed heavyweight French Terry boxy hoodie customized with your original artwork.',
+    available: true,
+  },
+  {
+    id: 'custom-jersey',
+    name: 'KALA Custom Printed Jersey',
+    category: 'Gaming',
+    price: 429,
+    image: 'gaming 01.png',
+    description: 'Custom tournament esports athletic jersey customized with your original artwork.',
+    available: true,
   },
 
   // Streetwear (6 items)

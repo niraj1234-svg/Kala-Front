@@ -10,8 +10,24 @@ export interface ServerCartItem {
   size: string
   quantity: number
   customization?: {
+    frontText?: string
     backText?: string
+    frontPosition?: { x: number; y: number }
+    backPosition?: { x: number; y: number }
     price?: number
+    apparelType?: string
+    color?: string
+    position?: string
+    artworkUrl?: string
+    previewUrl?: string
+    artwork?: {
+      x?: number
+      y?: number
+      width?: number
+      height?: number
+      rotation?: number
+      scale?: number
+    }
   }
 }
 
@@ -64,10 +80,7 @@ export async function addServerCartItem(item: {
   price: number
   size: string
   quantity: number
-  customization?: {
-    backText?: string
-    price?: number
-  }
+  customization?: ServerCartItem['customization']
 }): Promise<ServerCartResponse | null> {
   const token = getAuthToken()
   if (!token) return null

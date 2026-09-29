@@ -198,10 +198,32 @@ export const OrderDetails: React.FC = () => {
                       </span>
                     </div>
 
+                    {item.customization?.frontText && (
+                      <div className="mt-2 text-xs font-mono bg-[#FAFAFA] border border-[#E5E5E5] p-2 text-[#333333]">
+                        <span className="font-semibold text-[#D94700]">Custom Front Text:</span> "
+                        {item.customization.frontText}"
+                      </div>
+                    )}
+
                     {item.customization?.backText && (
                       <div className="mt-2 text-xs font-mono bg-[#FAFAFA] border border-[#E5E5E5] p-2 text-[#333333]">
                         <span className="font-semibold text-[#D94700]">Custom Back Text:</span> "
-                        {item.customization.backText}" (+₹{item.customization.price || 25})
+                        {item.customization.backText}" {!item.customization?.frontText && `(+₹${item.customization.price || 25})`}
+                      </div>
+                    )}
+
+                    {(item.customization?.customDesign || item.customization?.position) && (
+                      <div className="mt-2 text-xs font-mono bg-[#FAFAFA] border border-[#E5E5E5] p-2.5 text-[#333333] space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-[#D94700] uppercase tracking-wide">Custom Artwork Design</span>
+                          <span className="text-[10px] bg-[#111111] text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                            {item.customization.position || item.customization.customDesign?.position || 'Front'}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-[#666666] flex flex-wrap gap-x-3 gap-y-1 pt-0.5">
+                          <span>Apparel: <strong className="text-[#111111] uppercase">{item.customization.apparelType || item.customization.customDesign?.apparelType || 'Custom'}</strong></span>
+                          <span>Color: <strong className="text-[#111111] uppercase">{item.customization.color || item.customization.customDesign?.color || item.color || 'Standard'}</strong></span>
+                        </div>
                       </div>
                     )}
                   </div>

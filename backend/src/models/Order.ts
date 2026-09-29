@@ -1,5 +1,47 @@
 import mongoose, { Document, Schema } from 'mongoose'
 
+export interface ICustomArtworkCoordinates {
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+  rotation?: number
+  scale?: number
+}
+
+export interface ICustomDesignDetails {
+  frontText?: string
+  backText?: string
+  frontPosition?: { x?: number; y?: number }
+  backPosition?: { x?: number; y?: number }
+  frontFontSize?: number
+  backFontSize?: number
+  price?: number
+  apparelType?: string
+  color?: string
+  position?: 'front' | 'back' | 'left' | 'right' | string
+  artworkUrl?: string
+  previewUrl?: string
+  frontPreviewUrl?: string
+  backPreviewUrl?: string
+  frontArtworkUrl?: string
+  backArtworkUrl?: string
+  requirementDetails?: string
+  artwork?: ICustomArtworkCoordinates
+  frontArtwork?: {
+    x?: number
+    y?: number
+    scale?: number
+    fileName?: string
+  }
+  backArtwork?: {
+    x?: number
+    y?: number
+    scale?: number
+    fileName?: string
+  }
+}
+
 export interface IOrderItem {
   productId: string
   name: string
@@ -8,10 +50,7 @@ export interface IOrderItem {
   color?: string
   quantity: number
   price: number
-  customization?: {
-    backText?: string
-    price?: number
-  }
+  customization?: ICustomDesignDetails
 }
 
 export interface ICustomer {
@@ -141,8 +180,49 @@ const OrderItemSchema = new Schema<IOrderItem>(
     },
     customization: {
       type: {
-        backText: { type: String, trim: true, maxlength: 30 },
+        frontText: { type: String, trim: true, maxlength: 100 },
+        backText: { type: String, trim: true, maxlength: 100 },
+        frontPosition: {
+          x: { type: Number },
+          y: { type: Number },
+        },
+        backPosition: {
+          x: { type: Number },
+          y: { type: Number },
+        },
+        frontFontSize: { type: Number, default: 32 },
+        backFontSize: { type: Number, default: 32 },
         price: { type: Number, default: 0 },
+        apparelType: { type: String, trim: true },
+        color: { type: String, trim: true },
+        position: { type: String, trim: true },
+        artworkUrl: { type: String },
+        previewUrl: { type: String },
+        frontPreviewUrl: { type: String },
+        backPreviewUrl: { type: String },
+        frontArtworkUrl: { type: String },
+        backArtworkUrl: { type: String },
+        requirementDetails: { type: String, trim: true },
+        artwork: {
+          x: { type: Number },
+          y: { type: Number },
+          width: { type: Number },
+          height: { type: Number },
+          rotation: { type: Number },
+          scale: { type: Number },
+        },
+        frontArtwork: {
+          x: { type: Number },
+          y: { type: Number },
+          scale: { type: Number },
+          fileName: { type: String },
+        },
+        backArtwork: {
+          x: { type: Number },
+          y: { type: Number },
+          scale: { type: Number },
+          fileName: { type: String },
+        },
       },
       required: false,
       _id: false,

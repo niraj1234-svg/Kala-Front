@@ -6,7 +6,7 @@ import { useWishlist } from '../context/WishlistContext'
 import { useCart } from '../context/CartContext'
 import NewEventsSection from '../components/NewEventsSection'
 import ProductRatingBadge from '../components/ProductRatingBadge'
-import BulkOrderCalculator from '../components/BulkOrderCalculator'
+import BulkApparelBuilder from '../components/BulkApparelBuilder/BulkApparelBuilder'
 import { flyToCart } from '../utils/cartAnimation'
 import '../styles/Home.css'
 
@@ -172,9 +172,9 @@ export const Home: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          3. BULK ORDER CALCULATOR (Instant Custom Apparel Estimation Tool)
+          3. CREATE CUSTOM APPAREL FOR BULK ORDERS (Bulk Customization Builder)
           ==================================================================== */}
-      <BulkOrderCalculator />
+      <BulkApparelBuilder />
 
       {/* ====================================================================
           4. FEATURED PRODUCTS (Clean Visual Row)

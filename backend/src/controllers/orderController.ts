@@ -7,7 +7,7 @@ import { AuthenticatedUser } from '../middleware/authMiddleware'
 import { validateVerificationToken } from '../services/otpService'
 import mongoose from 'mongoose'
 
-const VALID_SIZES = ['S', 'M', 'L', 'XL', 'XXL']
+const VALID_SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'BULK', 'BULK (MIXED S-XXL)', 'FREE SIZE', 'CUSTOM']
 
 /**
  * Generate human-readable unique order ID:
@@ -260,59 +260,257 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       }
     }
 
-    // 5. Fetch Authoritative Products from MongoDB
+    // 5. Authoritative Custom Apparel Catalog & MongoDB Product Lookup
+    const CUSTOM_APPAREL_CATALOG: Record<string, { id: string; name: string; price: number; image: string; apparelType: string }> = {
+      'custom-t-shirt': {
+        id: 'custom-t-shirt',
+        name: 'KALA Custom Printed T-Shirt',
+        price: 349,
+        image: '/custom-apparel/kala-custom-hero-floating.png',
+        apparelType: 't-shirt',
+      },
+      'custom-tshirt': {
+        id: 'custom-t-shirt',
+        name: 'KALA Custom Printed T-Shirt',
+        price: 349,
+        image: '/custom-apparel/kala-custom-hero-floating.png',
+        apparelType: 't-shirt',
+      },
+      'tshirt': {
+        id: 'custom-t-shirt',
+        name: 'KALA Custom Printed T-Shirt',
+        price: 349,
+        image: '/custom-apparel/kala-custom-hero-floating.png',
+        apparelType: 't-shirt',
+      },
+      't-shirt': {
+        id: 'custom-t-shirt',
+        name: 'KALA Custom Printed T-Shirt',
+        price: 349,
+        image: '/custom-apparel/kala-custom-hero-floating.png',
+        apparelType: 't-shirt',
+      },
+      'custom-hoodie': {
+        id: 'custom-hoodie',
+        name: 'KALA Custom Printed Hoodie',
+        price: 699,
+        image: 'Streetwear -02.png',
+        apparelType: 'hoodie',
+      },
+      'hoodie': {
+        id: 'custom-hoodie',
+        name: 'KALA Custom Printed Hoodie',
+        price: 699,
+        image: 'Streetwear -02.png',
+        apparelType: 'hoodie',
+      },
+      'custom-jersey': {
+        id: 'custom-jersey',
+        name: 'KALA Custom Printed Jersey',
+        price: 429,
+        image: 'gaming 01.png',
+        apparelType: 'jersey',
+      },
+      'jersey': {
+        id: 'custom-jersey',
+        name: 'KALA Custom Printed Jersey',
+        price: 429,
+        image: 'gaming 01.png',
+        apparelType: 'jersey',
+      },
+      'bulk-tshirt': {
+        id: 'bulk-tshirt',
+        name: 'KALA Custom T-Shirt (Bulk)',
+        price: 175,
+        image: '/mockups/tshirt-black-front.svg',
+        apparelType: 'tshirt',
+      },
+      'bulk-tshirt-black': {
+        id: 'bulk-tshirt',
+        name: 'KALA Custom T-Shirt (Bulk)',
+        price: 175,
+        image: '/mockups/tshirt-black-front.svg',
+        apparelType: 'tshirt',
+      },
+      'bulk-tshirt-white': {
+        id: 'bulk-tshirt',
+        name: 'KALA Custom T-Shirt (Bulk)',
+        price: 175,
+        image: '/mockups/tshirt-white-front.svg',
+        apparelType: 'tshirt',
+      },
+      'bulk-hoodie': {
+        id: 'bulk-hoodie',
+        name: 'KALA Custom Hoodie (Bulk)',
+        price: 680,
+        image: '/mockups/hoodie-black-front.svg',
+        apparelType: 'hoodie',
+      },
+      'bulk-hoodie-black': {
+        id: 'bulk-hoodie',
+        name: 'KALA Custom Hoodie (Bulk)',
+        price: 680,
+        image: '/mockups/hoodie-black-front.svg',
+        apparelType: 'hoodie',
+      },
+      'bulk-hoodie-white': {
+        id: 'bulk-hoodie',
+        name: 'KALA Custom Hoodie (Bulk)',
+        price: 680,
+        image: '/mockups/hoodie-white-front.svg',
+        apparelType: 'hoodie',
+      },
+      'bulk-jersey': {
+        id: 'bulk-jersey',
+        name: 'KALA Custom Jersey (Bulk)',
+        price: 350,
+        image: '/mockups/jersey-black-front.svg',
+        apparelType: 'jersey',
+      },
+      'bulk-jersey-black': {
+        id: 'bulk-jersey',
+        name: 'KALA Custom Jersey (Bulk)',
+        price: 350,
+        image: '/mockups/jersey-black-front.svg',
+        apparelType: 'jersey',
+      },
+      'bulk-jersey-white': {
+        id: 'bulk-jersey',
+        name: 'KALA Custom Jersey (Bulk)',
+        price: 350,
+        image: '/mockups/jersey-white-front.svg',
+        apparelType: 'jersey',
+      },
+    }
+
     const productIds = items.map((i) => i.productId.trim())
     const dbProducts = await Product.find({ id: { $in: productIds } })
     const productMap = new Map(dbProducts.map((p) => [p.id, p]))
 
-    // 6. Verify All Product IDs Exist & Are Available in MongoDB
+    // 6. Verify All Product IDs Exist & Are Available in MongoDB or Custom Catalog
     for (const item of items) {
+      const pid = item.productId.trim().toLowerCase()
       const dbProduct = productMap.get(item.productId.trim())
-      if (!dbProduct) {
+      const isCustomCatalog = CUSTOM_APPAREL_CATALOG[pid]
+
+      if (!dbProduct && !isCustomCatalog) {
         res.status(404).json({
           success: false,
           message: `Product not found: No product found with ID '${item.productId}'.`,
         })
         return
       }
-      if (dbProduct.available === false) {
+      if (dbProduct && dbProduct.available === false) {
         res.status(400).json({
           success: false,
           message: `Product '${dbProduct.name}' is currently unavailable.`,
         })
         return
       }
+
+      // Validate custom design payload if present
+      if (item.customization && (item.customization.artworkUrl || item.customization.artwork || item.customization.position || item.customization.apparelType)) {
+        const cust = item.customization
+        const posLower = String(cust.position || '').toLowerCase()
+        const validPlacements = ['front', 'back', 'left', 'right', 'front & back', 'front & back custom print']
+        if (cust.position && !validPlacements.includes(posLower) && !posLower.includes('front') && !posLower.includes('back')) {
+          res.status(400).json({
+            success: false,
+            message: `Invalid customization: Placement '${cust.position}' is not supported. Allowed: FRONT, BACK, LEFT, RIGHT, FRONT & BACK.`,
+          })
+          return
+        }
+      }
     }
 
     // 7. Construct Verified Items & NEVER Trust Frontend Price
     const verifiedItems = items.map((item) => {
-      const dbProduct = productMap.get(item.productId.trim())!
+      const pid = item.productId.trim().toLowerCase()
+      const dbProduct = productMap.get(item.productId.trim())
+      const customFallback = CUSTOM_APPAREL_CATALOG[pid]
 
-      // Authoritative back custom text validation & pricing
-      let customizationData: { backText: string; price: number } | undefined = undefined
+      const productName = dbProduct ? dbProduct.name : (customFallback?.name || 'KALA Custom Apparel')
+      const productImage = dbProduct ? dbProduct.image : (customFallback?.image || '')
+      const baseProductPrice = dbProduct ? dbProduct.price : (customFallback?.price || 349)
+
+      // Handle custom artwork / design customization
+      let customizationData: any = undefined
       let customPrice = 0
 
-      const rawBackText = item.customization?.backText || item.backText
-      if (typeof rawBackText === 'string' && rawBackText.trim().length > 0) {
-        const cleanBackText = rawBackText.trim().slice(0, 30)
-        customPrice = 25 // STRICT: Authoritative server-side ₹25 customization fee
+      // 1. Process custom artwork / placement details
+      const rawCust = item.customization
+      if (rawCust && (rawCust.artworkUrl || rawCust.artwork || rawCust.position || rawCust.apparelType || rawCust.frontPreviewUrl || rawCust.previewUrl)) {
         customizationData = {
-          backText: cleanBackText,
-          price: 25,
+          apparelType: String(rawCust.apparelType || customFallback?.apparelType || 't-shirt').toLowerCase(),
+          color: String(rawCust.color || item.color || 'White').trim(),
+          position: String(rawCust.position || 'front').toLowerCase(),
+          artworkUrl: typeof rawCust.artworkUrl === 'string' ? rawCust.artworkUrl : '',
+          previewUrl: typeof rawCust.previewUrl === 'string' ? rawCust.previewUrl : '',
+          frontPreviewUrl: typeof rawCust.frontPreviewUrl === 'string' ? rawCust.frontPreviewUrl : (typeof rawCust.previewUrl === 'string' ? rawCust.previewUrl : ''),
+          backPreviewUrl: typeof rawCust.backPreviewUrl === 'string' ? rawCust.backPreviewUrl : '',
+          frontArtworkUrl: typeof rawCust.frontArtworkUrl === 'string' ? rawCust.frontArtworkUrl : (typeof rawCust.artworkUrl === 'string' ? rawCust.artworkUrl : ''),
+          backArtworkUrl: typeof rawCust.backArtworkUrl === 'string' ? rawCust.backArtworkUrl : '',
+          requirementDetails: typeof rawCust.requirementDetails === 'string' ? rawCust.requirementDetails : '',
+          artwork: {
+            x: typeof rawCust.artwork?.x === 'number' ? rawCust.artwork.x : 50,
+            y: typeof rawCust.artwork?.y === 'number' ? rawCust.artwork.y : 45,
+            width: typeof rawCust.artwork?.width === 'number' ? rawCust.artwork.width : 200,
+            height: typeof rawCust.artwork?.height === 'number' ? rawCust.artwork.height : 200,
+            rotation: typeof rawCust.artwork?.rotation === 'number' ? rawCust.artwork.rotation : 0,
+            scale: typeof rawCust.artwork?.scale === 'number' ? rawCust.artwork.scale : 1,
+          },
+          frontArtwork: rawCust.frontArtwork,
+          backArtwork: rawCust.backArtwork,
+          price: 0,
+        }
+      }
+
+      // 2. Process Front & Back Custom Text & Positions (+₹25 fee ONLY for Bihar T-Shirt)
+      const isCustomTextAllowed = dbProduct?.id === 'kala-bihari-story-premium-t-shirt' || Boolean(dbProduct?.customPrintTextEnabled)
+      const rawFrontText = isCustomTextAllowed ? (rawCust?.frontText || item.frontText) : ''
+      const rawBackText = isCustomTextAllowed ? (rawCust?.backText || item.backText) : ''
+      const hasFrontText = typeof rawFrontText === 'string' && rawFrontText.trim().length > 0
+      const hasBackText = typeof rawBackText === 'string' && rawBackText.trim().length > 0
+
+      if (isCustomTextAllowed && (hasFrontText || hasBackText)) {
+        customPrice = dbProduct?.customPrintTextPrice || 25 // STRICT: Authoritative server-side ₹25 customization fee
+        customizationData = {
+          ...(customizationData || {}),
+          ...(hasFrontText ? { frontText: rawFrontText.trim().slice(0, 50) } : {}),
+          ...(hasBackText ? { backText: rawBackText.trim().slice(0, 50) } : {}),
+          ...(rawCust?.frontPosition ? {
+            frontPosition: {
+              x: Number(rawCust.frontPosition.x) || 50,
+              y: Number(rawCust.frontPosition.y) || 52,
+            }
+          } : {}),
+          ...(rawCust?.backPosition ? {
+            backPosition: {
+              x: Number(rawCust.backPosition.x) || 50,
+              y: Number(rawCust.backPosition.y) || 44,
+            }
+          } : {}),
+          ...(rawCust?.frontFontSize ? {
+            frontFontSize: Math.max(12, Math.min(72, Number(rawCust.frontFontSize)))
+          } : {}),
+          ...(rawCust?.backFontSize ? {
+            backFontSize: Math.max(12, Math.min(72, Number(rawCust.backFontSize)))
+          } : {}),
+          price: (customizationData?.price || 0) + 25,
         }
       }
 
       // Proportional unit price in bundle mode vs standard catalog price
       const unitPrice = bundleData
         ? Math.round(bundleData.price / bundleData.slotCount)
-        : dbProduct.price + customPrice
+        : baseProductPrice + customPrice
 
       return {
-        productId: dbProduct.id,
-        name: dbProduct.name,
-        image: dbProduct.image,
+        productId: dbProduct ? dbProduct.id : (customFallback?.id || item.productId.trim()),
+        name: productName,
+        image: customizationData?.previewUrl || productImage,
         size: item.size.toUpperCase(),
-        color: typeof item.color === 'string' ? item.color.trim() : '',
+        color: typeof item.color === 'string' ? item.color.trim() : (customizationData?.color || ''),
         quantity: Math.floor(Number(item.quantity)),
         price: unitPrice, // STRICT: ALWAYS authoritative server-side pricing
         ...(customizationData ? { customization: customizationData } : {}),

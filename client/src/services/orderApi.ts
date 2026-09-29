@@ -1,15 +1,41 @@
 import { getAuthToken } from './authApi'
 import { API_BASE_URL } from '../config/api'
 
+export interface CustomArtworkCoordinates {
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+  rotation?: number
+  scale?: number
+}
+
+export interface CustomDesignDetails {
+  frontText?: string
+  backText?: string
+  frontPosition?: { x: number; y: number }
+  backPosition?: { x: number; y: number }
+  frontFontSize?: number
+  backFontSize?: number
+  customText?: {
+    front?: { text: string; x: number; y: number; fontSize: number }
+    back?: { text: string; x: number; y: number; fontSize: number }
+  }
+  price?: number
+  apparelType?: string
+  color?: string
+  position?: 'front' | 'back' | 'left' | 'right' | string
+  artworkUrl?: string
+  previewUrl?: string
+  artwork?: CustomArtworkCoordinates
+}
+
 export interface OrderItemInput {
   productId: string
   size: string
   color?: string
   quantity: number
-  customization?: {
-    backText?: string
-    price?: number
-  }
+  customization?: CustomDesignDetails
 }
 
 export interface ValidateCouponPayload {
@@ -69,10 +95,7 @@ export interface BackendOrderItem {
   color?: string
   quantity: number
   price: number
-  customization?: {
-    backText?: string
-    price?: number
-  }
+  customization?: CustomDesignDetails
 }
 
 export interface OrderTracking {

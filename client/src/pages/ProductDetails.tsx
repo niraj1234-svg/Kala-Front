@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { PRODUCTS, getProductHighlights, getProductImage } from '../data/products'
 import type { Product, ProductColorVariant } from '../data/products'
@@ -7,9 +7,25 @@ import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext'
 import { useAuth } from '../context/AuthContext'
 import ProductReviewsSection from '../components/reviews/ProductReviewsSection'
+import SimilarProducts from '../components/SimilarProducts'
+import CustomPrintText from '../components/CustomPrintText'
 import '../styles/ProductDetails.css'
 
 const AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL']
+
+// Centralized Text Size Configuration (16px to 72px)
+const TEXT_SIZE_CONFIG = {
+  min: 16,
+  max: 72,
+  default: 32,
+  step: 2,
+}
+
+// Safe printable area boundary percentages on the product image preview
+const SAFE_BOUNDS = {
+  front: { minX: 30, maxX: 70, minY: 35, maxY: 68 },
+  back: { minX: 28, maxX: 72, minY: 28, maxY: 65 },
+}
 
 export const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -20,7 +36,17 @@ export const ProductDetails: React.FC = () => {
   const { isInWishlist, toggleWishlist } = useWishlist()
   const { isAuthenticated } = useAuth()
 
+  // Front & Back Custom Text State
+  const [customFrontText, setCustomFrontText] = useState<string>('')
   const [customBackText, setCustomBackText] = useState<string>('')
+  const [frontPosition, setFrontPosition] = useState<{ x: number; y: number }>({ x: 50, y: 52 })
+  const [backPosition, setBackPosition] = useState<{ x: number; y: number }>({ x: 50, y: 44 })
+  const [frontFontSize, setFrontFontSize] = useState<number>(TEXT_SIZE_CONFIG.default)
+  const [backFontSize, setBackFontSize] = useState<number>(TEXT_SIZE_CONFIG.default)
+  const [isDraggingText, setIsDraggingText] = useState<boolean>(false)
+
+  const dragStartRef = useRef<{ clientX: number; clientY: number; startX: number; startY: number } | null>(null)
+  const previewCardRef = useRef<HTMLDivElement>(null)
 
   const [product, setProduct] = useState<Product | null>(() => {
     return PRODUCTS.find((p) => p.id === id) || null
@@ -116,11 +142,14 @@ export const ProductDetails: React.FC = () => {
     )
   }
 
-  const supportsCustomBackText =
-    product.id === 'kala-bihari-story-premium-t-shirt' ||
-    product.name.toLowerCase().includes('bihari story')
+  const supportsCustomText = Boolean(
+    product.customPrintTextEnabled === true ||
+    product.id === 'kala-bihari-story-premium-t-shirt'
+  )
 
-  const hasCustomText = Boolean(supportsCustomBackText && customBackText.trim().length > 0)
+  const hasFrontText = customFrontText.trim().length > 0
+  const hasBackText = customBackText.trim().length > 0
+  const hasCustomText = Boolean(supportsCustomText && (hasFrontText || hasBackText))
   const customizationFee = hasCustomText ? 25 : 0
   const displayPrice = product.price + customizationFee
 
@@ -136,19 +165,73 @@ export const ProductDetails: React.FC = () => {
   const currentImgIndex = galleryImages.indexOf(activeImage || product.image)
   const safeImgIndex = currentImgIndex >= 0 ? currentImgIndex : 0
 
-  const handlePrevImage = () => {
-    const prevIdx = (safeImgIndex - 1 + galleryImages.length) % galleryImages.length
-    setActiveImage(galleryImages[prevIdx])
+  // Detect whether current view is Front or Back
+  const activeImageStr = (activeImage || product.image).toLowerCase()
+  const isBackView = activeImageStr.includes('back') || safeImgIndex === 1
+  const currentViewKey = isBackView ? 'back' : 'front'
+
+  // Text, position, and font size to display on the active view
+  const currentTextToDisplay = isBackView ? customBackText : customFrontText
+  const currentPosition = isBackView ? backPosition : frontPosition
+  const currentFontSize = isBackView ? backFontSize : frontFontSize
+
+  // Pointer Drag Handlers for Text Positioning
+  const handleTextPointerDown = (e: React.PointerEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDraggingText(true)
+    dragStartRef.current = {
+      clientX: e.clientX,
+      clientY: e.clientY,
+      startX: currentPosition.x,
+      startY: currentPosition.y,
+    }
+    try {
+      ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+    } catch {
+      // fallback
+    }
   }
 
-  const handleNextImage = () => {
-    const nextIdx = (safeImgIndex + 1) % galleryImages.length
-    setActiveImage(galleryImages[nextIdx])
+  const handleTextPointerMove = (e: React.PointerEvent) => {
+    if (!isDraggingText || !dragStartRef.current || !previewCardRef.current) return
+    e.preventDefault()
+
+    const rect = previewCardRef.current.getBoundingClientRect()
+    if (rect.width === 0 || rect.height === 0) return
+
+    const deltaXPercent = ((e.clientX - dragStartRef.current.clientX) / rect.width) * 100
+    const deltaYPercent = ((e.clientY - dragStartRef.current.clientY) / rect.height) * 100
+
+    const bounds = SAFE_BOUNDS[currentViewKey]
+    const targetX = dragStartRef.current.startX + deltaXPercent
+    const targetY = dragStartRef.current.startY + deltaYPercent
+
+    const clampedX = Math.max(bounds.minX, Math.min(bounds.maxX, +targetX.toFixed(1)))
+    const clampedY = Math.max(bounds.minY, Math.min(bounds.maxY, +targetY.toFixed(1)))
+
+    if (isBackView) {
+      setBackPosition({ x: clampedX, y: clampedY })
+    } else {
+      setFrontPosition({ x: clampedX, y: clampedY })
+    }
+  }
+
+  const handleTextPointerUp = (e: React.PointerEvent) => {
+    if (isDraggingText) {
+      setIsDraggingText(false)
+      dragStartRef.current = null
+      try {
+        ;(e.target as HTMLElement).releasePointerCapture(e.pointerId)
+      } catch {
+        // fallback
+      }
+    }
   }
 
   // Single-line summary with optional expansion
-  const shortDescription = supportsCustomBackText
-    ? 'Premium 220 GSM Bihar-inspired streetwear T-shirt with expressive artwork and comfortable construction. Back customization +₹25.'
+  const shortDescription = supportsCustomText
+    ? 'Premium 220 GSM Bihar-inspired streetwear T-shirt with expressive artwork and comfortable construction. Custom print available (+₹25).'
     : (() => {
         const sentences = product.description.split('. ')
         if (sentences.length > 1) {
@@ -168,7 +251,38 @@ export const ProductDetails: React.FC = () => {
     setQuantity((prev) => Math.max(prev - 1, 1))
   }
 
-  // Handle Buy Now: immediately add item with selected size/quantity and go to checkout (or login if unauthenticated)
+  // Build customization payload with normalized coordinates and font sizes
+  const buildCustomizationPayload = () => {
+    if (!hasCustomText) return undefined
+    return {
+      frontText: customFrontText.trim().slice(0, 50) || undefined,
+      backText: customBackText.trim().slice(0, 50) || undefined,
+      frontPosition: hasFrontText ? frontPosition : undefined,
+      backPosition: hasBackText ? backPosition : undefined,
+      frontFontSize: hasFrontText ? frontFontSize : undefined,
+      backFontSize: hasBackText ? backFontSize : undefined,
+      customText: {
+        front: {
+          text: customFrontText.trim(),
+          x: +(frontPosition.x / 100).toFixed(3),
+          y: +(frontPosition.y / 100).toFixed(3),
+          fontSize: frontFontSize,
+        },
+        back: {
+          text: customBackText.trim(),
+          x: +(backPosition.x / 100).toFixed(3),
+          y: +(backPosition.y / 100).toFixed(3),
+          fontSize: backFontSize,
+        },
+      },
+      price: customizationFee,
+      apparelType: 'tshirt',
+      color: selectedVariant?.colorName || 'Standard',
+      position: hasFrontText && hasBackText ? 'front & back' : hasFrontText ? 'front' : 'back',
+    }
+  }
+
+  // Handle Buy Now
   const handleBuyNow = () => {
     if (!selectedSize) {
       setSizeError('Please select a size')
@@ -180,11 +294,9 @@ export const ProductDetails: React.FC = () => {
       ...product,
       image: selectedVariant?.image || activeImage || product.image,
     }
-    const customizationData = hasCustomText
-      ? { backText: customBackText.trim().slice(0, 30), price: 25 }
-      : undefined
+    const customizationData = buildCustomizationPayload()
 
-    addToCart(cartProduct, selectedSize, quantity, customizationData)
+    addToCart(cartProduct, selectedSize, quantity, customizationData as any)
 
     if (!isAuthenticated) {
       navigate('/account?redirect=/checkout&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.')
@@ -206,14 +318,11 @@ export const ProductDetails: React.FC = () => {
       ...product,
       image: selectedVariant?.image || activeImage || product.image,
     }
-    const customizationData = hasCustomText
-      ? { backText: customBackText.trim().slice(0, 30), price: 25 }
-      : undefined
+    const customizationData = buildCustomizationPayload()
 
-    addToCart(cartProduct, selectedSize, quantity, customizationData)
+    addToCart(cartProduct, selectedSize, quantity, customizationData as any)
     setAddedNotification(true)
 
-    // Reset notification after 3 seconds
     setTimeout(() => {
       setAddedNotification(false)
     }, 3000)
@@ -244,7 +353,7 @@ export const ProductDetails: React.FC = () => {
         await navigator.share(shareData)
         return
       } catch {
-        // Fall back to clipboard if user dismissed native sheet
+        // Fall back to clipboard
       }
     }
 
@@ -261,73 +370,73 @@ export const ProductDetails: React.FC = () => {
   return (
     <main className="kala-container kala-details-page">
       <div className="kala-details-grid">
-        {/* Product Image Gallery: Prominent Main Image + Compact Horizontal Slider Below */}
+        {/* ====================================================================
+            LEFT: Product Image Preview with Live Text Customization
+            (Clean layout: standalone floating arrow block & bottom chips removed)
+            ==================================================================== */}
         <div className="kala-details-gallery">
-          <div className="kala-details-main-image-card">
+          <div className="kala-details-main-image-card" ref={previewCardRef}>
+            {/* View Indicator Badge on Preview */}
+            <div className="kala-preview-view-badge" aria-label={`Currently viewing ${isBackView ? 'Back' : 'Front'} side`}>
+              {isBackView ? 'BACK VIEW' : 'FRONT VIEW'}
+            </div>
+
+            {/* Main T-Shirt Image */}
             <img
               src={activeImage || product.image}
-              alt={`${product.name} — view ${safeImgIndex + 1}`}
+              alt={`${product.name} — ${isBackView ? 'Back View' : 'Front View'}`}
+              className="kala-preview-main-img"
               loading="eager"
+              draggable={false}
             />
-          </div>
 
-          {/* Compact Horizontal Slider / Selector Below Main Image */}
-          {galleryImages.length > 1 && (
-            <div className="kala-gallery-slider-bar" role="region" aria-label="Product image selector">
-              {/* Previous Arrow */}
-              <button
-                type="button"
-                className="kala-gallery-nav-btn prev"
-                onClick={handlePrevImage}
-                aria-label="Previous product image"
-                title="Previous image"
+            {/* Subtle Safe Printable Boundary Box (Visible while dragging or if custom text exists) */}
+            {supportsCustomText && (currentTextToDisplay || isDraggingText) && (
+              <div
+                className="kala-details-safe-boundary"
+                style={{
+                  left: `${SAFE_BOUNDS[currentViewKey].minX}%`,
+                  top: `${SAFE_BOUNDS[currentViewKey].minY}%`,
+                  width: `${SAFE_BOUNDS[currentViewKey].maxX - SAFE_BOUNDS[currentViewKey].minX}%`,
+                  height: `${SAFE_BOUNDS[currentViewKey].maxY - SAFE_BOUNDS[currentViewKey].minY}%`,
+                }}
+                aria-hidden="true"
+              />
+            )}
+
+            {/* Live Text Overlay directly on the T-shirt image with customizable font size */}
+            {supportsCustomText && currentTextToDisplay && (
+              <div
+                className={`kala-live-text-overlay ${isDraggingText ? 'dragging' : ''}`}
+                style={{
+                  left: `${currentPosition.x}%`,
+                  top: `${currentPosition.y}%`,
+                }}
+                onPointerDown={handleTextPointerDown}
+                onPointerMove={handleTextPointerMove}
+                onPointerUp={handleTextPointerUp}
+                onPointerCancel={handleTextPointerUp}
+                role="region"
+                aria-label={`Live custom text on ${currentViewKey}: ${currentTextToDisplay}`}
+                title="Click and drag to adjust text position"
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-
-              {/* Horizontal Thumbnails Row */}
-              <div className="kala-gallery-thumbnails-horizontal" role="tablist" aria-label="Product view options">
-                {galleryImages.map((imgUrl, idx) => {
-                  const isCurrent = (activeImage || product.image) === imgUrl
-                  const label = idx === 0 ? 'FRONT' : (idx === 1 ? 'BACK' : `VIEW ${idx + 1}`)
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      role="tab"
-                      aria-selected={isCurrent}
-                      aria-label={`View ${label} image`}
-                      className={`kala-gallery-thumb-chip ${isCurrent ? 'active' : ''}`}
-                      onClick={() => setActiveImage(imgUrl)}
-                    >
-                      <div className="kala-thumb-img-wrap">
-                        <img src={imgUrl} alt="" aria-hidden="true" />
-                      </div>
-                      <span className="kala-thumb-chip-label">{label}</span>
-                    </button>
-                  )
-                })}
+                <div className="kala-live-text-badge">
+                  <span
+                    className="kala-live-text-content"
+                    style={{ fontSize: `${currentFontSize}px` }}
+                  >
+                    {currentTextToDisplay}
+                  </span>
+                  <span className="kala-live-text-drag-hint">Drag to move</span>
+                </div>
               </div>
-
-              {/* Next Arrow */}
-              <button
-                type="button"
-                className="kala-gallery-nav-btn next"
-                onClick={handleNextImage}
-                aria-label="Next product image"
-                title="Next image"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        {/* Product Information */}
+        {/* ====================================================================
+            RIGHT: Product Information, Custom Text Controls, Size & Add to Cart
+            ==================================================================== */}
         <div className="kala-details-info">
           {/* Product Name */}
           <h1 className="kala-details-title">{product.name}</h1>
@@ -339,7 +448,7 @@ export const ProductDetails: React.FC = () => {
             </div>
             {hasCustomText && (
               <span className="kala-custom-price-badge">
-                (₹{product.price} base + ₹25 back text)
+                (₹{product.price} base + ₹25 custom print)
               </span>
             )}
           </div>
@@ -354,8 +463,8 @@ export const ProductDetails: React.FC = () => {
             <span>{product.available ? 'In Stock' : 'Out of Stock'}</span>
           </div>
 
-          {/* Key Specifications (220 GSM, Premium Comfort, Durable, Comfortable Fit) */}
-          {supportsCustomBackText && (
+          {/* Key Specifications */}
+          {supportsCustomText && (
             <div className="kala-details-spec-pills" aria-label="Key specifications">
               <span className="kala-spec-pill">220 GSM</span>
               <span className="kala-spec-pill">Premium Comfort</span>
@@ -364,7 +473,7 @@ export const ProductDetails: React.FC = () => {
             </div>
           )}
 
-          {/* Reduced 1-line description with optional expand/collapse */}
+          {/* 1-line description with optional expand/collapse */}
           <div className="kala-details-desc-wrap">
             <p className="kala-details-description">
               <span>{isDescriptionExpanded ? product.description : shortDescription}</span>
@@ -381,58 +490,44 @@ export const ProductDetails: React.FC = () => {
             </p>
           </div>
 
-          {/* Special Customization: Back Custom Text (+₹25) */}
-          {supportsCustomBackText && (
-            <section className="kala-custom-back-box" aria-labelledby="custom-back-heading">
-              <div className="kala-custom-back-header">
-                <div className="kala-custom-back-title-row">
-                  <h3 id="custom-back-heading" className="kala-custom-back-title">
-                    BACK CUSTOM TEXT
-                  </h3>
-                  <span className="kala-custom-back-badge">+₹25</span>
-                </div>
-                <p className="kala-custom-back-desc">
-                  Add your own text to the back of the T-shirt
-                </p>
-              </div>
-
-              <div className="kala-custom-back-input-group">
-                <input
-                  type="text"
-                  maxLength={30}
-                  value={customBackText}
-                  onChange={(e) => setCustomBackText(e.target.value)}
-                  placeholder="Enter your custom back text..."
-                  className="kala-custom-back-input"
-                  aria-label="Enter custom back text"
-                />
-                <div className="kala-custom-back-meta">
-                  <span className="kala-custom-back-helper">Maximum 30 characters</span>
-                  <span className={`kala-custom-back-count ${customBackText.length >= 30 ? 'limit' : ''}`}>
-                    {customBackText.length}/30
-                  </span>
-                </div>
-              </div>
-
-              {hasCustomText && (
-                <div className="kala-custom-price-breakdown">
-                  <div className="kala-price-breakdown-row">
-                    <span>Base price</span>
-                    <span>₹{product.price.toLocaleString('en-IN')}</span>
-                  </div>
-                  <div className="kala-price-breakdown-row">
-                    <span>Back custom text</span>
-                    <span className="kala-price-breakdown-add">+₹25</span>
-                  </div>
-                  <div className="kala-price-breakdown-divider" />
-                  <div className="kala-price-breakdown-row total">
-                    <span>Total</span>
-                    <span>₹{displayPrice.toLocaleString('en-IN')}</span>
-                  </div>
-                </div>
-              )}
-            </section>
-          )}
+          {/* ====================================================================
+              Custom Print Text Component (Renders ONLY when enabled === true)
+              ==================================================================== */}
+          <CustomPrintText
+            enabled={supportsCustomText}
+            price={product.customPrintTextPrice || 25}
+            activeSide={currentViewKey}
+            onSelectSide={(side) => {
+              if (side === 'front') {
+                if (galleryImages[0]) setActiveImage(galleryImages[0])
+              } else {
+                const backImg = galleryImages[1] || getProductImage('kala-bihari-story-back.png')
+                if (backImg) setActiveImage(backImg)
+              }
+            }}
+            frontText={customFrontText}
+            backText={customBackText}
+            onChangeFrontText={(val) => {
+              setCustomFrontText(val)
+              if (isBackView && galleryImages[0]) {
+                setActiveImage(galleryImages[0])
+              }
+            }}
+            onChangeBackText={(val) => {
+              setCustomBackText(val)
+              const backImg = galleryImages[1] || getProductImage('kala-bihari-story-back.png')
+              if (!isBackView && backImg) {
+                setActiveImage(backImg)
+              }
+            }}
+            frontFontSize={frontFontSize}
+            backFontSize={backFontSize}
+            onChangeFrontFontSize={setFrontFontSize}
+            onChangeBackFontSize={setBackFontSize}
+            onResetFrontPosition={() => setFrontPosition({ x: 50, y: 52 })}
+            onResetBackPosition={() => setBackPosition({ x: 50, y: 44 })}
+            basePrice={product.price}
+          />
 
           {/* Color Variant Selector */}
           {product.variants && product.variants.length > 0 && (
@@ -449,28 +544,38 @@ export const ProductDetails: React.FC = () => {
                       type="button"
                       role="radio"
                       aria-checked={isSelected}
-                      className={`kala-details-color-btn ${isSelected ? 'selected' : ''}`}
+                      aria-label={`Color: ${v.colorName}`}
+                      className={`kala-color-swatch-btn ${isSelected ? 'active' : ''} ${
+                        isWhite ? 'white-swatch' : ''
+                      }`}
+                      style={{ backgroundColor: v.color }}
                       onClick={() => handleColorSelect(v)}
-                      aria-label={`${v.colorName} color`}
                     >
-                      <span
-                        className={`kala-details-color-circle ${isSelected ? 'selected' : ''} ${
-                          isWhite ? 'is-white' : ''
-                        }`}
-                        style={{ backgroundColor: v.color }}
-                      />
-                      <span className="kala-details-color-name">{v.colorName}</span>
+                      {isSelected && (
+                        <span
+                          className="kala-swatch-check"
+                          style={{ color: isWhite ? '#111111' : '#ffffff' }}
+                        >
+                          ✓
+                        </span>
+                      )}
                     </button>
                   )
                 })}
               </div>
+              <span className="kala-selected-color-name">
+                {selectedVariant?.colorName || 'Select a color'}
+              </span>
             </div>
           )}
 
-          {/* Size Selector */}
-          <div className="kala-size-section">
-            <span className="kala-section-label">SIZE</span>
-            <div className="kala-size-options" role="radiogroup" aria-label="Select size">
+          {/* Size Selector - Explicit horizontal layout with compact rectangular buttons */}
+          <div className="kala-details-size-section kala-size-section">
+            <div className="kala-size-label-row">
+              <span className="kala-section-label">Select Size</span>
+              {sizeError && <span className="kala-size-error-msg">{sizeError}</span>}
+            </div>
+            <div className="kala-size-options kala-size-grid" role="radiogroup" aria-label="Select size">
               {AVAILABLE_SIZES.map((size) => {
                 const isSelected = selectedSize === size
                 return (
@@ -487,13 +592,12 @@ export const ProductDetails: React.FC = () => {
                 )
               })}
             </div>
-            {sizeError && <p className="kala-size-error">{sizeError}</p>}
           </div>
 
-          {/* Quantity Selector */}
-          <div className="kala-qty-section">
-            <span className="kala-section-label">QUANTITY</span>
-            <div className="kala-qty-controls" aria-label="Quantity controls">
+          {/* Quantity Selector - Explicit horizontal controls */}
+          <div className="kala-details-qty-section kala-qty-section">
+            <span className="kala-section-label">Quantity</span>
+            <div className="kala-qty-controls kala-qty-stepper">
               <button
                 type="button"
                 className="kala-qty-btn"
@@ -518,165 +622,86 @@ export const ProductDetails: React.FC = () => {
             </div>
           </div>
 
-          {/* Added to Cart Feedback Notification */}
+          {/* Primary Action Buttons: BUY NOW & ADD TO CART */}
+          <div className="kala-details-actions">
+            <button
+              type="button"
+              className="kala-btn kala-btn-primary kala-btn-full"
+              onClick={handleBuyNow}
+              disabled={!product.available}
+            >
+              {product.available ? 'BUY NOW' : 'OUT OF STOCK'}
+            </button>
+            <button
+              type="button"
+              className="kala-btn kala-btn-outline kala-btn-full"
+              onClick={handleAddToCart}
+              disabled={!product.available}
+            >
+              ADD TO CART
+            </button>
+          </div>
+
+          {/* Feedback Notifications */}
           {addedNotification && (
-            <div className="kala-added-banner" role="status">
-              <span>✓ Added to cart</span>
-              <Link to="/cart" className="kala-view-cart-link">
-                View Bag →
-              </Link>
+            <div className="kala-notification-toast success animate-fadeIn" role="status">
+              ✓ Added {quantity} × {product.name} ({selectedSize}) to cart!
             </div>
           )}
 
-          {/* Action Buttons (BUY NOW + ADD TO CART) */}
-          <div className="kala-details-actions">
-            <div className="kala-details-cta-stack">
-              <button
-                type="button"
-                className="kala-btn kala-btn-primary kala-buy-now-btn"
-                onClick={handleBuyNow}
-                disabled={!product.available}
-              >
-                BUY NOW
-              </button>
-
-              <button
-                type="button"
-                className="kala-btn kala-btn-secondary kala-add-to-cart-btn"
-                onClick={handleAddToCart}
-                disabled={!product.available}
-              >
-                ADD TO CART
-              </button>
-            </div>
-          </div>
-
-          {/* Small Actions (Wishlist + Share) */}
-          <div className="kala-details-small-actions">
+          {/* Wishlist and Share Secondary Bar */}
+          <div className="kala-details-secondary-bar">
             <button
               type="button"
-              className={`kala-small-action-btn ${isWishlisted ? 'active' : ''}`}
-              aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+              className={`kala-secondary-action-btn ${isWishlisted ? 'wishlisted' : ''}`}
               onClick={() => toggleWishlist(product.id)}
+              aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill={isWishlisted ? 'var(--kala-orange)' : 'none'}
-                stroke={isWishlisted ? 'var(--kala-orange)' : 'currentColor'}
-                strokeWidth="1.8"
-                aria-hidden="true"
-              >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill={isWishlisted ? '#D94700' : 'none'} stroke={isWishlisted ? '#D94700' : 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
-              <span>{isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}</span>
+              <span>{isWishlisted ? 'In Wishlist' : 'Add to Wishlist'}</span>
             </button>
 
             <button
               type="button"
-              className="kala-small-action-btn"
-              aria-label="Share product"
+              className="kala-secondary-action-btn"
               onClick={handleShare}
+              aria-label="Share this product"
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
-              >
-                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                <polyline points="16 6 12 2 8 6" />
-                <line x1="12" y1="2" x2="12" y2="15" />
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
               </svg>
               <span>{shareFeedback || 'Share'}</span>
             </button>
           </div>
 
-          {/* Service Row (Pan-India Delivery, Secure Payments, Premium Quality ONLY) */}
-          <div className="kala-details-services">
-            <div className="kala-service-pill">
-              <span className="kala-service-icon" aria-hidden="true">🚚</span>
-              <span className="kala-service-text">
-                {product.freeShipping || product.id === 'streetwear-oversized-acid-tee'
-                  ? 'Free Delivery'
-                  : 'Pan-India Delivery'}
-              </span>
+          {/* Highlights List */}
+          {highlights.length > 0 && (
+            <div className="kala-details-highlights-section">
+              <span className="kala-section-label">Product Features</span>
+              <div className="kala-highlights-grid">
+                {highlights.map((h, i) => (
+                  <div key={i} className="kala-highlight-row">
+                    <span className="kala-highlight-label">{h.label}:</span>
+                    <span className="kala-highlight-value">{h.value}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="kala-service-pill">
-              <span className="kala-service-icon" aria-hidden="true">🛡</span>
-              <span className="kala-service-text">Secure Payments</span>
-            </div>
-            <div className="kala-service-pill">
-              <span className="kala-service-icon" aria-hidden="true">★</span>
-              <span className="kala-service-text">Premium Quality</span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* Product Highlights Section (Clean compact layout for T-Shirts) */}
-      {highlights.length > 0 && (
-        <section className="kala-product-highlights" aria-labelledby="highlights-heading">
-          <h2 id="highlights-heading" className="kala-highlights-title">
-            Product Highlights
-          </h2>
-          <div className="kala-highlights-grid">
-            {highlights.map((item) => (
-              <div key={item.label} className="kala-highlight-item">
-                <span className="kala-highlight-label">{item.label}</span>
-                <span className="kala-highlight-value">{item.value}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {/* 3. Similar Products Carousel Section (Below Highlights, Above Reviews) */}
+      <SimilarProducts currentProduct={product} />
 
-      {/* Customer Reviews & Ratings Section */}
+      {/* 4 & 5. VOICE OF KALA / Customer Product Reviews Section */}
       <ProductReviewsSection productId={product.id} />
-
-      {/* Mobile Sticky Add to Cart Bottom Bar (<= 768px) */}
-      <aside className="kala-mobile-sticky-bar" aria-label="Quick purchase actions">
-        <div className="kala-mobile-sticky-inner">
-          <div className="kala-mobile-sticky-info">
-            <span className="kala-mobile-sticky-name">{product.name}</span>
-            <div className="kala-mobile-sticky-meta">
-              <span className="kala-mobile-sticky-price">₹{displayPrice.toLocaleString('en-IN')}</span>
-              {selectedSize && (
-                <span className="kala-mobile-sticky-size">Size: {selectedSize}</span>
-              )}
-            </div>
-          </div>
-          <button
-            type="button"
-            className="kala-mobile-sticky-btn"
-            onClick={() => {
-              if (!selectedSize) {
-                const sizeEl = document.querySelector('.kala-size-section')
-                if (sizeEl) {
-                  sizeEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                }
-                setSizeError('Please select a size')
-                return
-              }
-              handleAddToCart()
-            }}
-            disabled={!product.available}
-          >
-            {product.available ? (
-              <>
-                <span>ADD TO CART</span>
-                <span className="kala-sticky-arrow" aria-hidden="true">→</span>
-              </>
-            ) : (
-              'OUT OF STOCK'
-            )}
-          </button>
-        </div>
-      </aside>
     </main>
   )
 }

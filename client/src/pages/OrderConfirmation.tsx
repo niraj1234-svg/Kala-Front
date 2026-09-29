@@ -299,9 +299,19 @@ export const OrderConfirmation: React.FC = () => {
                   <div className="kala-order-item-meta">
                     Size: <strong>{item.size}</strong> · Qty: {item.quantity} · ₹{item.price.toLocaleString('en-IN')} each
                   </div>
+                  {item.customization?.frontText && (
+                    <div className="kala-order-item-custom-text" style={{ marginTop: '0.35rem', fontSize: '0.8rem', color: '#1e3d2f', fontWeight: 600 }}>
+                      Front Text: "{item.customization.frontText}"
+                    </div>
+                  )}
                   {item.customization?.backText && (
                     <div className="kala-order-item-custom-text" style={{ marginTop: '0.35rem', fontSize: '0.8rem', color: '#1e3d2f', fontWeight: 600 }}>
-                      Back Text: "{item.customization.backText}" (+₹25)
+                      Back Text: "{item.customization.backText}" {!item.customization?.frontText && '(+₹25)'}
+                    </div>
+                  )}
+                  {item.customization?.position && (
+                    <div style={{ marginTop: '0.2rem', fontSize: '0.75rem', color: 'var(--kala-orange)', fontWeight: 700, textTransform: 'uppercase' }}>
+                      {item.customization.position} Print
                     </div>
                   )}
                 </div>

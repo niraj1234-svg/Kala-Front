@@ -75,7 +75,9 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
 
     const cleanProductId = productId.trim()
     const cleanSize = size.trim().toUpperCase()
-    const parsedQty = Math.max(1, Math.min(parseInt(String(quantity), 10) || 1, 10))
+    const isBulk = cleanProductId.startsWith('bulk-') || cleanSize.includes('BULK')
+    const maxQtyLimit = isBulk ? 10000 : 1000
+    const parsedQty = Math.max(1, Math.min(parseInt(String(quantity), 10) || 1, maxQtyLimit))
 
     // Pull authoritative product data from MongoDB if available
     const dbProduct = await Product.findOne({ id: cleanProductId })
@@ -84,12 +86,26 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
       ? image.trim()
       : (dbProduct?.image || '/favicon.png')
 
-    // Handle optional back custom text (+₹25)
-    const rawBackText = customization?.backText || (typeof req.body.backText === 'string' ? req.body.backText : '')
+    // Handle customization (front/back text ONLY allowed for Bihar Story T-Shirt)
+    const isCustomTextAllowed = cleanProductId === 'kala-bihari-story-premium-t-shirt' || Boolean(dbProduct?.customPrintTextEnabled)
+    const rawFrontText = isCustomTextAllowed ? (customization?.frontText || (typeof req.body.frontText === 'string' ? req.body.frontText : '')) : ''
+    const cleanFrontText = typeof rawFrontText === 'string' && rawFrontText.trim() ? rawFrontText.trim().slice(0, 30) : ''
+    const rawBackText = isCustomTextAllowed ? (customization?.backText || (typeof req.body.backText === 'string' ? req.body.backText : '')) : ''
     const cleanBackText = typeof rawBackText === 'string' && rawBackText.trim() ? rawBackText.trim().slice(0, 30) : ''
-    const customPrice = cleanBackText ? 25 : 0
+    const hasCustomText = Boolean(cleanFrontText || cleanBackText)
+    const customPrice = hasCustomText ? (dbProduct?.customPrintTextPrice || 25) : 0
     const basePrice = typeof dbProduct?.price === 'number' ? dbProduct.price : (typeof price === 'number' && price >= 0 ? price : 0)
     const resolvedPrice = basePrice + customPrice
+
+    let itemCustomization: any = undefined
+    if (customization || hasCustomText) {
+      itemCustomization = {
+        ...(customization || {}),
+        ...(cleanFrontText ? { frontText: cleanFrontText } : {}),
+        ...(cleanBackText ? { backText: cleanBackText } : {}),
+        ...(customPrice > 0 ? { price: customPrice } : {}),
+      }
+    }
 
     let cart = await Cart.findOne({ userId })
     if (!cart) {
@@ -102,18 +118,21 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
     const existingIndex = cart.items.findIndex(
       (item) => item.productId === cleanProductId &&
                 item.size === cleanSize &&
-                (item.customization?.backText || '') === cleanBackText
+                (item.customization?.frontText || '') === cleanFrontText &&
+                (item.customization?.backText || '') === cleanBackText &&
+                (!item.customization?.artworkUrl || item.customization.artworkUrl === customization?.artworkUrl) &&
+                (item.customization?.position || '') === (customization?.position || '')
     )
 
     if (existingIndex > -1) {
       const currentQty = cart.items[existingIndex].quantity || 0
-      cart.items[existingIndex].quantity = Math.min(currentQty + parsedQty, 10)
+      cart.items[existingIndex].quantity = Math.min(currentQty + parsedQty, maxQtyLimit)
       // Update image/price to authoritative if available
       cart.items[existingIndex].name = resolvedName
       cart.items[existingIndex].image = resolvedImage
       cart.items[existingIndex].price = resolvedPrice
-      if (cleanBackText) {
-        cart.items[existingIndex].customization = { backText: cleanBackText, price: 25 }
+      if (itemCustomization) {
+        cart.items[existingIndex].customization = itemCustomization
       }
     } else {
       cart.items.push({
@@ -123,7 +142,7 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
         price: resolvedPrice,
         size: cleanSize,
         quantity: parsedQty,
-        ...(cleanBackText ? { customization: { backText: cleanBackText, price: 25 } } : {}),
+        ...(itemCustomization ? { customization: itemCustomization } : {}),
       })
     }
 
@@ -211,7 +230,9 @@ export const updateItemQuantity = async (req: Request, res: Response): Promise<v
     if (parsedQty <= 0) {
       cart.items.splice(matchIndex, 1)
     } else {
-      cart.items[matchIndex].quantity = Math.min(Math.max(1, parsedQty), 10)
+      const isBulk = cart.items[matchIndex].productId.startsWith('bulk-') || cart.items[matchIndex].size.toUpperCase().includes('BULK')
+      const maxLimit = isBulk ? 10000 : 1000
+      cart.items[matchIndex].quantity = Math.min(Math.max(1, parsedQty), maxLimit)
     }
 
     await cart.save()
@@ -355,11 +376,15 @@ export const syncCart = async (req: Request, res: Response): Promise<void> => {
 
       if (!productId || !size) continue
 
+      const rawFrontText = rawItem.customization?.frontText || (typeof rawItem.frontText === 'string' ? rawItem.frontText : '')
+      const cleanFrontText = typeof rawFrontText === 'string' && rawFrontText.trim() ? rawFrontText.trim().slice(0, 30) : ''
       const rawBackText = rawItem.customization?.backText || (typeof rawItem.backText === 'string' ? rawItem.backText : '')
       const cleanBackText = typeof rawBackText === 'string' && rawBackText.trim() ? rawBackText.trim().slice(0, 30) : ''
-      const customPrice = cleanBackText ? 25 : 0
+      const hasCustomText = Boolean(cleanFrontText || cleanBackText)
+      const customPrice = hasCustomText ? 25 : 0
 
-      const key = `${productId}:${size}:${cleanBackText}`
+      const custKey = `${cleanFrontText}_${cleanBackText}_${rawItem.customization?.artworkUrl || ''}_${rawItem.customization?.position || ''}`
+      const key = `${productId}:${size}:${custKey}`
       const existing = consolidatedMap.get(key)
       if (existing) {
         existing.quantity = Math.min(existing.quantity + quantity, 10)
@@ -371,6 +396,16 @@ export const syncCart = async (req: Request, res: Response): Promise<void> => {
         const basePrice = typeof dbProduct?.price === 'number' ? dbProduct.price : (typeof rawItem.price === 'number' && rawItem.price >= 0 ? rawItem.price : 0)
         const resolvedPrice = basePrice + customPrice
 
+        let mergedCustomization: any = undefined
+        if (rawItem.customization || hasCustomText) {
+          mergedCustomization = {
+            ...(rawItem.customization || {}),
+            ...(cleanFrontText ? { frontText: cleanFrontText } : {}),
+            ...(cleanBackText ? { backText: cleanBackText } : {}),
+            ...(customPrice > 0 ? { price: customPrice } : {}),
+          }
+        }
+
         consolidatedMap.set(key, {
           productId,
           size,
@@ -378,7 +413,7 @@ export const syncCart = async (req: Request, res: Response): Promise<void> => {
           name: resolvedName,
           image: resolvedImage,
           price: resolvedPrice,
-          ...(cleanBackText ? { customization: { backText: cleanBackText, price: 25 } } : {}),
+          ...(mergedCustomization ? { customization: mergedCustomization } : {}),
         })
       }
     }

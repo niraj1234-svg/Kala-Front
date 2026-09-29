@@ -306,6 +306,21 @@ export const AccountOrderDetail: React.FC = () => {
                     Size: <strong>{item.size}</strong> · Qty: {item.quantity} · ₹
                     {item.price.toLocaleString('en-IN')} each
                   </div>
+                  {item.customization?.position && (
+                    <div style={{ fontSize: '0.75rem', color: 'var(--kala-orange)', fontWeight: 700, marginTop: '2px', textTransform: 'uppercase' }}>
+                      {item.customization.position} Print
+                    </div>
+                  )}
+                  {item.customization?.frontText && (
+                    <div style={{ fontSize: '0.75rem', color: '#4B5563', marginTop: '2px' }}>
+                      Front Text: <strong>"{item.customization.frontText}"</strong>
+                    </div>
+                  )}
+                  {item.customization?.backText && (
+                    <div style={{ fontSize: '0.75rem', color: '#4B5563', marginTop: '2px' }}>
+                      Back Text: <strong>"{item.customization.backText}"</strong>
+                    </div>
+                  )}
                 </div>
                 <div className="kala-order-item-total">
                   ₹{(item.price * item.quantity).toLocaleString('en-IN')}

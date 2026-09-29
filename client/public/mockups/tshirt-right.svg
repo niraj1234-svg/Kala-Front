@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.08" />
+    </filter>
+    <linearGradient id="shade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.16" />
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.16" />
+    </linearGradient>
+  </defs>
+  <g filter="url(#shadow)" transform="translate(500, 0) scale(-1, 1)">
+    <path d="M 215 68 C 230 68 250 78 275 88 L 320 180 L 275 220 L 260 175 L 275 432 C 275 436 271 440 266 440 L 194 440 C 189 440 185 436 185 432 L 180 170 C 180 130 190 90 215 68 Z" fill="#FFFFFF" stroke="#D1D5DB" stroke-width="1.2" />
+    <path d="M 215 68 C 230 68 250 78 275 88 L 320 180 L 275 220 L 260 175 L 275 432 C 275 436 271 440 266 440 L 194 440 C 189 440 185 436 185 432 L 180 170 C 180 130 190 90 215 68 Z" fill="url(#shade)" />
+    <path d="M 215 85 C 240 120 250 150 260 175" fill="none" stroke="#D1D5DB" stroke-width="1" opacity="0.7" />
+    <line x1="228" y1="180" x2="228" y2="440" stroke="#D1D5DB" stroke-width="0.9" opacity="0.6" stroke-dasharray="3,2" />
+  </g>
+</svg>

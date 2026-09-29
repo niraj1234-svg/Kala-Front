@@ -10,6 +10,7 @@ import AuthPromptModal from './components/AuthPromptModal'
 import Home from './pages/Home'
 import Shop from './pages/Shop'
 import CustomApparel from './pages/CustomApparel'
+import Customize from './pages/Customize'
 import BusinessBranding from './pages/BusinessBranding'
 import About from './pages/About'
 import Cart from './pages/Cart'
@@ -71,7 +72,9 @@ function App() {
                   <Route path="/shop" element={<Shop />} />
                   <Route path="/bundle" element={<BundleBuilder />} />
                   <Route path="/product/:id" element={<ProductDetails />} />
+                  <Route path="/products/:id" element={<ProductDetails />} />
                   <Route path="/custom-apparel" element={<CustomApparel />} />
+                  <Route path="/customize" element={<Customize />} />
                   <Route path="/business-branding" element={<BusinessBranding />} />
                   <Route path="/bulk-order" element={<BusinessBranding />} />
                   <Route path="/about" element={<About />} />

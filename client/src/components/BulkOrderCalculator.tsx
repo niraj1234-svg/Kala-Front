@@ -1,8 +1,8 @@
 import React from 'react'
-import BusinessInquirySection from './business/BusinessInquirySection'
+import BulkApparelBuilder from './BulkApparelBuilder/BulkApparelBuilder'
 
 export const BulkOrderCalculator: React.FC = () => {
-  return <BusinessInquirySection />
+  return <BulkApparelBuilder />
 }
 
 export default BulkOrderCalculator

@@ -58,7 +58,7 @@ export const Cart: React.FC = () => {
         <div className="kala-cart-items-list" role="list">
           {cartItems.map((item) => {
             const itemSubtotal = item.price * item.quantity
-            const itemKey = `${item.productId}-${item.size}-${item.customization?.backText || ''}-${item.image || ''}`
+            const itemKey = `${item.productId}-${item.size}-${item.customization?.frontText || ''}-${item.customization?.backText || ''}-${item.image || ''}`
 
             return (
               <div key={itemKey} className="kala-cart-item" role="listitem">
@@ -72,12 +72,21 @@ export const Cart: React.FC = () => {
 
                 <div className="kala-cart-item-details">
                   <div className="kala-cart-item-top">
-                    <Link
-                      to={`/product/${item.productId}`}
-                      className="kala-cart-item-title"
-                    >
-                      {item.name}
-                    </Link>
+                    {item.productId.startsWith('custom-') ? (
+                      <Link
+                        to="/customize"
+                        className="kala-cart-item-title"
+                      >
+                        {item.name}
+                      </Link>
+                    ) : (
+                      <Link
+                        to={`/product/${item.productId}`}
+                        className="kala-cart-item-title"
+                      >
+                        {item.name}
+                      </Link>
+                    )}
                     <button
                       type="button"
                       className="kala-cart-item-remove-btn"
@@ -90,15 +99,43 @@ export const Cart: React.FC = () => {
 
                   <div className="kala-cart-item-size">
                     Size: <strong>{item.size}</strong>
+                    {item.color && (
+                      <span style={{ marginLeft: '0.75rem' }}>
+                        Color: <strong>{item.color.toUpperCase()}</strong>
+                      </span>
+                    )}
                   </div>
 
-                  {item.customization?.backText && (
-                    <div className="kala-cart-item-customization">
-                      <span className="kala-cart-custom-label">Back Text:</span>
-                      <strong className="kala-cart-custom-value">"{item.customization.backText}"</strong>
-                      <span className="kala-cart-custom-fee">(+₹25)</span>
+                  {(item.customization?.frontText || item.customization?.backText) ? (
+                    <div className="kala-cart-item-custom-box">
+                      <span className="kala-cart-custom-badge">Custom Print Text: +₹25</span>
+                      {item.customization.frontText && (
+                        <div className="kala-cart-custom-row">
+                          <span className="kala-cart-custom-label">Front:</span>
+                          <strong className="kala-cart-custom-value">"{item.customization.frontText}"</strong>
+                          {item.customization.frontFontSize && (
+                            <span className="kala-cart-custom-size">({item.customization.frontFontSize}px)</span>
+                          )}
+                        </div>
+                      )}
+                      {item.customization.backText && (
+                        <div className="kala-cart-custom-row">
+                          <span className="kala-cart-custom-label">Back:</span>
+                          <strong className="kala-cart-custom-value">"{item.customization.backText}"</strong>
+                          {item.customization.backFontSize && (
+                            <span className="kala-cart-custom-size">({item.customization.backFontSize}px)</span>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  ) : item.customization?.position ? (
+                    <div className="kala-cart-item-customization">
+                      <span className="kala-cart-custom-label">Custom Print:</span>
+                      <strong className="kala-cart-custom-value" style={{ textTransform: 'uppercase' }}>
+                        {item.customization.position}
+                      </strong>
+                    </div>
+                  ) : null}
 
                   <div className="kala-cart-item-price">
                     ₹{item.price.toLocaleString('en-IN')}

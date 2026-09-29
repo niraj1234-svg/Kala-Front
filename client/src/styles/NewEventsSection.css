@@ -1,6 +1,7 @@
 /* ==========================================================================
    KALA NEW EVENTS SECTION STYLES
    Wide Single-Card Carousel with Side Navigation Arrows & Responsive Mobile Layout
+   Sequence: 1. Featured Drop -> 2. Multi-Buy Offer -> 3. Upcoming Event
    ========================================================================== */
 
 .kala-new-events-section {
@@ -80,7 +81,8 @@
 }
 
 /* --------------------------------------------------------------------------
-   2. CAROUSEL ROW: [ PREV ARROW ]  [ EVENT CARD ]  [ NEXT ARROW ]
+   2. CAROUSEL ROW: [ PREV ARROW ]  [ EVENT CARD VIEWPORT ]  [ NEXT ARROW ]
+   Side navigation arrows vertically centered.
    -------------------------------------------------------------------------- */
 .kala-new-events-carousel-outer {
   position: relative;
@@ -147,9 +149,36 @@
   cursor: grabbing;
 }
 
-.kala-carousel-stage {
+/* Viewport with rounded borders and shadow */
+.kala-carousel-viewport {
   position: relative;
   width: 100%;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1.5px solid #E5E2DD;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+  background-color: #FFFFFF;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.kala-carousel-viewport:hover {
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.09);
+  border-color: #D4CFC7;
+}
+
+/* Sliding track for smooth horizontal transitions */
+.kala-carousel-track {
+  display: flex;
+  width: 100%;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.kala-carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
+  box-sizing: border-box;
 }
 
 /* --------------------------------------------------------------------------
@@ -159,34 +188,12 @@
   position: relative;
   width: 100%;
   background-color: #FFFFFF;
-  border: 1.5px solid #E5E2DD;
-  border-radius: 18px;
-  overflow: hidden;
   display: grid;
   grid-template-columns: minmax(360px, 44%) 1fr;
   align-items: stretch;
   min-height: 420px;
   max-height: 490px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-  animation: kalaCardFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   box-sizing: border-box;
-}
-
-.kala-event-card-single:hover {
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.09);
-  border-color: #D4CFC7;
-}
-
-@keyframes kalaCardFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px) scale(0.995);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 /* --------------------------------------------------------------------------
@@ -338,7 +345,7 @@
   color: #FFFFFF;
 }
 
-/* Bundle 3-Shirt Stack Visual */
+/* Slide 2: Bundle 3-Shirt Stack Visual */
 .kala-stage-bundle {
   background: radial-gradient(circle at center, #FFF4EC 0%, #F5ECE3 100%);
 }
@@ -387,7 +394,7 @@
   transform: translateX(56px) translateY(8px) rotate(18deg) scale(0.94);
 }
 
-/* Upcoming Locked Slide Visual */
+/* Slide 3: Upcoming Locked Slide Visual */
 .kala-stage-upcoming {
   background-color: #18181A;
   color: #FFFFFF;
@@ -561,7 +568,7 @@
   flex-shrink: 0;
 }
 
-/* Slide 1 Bundle Tier Rows */
+/* Slide 2 Bundle Tier Rows */
 .kala-bundle-tiers-group {
   display: flex;
   flex-direction: column;
@@ -630,6 +637,17 @@
   font-size: 0.95rem;
   font-weight: 900;
   color: #D94700;
+}
+
+.kala-tier-arrow {
+  color: #9CA3AF;
+  margin-left: 0.5rem;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.kala-bundle-tier-link:hover .kala-tier-arrow {
+  color: #D94700;
+  transform: translateX(3px);
 }
 
 /* CTA Wrap & Buttons */
@@ -762,27 +780,82 @@
 }
 
 /* --------------------------------------------------------------------------
-   6. RESPONSIVE BREAKPOINTS (Mobile & Tablet)
+   6. INDICATOR DOTS
    -------------------------------------------------------------------------- */
-@media (max-width: 900px) {
+.kala-carousel-indicators {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1.15rem;
+}
+
+.kala-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background-color: #D1D5DB;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.kala-indicator-dot:hover {
+  background-color: #9CA3AF;
+  transform: scale(1.15);
+}
+
+.kala-indicator-dot.active {
+  width: 24px;
+  background-color: #D94700;
+  box-shadow: 0 0 8px rgba(217, 71, 0, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   7. RESPONSIVE BREAKPOINTS (Laptop, Tablet, Mobile)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
   .kala-event-card-single {
-    grid-template-columns: minmax(300px, 42%) 1fr;
+    grid-template-columns: minmax(320px, 42%) 1fr;
     min-height: 400px;
   }
 
   .kala-bundle-stack-visual {
-    width: 210px;
-    height: 210px;
+    width: 220px;
+    height: 220px;
   }
 
   .kala-stack-tee {
-    width: 135px;
-    height: 135px;
+    width: 140px;
+    height: 140px;
+  }
+}
+
+@media (max-width: 900px) {
+  .kala-new-events-carousel-outer {
+    gap: 0.75rem;
   }
 
   .kala-carousel-side-arrow {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .kala-event-card-single {
+    grid-template-columns: minmax(290px, 40%) 1fr;
+    min-height: 390px;
+  }
+
+  .kala-bundle-stack-visual {
+    width: 200px;
+    height: 200px;
+  }
+
+  .kala-stack-tee {
+    width: 125px;
+    height: 125px;
   }
 }
 
@@ -792,26 +865,57 @@
   }
 
   .kala-new-events-carousel-outer {
-    gap: 0.5rem;
+    position: relative;
+    padding: 0;
+    gap: 0;
   }
 
+  /* On mobile, side arrows float on the sides vertically centered */
   .kala-carousel-side-arrow {
-    width: 40px;
-    height: 40px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    background-color: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
+    z-index: 10;
   }
 
+  .kala-carousel-side-arrow.prev {
+    left: 8px;
+  }
+
+  .kala-carousel-side-arrow.next {
+    right: 8px;
+  }
+
+  .kala-carousel-side-arrow:hover {
+    transform: translateY(-50%) scale(1.08);
+  }
+
+  .kala-carousel-side-arrow:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+
+  .kala-carousel-viewport {
+    border-radius: 14px;
+  }
+
+  /* Convert card to vertical stacked layout */
   .kala-event-card-single {
     grid-template-columns: 1fr;
     min-height: auto;
     max-height: none;
-    border-radius: 14px;
   }
 
   .kala-event-media-stage {
     border-right: none;
     border-bottom: 1.5px solid #EAE7E1;
     padding: 1.25rem 1rem;
-    min-height: 210px;
+    min-height: 220px;
   }
 
   .kala-stage-image-wrap {
@@ -872,18 +976,22 @@
     padding: 0 0.35rem;
   }
 
-  .kala-new-events-carousel-outer {
-    gap: 0.35rem;
+  .kala-carousel-side-arrow {
+    width: 34px;
+    height: 34px;
   }
 
-  .kala-carousel-side-arrow {
-    width: 36px;
-    height: 36px;
+  .kala-carousel-side-arrow.prev {
+    left: 4px;
+  }
+
+  .kala-carousel-side-arrow.next {
+    right: 4px;
   }
 
   .kala-carousel-side-arrow svg {
-    width: 17px;
-    height: 17px;
+    width: 16px;
+    height: 16px;
   }
 
   .kala-stage-image-wrap {

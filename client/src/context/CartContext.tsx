@@ -8,17 +8,59 @@ import {
   clearServerCart,
 } from '../services/cartApi'
 
+export interface CartItemCustomization {
+  frontText?: string
+  backText?: string
+  frontPosition?: { x: number; y: number }
+  backPosition?: { x: number; y: number }
+  frontFontSize?: number
+  backFontSize?: number
+  customText?: {
+    front?: { text: string; x: number; y: number; fontSize: number }
+    back?: { text: string; x: number; y: number; fontSize: number }
+  }
+  price?: number
+  apparelType?: string
+  color?: string
+  position?: 'front' | 'back' | 'left' | 'right' | string
+  artworkUrl?: string
+  previewUrl?: string
+  frontPreviewUrl?: string
+  backPreviewUrl?: string
+  frontArtworkUrl?: string
+  backArtworkUrl?: string
+  requirementDetails?: string
+  artwork?: {
+    x?: number
+    y?: number
+    width?: number
+    height?: number
+    rotation?: number
+    scale?: number
+  }
+  frontArtwork?: {
+    x?: number
+    y?: number
+    scale?: number
+    fileName?: string
+  }
+  backArtwork?: {
+    x?: number
+    y?: number
+    scale?: number
+    fileName?: string
+  }
+}
+
 export interface CartItem {
   productId: string
   name: string
   image: string
   price: number
   size: string
+  color?: string
   quantity: number
-  customization?: {
-    backText?: string
-    price?: number
-  }
+  customization?: CartItemCustomization
 }
 
 export interface CartContextType {
@@ -26,10 +68,10 @@ export interface CartContextType {
   cartCount: number
   cartSubtotal: number
   addToCart: (
-    product: { id: string; name: string; image: string; price: number },
+    product: { id: string; name: string; image: string; price: number; color?: string },
     size: string,
     quantity: number,
-    customization?: { backText?: string; price?: number }
+    customization?: CartItemCustomization
   ) => void
   removeFromCart: (productId: string, size: string, image?: string, backText?: string) => void
   updateQuantity: (productId: string, size: string, quantity: number, image?: string, backText?: string) => void
@@ -195,18 +237,36 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   )
 
   const addToCart = (
-    product: { id: string; name: string; image: string; price: number },
+    product: { id: string; name: string; image: string; price: number; color?: string },
     size: string,
     quantity: number,
-    customization?: { backText?: string; price?: number }
+    customization?: CartItemCustomization
   ) => {
     if (!size || quantity <= 0) return
 
     const clampedQuantity = Math.min(quantity, 10)
-    const cleanBackText = customization?.backText?.trim().slice(0, 30) || ''
-    const customFee = cleanBackText ? 25 : 0
-    const finalUnitPrice = product.price + customFee
-    const finalCustomization = cleanBackText ? { backText: cleanBackText, price: 25 } : undefined
+    const cleanFrontText = customization?.frontText?.trim().slice(0, 50) || ''
+    const cleanBackText = customization?.backText?.trim().slice(0, 50) || ''
+    const hasCustomText = Boolean(cleanFrontText || cleanBackText)
+    const customFee = hasCustomText ? 25 : 0
+    const finalUnitPrice = product.price + (customization?.price !== undefined ? customization.price : customFee)
+
+    const finalCustomization: CartItemCustomization | undefined = customization
+      ? {
+          ...customization,
+          ...(cleanFrontText ? { frontText: cleanFrontText } : {}),
+          ...(cleanBackText ? { backText: cleanBackText } : {}),
+          ...(customFee > 0 && customization.price === undefined ? { price: customFee } : {}),
+        }
+      : hasCustomText
+        ? {
+            ...(cleanFrontText ? { frontText: cleanFrontText } : {}),
+            ...(cleanBackText ? { backText: cleanBackText } : {}),
+            price: customFee,
+          }
+        : undefined
+
+    const itemColor = product.color || customization?.color || ''
 
     setCartItems((prevItems) => {
       const existingIndex = prevItems.findIndex(
@@ -214,7 +274,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           item.productId === product.id &&
           item.size === size &&
           (!item.image || item.image === product.image) &&
-          (item.customization?.backText || '') === cleanBackText
+          (item.color || '') === itemColor &&
+          (item.customization?.frontText || '') === cleanFrontText &&
+          (item.customization?.backText || '') === cleanBackText &&
+          (!item.customization?.artworkUrl || item.customization.artworkUrl === customization?.artworkUrl) &&
+          (item.customization?.position || '') === (customization?.position || '')
       )
 
       if (existingIndex > -1) {
@@ -224,6 +288,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           ...updated[existingIndex],
           quantity: Math.min(currentQty + clampedQuantity, 10),
           price: finalUnitPrice,
+          color: itemColor,
           ...(finalCustomization ? { customization: finalCustomization } : {}),
         }
         return updated
@@ -234,6 +299,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           image: product.image,
           price: finalUnitPrice,
           size,
+          color: itemColor,
           quantity: clampedQuantity,
           ...(finalCustomization ? { customization: finalCustomization } : {}),
         }
@@ -251,7 +317,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         size,
         quantity: clampedQuantity,
         ...(finalCustomization ? { customization: finalCustomization } : {}),
-      }).catch((err) => {
+      } as any).catch((err) => {
         console.warn('[CartContext] Failed to sync added item with server:', err)
       })
     }

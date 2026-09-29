@@ -64,6 +64,8 @@ function normalizeApiProduct(p: any): Product {
     description: p.description,
     available: p.available ?? true,
     variants: resolvedVariants,
+    customPrintTextEnabled: p.customPrintTextEnabled ?? (p.id === 'kala-bihari-story-premium-t-shirt'),
+    customPrintTextPrice: p.customPrintTextPrice ?? 25,
   }
 }
 

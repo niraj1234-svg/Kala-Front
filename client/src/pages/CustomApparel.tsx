@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { PRODUCTS } from '../data/products'
 import { saveCustomRequest } from '../types/requests'
 import { createCustomRequest } from '../services/customRequestApi'
 import type { CustomRequestInput } from '../services/customRequestApi'
 import HowItWorks from '../components/HowItWorks'
+import ApparelSelector from '../components/CustomApparel/ApparelSelector'
+import ColorSelector from '../components/CustomApparel/ColorSelector'
+import DesignUploader, { type UploadedArtwork } from '../components/CustomApparel/DesignUploader'
+import { type ApparelType } from '../components/CustomApparel/ApparelMockup'
 import '../styles/CustomApparel.css'
 
 interface SubmittedDisplay {
@@ -37,6 +42,19 @@ export const CustomApparel: React.FC = () => {
   const [submittedRequest, setSubmittedRequest] = useState<SubmittedDisplay | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+
+  const navigate = useNavigate()
+
+  // Quick "Upload Your Design" Section State (Requirements 2 & 3)
+  const [quickApparel, setQuickApparel] = useState<ApparelType>('tshirt')
+  const [quickColor, setQuickColor] = useState<string>('#18181B')
+  const [quickColorName, setQuickColorName] = useState<string>('Black')
+  const [quickArtwork, setQuickArtwork] = useState<UploadedArtwork | null>(null)
+  const uploadSectionRef = useRef<HTMLDivElement>(null)
+
+  const scrollToUploadSection = () => {
+    uploadSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   const heroRef = useRef<HTMLElement>(null)
   const formRef = useRef<HTMLDivElement>(null)
@@ -480,11 +498,11 @@ export const CustomApparel: React.FC = () => {
                 <button
                   type="button"
                   className="kala-hero-cta-btn kala-hero-cta-primary"
-                  onClick={() => scrollToForm()}
+                  onClick={() => navigate('/customize')}
                 >
                   <span className="kala-hero-btn-inner">
                     <span className="kala-hero-btn-symbol" aria-hidden="true">✎</span>
-                    <span>START YOUR DESIGN</span>
+                    <span>UPLOAD YOUR DESIGN</span>
                   </span>
                   <span className="kala-hero-btn-arrow" aria-hidden="true">→</span>
                 </button>
@@ -492,13 +510,13 @@ export const CustomApparel: React.FC = () => {
                 <button
                   type="button"
                   className="kala-hero-cta-btn kala-hero-cta-secondary"
-                  onClick={scrollToCategories}
+                  onClick={scrollToUploadSection}
                 >
                   <span className="kala-hero-btn-inner">
                     <span className="kala-hero-btn-symbol" aria-hidden="true">♧</span>
-                    <span>VIEW APPAREL</span>
+                    <span>CUSTOMIZE HERE</span>
                   </span>
-                  <span className="kala-hero-btn-arrow" aria-hidden="true">→</span>
+                  <span className="kala-hero-btn-arrow" aria-hidden="true">↓</span>
                 </button>
               </div>
             </div>
@@ -693,7 +711,12 @@ export const CustomApparel: React.FC = () => {
                     <button
                       type="button"
                       className="kala-card-action-btn"
-                      onClick={() => scrollToForm(cat.typeValue)}
+                      onClick={() => {
+                        if (cat.id === 'custom-t-shirts') navigate('/customize', { state: { apparelType: 'tshirt' } })
+                        else if (cat.id === 'hoodies') navigate('/customize', { state: { apparelType: 'hoodie' } })
+                        else if (cat.id === 'jerseys') navigate('/customize', { state: { apparelType: 'jersey' } })
+                        else scrollToForm(cat.typeValue)
+                      }}
                     >
                       <span>{cat.buttonText}</span>
                       <span className="kala-card-btn-arrow" aria-hidden="true">→</span>
@@ -702,6 +725,91 @@ export const CustomApparel: React.FC = () => {
                 </article>
               )
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* 2.5 UPLOAD YOUR DESIGN & LIVE PREVIEW FEATURE (Requirements 2 & 3) */}
+      <section
+        ref={uploadSectionRef}
+        id="upload-design"
+        className="kala-custom-upload-feature py-16 bg-[#FFFFFF] border-y border-[#ECECEC]"
+        aria-labelledby="upload-design-heading"
+      >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center gap-2 mb-2">
+              <span className="w-6 h-[1.5px] bg-[#D94700]" />
+              <span className="text-[11px] font-mono uppercase tracking-widest text-[#D94700] font-bold">
+                INSTANT CUSTOM STUDIO
+              </span>
+              <span className="w-6 h-[1.5px] bg-[#D94700]" />
+            </div>
+            <h2 id="upload-design-heading" className="text-2xl sm:text-3xl font-extrabold text-[#111111] font-mono tracking-tight">
+              UPLOAD YOUR DESIGN
+            </h2>
+            <p className="text-xs sm:text-sm text-[#6B7280] mt-1.5 max-w-lg mx-auto">
+              Select your apparel, choose a color, and upload your artwork to see a live 3D preview on the plain mockup.
+            </p>
+          </div>
+
+          <div className="bg-[#FAF9F6] border border-[#E5E7EB] rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+            {/* 1. Select Apparel */}
+            <ApparelSelector
+              selectedApparel={quickApparel}
+              onSelectApparel={setQuickApparel}
+            />
+
+            {/* 2. Select Color */}
+            <ColorSelector
+              selectedColor={quickColor}
+              colorName={quickColorName}
+              onSelectColor={(hex, name) => {
+                setQuickColor(hex)
+                setQuickColorName(name)
+              }}
+            />
+
+            {/* 3. Upload Artwork */}
+            <DesignUploader
+              artwork={quickArtwork}
+              onArtworkChange={(art) => {
+                setQuickArtwork(art)
+                if (art) {
+                  setTimeout(() => {
+                    navigate('/customize', {
+                      state: {
+                        apparelType: quickApparel,
+                        color: quickColor,
+                        colorName: quickColorName,
+                        artwork: art,
+                      },
+                    })
+                  }, 500)
+                }
+              }}
+            />
+
+            {/* Continue Button */}
+            <div className="pt-2">
+              <button
+                type="button"
+                className="w-full py-3.5 px-6 rounded-xl bg-[#D94700] hover:bg-[#BF3E00] text-white font-bold text-sm tracking-wider uppercase transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer group"
+                onClick={() => {
+                  navigate('/customize', {
+                    state: {
+                      apparelType: quickApparel,
+                      color: quickColor,
+                      colorName: quickColorName,
+                      artwork: quickArtwork,
+                    },
+                  })
+                }}
+              >
+                <span>{quickArtwork ? 'OPEN LIVE CUSTOMIZER' : 'START CUSTOMIZING & PREVIEW'}</span>
+                <span className="text-lg transition-transform group-hover:translate-x-1">→</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>

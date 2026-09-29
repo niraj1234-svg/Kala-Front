@@ -1,0 +1,1590 @@
+/* ==========================================================================
+   KALA BULK APPAREL CUSTOMIZATION BUILDER (Reference 2 Design)
+   ========================================================================== */
+
+.kala-bulk-section {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 2.5rem 1rem 3.5rem;
+  font-family: var(--kala-font-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  color: #111111;
+  box-sizing: border-box;
+}
+
+.kala-bulk-container {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   HERO HEADER
+   ========================================================================== */
+.kala-bulk-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.kala-bulk-eyebrow-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.kala-bulk-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #fff7ed;
+  border: 1px solid #ffedd5;
+  color: #c2410c;
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.kala-bulk-dot {
+  color: #ea580c;
+  font-size: 0.65rem;
+}
+
+.kala-bulk-main-heading {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #111111;
+  line-height: 1.15;
+  margin: 0 0 0.65rem;
+  text-transform: uppercase;
+}
+
+.kala-bulk-orange-text {
+  color: #d94700;
+}
+
+.kala-bulk-subtitle {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0 auto;
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+/* Toast Notification */
+.kala-bulk-toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.kala-bulk-toast.success {
+  background-color: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+}
+
+.kala-bulk-toast.error {
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+.kala-bulk-toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+/* ==========================================================================
+   TWO-COLUMN BUILDER MAIN CONTAINER
+   ========================================================================== */
+.kala-bulk-builder-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.05);
+  display: grid;
+  grid-template-columns: 42% 58%;
+  gap: 2rem;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+  .kala-bulk-builder-card {
+    grid-template-columns: 1fr;
+    padding: 1.25rem;
+    gap: 1.75rem;
+  }
+}
+
+/* ==========================================================================
+   LEFT COLUMN: LIVE PRODUCT PREVIEW
+   ========================================================================== */
+.kala-bulk-col-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.kala-bulk-preview-card {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  position: relative;
+  padding: 1.25rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 440px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.kala-bulk-preview-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e5e7eb;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 12;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.kala-bulk-preview-arrow:hover {
+  background-color: #ffffff;
+  color: #ea580c;
+  border-color: #ea580c;
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.18);
+}
+
+.kala-bulk-preview-arrow-left {
+  left: 12px;
+}
+
+.kala-bulk-preview-arrow-right {
+  right: 12px;
+}
+
+.kala-bulk-preview-badges {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 5;
+}
+
+.kala-bulk-badge-dark {
+  background-color: #111111;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.kala-bulk-badge-price {
+  background-color: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #ea580c;
+  font-size: 0.75rem;
+  font-weight: 750;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+}
+
+/* Center Garment Stage */
+.kala-bulk-garment-stage {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  aspect-ratio: 1 / 1;
+  margin: 0.5rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-bulk-garment-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.12));
+}
+
+/* Subtle Dotted Printable Boundary Box - disabled per user request */
+.kala-bulk-printable-area {
+  display: none !important;
+}
+
+/* Interactive Draggable Artwork Layer */
+.kala-bulk-artwork-layer {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  z-index: 8;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.kala-bulk-artwork-layer.dragging {
+  cursor: grabbing;
+}
+
+.kala-bulk-artwork-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+}
+
+.kala-bulk-drag-indicator {
+  position: absolute;
+  bottom: -18px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #fb923c;
+  background-color: rgba(17, 17, 17, 0.85);
+  padding: 1px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.kala-bulk-artwork-layer:hover .kala-bulk-drag-indicator,
+.kala-bulk-artwork-layer.dragging .kala-bulk-drag-indicator {
+  opacity: 1;
+}
+
+/* Front / Back Pill Switcher */
+.kala-bulk-side-toggle {
+  display: inline-flex;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  padding: 3px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  z-index: 5;
+}
+
+.kala-bulk-side-btn {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 0.4rem 1.15rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kala-bulk-side-btn.active {
+  background-color: #111111;
+  color: #ffffff;
+}
+
+/* 2. Apparel Category Tabs (T-Shirts | Hoodies | Jerseys) */
+.kala-bulk-category-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+}
+
+.kala-bulk-category-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.5rem;
+  background-color: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  color: #374151;
+  font-size: 0.8125rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kala-bulk-category-tab:hover {
+  border-color: #111111;
+}
+
+.kala-bulk-category-tab.active {
+  border-color: #d94700;
+  background-color: #fff8f5;
+  color: #d94700;
+}
+
+.kala-bulk-tab-icon-wrap {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-bulk-tab-icon {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* 3. Variation Thumbnails Grid (4 variations) */
+.kala-bulk-thumbnails-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.kala-bulk-thumb-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.4rem 0.25rem 0.35rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kala-bulk-thumb-card:hover {
+  border-color: #9ca3af;
+}
+
+.kala-bulk-thumb-card.active {
+  border-color: #d94700;
+  background-color: #fff8f5;
+}
+
+.kala-bulk-thumb-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-bulk-thumb-img {
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.kala-bulk-thumb-art {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+.kala-bulk-thumb-art img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.kala-bulk-thumb-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #4b5563;
+  margin-top: 2px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   RIGHT COLUMN: CONFIGURATION CONTROLS
+   ========================================================================== */
+.kala-bulk-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.kala-bulk-top-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -0.5rem;
+  padding-right: 2rem;
+}
+
+@media (max-width: 992px) {
+  .kala-bulk-top-row {
+    padding-right: 0.75rem;
+  }
+}
+
+/* Step Block Layout */
+.kala-bulk-step-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.kala-bulk-step-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.kala-bulk-step-num {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: 50%;
+  background-color: #d94700;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-bulk-step-title {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #111111;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.kala-bulk-step-subtitle {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.kala-bulk-optional-tag {
+  color: #9ca3af;
+  font-weight: 500;
+  text-transform: none;
+  font-size: 0.75rem;
+}
+
+.kala-bulk-step-desc {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 2px 0 0;
+}
+
+/* ==========================================================================
+   STEP 1: APPAREL CARDS
+   ========================================================================== */
+.kala-bulk-apparel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .kala-bulk-apparel-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kala-bulk-apparel-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  background-color: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.kala-bulk-apparel-card:hover {
+  border-color: #9ca3af;
+}
+
+.kala-bulk-apparel-card.selected {
+  border-color: #d94700;
+  background-color: #fff8f5;
+  box-shadow: 0 0 0 1px #d94700;
+}
+
+.kala-bulk-card-thumb-wrap {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-bulk-card-thumb {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.kala-bulk-card-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.kala-bulk-card-name {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #111111;
+}
+
+.kala-bulk-card-price {
+  font-size: 0.7rem;
+  color: #6b7280;
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+}
+
+.kala-bulk-price-highlight {
+  color: #d94700;
+  font-weight: 800;
+}
+
+.kala-bulk-radio-circle {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-bulk-apparel-card.selected .kala-bulk-radio-circle {
+  border-color: #d94700;
+}
+
+.kala-bulk-radio-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #d94700;
+  border-radius: 50%;
+}
+
+/* ==========================================================================
+   STEP 2: COLOR SELECTION
+   ========================================================================== */
+.kala-bulk-color-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.kala-bulk-color-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.kala-bulk-swatch-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kala-bulk-swatch-circle.black {
+  background-color: #111111;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.kala-bulk-swatch-circle.white {
+  background-color: #ffffff;
+  border: 1.5px solid #d1d5db;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.kala-bulk-color-btn.selected .kala-bulk-swatch-circle {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 2.5px #d94700;
+}
+
+.kala-bulk-swatch-check {
+  color: #ffffff;
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+
+.kala-bulk-swatch-check.dark {
+  color: #111111;
+}
+
+.kala-bulk-color-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* ==========================================================================
+   STEP 3: UPLOAD YOUR DESIGN
+   ========================================================================== */
+.kala-bulk-upload-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f9fafb;
+  border: 1.5px dashed #d1d5db;
+  border-radius: 10px;
+  padding: 0.85rem 1.15rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.kala-bulk-upload-card.drag-over {
+  border-color: #d94700;
+  background-color: #fff8f5;
+}
+
+.kala-bulk-upload-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.kala-bulk-upload-icon-wrap {
+  width: 40px;
+  height: 40px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+}
+
+.kala-bulk-upload-label {
+  font-size: 0.875rem;
+  font-weight: 750;
+  color: #111111;
+  margin: 0;
+}
+
+.kala-bulk-upload-hint {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 2px 0 0;
+}
+
+#bulk-design-file-input {
+  display: none !important;
+}
+
+.kala-bulk-choose-btn {
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #111111;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kala-bulk-choose-btn:hover {
+  border-color: #111111;
+  background-color: #f3f4f6;
+}
+
+.kala-bulk-upload-error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+}
+
+.kala-bulk-uploaded-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+}
+
+.kala-bulk-pill-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.kala-bulk-pill-tag {
+  color: #d94700;
+  font-weight: 800;
+  font-size: 0.65rem;
+}
+
+.kala-bulk-pill-name {
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+.kala-bulk-pill-reset {
+  background: none;
+  border: none;
+  color: #d94700;
+  font-weight: 700;
+  font-size: 0.7rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+/* ==========================================================================
+   STEP 4: DESIGN ADJUSTER (SLIDER)
+   ========================================================================== */
+.kala-bulk-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+}
+
+.kala-bulk-slider-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.kala-bulk-size-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #111111;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.kala-bulk-size-btn:hover:not(:disabled) {
+  background-color: #e5e7eb;
+}
+
+.kala-bulk-size-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.kala-bulk-range-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  background: #e5e7eb;
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+}
+
+.kala-bulk-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #d94700;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+}
+
+.kala-bulk-range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.kala-bulk-range-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #d94700;
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.kala-bulk-size-badge {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8125rem;
+  font-weight: 750;
+  color: #111111;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   STEP 5: APPROXIMATE QUANTITY BY SIZE (Per-Size Steppers + Math Summary)
+   ========================================================================== */
+.kala-bulk-step-subdesc {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  margin: -0.25rem 0 0.5rem;
+  line-height: 1.4;
+}
+
+/* 5-Column Grid for Sizes */
+.kala-bulk-size-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.65rem;
+}
+
+@media (max-width: 640px) {
+  .kala-bulk-size-grid {
+    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+    gap: 0.45rem;
+  }
+}
+
+.kala-bulk-size-card {
+  background-color: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.55rem 0.45rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.kala-bulk-size-card:hover {
+  border-color: #111111;
+}
+
+.kala-bulk-size-card.has-qty {
+  border-color: #111111;
+  background-color: #fafafa;
+}
+
+.kala-bulk-size-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.kala-bulk-size-label {
+  font-size: 0.875rem;
+  font-weight: 900;
+  color: #111111;
+}
+
+.kala-bulk-size-pcs {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #d94700;
+}
+
+.kala-bulk-size-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+}
+
+.kala-bulk-step-btn {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  color: #111111;
+  font-size: 0.875rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.12s ease;
+}
+
+.kala-bulk-step-btn:hover:not(:disabled) {
+  background-color: #111111;
+  color: #ffffff;
+  border-color: #111111;
+}
+
+.kala-bulk-step-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.kala-bulk-size-input {
+  width: 36px;
+  text-align: center;
+  padding: 0.25rem 0.15rem;
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #111111;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background-color: #ffffff;
+  -moz-appearance: textfield;
+}
+
+.kala-bulk-size-input::-webkit-outer-spin-button,
+.kala-bulk-size-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.kala-bulk-size-input:focus {
+  border-color: #d94700;
+  outline: none;
+}
+
+/* Quick Presets Row */
+.kala-bulk-presets-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.kala-bulk-preset-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.kala-bulk-qty-pill {
+  padding: 0.4rem 0.75rem;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kala-bulk-qty-pill:hover {
+  border-color: #111111;
+}
+
+.kala-bulk-qty-pill.active {
+  background-color: #111111;
+  color: #ffffff;
+  border-color: #111111;
+}
+
+/* Live Mathematics Summary Box */
+.kala-bulk-math-summary-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.kala-bulk-math-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.kala-bulk-math-tag {
+  font-size: 0.65rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.kala-bulk-math-count-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.kala-bulk-math-total {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.kala-bulk-math-equation {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.kala-bulk-math-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.kala-bulk-math-price-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.kala-bulk-math-price {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #d94700;
+}
+
+.kala-bulk-math-rate {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+/* ==========================================================================
+   STEP 6: REQUIREMENT DETAILS
+   ========================================================================== */
+.kala-bulk-textarea-wrap {
+  width: 100%;
+}
+
+.kala-bulk-textarea {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  color: #111111;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.kala-bulk-textarea:focus {
+  border-color: #111111;
+  outline: none;
+}
+
+/* ==========================================================================
+   ACCOUNT SHORTCUT (TOP RIGHT)
+   ========================================================================== */
+.kala-bulk-account-shortcut {
+  display: flex;
+  align-items: center;
+}
+
+.kala-bulk-account-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.kala-bulk-account-pill {
+  background-color: #1f2937;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.kala-bulk-account-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid #d1d5db;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  transition: border-color 0.15s ease;
+}
+
+.kala-bulk-account-btn:hover .kala-bulk-account-avatar {
+  border-color: #d94700;
+  color: #d94700;
+}
+
+.kala-bulk-avatar-initial {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #d94700;
+}
+
+/* Modal Backdrop & Dialog */
+.kala-bulk-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.kala-bulk-modal-box {
+  background-color: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  padding: 1.75rem;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+
+.kala-bulk-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.15rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.kala-bulk-modal-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.kala-bulk-modal-tab {
+  flex: 1;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid #e5e7eb;
+  font-size: 0.875rem;
+  font-weight: 750;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.kala-bulk-modal-tab.active {
+  border-bottom-color: #d94700;
+  color: #d94700;
+}
+
+.kala-bulk-modal-auth-desc {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  margin: 0 0 1rem;
+}
+
+.kala-bulk-modal-error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.kala-bulk-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.kala-bulk-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kala-bulk-form-group label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.kala-bulk-form-group input {
+  padding: 0.55rem 0.75rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.kala-bulk-modal-submit {
+  margin-top: 0.5rem;
+  background-color: #d94700;
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.kala-bulk-modal-submit:hover {
+  background-color: #c23e00;
+}
+
+.kala-bulk-modal-logged-in {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+}
+
+.kala-bulk-modal-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: #fff7ed;
+  border: 2px solid #d94700;
+  color: #d94700;
+  font-size: 1.5rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-bulk-modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #111111;
+  margin: 0;
+}
+
+.kala-bulk-modal-subtitle {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.kala-bulk-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.kala-bulk-modal-btn {
+  flex: 1;
+  padding: 0.65rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.kala-bulk-modal-btn.primary {
+  background-color: #111111;
+  color: #ffffff;
+  border: none;
+}
+
+.kala-bulk-modal-btn.outline {
+  background-color: transparent;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+/* ==========================================================================
+   DISCUSSION & ACTIONS SECTION (BOTTOM OF CONFIG PANEL)
+   ========================================================================== */
+.kala-bulk-discussion-wrap {
+  margin-top: 0.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Estimated Total / Money Required Display (No pay or checkout buttons) */
+.kala-bulk-estimate-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fff8f5 100%);
+  border: 1.5px solid #fed7aa;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 10px rgba(217, 71, 0, 0.05);
+}
+
+.kala-bulk-estimate-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.kala-bulk-estimate-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.kala-bulk-estimate-tag {
+  font-size: 0.6875rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  color: #9a3412;
+  text-transform: uppercase;
+}
+
+.kala-bulk-estimate-amount-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.kala-bulk-estimate-amount {
+  font-size: 1.5rem;
+  font-weight: 950;
+  color: #d94700;
+  line-height: 1.1;
+}
+
+.kala-bulk-estimate-unit-tag {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #4b5563;
+}
+
+.kala-bulk-estimate-sizes {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.kala-bulk-estimate-sizes strong {
+  color: #111111;
+  font-weight: 750;
+}
+
+.kala-bulk-estimate-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+}
+
+@media (max-width: 640px) {
+  .kala-bulk-estimate-right {
+    align-items: flex-start;
+  }
+}
+
+.kala-bulk-estimate-pill {
+  display: inline-flex;
+  align-items: center;
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.3rem 0.65rem;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+}
+
+.kala-bulk-estimate-subnote {
+  font-size: 0.7rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+/* Discussion Header */
+.kala-bulk-discussion-header {
+  margin-top: 0.25rem;
+}
+
+.kala-bulk-discussion-title {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #111111;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.kala-bulk-discussion-sub {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 2px 0 0;
+}
+
+/* 4 Contact Grid */
+.kala-bulk-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.65rem;
+}
+
+@media (max-width: 640px) {
+  .kala-bulk-contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kala-bulk-contact-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.kala-bulk-contact-card:hover {
+  border-color: #111111;
+  background-color: #f9fafb;
+}
+
+.kala-bulk-contact-card.whatsapp {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.kala-bulk-contact-card.whatsapp:hover {
+  border-color: #22c55e;
+  background-color: #dcfce7;
+}
+
+.kala-bulk-contact-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.kala-bulk-contact-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-bulk-contact-label {
+  font-size: 0.8125rem;
+  font-weight: 750;
+  color: #111111;
+}
+
+.kala-bulk-contact-note {
+  font-size: 0.6875rem;
+  color: #6b7280;
+}
+
+.kala-bulk-discussion-footer {
+  text-align: center;
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+.kala-bulk-disclaimer-box {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.6875rem;
+  color: #6b7280;
+}

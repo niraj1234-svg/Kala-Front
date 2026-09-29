@@ -382,23 +382,31 @@
   background: #F8FAFC;
   border: 1px solid #E2E8F0;
   border-radius: 8px;
-  padding: 0.65rem 0.85rem;
+  padding: 0.75rem 0.95rem;
 }
 
 .kala-biz-info-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.4rem;
-  font-size: 0.75rem;
-  color: #111111;
+  margin-bottom: 0.45rem;
+  font-size: 0.8rem;
+  color: #111111 !important;
+}
+
+.kala-biz-info-header strong {
+  color: #111111 !important;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: -0.01em;
 }
 
 .kala-biz-info-price {
   font-weight: 800;
-  color: #D94700;
-  font-size: 0.72rem;
+  color: #D94700 !important;
+  font-size: 0.75rem;
   text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .kala-biz-feature-list {
@@ -407,20 +415,22 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.25rem;
 }
 
 .kala-biz-feature-item {
-  font-size: 0.75rem;
-  color: #4B5563;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #1F2937 !important;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
+  line-height: 1.4;
 }
 
 .kala-biz-check-bullet {
-  color: #D94700;
-  font-size: 0.9rem;
+  color: #D94700 !important;
+  font-size: 0.95rem;
   font-weight: 900;
   line-height: 1;
 }
@@ -1010,6 +1020,76 @@
 
 .kala-biz-modal-summary-chip .dot {
   color: #D1D5DB;
+}
+
+/* Unified Single Summary & Requirement Box */
+.kala-biz-modal-summary-box {
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.kala-biz-summary-main-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1F2937;
+}
+
+.kala-biz-summary-main-row .summary-cat {
+  font-family: var(--kala-font-primary);
+  font-weight: 900;
+  color: #111111;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.kala-biz-summary-main-row .summary-price {
+  font-family: var(--kala-font-primary);
+  font-weight: 900;
+  color: #D94700;
+  background: rgba(217, 71, 0, 0.08);
+  border: 1px solid rgba(217, 71, 0, 0.15);
+  padding: 0.12rem 0.45rem;
+  border-radius: 4px;
+}
+
+.kala-biz-summary-main-row .dot {
+  color: #9CA3AF;
+  font-size: 0.8rem;
+}
+
+.kala-biz-summary-detail-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.74rem;
+  color: #4B5563;
+  padding-top: 0.35rem;
+  border-top: 1px dashed #E5E7EB;
+}
+
+.kala-biz-summary-detail-row .detail-label {
+  font-family: var(--kala-font-primary);
+  font-weight: 800;
+  color: #111111;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+
+.kala-biz-summary-detail-row .detail-val {
+  font-weight: 600;
+  color: #374151;
 }
 
 /* Modal Form Styles */

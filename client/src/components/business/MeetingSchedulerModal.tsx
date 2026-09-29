@@ -12,6 +12,7 @@ import {
   generateWhatsAppInquiryUrl,
   type BookedSlotItem,
 } from '../../services/businessInquiryApi'
+import '../../styles/BusinessInquiry.css'
 
 interface MeetingSchedulerModalProps {
   isOpen: boolean
@@ -20,7 +21,9 @@ interface MeetingSchedulerModalProps {
   colorName: string
   customizationName: string
   approxQuantity: string
-  initialRequirement: string
+  initialRequirement?: string
+  sizeBreakdown?: string
+  estimatedTotal?: number
   onClose: () => void
 }
 
@@ -31,7 +34,9 @@ export const MeetingSchedulerModal: React.FC<MeetingSchedulerModalProps> = ({
   colorName,
   customizationName,
   approxQuantity,
-  initialRequirement,
+  initialRequirement = '',
+  sizeBreakdown,
+  estimatedTotal,
   onClose,
 }) => {
   const availableDates: AvailableDate[] = getUpcomingAvailableDates()
@@ -148,7 +153,13 @@ export const MeetingSchedulerModal: React.FC<MeetingSchedulerModalProps> = ({
       }
     }
 
-    if (!requirement.trim()) {
+    const effectiveRequirement =
+      requirement.trim() ||
+      (sizeBreakdown
+        ? `Sizes: ${sizeBreakdown} | Est: ₹${estimatedTotal?.toLocaleString('en-IN') || ''}`
+        : initialRequirement?.trim() || `${apparelCategoryName} (${colorName}) - ${approxQuantity || '50'} pcs`)
+
+    if (!effectiveRequirement) {
       newErrors.requirement = 'Please describe your requirement or event details.'
     }
 
@@ -172,6 +183,15 @@ export const MeetingSchedulerModal: React.FC<MeetingSchedulerModalProps> = ({
 
     setIsSubmitting(true)
 
+    const finalRequirement = [
+      `${apparelCategoryName} (${colorName}) - ${approxQuantity || ''} pcs`.trim(),
+      sizeBreakdown ? `Sizes: ${sizeBreakdown}` : null,
+      estimatedTotal ? `Est. ₹${estimatedTotal.toLocaleString('en-IN')}` : null,
+      requirement && requirement !== initialRequirement ? requirement.trim() : null,
+    ]
+      .filter(Boolean)
+      .join(' • ') || `${apparelCategoryName} Bulk Inquiry`
+
     try {
       await submitBusinessInquiry({
         name: name.trim(),
@@ -182,7 +202,7 @@ export const MeetingSchedulerModal: React.FC<MeetingSchedulerModalProps> = ({
         color: colorName,
         customization: customizationName,
         approxQuantity: approxQuantity || undefined,
-        requirement: requirement.trim(),
+        requirement: finalRequirement,
         contactMethod: method,
         meetingDate: selectedDate,
         meetingTime: selectedTime,
@@ -247,19 +267,41 @@ export const MeetingSchedulerModal: React.FC<MeetingSchedulerModalProps> = ({
           </button>
         </div>
 
-        {/* Selected Summary Pill */}
-        <div className="kala-biz-modal-summary-chip">
-          <span>{apparelCategoryName}</span>
-          <span className="dot">•</span>
-          <span>{colorName}</span>
-          <span className="dot">•</span>
-          <span>{customizationName}</span>
-          {approxQuantity && (
-            <>
-              <span className="dot">•</span>
-              <span>{approxQuantity} pcs</span>
-            </>
-          )}
+        {/* Unified Order & Requirement Summary Box (Combines top chip & requirement into one clean box) */}
+        <div className="kala-biz-modal-summary-box">
+          <div className="kala-biz-summary-main-row">
+            <span className="summary-cat">{apparelCategoryName}</span>
+            <span className="dot">•</span>
+            <span>{colorName}</span>
+            {approxQuantity && (
+              <>
+                <span className="dot">•</span>
+                <span>{approxQuantity} pcs</span>
+              </>
+            )}
+            {estimatedTotal ? (
+              <>
+                <span className="dot">•</span>
+                <span className="summary-price">Est. ₹{estimatedTotal.toLocaleString('en-IN')}</span>
+              </>
+            ) : customizationName ? (
+              <>
+                <span className="dot">•</span>
+                <span>{customizationName}</span>
+              </>
+            ) : null}
+          </div>
+
+          {sizeBreakdown ? (
+            <div className="kala-biz-summary-detail-row">
+              <span className="detail-label">Sizes:</span>
+              <span className="detail-val">{sizeBreakdown}</span>
+            </div>
+          ) : initialRequirement ? (
+            <div className="kala-biz-summary-detail-row">
+              <span className="detail-val">{initialRequirement}</span>
+            </div>
+          ) : null}
         </div>
 
         {/* ================================================================
@@ -498,24 +540,6 @@ export const MeetingSchedulerModal: React.FC<MeetingSchedulerModalProps> = ({
               )}
             </div>
 
-            {/* Requirement / Notes */}
-            <div className="kala-biz-form-group">
-              <label htmlFor="biz-cust-req" className="kala-biz-form-label">
-                Requirement Details <span className="req">*</span>
-              </label>
-              <textarea
-                id="biz-cust-req"
-                rows={2}
-                className={`kala-biz-textarea ${errors.requirement ? 'has-error' : ''}`}
-                placeholder="Mention sizes, expected delivery date, or special branding requirements"
-                value={requirement}
-                onChange={(e) => {
-                  setRequirement(e.target.value)
-                  if (errors.requirement) setErrors((p) => ({ ...p, requirement: '' }))
-                }}
-              />
-              {errors.requirement && <p className="kala-biz-form-error">{errors.requirement}</p>}
-            </div>
 
             {/* Server Error Notice */}
             {submitError && (

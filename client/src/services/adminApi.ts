@@ -23,13 +23,61 @@ export interface AdminLoginResponse {
   user: AdminUser
 }
 
+export interface AdminCustomArtworkCoordinates {
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+  rotation?: number
+  scale?: number
+}
+
+export interface AdminCustomDesignDetails {
+  frontText?: string
+  backText?: string
+  frontPosition?: { x?: number; y?: number }
+  backPosition?: { x?: number; y?: number }
+  frontFontSize?: number
+  backFontSize?: number
+  customText?: {
+    front?: { text: string; x: number; y: number; fontSize: number }
+    back?: { text: string; x: number; y: number; fontSize: number }
+  }
+  price?: number
+  apparelType?: string
+  color?: string
+  position?: 'front' | 'back' | 'left' | 'right' | string
+  artworkUrl?: string
+  previewUrl?: string
+  frontPreviewUrl?: string
+  backPreviewUrl?: string
+  frontArtworkUrl?: string
+  backArtworkUrl?: string
+  requirementDetails?: string
+  artwork?: AdminCustomArtworkCoordinates
+  frontArtwork?: {
+    x?: number
+    y?: number
+    scale?: number
+    fileName?: string
+  }
+  backArtwork?: {
+    x?: number
+    y?: number
+    scale?: number
+    fileName?: string
+  }
+}
+
 export interface AdminOrderItem {
   productId: string
   name: string
   image: string
   size: string
+  color?: string
   quantity: number
   price: number
+  customization?: AdminCustomDesignDetails
 }
 
 export interface AdminCustomer {

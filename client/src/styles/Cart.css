@@ -124,6 +124,40 @@
   width: fit-content;
 }
 
+.kala-cart-item-custom-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background-color: rgba(217, 71, 0, 0.05);
+  border: 1px solid rgba(217, 71, 0, 0.2);
+  border-radius: 6px;
+  padding: 0.4rem 0.65rem;
+  margin-bottom: 0.5rem;
+  width: fit-content;
+}
+
+.kala-cart-custom-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--kala-orange);
+}
+
+.kala-cart-custom-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--kala-black);
+}
+
+.kala-cart-custom-size {
+  font-size: 0.72rem;
+  color: var(--kala-text-secondary);
+  font-family: var(--kala-font-mono, monospace);
+}
+
 .kala-cart-custom-label {
   font-weight: 600;
   color: var(--kala-text-secondary);

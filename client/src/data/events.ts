@@ -56,7 +56,25 @@ export interface UpcomingEvent {
 export type KalaEvent = ProductEvent | BundleEvent | UpcomingEvent
 
 export const KALA_EVENTS: KalaEvent[] = [
-  // 1. Slide 1 — Most Recent Event: Build Your T-Shirt Stack Bundle Offer
+  // 1. Slide 1 — FEATURED DROP: KALA Bihari Story Premium T-Shirt
+  {
+    id: 'kala-bihari-story',
+    type: 'product',
+    title: 'KALA Bihari Story Premium T-Shirt',
+    price: 400,
+    currency: '₹',
+    status: 'In Stock',
+    badge: 'FEATURED DROP',
+    description: "A premium 220 GSM everyday T-shirt rooted in Bihar's culture and designed for modern streetwear.",
+    productId: 'kala-bihari-story-premium-t-shirt',
+    link: '/product/kala-bihari-story-premium-t-shirt',
+    features: ['220 GSM', 'Premium Comfort', 'Durable Fabric', 'Comfortable Fit'],
+    frontImage: getProductImage('kala-bihari-story-front.png') || '/images/kala-bihari-story-front.png',
+    backImage: getProductImage('kala-bihari-story-back.png') || '/images/kala-bihari-story-back.png',
+    ctaText: 'VIEW PRODUCT',
+  },
+
+  // 2. Slide 2 — MULTI-BUY OFFER: Build Your T-Shirt Stack
   {
     id: 'tshirt-stack-bundle',
     type: 'bundle',
@@ -95,25 +113,7 @@ export const KALA_EVENTS: KalaEvent[] = [
     ],
   },
 
-  // 2. Slide 2 — Second Recent Event: KALA Bihari Story Premium T-Shirt
-  {
-    id: 'kala-bihari-story',
-    type: 'product',
-    title: 'KALA BIHARI STORY PREMIUM T-SHIRT',
-    price: 400,
-    currency: '₹',
-    status: 'IN STOCK',
-    badge: 'FEATURED DROP',
-    description: "A premium 220 GSM everyday T-shirt rooted in Bihar's culture and designed for modern streetwear.",
-    productId: 'kala-bihari-story-premium-t-shirt',
-    link: '/product/kala-bihari-story-premium-t-shirt',
-    features: ['220 GSM', 'Premium Comfort', 'Durable Fabric', 'Comfortable Fit'],
-    frontImage: getProductImage('kala-bihari-story-front.png') || '/images/kala-bihari-story-front.png',
-    backImage: getProductImage('kala-bihari-story-back.png') || '/images/kala-bihari-story-back.png',
-    ctaText: 'VIEW PRODUCT',
-  },
-
-  // 3. Slide 3 — Upcoming Event: Designathon Idea
+  // 3. Slide 3 — UPCOMING EVENT: Designathon Idea
   {
     id: 'designathon-idea',
     type: 'upcoming',
