@@ -30,6 +30,7 @@ export interface Product {
   description: string
   available: boolean
   variants?: ProductColorVariant[]
+  highlights?: ProductHighlight[]
   freeShipping?: boolean
   customPrintTextEnabled?: boolean
   customPrintTextPrice?: number
@@ -46,13 +47,30 @@ export function isTShirtProduct(product: Product): boolean {
   return (
     name.includes('tee') ||
     name.includes('t-shirt') ||
+    name.includes('polo') ||
     name.includes('jersey') ||
     id.includes('tee') ||
+    id.includes('polo') ||
     id.includes('jersey')
   )
 }
 
 export function getProductHighlights(product: Product): ProductHighlight[] {
+  if (product.highlights && product.highlights.length > 0) {
+    return product.highlights
+  }
+
+  if (product.id === 'ai-data-science-polo-t-shirt') {
+    return [
+      { label: 'Collar', value: 'Polo collar' },
+      { label: 'Placket', value: '2-button front placket' },
+      { label: 'Color', value: 'Light grey' },
+      { label: 'Front Print', value: 'Front chest university logo' },
+      { label: 'Back Print', value: 'Large AI & Data Science back print' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ]
+  }
+
   if (!isTShirtProduct(product)) {
     return []
   }
@@ -116,7 +134,30 @@ export function getProductHighlights(product: Product): ProductHighlight[] {
 }
 
 export const PRODUCTS: Product[] = [
-  // KALA Bihari Story Premium T-Shirt (Featured First Product)
+  // AI & Data Science Polo T-Shirt (Featured First Product)
+  {
+    id: 'ai-data-science-polo-t-shirt',
+    name: 'AI & Data Science Polo T-Shirt',
+    category: 'Streetwear',
+    price: 250,
+    image: getProductImage('ai-data-science-polo-front.png'),
+    images: [
+      getProductImage('ai-data-science-polo-front.png'),
+      getProductImage('ai-data-science-polo-back.png'),
+    ],
+    description: 'Premium polo T-shirt with AI & Data Science artwork.',
+    available: true,
+    highlights: [
+      { label: 'Collar', value: 'Polo collar' },
+      { label: 'Placket', value: '2-button front placket' },
+      { label: 'Color', value: 'Light grey' },
+      { label: 'Front Print', value: 'Front chest university logo' },
+      { label: 'Back Print', value: 'Large AI & Data Science back print' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+
+  // KALA Bihari Story Premium T-Shirt (Featured Second Product)
   {
     id: 'kala-bihari-story-premium-t-shirt',
     name: 'KALA Bihari Story Premium T-Shirt',
@@ -138,7 +179,7 @@ export const PRODUCTS: Product[] = [
     id: 'streetwear-oversized-acid-tee',
     name: 'KALA Raw Acid-Wash Oversized Tee',
     category: 'Streetwear',
-    price: 1,
+    price: 350,
     image: getProductImage('Streetwear 01.png'),
     description: 'Premium 280 GSM oversized cotton tee.',
     available: true,

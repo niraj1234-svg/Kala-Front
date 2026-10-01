@@ -303,9 +303,8 @@
   font-weight: 700;
 }
 
-/* Size Selector */
-.kala-size-section,
-.kala-details-size-section {
+/* Size & Quantity Breakdown Matrix (Reference: 2nd Image) */
+.kala-size-breakdown-section {
   margin-bottom: 1.5rem;
 }
 
@@ -321,6 +320,247 @@
   color: #dc2626;
   font-size: 0.8125rem;
   font-weight: 600;
+}
+
+.kala-size-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  width: 100%;
+  margin-top: 0.35rem;
+}
+
+@media (max-width: 620px) {
+  .kala-size-cards-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+
+  .kala-size-card {
+    padding: 6px 2px 7px 2px;
+    border-radius: 8px;
+    border-width: 1.5px;
+  }
+
+  .kala-size-card-name {
+    font-size: 0.92rem;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  .kala-size-card-pcs {
+    font-size: 0.68rem;
+    margin-bottom: 4px;
+  }
+
+  .kala-size-card-stepper {
+    gap: 2px;
+  }
+
+  .kala-size-card-btn {
+    width: 20px;
+    height: 24px;
+    min-width: 20px;
+    min-height: 24px;
+    font-size: 0.82rem;
+    border-radius: 4px;
+  }
+
+  .kala-size-card-input {
+    width: 22px;
+    min-width: 16px;
+    max-width: 28px;
+    height: 24px;
+    font-size: 0.8rem;
+    padding: 0 1px;
+    border-radius: 4px;
+  }
+}
+
+@media (max-width: 360px) {
+  .kala-size-cards-grid {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 3px;
+    gap: 4px;
+  }
+
+  .kala-size-cards-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .kala-size-card {
+    flex: 0 0 58px;
+  }
+}
+
+.kala-size-card {
+  background-color: #ffffff;
+  border: 2px solid #111111;
+  border-radius: 12px;
+  padding: 12px 6px 12px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.kala-size-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.kala-size-card.is-zero {
+  border-color: #e2e8f0;
+  background-color: #ffffff;
+}
+
+.kala-size-card.is-zero:hover {
+  border-color: #94a3b8;
+}
+
+.kala-size-card.has-qty {
+  border-color: #111111;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.kala-size-card-header {
+  margin-bottom: 2px;
+}
+
+.kala-size-card-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #111111;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.kala-size-card-pcs {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #d9531e;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.kala-size-card.is-zero .kala-size-card-pcs {
+  color: #94a3b8;
+}
+
+.kala-size-card-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+  cursor: default;
+}
+
+.kala-size-card-btn {
+  width: 26px;
+  height: 28px;
+  min-width: 26px;
+  min-height: 28px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kala-size-card-btn:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.kala-size-card-btn:active:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+.kala-size-card-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background-color: #f8fafc;
+}
+
+.kala-size-card-input {
+  width: 36px;
+  min-width: 28px;
+  max-width: 48px;
+  height: 28px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111111;
+  text-align: center;
+  padding: 0 2px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  -moz-appearance: textfield;
+}
+
+.kala-size-card-input:focus {
+  border-color: #111111;
+  box-shadow: 0 0 0 1px #111111;
+}
+
+.kala-size-card-input::-webkit-outer-spin-button,
+.kala-size-card-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Order Summary Row beneath the cards */
+.kala-size-qty-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #334155;
+}
+
+.kala-summary-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.kala-summary-pill strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* Legacy Size/Qty Classes for Fallback */
+.kala-size-section,
+.kala-details-size-section {
+  margin-bottom: 1.5rem;
 }
 
 .kala-size-options,
@@ -419,6 +659,35 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.kala-qty-input {
+  min-width: 48px;
+  max-width: 90px;
+  width: auto;
+  height: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--kala-black, #111111);
+  padding: 0 0.35rem;
+  cursor: text;
+  user-select: text;
+  -moz-appearance: textfield;
+}
+
+.kala-qty-input:focus {
+  background-color: rgba(17, 17, 17, 0.04);
+}
+
+.kala-qty-input::-webkit-outer-spin-button,
+.kala-qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 /* Added to Cart Feedback Badge */
@@ -1387,55 +1656,130 @@
 @media (max-width: 768px) {
   .kala-details-page {
     padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+    padding-top: 1rem;
   }
 
   .kala-details-grid {
-    gap: 1.25rem;
+    gap: 1rem;
+  }
+
+  .kala-details-main-image-card {
+    border-radius: 12px;
   }
 
   .kala-details-main-image-card img {
     aspect-ratio: 4 / 5;
-    max-height: 400px;
-    padding: 0.75rem;
+    max-height: 330px;
+    padding: 0.5rem;
+    object-fit: contain;
+  }
+
+  .kala-preview-side-arrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .kala-preview-side-arrow svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .kala-preview-view-badge {
+    font-size: 0.65rem;
+    padding: 2px 7px;
+    top: 6px;
+    left: 6px;
   }
 
   .kala-details-title {
-    font-size: 1.5rem;
-    margin-bottom: 0.35rem;
+    font-size: 1.25rem;
+    line-height: 1.25;
+    margin-bottom: 0.25rem;
   }
 
   .kala-details-price {
-    font-size: 1.35rem;
-    margin-bottom: 0.35rem;
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
   }
 
   .kala-details-stock-status {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.78rem;
   }
 
   .kala-details-spec-pills {
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.5rem;
+    gap: 4px;
+  }
+
+  .kala-spec-pill {
+    font-size: 0.68rem;
+    padding: 2px 7px;
   }
 
   .kala-details-desc-wrap {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
   }
 
-  .kala-gallery-slider-bar {
+  .kala-details-description {
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+
+  .kala-size-breakdown-section {
+    margin-bottom: 0.85rem;
+  }
+
+  .kala-size-qty-summary {
+    margin-top: 0.45rem;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.78rem;
+  }
+
+  .kala-summary-pill {
+    font-size: 0.78rem;
+  }
+
+  .kala-details-actions {
+    margin-bottom: 0.65rem;
     gap: 0.5rem;
   }
 
+  .kala-btn-full {
+    min-height: 44px;
+    font-size: 0.82rem;
+    padding: 0.65rem 1rem;
+  }
+
+  .kala-details-secondary-bar,
+  .kala-details-small-actions {
+    margin-top: 0.4rem;
+    margin-bottom: 1.25rem;
+    gap: 0.5rem;
+  }
+
+  .kala-secondary-action-btn,
+  .kala-small-action-btn {
+    min-height: 40px;
+    font-size: 0.78rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .kala-gallery-slider-bar {
+    gap: 0.4rem;
+  }
+
   .kala-gallery-thumb-chip {
-    padding: 3px 10px 3px 3px;
+    padding: 2px 8px 2px 2px;
   }
 
   .kala-thumb-img-wrap {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
   }
 
   .kala-thumb-chip-label {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
   }
 
   .kala-mobile-sticky-bar {

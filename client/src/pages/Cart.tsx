@@ -155,16 +155,44 @@ export const Cart: React.FC = () => {
                       >
                         −
                       </button>
-                      <span className="kala-qty-value" aria-live="polite">
-                        {item.quantity}
-                      </span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        className="kala-qty-input kala-qty-value"
+                        value={item.quantity}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, '')
+                          if (val) {
+                            updateQuantity(
+                              item.productId,
+                              item.size,
+                              Math.max(1, parseInt(val, 10)),
+                              item.image,
+                              item.customization?.backText
+                            )
+                          }
+                        }}
+                        onBlur={(e) => {
+                          const val = parseInt(e.target.value, 10)
+                          if (!val || val < 1) {
+                            updateQuantity(
+                              item.productId,
+                              item.size,
+                              1,
+                              item.image,
+                              item.customization?.backText
+                            )
+                          }
+                        }}
+                        aria-label={`Quantity for ${item.name}`}
+                      />
                       <button
                         type="button"
                         className="kala-qty-btn"
                         onClick={() =>
                           updateQuantity(item.productId, item.size, item.quantity + 1, item.image, item.customization?.backText)
                         }
-                        disabled={item.quantity >= 10}
                         aria-label="Increase quantity"
                       >
                         +

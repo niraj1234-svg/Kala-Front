@@ -76,7 +76,7 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
     const cleanProductId = productId.trim()
     const cleanSize = size.trim().toUpperCase()
     const isBulk = cleanProductId.startsWith('bulk-') || cleanSize.includes('BULK')
-    const maxQtyLimit = isBulk ? 10000 : 1000
+    const maxQtyLimit = 1000000
     const parsedQty = Math.max(1, Math.min(parseInt(String(quantity), 10) || 1, maxQtyLimit))
 
     // Pull authoritative product data from MongoDB if available
@@ -231,7 +231,7 @@ export const updateItemQuantity = async (req: Request, res: Response): Promise<v
       cart.items.splice(matchIndex, 1)
     } else {
       const isBulk = cart.items[matchIndex].productId.startsWith('bulk-') || cart.items[matchIndex].size.toUpperCase().includes('BULK')
-      const maxLimit = isBulk ? 10000 : 1000
+      const maxLimit = 1000000
       cart.items[matchIndex].quantity = Math.min(Math.max(1, parsedQty), maxLimit)
     }
 
@@ -372,7 +372,7 @@ export const syncCart = async (req: Request, res: Response): Promise<void> => {
       if (!rawItem || typeof rawItem !== 'object') continue
       const productId = String(rawItem.productId || rawItem.id || '').trim()
       const size = String(rawItem.size || '').trim().toUpperCase()
-      const quantity = Math.max(1, Math.min(parseInt(String(rawItem.quantity || 1), 10) || 1, 10))
+      const quantity = Math.max(1, parseInt(String(rawItem.quantity || 1), 10) || 1)
 
       if (!productId || !size) continue
 
@@ -387,7 +387,7 @@ export const syncCart = async (req: Request, res: Response): Promise<void> => {
       const key = `${productId}:${size}:${custKey}`
       const existing = consolidatedMap.get(key)
       if (existing) {
-        existing.quantity = Math.min(existing.quantity + quantity, 10)
+        existing.quantity = existing.quantity + quantity
       } else {
         // Fetch DB product if possible
         const dbProduct = await Product.findOne({ id: productId })

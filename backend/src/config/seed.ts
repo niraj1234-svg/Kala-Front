@@ -2,7 +2,19 @@ import { Product } from '../models/Product'
 import { connectDB } from './db'
 
 export const SEED_PRODUCTS = [
-  // KALA Bihari Story Premium T-Shirt (Featured First Product)
+  // AI & Data Science Polo T-Shirt (Featured First Product)
+  {
+    id: 'ai-data-science-polo-t-shirt',
+    name: 'AI & Data Science Polo T-Shirt',
+    category: 'Streetwear',
+    price: 250,
+    image: 'ai-data-science-polo-front.png',
+    images: ['ai-data-science-polo-front.png', 'ai-data-science-polo-back.png'],
+    description: 'Premium polo T-shirt with AI & Data Science artwork.',
+    available: true,
+  },
+
+  // KALA Bihari Story Premium T-Shirt (Featured Second Product)
   {
     id: 'kala-bihari-story-premium-t-shirt',
     name: 'KALA Bihari Story Premium T-Shirt',
@@ -53,7 +65,7 @@ export const SEED_PRODUCTS = [
     id: 'streetwear-oversized-acid-tee',
     name: 'KALA Raw Acid-Wash Oversized Tee',
     category: 'Streetwear',
-    price: 1,
+    price: 350,
     image: 'Streetwear 01.png',
     description: 'Premium 280 GSM oversized cotton tee.',
     available: true,
@@ -263,7 +275,15 @@ export const syncProductPrices = async () => {
         { id: item.id },
         {
           $set: updateData,
-          $setOnInsert: { id: item.id, createdAt: item.id === 'kala-bihari-story-premium-t-shirt' ? new Date('2020-01-01') : new Date() },
+          $setOnInsert: {
+            id: item.id,
+            createdAt:
+              item.id === 'ai-data-science-polo-t-shirt'
+                ? new Date('2019-01-01')
+                : item.id === 'kala-bihari-story-premium-t-shirt'
+                  ? new Date('2020-01-01')
+                  : new Date(),
+          },
         },
         { upsert: true }
       )

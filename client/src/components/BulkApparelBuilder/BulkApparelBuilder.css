@@ -130,6 +130,32 @@
   }
 }
 
+@media (max-width: 640px) {
+  .kala-bulk-section {
+    padding: 1.5rem 0.5rem 2rem;
+  }
+
+  .kala-bulk-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .kala-bulk-main-heading {
+    font-size: clamp(1.35rem, 5.5vw, 1.85rem);
+    margin-bottom: 0.35rem;
+  }
+
+  .kala-bulk-subtitle {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .kala-bulk-builder-card {
+    padding: 0.75rem;
+    border-radius: 12px;
+    gap: 1rem;
+  }
+}
+
 /* ==========================================================================
    LEFT COLUMN: LIVE PRODUCT PREVIEW
    ========================================================================== */
@@ -152,6 +178,13 @@
   min-height: 440px;
   box-sizing: border-box;
   overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .kala-bulk-preview-card {
+    min-height: 290px;
+    padding: 0.75rem;
+  }
 }
 
 .kala-bulk-preview-arrow {
@@ -1518,7 +1551,8 @@
 
 @media (max-width: 640px) {
   .kala-bulk-contact-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.45rem;
   }
 }
 

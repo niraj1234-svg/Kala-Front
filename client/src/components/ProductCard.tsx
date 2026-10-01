@@ -109,7 +109,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             ref={imageRef}
             src={displayedImage}
             alt={`${product.name}${selectedVariant ? ` - ${selectedVariant.colorName}` : ''}`}
-            className={`kala-product-image ${isFading ? 'is-fading' : ''}`}
+            className={`kala-product-image ${isFading ? 'is-fading' : ''} ${product.id === 'ai-data-science-polo-t-shirt' ? 'contain-mockup' : ''}`}
             loading="lazy"
           />
           <ProductRatingBadge productId={product.id} productName={product.name} />

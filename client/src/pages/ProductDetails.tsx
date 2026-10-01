@@ -32,7 +32,7 @@ export const ProductDetails: React.FC = () => {
   const [searchParams] = useSearchParams()
   const initialColorParam = searchParams.get('color')
   const navigate = useNavigate()
-  const { addToCart } = useCart()
+  const { addMultipleToCart } = useCart()
   const { isInWishlist, toggleWishlist } = useWishlist()
   const { isAuthenticated } = useAuth()
 
@@ -77,8 +77,21 @@ export const ProductDetails: React.FC = () => {
     }
     return p?.image || ''
   })
-  const [selectedSize, setSelectedSize] = useState<string | null>(null)
-  const [quantity, setQuantity] = useState<number>(1)
+  // Multi-size breakdown quantities matching the 2nd reference image (S, M, L, XL, XXL)
+  const [sizeQuantities, setSizeQuantities] = useState<Record<string, number>>({
+    S: 1,
+    M: 0,
+    L: 0,
+    XL: 0,
+    XXL: 0,
+  })
+  const [sizeInputs, setSizeInputs] = useState<Record<string, string>>({
+    S: '1',
+    M: '0',
+    L: '0',
+    XL: '0',
+    XXL: '0',
+  })
   const [sizeError, setSizeError] = useState<string>('')
   const [addedNotification, setAddedNotification] = useState<boolean>(false)
   const [shareFeedback, setShareFeedback] = useState<string>('')
@@ -87,6 +100,9 @@ export const ProductDetails: React.FC = () => {
   // Scroll to top and fetch fresh product data on route change
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    setSizeQuantities({ S: 1, M: 0, L: 0, XL: 0, XXL: 0 })
+    setSizeInputs({ S: '1', M: '0', L: '0', XL: '0', XXL: '0' })
+    setSizeError('')
     if (!id) return
     let isMounted = true
 
@@ -157,12 +173,21 @@ export const ProductDetails: React.FC = () => {
     ? product.images
     : product.id === 'kala-bihari-story-premium-t-shirt'
       ? [product.image, getProductImage('kala-bihari-story-back.png')].filter(Boolean)
-      : [product.image].filter(Boolean)
+      : product.id === 'ai-data-science-polo-t-shirt'
+        ? [getProductImage('ai-data-science-polo-front.png'), getProductImage('ai-data-science-polo-back.png')].filter(Boolean)
+        : [product.image].filter(Boolean)
 
   const highlights = getProductHighlights(product)
   const isWishlisted = isInWishlist(product.id)
 
-  const currentImgIndex = galleryImages.indexOf(activeImage || product.image)
+  const currentImgIndex = Math.max(
+    0,
+    galleryImages.findIndex(
+      (img) =>
+        img === (activeImage || product.image) ||
+        (Boolean(img) && Boolean(activeImage) && (img.endsWith(activeImage) || activeImage.endsWith(img)))
+    )
+  )
   const safeImgIndex = currentImgIndex >= 0 ? currentImgIndex : 0
 
   // Detect whether current view is Front or Back
@@ -242,13 +267,77 @@ export const ProductDetails: React.FC = () => {
 
   const hasExpandableDescription = product.description.trim() !== shortDescription.trim()
 
-  // Handle Quantity adjustments
-  const handleIncreaseQty = () => {
-    setQuantity((prev) => Math.min(prev + 1, 10))
+  // Total Quantity across all sizes & total price
+  const totalQuantity = AVAILABLE_SIZES.reduce(
+    (sum, size) => sum + (sizeQuantities[size] || 0),
+    0
+  )
+  const totalPrice = totalQuantity * displayPrice
+
+  // Handle Multi-Size Quantity adjustments (Infinite max quantity & direct typed input)
+  const handleIncreaseSizeQty = (size: string) => {
+    setSizeQuantities((prev) => {
+      const current = prev[size] || 0
+      const next = current + 1
+      setSizeInputs((inputs) => ({ ...inputs, [size]: String(next) }))
+      return { ...prev, [size]: next }
+    })
+    if (sizeError) setSizeError('')
   }
 
-  const handleDecreaseQty = () => {
-    setQuantity((prev) => Math.max(prev - 1, 1))
+  const handleDecreaseSizeQty = (size: string) => {
+    setSizeQuantities((prev) => {
+      const current = prev[size] || 0
+      const next = Math.max(0, current - 1)
+      setSizeInputs((inputs) => ({ ...inputs, [size]: String(next) }))
+      return { ...prev, [size]: next }
+    })
+  }
+
+  const handleSizeInputChange = (size: string, rawVal: string) => {
+    const digitsOnly = rawVal.replace(/\D/g, '')
+    setSizeInputs((prev) => ({ ...prev, [size]: digitsOnly }))
+    if (digitsOnly !== '') {
+      const parsed = parseInt(digitsOnly, 10)
+      setSizeQuantities((prev) => ({ ...prev, [size]: parsed }))
+      if (sizeError) setSizeError('')
+    } else {
+      setSizeQuantities((prev) => ({ ...prev, [size]: 0 }))
+    }
+  }
+
+  const handleSizeInputBlur = (size: string) => {
+    const rawVal = sizeInputs[size]
+    if (!rawVal || isNaN(parseInt(rawVal, 10))) {
+      const fallback = sizeQuantities[size] || 0
+      setSizeInputs((prev) => ({ ...prev, [size]: String(fallback) }))
+    } else {
+      const parsed = parseInt(rawVal, 10)
+      setSizeQuantities((prev) => ({ ...prev, [size]: parsed }))
+      setSizeInputs((prev) => ({ ...prev, [size]: String(parsed) }))
+    }
+  }
+
+  const handleCardClick = (size: string, e: React.MouseEvent) => {
+    const targetTag = (e.target as HTMLElement).tagName
+    if (targetTag === 'INPUT' || targetTag === 'BUTTON') return
+
+    if (totalQuantity <= 1) {
+      // 1-click size switch for single item purchase
+      const nextQty: Record<string, number> = { S: 0, M: 0, L: 0, XL: 0, XXL: 0 }
+      const nextInputs: Record<string, string> = { S: '0', M: '0', L: '0', XL: '0', XXL: '0' }
+      nextQty[size] = 1
+      nextInputs[size] = '1'
+      setSizeQuantities(nextQty)
+      setSizeInputs(nextInputs)
+    } else {
+      // Multi-size builder: if size is 0, activate with 1
+      if ((sizeQuantities[size] || 0) === 0) {
+        setSizeQuantities((prev) => ({ ...prev, [size]: 1 }))
+        setSizeInputs((prev) => ({ ...prev, [size]: '1' }))
+      }
+    }
+    if (sizeError) setSizeError('')
   }
 
   // Build customization payload with normalized coordinates and font sizes
@@ -284,8 +373,13 @@ export const ProductDetails: React.FC = () => {
 
   // Handle Buy Now
   const handleBuyNow = () => {
-    if (!selectedSize) {
-      setSizeError('Please select a size')
+    const selectedEntries = AVAILABLE_SIZES.map((size) => ({
+      size,
+      quantity: sizeQuantities[size] || 0,
+    })).filter((entry) => entry.quantity > 0)
+
+    if (selectedEntries.length === 0) {
+      setSizeError('Please select quantity for at least one size')
       return
     }
 
@@ -296,7 +390,14 @@ export const ProductDetails: React.FC = () => {
     }
     const customizationData = buildCustomizationPayload()
 
-    addToCart(cartProduct, selectedSize, quantity, customizationData as any)
+    const itemsToAdd = selectedEntries.map((entry) => ({
+      product: cartProduct,
+      size: entry.size,
+      quantity: entry.quantity,
+      customization: customizationData as any,
+    }))
+
+    addMultipleToCart(itemsToAdd)
 
     if (!isAuthenticated) {
       navigate('/account?redirect=/checkout&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.')
@@ -308,8 +409,13 @@ export const ProductDetails: React.FC = () => {
 
   // Handle Add to Cart
   const handleAddToCart = () => {
-    if (!selectedSize) {
-      setSizeError('Please select a size')
+    const selectedEntries = AVAILABLE_SIZES.map((size) => ({
+      size,
+      quantity: sizeQuantities[size] || 0,
+    })).filter((entry) => entry.quantity > 0)
+
+    if (selectedEntries.length === 0) {
+      setSizeError('Please select quantity for at least one size')
       return
     }
 
@@ -320,24 +426,24 @@ export const ProductDetails: React.FC = () => {
     }
     const customizationData = buildCustomizationPayload()
 
-    addToCart(cartProduct, selectedSize, quantity, customizationData as any)
+    const itemsToAdd = selectedEntries.map((entry) => ({
+      product: cartProduct,
+      size: entry.size,
+      quantity: entry.quantity,
+      customization: customizationData as any,
+    }))
+
+    addMultipleToCart(itemsToAdd)
     setAddedNotification(true)
 
     setTimeout(() => {
       setAddedNotification(false)
-    }, 3000)
+    }, 3500)
   }
 
   const handleColorSelect = (variant: ProductColorVariant) => {
     setSelectedVariant(variant)
     setActiveImage(variant.image)
-  }
-
-  const handleSizeSelect = (size: string) => {
-    setSelectedSize(size)
-    if (sizeError) {
-      setSizeError('')
-    }
   }
 
   // Handle Share action
@@ -377,9 +483,49 @@ export const ProductDetails: React.FC = () => {
         <div className="kala-details-gallery">
           <div className="kala-details-main-image-card" ref={previewCardRef}>
             {/* View Indicator Badge on Preview */}
-            <div className="kala-preview-view-badge" aria-label={`Currently viewing ${isBackView ? 'Back' : 'Front'} side`}>
-              {isBackView ? 'BACK VIEW' : 'FRONT VIEW'}
-            </div>
+            {galleryImages.length > 1 && (
+              <div className="kala-preview-view-badge" aria-label={`Currently viewing ${isBackView ? 'Back' : 'Front'} side`}>
+                {isBackView ? 'BACK VIEW' : 'FRONT VIEW'}
+              </div>
+            )}
+
+            {/* Side Navigation Arrow: Previous (Front) */}
+            {galleryImages.length > 1 && currentImgIndex > 0 && (
+              <button
+                type="button"
+                className="kala-preview-side-arrow prev"
+                onClick={() => {
+                  const prevIdx = currentImgIndex - 1
+                  if (galleryImages[prevIdx]) {
+                    setActiveImage(galleryImages[prevIdx])
+                  }
+                }}
+                aria-label="View front of product"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+            )}
+
+            {/* Side Navigation Arrow: Next (Back) */}
+            {galleryImages.length > 1 && currentImgIndex < galleryImages.length - 1 && (
+              <button
+                type="button"
+                className="kala-preview-side-arrow next"
+                onClick={() => {
+                  const nextIdx = currentImgIndex + 1
+                  if (galleryImages[nextIdx]) {
+                    setActiveImage(galleryImages[nextIdx])
+                  }
+                }}
+                aria-label="View back of product"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            )}
 
             {/* Main T-Shirt Image */}
             <img
@@ -569,56 +715,105 @@ export const ProductDetails: React.FC = () => {
             </div>
           )}
 
-          {/* Size Selector - Explicit horizontal layout with compact rectangular buttons */}
-          <div className="kala-details-size-section kala-size-section">
+          {/* ====================================================================
+              Multi-Size Quantity Breakdown Matrix (Reference: 2nd Image)
+              Each size has its own independent quantity stepper with infinite max
+              and direct typed input support.
+              ==================================================================== */}
+          <div className="kala-size-breakdown-section">
             <div className="kala-size-label-row">
-              <span className="kala-section-label">Select Size</span>
+              <span className="kala-section-label">Select Size & Quantity</span>
               {sizeError && <span className="kala-size-error-msg">{sizeError}</span>}
             </div>
-            <div className="kala-size-options kala-size-grid" role="radiogroup" aria-label="Select size">
+
+            <div className="kala-size-cards-grid" role="group" aria-label="Select quantity for each size">
               {AVAILABLE_SIZES.map((size) => {
-                const isSelected = selectedSize === size
+                const qty = sizeQuantities[size] || 0
+                const inputValue = sizeInputs[size] !== undefined ? sizeInputs[size] : String(qty)
+                const isSelected = qty > 0
+
                 return (
-                  <button
+                  <div
                     key={size}
-                    type="button"
-                    role="radio"
-                    aria-checked={isSelected}
-                    className={`kala-size-btn ${isSelected ? 'active' : ''}`}
-                    onClick={() => handleSizeSelect(size)}
+                    className={`kala-size-card ${isSelected ? 'has-qty' : 'is-zero'}`}
+                    onClick={(e) => handleCardClick(size, e)}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`Size ${size}, ${qty} pieces selected`}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        if (
+                          (e.target as HTMLElement).tagName !== 'INPUT' &&
+                          (e.target as HTMLElement).tagName !== 'BUTTON'
+                        ) {
+                          e.preventDefault()
+                          handleCardClick(size, e as any)
+                        }
+                      }
+                    }}
                   >
-                    {size}
-                  </button>
+                    <div className="kala-size-card-header">
+                      <span className="kala-size-card-name">{size}</span>
+                    </div>
+
+                    <div className="kala-size-card-pcs">
+                      {qty} pcs
+                    </div>
+
+                    <div
+                      className="kala-size-card-stepper"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        type="button"
+                        className="kala-size-card-btn minus"
+                        onClick={() => handleDecreaseSizeQty(size)}
+                        disabled={qty <= 0}
+                        aria-label={`Decrease ${size} quantity`}
+                      >
+                        −
+                      </button>
+
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        className="kala-size-card-input"
+                        value={inputValue}
+                        onChange={(e) => handleSizeInputChange(size, e.target.value)}
+                        onBlur={() => handleSizeInputBlur(size)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            ;(e.target as HTMLInputElement).blur()
+                          }
+                        }}
+                        aria-label={`Quantity for size ${size}`}
+                      />
+
+                      <button
+                        type="button"
+                        className="kala-size-card-btn plus"
+                        onClick={() => handleIncreaseSizeQty(size)}
+                        aria-label={`Increase ${size} quantity`}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
                 )
               })}
             </div>
-          </div>
 
-          {/* Quantity Selector - Explicit horizontal controls */}
-          <div className="kala-details-qty-section kala-qty-section">
-            <span className="kala-section-label">Quantity</span>
-            <div className="kala-qty-controls kala-qty-stepper">
-              <button
-                type="button"
-                className="kala-qty-btn"
-                onClick={handleDecreaseQty}
-                disabled={quantity <= 1}
-                aria-label="Decrease quantity"
-              >
-                −
-              </button>
-              <span className="kala-qty-value" aria-live="polite">
-                {quantity}
-              </span>
-              <button
-                type="button"
-                className="kala-qty-btn"
-                onClick={handleIncreaseQty}
-                disabled={quantity >= 10}
-                aria-label="Increase quantity"
-              >
-                +
-              </button>
+            {/* Total Quantity & Total Price Snapshot */}
+            <div className="kala-size-qty-summary">
+              <div className="kala-summary-pill">
+                <span>Total Quantity:</span>
+                <strong>{totalQuantity} pcs</strong>
+              </div>
+              <div className="kala-summary-pill">
+                <span>Total Price:</span>
+                <strong>₹{totalPrice.toLocaleString('en-IN')}</strong>
+              </div>
             </div>
           </div>
 
@@ -630,7 +825,7 @@ export const ProductDetails: React.FC = () => {
               onClick={handleBuyNow}
               disabled={!product.available}
             >
-              {product.available ? 'BUY NOW' : 'OUT OF STOCK'}
+              {product.available ? (totalQuantity > 1 ? `BUY NOW (${totalQuantity} PCS)` : 'BUY NOW') : 'OUT OF STOCK'}
             </button>
             <button
               type="button"
@@ -638,14 +833,18 @@ export const ProductDetails: React.FC = () => {
               onClick={handleAddToCart}
               disabled={!product.available}
             >
-              ADD TO CART
+              {totalQuantity > 1 ? `ADD TO CART (${totalQuantity} PCS)` : 'ADD TO CART'}
             </button>
           </div>
 
           {/* Feedback Notifications */}
           {addedNotification && (
             <div className="kala-notification-toast success animate-fadeIn" role="status">
-              ✓ Added {quantity} × {product.name} ({selectedSize}) to cart!
+              ✓ Added {totalQuantity} {totalQuantity === 1 ? 'item' : 'items'} to cart! (
+              {AVAILABLE_SIZES.filter((s) => (sizeQuantities[s] || 0) > 0)
+                .map((s) => `${s}: ${sizeQuantities[s]}`)
+                .join(', ')}
+              )
             </div>
           )}
 

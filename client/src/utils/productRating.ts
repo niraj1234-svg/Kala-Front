@@ -13,49 +13,59 @@ export interface ProductRatingMetric {
 
 // Stable deterministic mappings matching reference designs & catalog
 const PRODUCT_METRIC_MAP: Record<string, ProductRatingMetric> = {
-  // Streetwear
-  'streetwear-oversized-acid-tee': { rating: 4, purchaseCount: '4.6k' },
-  'streetwear-heavyweight-hoodie-onyx': { rating: 4, purchaseCount: '3.2k' },
-  'streetwear-tactical-cargo-pant': { rating: 4, purchaseCount: '5.1k' },
-  'streetwear-vintage-wash-tee': { rating: 4, purchaseCount: '2.8k' },
-  'streetwear-monochrome-sweatshirt': { rating: 4, purchaseCount: '4.1k' },
-  'streetwear-distressed-urban-tee': { rating: 4, purchaseCount: '3.7k' },
+  // AI & Data Science Polo T-Shirt (User specified: only buyers 60 and 5 stars)
+  'ai-data-science-polo-t-shirt': { rating: 5, purchaseCount: '60' },
 
-  // Gaming
-  'gaming-cyber-pro-jersey-01': { rating: 4, purchaseCount: '2.9k' },
-  'gaming-stealth-tactical-hoodie-02': { rating: 4, purchaseCount: '6.3k' },
-  'gaming-neon-overload-tee-03': { rating: 4, purchaseCount: '3.5k' },
-  'gaming-pro-arena-warmup-04': { rating: 4, purchaseCount: '4.8k' },
-  'gaming-shadow-spec-ops-tee-05': { rating: 4, purchaseCount: '2.4k' },
+  // KALA Bihari Story Premium T-Shirt
+  'kala-bihari-story-premium-t-shirt': { rating: 4.8, purchaseCount: '92' },
 
-  // Gymwear
-  'gymwear-performance-compression-tee-01': { rating: 4, purchaseCount: '5.2k' },
-  'gymwear-seamless-muscle-tank-02': { rating: 4, purchaseCount: '3.8k' },
-  'gymwear-tapered-jogger-03': { rating: 4, purchaseCount: '4.4k' },
-  'gymwear-endurance-dryfit-tee-04': { rating: 4, purchaseCount: '3.1k' },
-  'gymwear-oversized-pump-cover-05': { rating: 4, purchaseCount: '4.9k' },
-  'gymwear-dynamic-stretch-shorts-06': { rating: 4, purchaseCount: '2.8k' },
-  'gymwear-athletic-shorts-06': { rating: 4, purchaseCount: '2.7k' },
-  'gymwear-stringer-vest-07': { rating: 4, purchaseCount: '3.6k' },
-  'gymwear-power-lifting-tee-08': { rating: 4, purchaseCount: '4.3k' },
-  'gymwear-runner-windbreaker-09': { rating: 4, purchaseCount: '5.0k' },
+  // Streetwear (buyers strictly below 100, ratings between 3.9 and 5.0)
+  'streetwear-oversized-acid-tee': { rating: 4.5, purchaseCount: '78' },
+  'streetwear-heavyweight-hoodie-onyx': { rating: 4.7, purchaseCount: '64' },
+  'streetwear-tactical-cargo-pant': { rating: 4.3, purchaseCount: '85' },
+  'streetwear-vintage-wash-tee': { rating: 4.1, purchaseCount: '52' },
+  'streetwear-monochrome-sweatshirt': { rating: 4.6, purchaseCount: '89' },
+  'streetwear-distressed-urban-tee': { rating: 4.4, purchaseCount: '73' },
+
+  // Gaming (buyers strictly below 100, ratings between 3.9 and 5.0)
+  'gaming-cyber-pro-jersey-01': { rating: 4.6, purchaseCount: '67' },
+  'gaming-stealth-tactical-hoodie-02': { rating: 4.8, purchaseCount: '94' },
+  'gaming-neon-overload-tee-03': { rating: 4.2, purchaseCount: '58' },
+  'gaming-pro-arena-warmup-04': { rating: 4.7, purchaseCount: '81' },
+  'gaming-shadow-spec-ops-tee-05': { rating: 3.9, purchaseCount: '46' },
+
+  // Gymwear (buyers strictly below 100, ratings between 3.9 and 5.0)
+  'gymwear-performance-compression-tee-01': { rating: 4.8, purchaseCount: '87' },
+  'gymwear-seamless-muscle-tank-02': { rating: 4.3, purchaseCount: '69' },
+  'gymwear-tapered-jogger-03': { rating: 4.5, purchaseCount: '74' },
+  'gymwear-endurance-dryfit-tee-04': { rating: 4.1, purchaseCount: '55' },
+  'gymwear-oversized-pump-cover-05': { rating: 4.9, purchaseCount: '96' },
+  'gymwear-dynamic-stretch-shorts-06': { rating: 4.4, purchaseCount: '63' },
+  'gymwear-athletic-shorts-06': { rating: 4.0, purchaseCount: '51' },
+  'gymwear-stringer-vest-07': { rating: 4.2, purchaseCount: '70' },
+  'gymwear-power-lifting-tee-08': { rating: 4.7, purchaseCount: '83' },
+  'gymwear-runner-windbreaker-09': { rating: 4.5, purchaseCount: '90' },
 }
 
 const DETERMINISTIC_PURCHASE_COUNTS = [
-  '4.6k',
-  '3.2k',
-  '5.1k',
-  '2.8k',
-  '4.1k',
-  '3.7k',
-  '2.9k',
-  '6.3k',
-  '3.5k',
-  '4.8k',
-  '5.4k',
-  '3.9k',
-  '4.2k',
-  '5.8k',
+  '78',
+  '64',
+  '85',
+  '52',
+  '89',
+  '73',
+  '67',
+  '94',
+  '58',
+  '81',
+  '46',
+  '87',
+  '69',
+  '74',
+  '55',
+  '96',
+  '63',
+  '90',
 ]
 
 /**
@@ -68,60 +78,51 @@ export function getProductRatingInfo(
   realRating?: number,
   realReviews?: number
 ): ProductRatingMetric {
+  const idKey = (productId || '').toLowerCase().trim()
+  const nameKey = (productName || '').toLowerCase().trim()
+
+  // SPECIAL EXPLICIT RULE: The user-provided AI & Data Science Polo T-Shirt always has 5 stars and 60 buyers
+  if (
+    idKey === 'ai-data-science-polo-t-shirt' ||
+    nameKey.includes('ai & data science') ||
+    nameKey.includes('data science polo')
+  ) {
+    return {
+      rating: 5,
+      purchaseCount: '60',
+    }
+  }
+
   // If real rating & reviews exist from backend in future, use them directly
   if (typeof realRating === 'number' && typeof realReviews === 'number' && realReviews > 0) {
-    const compactCount =
-      realReviews >= 1000 ? `${(realReviews / 1000).toFixed(1)}k` : `${realReviews}`
+    const clampedRating = Math.max(3.9, Math.min(5, +realRating.toFixed(1)))
+    const compactCount = String(Math.min(99, Math.max(1, realReviews)))
     return {
-      rating: Math.round(realRating) || 4,
+      rating: clampedRating,
       purchaseCount: compactCount,
     }
   }
 
-  const idKey = (productId || '').toLowerCase().trim()
-
-  // 1. Direct ID lookup
+  // 1. Direct ID lookup in authoritative metric map
   if (idKey && PRODUCT_METRIC_MAP[idKey]) {
     return PRODUCT_METRIC_MAP[idKey]
   }
 
-  // 2. Keyword matching on name for items matching visual references
-  const nameKey = (productName || '').toLowerCase()
-  if (nameKey.includes('striped') || nameKey.includes('acid-wash')) {
-    return { rating: 4, purchaseCount: '4.6k' }
-  }
-  if (nameKey.includes('good things') || nameKey.includes('boxy hoodie')) {
-    return { rating: 4, purchaseCount: '3.2k' }
-  }
-  if (nameKey.includes('minimal') || nameKey.includes('cargo')) {
-    return { rating: 4, purchaseCount: '5.1k' }
-  }
-  if (nameKey.includes('discipline') || nameKey.includes('vintage')) {
-    return { rating: 4, purchaseCount: '2.8k' }
-  }
-  if (nameKey.includes('same people') || nameKey.includes('crewneck')) {
-    return { rating: 4, purchaseCount: '4.1k' }
-  }
-  if (nameKey.includes('performance') || nameKey.includes('distressed')) {
-    return { rating: 4, purchaseCount: '3.7k' }
-  }
-  if (nameKey.includes('urban drift') || nameKey.includes('cyber')) {
-    return { rating: 4, purchaseCount: '2.9k' }
-  }
-  if (nameKey.includes('essential hoodie') || nameKey.includes('stealth')) {
-    return { rating: 4, purchaseCount: '6.3k' }
-  }
-
-  // 3. Fallback deterministic hash algorithm based on product ID / name string
+  // 2. Fallback deterministic hash algorithm based on product ID / name string
+  // Generates ratings between 3.9 and 5.0 and buyers strictly below 100
   const str = idKey || nameKey || 'kala-product'
   let hash = 0
   for (let i = 0; i < str.length; i++) {
     hash = (hash << 5) - hash + str.charCodeAt(i)
     hash |= 0
   }
-  const index = Math.abs(hash) % DETERMINISTIC_PURCHASE_COUNTS.length
+  const absHash = Math.abs(hash)
+  const ratingSpread = [3.9, 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5.0]
+  const randomRating = ratingSpread[absHash % ratingSpread.length]
+  const randomBuyers = DETERMINISTIC_PURCHASE_COUNTS[absHash % DETERMINISTIC_PURCHASE_COUNTS.length]
+
   return {
-    rating: 4,
-    purchaseCount: DETERMINISTIC_PURCHASE_COUNTS[index],
+    rating: randomRating,
+    purchaseCount: randomBuyers,
   }
 }

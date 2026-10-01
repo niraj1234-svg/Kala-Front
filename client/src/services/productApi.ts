@@ -24,6 +24,11 @@ function normalizeApiProduct(p: any): Product {
       }
       return getProductImage(f)
     })
+  } else if (p.id === 'ai-data-science-polo-t-shirt') {
+    resolvedImages = [
+      getProductImage('ai-data-science-polo-front.png'),
+      getProductImage('ai-data-science-polo-back.png'),
+    ]
   }
 
   let resolvedVariants = undefined
@@ -64,6 +69,19 @@ function normalizeApiProduct(p: any): Product {
     description: p.description,
     available: p.available ?? true,
     variants: resolvedVariants,
+    highlights:
+      Array.isArray(p.highlights) && p.highlights.length > 0
+        ? p.highlights
+        : p.id === 'ai-data-science-polo-t-shirt'
+          ? [
+              { label: 'Collar', value: 'Polo collar' },
+              { label: 'Placket', value: '2-button front placket' },
+              { label: 'Color', value: 'Light grey' },
+              { label: 'Front Print', value: 'Front chest university logo' },
+              { label: 'Back Print', value: 'Large AI & Data Science back print' },
+              { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+            ]
+          : undefined,
     customPrintTextEnabled: p.customPrintTextEnabled ?? (p.id === 'kala-bihari-story-premium-t-shirt'),
     customPrintTextPrice: p.customPrintTextPrice ?? 25,
   }
@@ -102,8 +120,10 @@ export async function fetchProducts(category?: string): Promise<Product[]> {
         )
         .map(normalizeApiProduct)
 
-      // Ensure KALA Bihari Story Premium T-Shirt is always the FIRST product
+      // Ensure AI & Data Science Polo T-Shirt is always the FIRST product, followed by KALA Bihari Story Premium T-Shirt
       return normalized.sort((a: Product, b: Product) => {
+        if (a.id === 'ai-data-science-polo-t-shirt') return -1
+        if (b.id === 'ai-data-science-polo-t-shirt') return 1
         if (a.id === 'kala-bihari-story-premium-t-shirt') return -1
         if (b.id === 'kala-bihari-story-premium-t-shirt') return 1
         return 0

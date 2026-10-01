@@ -4,13 +4,13 @@ import logoImg from '../assets/logo.png'
 import '../styles/Footer.css'
 
 export const Footer: React.FC = () => {
-  // Mobile accordion state for collapsible sections
+  // Mobile accordion state for collapsible sections (collapsed by default to prevent mobile text bloat)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    shop: true, // Default open for mobile discovery
+    shop: false,
     custom: false,
     business: false,
-    services: true,
-    support: true,
+    services: false,
+    support: false,
     social: false,
   })
 

@@ -29,11 +29,11 @@
   --kala-font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   --kala-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Font Sizes (Responsive clamp scale) */
-  --kala-fs-display: clamp(2.5rem, 5vw + 1rem, 4.5rem);       /* Hero / Display */
-  --kala-fs-h1: clamp(2rem, 3.5vw + 0.5rem, 3rem);            /* H1 Section Titles */
-  --kala-fs-h2: clamp(1.5rem, 2.2vw + 0.25rem, 2.25rem);      /* H2 Feature Titles */
-  --kala-fs-h3: clamp(1.2rem, 1.4vw + 0.2rem, 1.5rem);        /* H3 Card / Sub-headings */
+  /* Font Sizes (Responsive clamp scale - refined for seamless mobile & desktop scaling) */
+  --kala-fs-display: clamp(1.75rem, 4.5vw + 0.5rem, 4rem);     /* Hero / Display */
+  --kala-fs-h1: clamp(1.4rem, 3vw + 0.35rem, 2.75rem);         /* H1 Section Titles */
+  --kala-fs-h2: clamp(1.15rem, 2vw + 0.2rem, 2rem);            /* H2 Feature Titles */
+  --kala-fs-h3: clamp(1.02rem, 1.2vw + 0.15rem, 1.35rem);      /* H3 Card / Sub-headings */
   --kala-fs-body: 1rem;                                        /* Standard Paragraph */
   --kala-fs-small: 0.875rem;                                   /* Small / Caption */
   --kala-fs-label: 0.75rem;                                    /* Uppercase Badge / Meta */
@@ -52,8 +52,8 @@
 
   /* Layout Foundation */
   --kala-max-width: 1400px;
-  --kala-page-padding: clamp(0.85rem, 3.5vw, 3.5rem);
-  --kala-section-spacing: clamp(2.5rem, 5vw, 6.5rem);
+  --kala-page-padding: clamp(0.75rem, 3.2vw, 3.5rem);
+  --kala-section-spacing: clamp(2rem, 4.5vw, 5.5rem);
 
   /* Spacing Scale */
   --kala-space-xs: 0.25rem;   /* 4px */

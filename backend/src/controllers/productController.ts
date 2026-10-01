@@ -14,6 +14,8 @@ export const getProducts = async (req: Request, res: Response) => {
 
     const rawProducts = await Product.find(filter).sort({ createdAt: 1 })
     const products = rawProducts.sort((a, b) => {
+      if (a.id === 'ai-data-science-polo-t-shirt') return -1
+      if (b.id === 'ai-data-science-polo-t-shirt') return 1
       if (a.id === 'kala-bihari-story-premium-t-shirt') return -1
       if (b.id === 'kala-bihari-story-premium-t-shirt') return 1
       return 0

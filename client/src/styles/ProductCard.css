@@ -42,6 +42,11 @@
   opacity: 1;
 }
 
+.kala-product-image.contain-mockup {
+  object-fit: contain;
+  padding: 0.5rem;
+}
+
 .kala-product-card:hover .kala-product-image {
   transform: scale(1.03);
 }

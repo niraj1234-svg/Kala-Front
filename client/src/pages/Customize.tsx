@@ -424,7 +424,7 @@ export const Customize: React.FC = () => {
                   <button
                     type="button"
                     className="w-6 h-6 rounded border border-[#D1D5DB] bg-white text-xs font-bold hover:bg-[#F3F4F6]"
-                    onClick={() => setQuantity((q) => Math.min(10, q + 1))}
+                    onClick={() => setQuantity((q) => q + 1)}
                   >
                     +
                   </button>
