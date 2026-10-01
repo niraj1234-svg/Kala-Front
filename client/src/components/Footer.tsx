@@ -33,10 +33,6 @@ export const Footer: React.FC = () => {
           <p className="kala-footer-tagline">
             Minimal luxury apparel, authentic Indian streetwear, and custom digital tech services crafted for creators, teams, and brands.
           </p>
-          <div className="kala-footer-badge">
-            <span className="kala-footer-badge-dot" aria-hidden="true" />
-            <span>EST. 2026 • CRAFTED IN INDIA</span>
-          </div>
         </div>
 
         {/* 1. SHOP SECTION */}
