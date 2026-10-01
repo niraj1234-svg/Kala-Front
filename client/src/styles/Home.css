@@ -870,3 +870,150 @@
   }
 }
 
+/* --------------------------------------------------------------------------
+   HOMEPAGE DIGITAL SERVICES SECTION
+   -------------------------------------------------------------------------- */
+.kala-home-services-section {
+  padding: clamp(3rem, 5.5vw, 5rem) 0;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FBF9F5 100%);
+  border-top: 1px solid var(--kala-border);
+}
+
+.kala-home-services-container {
+  max-width: var(--kala-max-width);
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3.5vw, 3.5rem);
+}
+
+.kala-home-services-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.kala-home-services-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--kala-orange);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+  display: block;
+}
+
+.kala-home-services-title {
+  font-size: clamp(1.6rem, 2.5vw, 2.25rem);
+  font-weight: 900;
+  letter-spacing: var(--kala-ls-tight);
+  text-transform: uppercase;
+  color: var(--kala-black);
+}
+
+.kala-home-services-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--kala-black);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color var(--kala-transition-fast);
+}
+
+.kala-home-services-view-all:hover {
+  color: var(--kala-orange);
+}
+
+.kala-home-services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 960px) {
+  .kala-home-services-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kala-home-service-card {
+  background: #FFFFFF;
+  border: 1px solid var(--kala-border);
+  border-radius: 8px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: var(--kala-black);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+}
+
+.kala-home-service-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(217, 71, 0, 0.5);
+  box-shadow: 0 14px 30px rgba(217, 71, 0, 0.08);
+}
+
+.kala-home-service-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.kala-home-service-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(217, 71, 0, 0.08);
+  color: var(--kala-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-home-service-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: #111111;
+  color: #FFFFFF;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.kala-home-service-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: var(--kala-black);
+}
+
+.kala-home-service-desc {
+  font-size: 0.88rem;
+  color: var(--kala-text-secondary);
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+  flex-grow: 1;
+}
+
+.kala-home-service-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid var(--kala-border);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kala-orange);
+}
+

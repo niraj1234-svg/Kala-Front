@@ -9,6 +9,7 @@ export const Footer: React.FC = () => {
     shop: true, // Default open for mobile discovery
     custom: false,
     business: false,
+    services: true,
     support: true,
     social: false,
   })
@@ -30,7 +31,7 @@ export const Footer: React.FC = () => {
             <span className="kala-footer-logo-text">KALA</span>
           </Link>
           <p className="kala-footer-tagline">
-            Minimal luxury apparel, authentic Indian streetwear, and custom embroidery crafted for creators, teams, and brands.
+            Minimal luxury apparel, authentic Indian streetwear, and custom digital tech services crafted for creators, teams, and brands.
           </p>
           <div className="kala-footer-badge">
             <span className="kala-footer-badge-dot" aria-hidden="true" />
@@ -67,28 +68,31 @@ export const Footer: React.FC = () => {
           </ul>
         </div>
 
-        {/* 2. CUSTOM APPAREL SECTION */}
-        <div className={`kala-footer-nav-col ${openSections.custom ? 'is-open' : ''}`}>
+        {/* 2. SERVICES SECTION (Web Dev, App Dev, WhatsApp Bot) */}
+        <div className={`kala-footer-nav-col ${openSections.services ? 'is-open' : ''}`}>
           <button
             type="button"
             className="kala-footer-heading-btn"
-            onClick={() => toggleSection('custom')}
-            aria-expanded={openSections.custom}
+            onClick={() => toggleSection('services')}
+            aria-expanded={openSections.services}
           >
-            <span className="kala-footer-heading">CUSTOM APPAREL</span>
+            <span className="kala-footer-heading">SERVICES</span>
             <span className="kala-footer-toggle-icon" aria-hidden="true">
-              {openSections.custom ? '−' : '+'}
+              {openSections.services ? '−' : '+'}
             </span>
           </button>
           <ul className="kala-footer-links">
             <li>
-              <Link to="/custom-apparel" className="kala-footer-link">Create Yours</Link>
+              <Link to="/services#web-dev" className="kala-footer-link">Web Development</Link>
             </li>
             <li>
-              <Link to="/custom-apparel" className="kala-footer-link">Custom T-Shirts</Link>
+              <Link to="/services#app-dev" className="kala-footer-link">App Development</Link>
             </li>
             <li>
-              <Link to="/custom-apparel" className="kala-footer-link">Embroidery & Printing</Link>
+              <Link to="/services#whatsapp-bot" className="kala-footer-link">WhatsApp Auto Reply Bot</Link>
+            </li>
+            <li>
+              <Link to="/services" className="kala-footer-link">Request Tech Quote</Link>
             </li>
           </ul>
         </div>

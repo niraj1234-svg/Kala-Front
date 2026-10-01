@@ -56,6 +56,9 @@ export const BusinessBranding: React.FC = () => {
     'Gym / Fitness Apparel',
     'Custom Packaging',
     'Full Brand Merchandise',
+    'Web Development',
+    'App Development',
+    'WhatsApp Auto Reply Bot',
     'Other',
   ]
 

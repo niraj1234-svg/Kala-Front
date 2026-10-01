@@ -279,7 +279,95 @@ export const Home: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          4. SERVICE / TRUST SECTION (Strictly 3 Core Guarantees)
+          4. DIGITAL & TECH SERVICES (Web Dev, App Dev, WhatsApp Bot)
+          ==================================================================== */}
+      <section className="kala-home-services-section" aria-labelledby="home-services-heading">
+        <div className="kala-home-services-container">
+          <div className="kala-home-services-header">
+            <div>
+              <span className="kala-home-services-eyebrow">TECH &amp; DIGITAL SOLUTIONS</span>
+              <h2 id="home-services-heading" className="kala-home-services-title">
+                SERVICES WE PROVIDE
+              </h2>
+            </div>
+            <Link to="/services" className="kala-home-services-view-all">
+              <span>EXPLORE ALL SERVICES</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </Link>
+          </div>
+
+          <div className="kala-home-services-grid">
+            {/* Card 1: Web Development */}
+            <Link to="/services#web-dev" className="kala-home-service-card">
+              <div className="kala-home-service-top">
+                <div className="kala-home-service-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  </svg>
+                </div>
+                <span className="kala-home-service-tag">FULL-STACK</span>
+              </div>
+              <h3 className="kala-home-service-name">Web Development</h3>
+              <p className="kala-home-service-desc">
+                High-performance websites, Next.js / React web applications, custom e-commerce stores &amp; dashboards.
+              </p>
+              <div className="kala-home-service-footer">
+                <span>EXPLORE &amp; INQUIRE</span>
+                <span aria-hidden="true">→</span>
+              </div>
+            </Link>
+
+            {/* Card 2: App Development */}
+            <Link to="/services#app-dev" className="kala-home-service-card">
+              <div className="kala-home-service-top">
+                <div className="kala-home-service-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                    <line x1="12" y1="18" x2="12.01" y2="18" />
+                  </svg>
+                </div>
+                <span className="kala-home-service-tag">IOS &amp; ANDROID</span>
+              </div>
+              <h3 className="kala-home-service-name">App Development</h3>
+              <p className="kala-home-service-desc">
+                Native and cross-platform mobile apps built with Flutter and React Native for fluid, intuitive UX.
+              </p>
+              <div className="kala-home-service-footer">
+                <span>EXPLORE &amp; INQUIRE</span>
+                <span aria-hidden="true">→</span>
+              </div>
+            </Link>
+
+            {/* Card 3: WhatsApp Auto Reply Bot */}
+            <Link to="/services#whatsapp-bot" className="kala-home-service-card">
+              <div className="kala-home-service-top">
+                <div className="kala-home-service-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                  </svg>
+                </div>
+                <span className="kala-home-service-tag">AI AUTOMATION</span>
+              </div>
+              <h3 className="kala-home-service-name">WhatsApp Auto Reply Bot</h3>
+              <p className="kala-home-service-desc">
+                24/7 automated inquiry responses, interactive sales flows, lead qualification &amp; WhatsApp Cloud API automation.
+              </p>
+              <div className="kala-home-service-footer">
+                <span>EXPLORE &amp; INQUIRE</span>
+                <span aria-hidden="true">→</span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          5. SERVICE / TRUST SECTION (Strictly 3 Core Guarantees)
           ==================================================================== */}
       <section className="kala-trust-bar-section" aria-label="Trust & Guarantees">
         <div className="kala-trust-bar-container">

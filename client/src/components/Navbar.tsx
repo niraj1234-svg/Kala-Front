@@ -15,6 +15,7 @@ const NAV_ROUTES: NavRoute[] = [
   { label: 'SHOP', to: '/shop' },
   { label: 'CUSTOM APPAREL', to: '/custom-apparel' },
   { label: 'BUSINESS BRANDING', to: '/business-branding' },
+  { label: 'SERVICES', to: '/services' },
   { label: 'ABOUT', to: '/about' },
 ]
 
