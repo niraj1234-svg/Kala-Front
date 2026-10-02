@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   type ApparelId,
   type ApparelColor,
@@ -6,6 +7,7 @@ import {
   type ApparelCustomizationState,
   type SizeKey,
   type SizeQuantities,
+  type UploadedApparelImage,
 } from './types'
 import { APPAREL_CONFIGS, DEFAULT_EMBLEM_URL } from './mockupAssets'
 import ApparelPreview from './ApparelPreview'
@@ -32,6 +34,7 @@ export const BulkApparelBuilder: React.FC = () => {
     XXL: 5,
   })
   const [requirement, setRequirement] = useState<string>('')
+  const [uploadedApparel, setUploadedApparel] = useState<UploadedApparelImage | null>(null)
 
   // 2. Independent Customization State per apparel & side
   const [customizationState, setCustomizationState] = useState<ApparelCustomizationState>({
@@ -185,6 +188,29 @@ export const BulkApparelBuilder: React.FC = () => {
     setTimeout(() => setNotification(null), 3500)
   }
 
+  // Handle customer's own apparel upload
+  const handleUploadApparel = (apparel: UploadedApparelImage) => {
+    setUploadedApparel({
+      ...apparel,
+      uploadedSide: selectedSide,
+    })
+    setNotification({
+      type: 'success',
+      message: `Your apparel "${apparel.fileName}" applied to live preview!`,
+    })
+    setTimeout(() => setNotification(null), 3500)
+  }
+
+  // Handle remove customer's uploaded apparel
+  const handleRemoveApparel = () => {
+    setUploadedApparel(null)
+    setNotification({
+      type: 'success',
+      message: 'Reverted to default KALA apparel mockup.',
+    })
+    setTimeout(() => setNotification(null), 3500)
+  }
+
   // Reset to default demo graphic
   const handleResetDefault = () => {
     setCustomizationState((prev) => ({
@@ -206,26 +232,39 @@ export const BulkApparelBuilder: React.FC = () => {
     <section className="kala-bulk-section" id="bulk-apparel-builder" aria-label="Create Custom Apparel for Bulk Orders">
       <div className="kala-bulk-container">
         {/* ====================================================================
-            HERO HEADER
+            PAGE HEADER (Compact, with Back to Shop and Trust Badges)
             ==================================================================== */}
-        <header className="kala-bulk-header">
-          {/* Small Eyebrow Badge */}
-          <div className="kala-bulk-eyebrow-wrap">
-            <span className="kala-bulk-eyebrow">
-              <span className="kala-bulk-dot" aria-hidden="true">●</span>
-              <span>KALA BUSINESS</span>
-            </span>
+        <header className="kala-dedicated-page-header">
+          <div className="kala-dedicated-top-nav">
+            <Link to="/shop" className="kala-back-to-shop-btn">
+              <span aria-hidden="true">←</span>
+              <span>BACK TO SHOP</span>
+            </Link>
           </div>
 
-          {/* Main Title */}
-          <h1 className="kala-bulk-main-heading">
-            CREATE CUSTOM APPAREL FOR <span className="kala-bulk-orange-text">BULK ORDERS</span>
-          </h1>
+          <div className="kala-dedicated-title-wrap">
+            <h1 className="kala-dedicated-main-title">
+              CREATE CUSTOM APPAREL
+            </h1>
+            <p className="kala-dedicated-subtitle">
+              Custom apparel for companies, colleges, events, gyms and sports teams.
+            </p>
+          </div>
 
-          {/* Subtitle */}
-          <p className="kala-bulk-subtitle">
-            Custom apparel for companies, colleges, events, gyms and sports teams.
-          </p>
+          <div className="kala-dedicated-trust-row" aria-label="KALA Custom Apparel Highlights">
+            <span className="kala-dedicated-trust-item">
+              <span className="dot">●</span>
+              <span>Premium Quality</span>
+            </span>
+            <span className="kala-dedicated-trust-item">
+              <span className="dot">●</span>
+              <span>Bulk Orders</span>
+            </span>
+            <span className="kala-dedicated-trust-item">
+              <span className="dot">●</span>
+              <span>Trusted by Teams</span>
+            </span>
+          </div>
         </header>
 
         {/* Global Notification Feedback */}
@@ -254,6 +293,7 @@ export const BulkApparelBuilder: React.FC = () => {
               selectedColor={selectedColor}
               selectedSide={selectedSide}
               customizationState={customizationState}
+              uploadedApparel={uploadedApparel}
               onSelectApparel={setSelectedApparel}
               onSelectColor={setSelectedColor}
               onSelectSide={setSelectedSide}
@@ -287,6 +327,9 @@ export const BulkApparelBuilder: React.FC = () => {
               currentArtworkUrl={currentSideData.artworkUrl}
               onUpload={handleUploadArtwork}
               onResetDefault={handleResetDefault}
+              uploadedApparel={uploadedApparel}
+              onUploadApparel={handleUploadApparel}
+              onRemoveApparel={handleRemoveApparel}
             />
 
             {/* Step 4: Design Preview & Adjust */}
@@ -319,7 +362,13 @@ export const BulkApparelBuilder: React.FC = () => {
               sizeBreakdownText={sizeBreakdownText}
               unitPrice={estimatedUnitPrice}
               estimatedTotal={estimatedTotal}
-              requirement={requirement}
+              requirement={
+                uploadedApparel
+                  ? `${requirement ? `${requirement}\n` : ''}[Customer Uploaded Apparel: ${uploadedApparel.fileName}]`
+                  : requirement
+              }
+              currentArtworkName={currentSideData.artworkName}
+              uploadedApparelFileName={uploadedApparel?.fileName}
             />
           </div>
         </div>

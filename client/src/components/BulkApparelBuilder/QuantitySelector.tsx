@@ -4,19 +4,17 @@ import { type SizeKey, type SizeQuantities } from './types'
 export const SIZES: SizeKey[] = ['S', 'M', 'L', 'XL', 'XXL']
 
 export const PRESET_OPTIONS = [
-  { label: '20 pcs', value: 20 },
-  { label: '50 pcs', value: 50 },
-  { label: '100 pcs', value: 100 },
-  { label: '250 pcs', value: 250 },
-  { label: '500+ pcs', value: 500 },
+  { label: '10 each', value: 50 },
+  { label: '25 each', value: 125 },
+  { label: '50 each', value: 250 },
+  { label: '100 each', value: 500 },
 ]
 
 export const PRESET_DISTRIBUTIONS: Record<number, SizeQuantities> = {
-  20: { S: 2, M: 7, L: 7, XL: 3, XXL: 1 },
-  50: { S: 5, M: 18, L: 18, XL: 7, XXL: 2 },
-  100: { S: 10, M: 35, L: 35, XL: 15, XXL: 5 },
-  250: { S: 25, M: 90, L: 90, XL: 35, XXL: 10 },
-  500: { S: 50, M: 175, L: 175, XL: 75, XXL: 25 },
+  50: { S: 10, M: 10, L: 10, XL: 10, XXL: 10 },
+  125: { S: 25, M: 25, L: 25, XL: 25, XXL: 25 },
+  250: { S: 50, M: 50, L: 50, XL: 50, XXL: 50 },
+  500: { S: 100, M: 100, L: 100, XL: 100, XXL: 100 },
 }
 
 interface QuantitySelectorProps {
@@ -67,11 +65,19 @@ export const QuantitySelector: React.FC<QuantitySelectorProps> = ({
       <div className="kala-bulk-size-grid" role="group" aria-label="Quantity for each size">
         {SIZES.map((sz) => {
           const count = sizeQuantities[sz] || 0
+          const subtotal = count * unitPrice
           return (
             <div key={sz} className={`kala-bulk-size-card ${count > 0 ? 'has-qty' : ''}`}>
               <div className="kala-bulk-size-header">
-                <span className="kala-bulk-size-label">{sz}</span>
-                <span className="kala-bulk-size-pcs">{count} pcs</span>
+                <div className="kala-bulk-size-title-row">
+                  <span className="kala-bulk-size-label">{sz}</span>
+                  <span className="kala-bulk-size-rate">₹{unitPrice}</span>
+                </div>
+                {count > 0 ? (
+                  <span className="kala-bulk-size-subtotal">₹{subtotal.toLocaleString('en-IN')}</span>
+                ) : (
+                  <span className="kala-bulk-size-pcs">0 pcs</span>
+                )}
               </div>
 
               <div className="kala-bulk-size-stepper">

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { CONTACT_OPTIONS, type ContactMethodType } from '../../data/businessSlots'
 import { generateWhatsAppInquiryUrl } from '../../services/businessInquiryApi'
 import MeetingSchedulerModal from '../business/MeetingSchedulerModal'
+import QuoteRequestModal from './QuoteRequestModal'
 
 interface DiscussionOptionsProps {
   apparelName: string
@@ -11,6 +11,8 @@ interface DiscussionOptionsProps {
   unitPrice: number
   estimatedTotal: number
   requirement: string
+  currentArtworkName?: string
+  uploadedApparelFileName?: string
 }
 
 export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
@@ -21,30 +23,33 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
   unitPrice,
   estimatedTotal,
   requirement,
+  currentArtworkName,
+  uploadedApparelFileName,
 }) => {
-  const [activeModalMethod, setActiveModalMethod] = useState<ContactMethodType | null>(null)
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
+  const [isCallModalOpen, setIsCallModalOpen] = useState(false)
+  const [isBreakdownOpen, setIsBreakdownOpen] = useState(false)
 
-  const handleSelectContactMethod = (method: ContactMethodType) => {
+  const handleWhatsAppClick = () => {
     const sizeInfo = sizeBreakdownText ? ` (${sizeBreakdownText})` : ''
-    if (method === 'WhatsApp') {
-      const url = generateWhatsAppInquiryUrl({
-        apparelCategory: apparelName,
-        color: colorName,
-        customization: `Custom Bulk Artwork Print${sizeInfo}`,
-        approxQuantity: `${quantity} pcs`,
-        requirement: requirement || `Bulk ${apparelName} order enquiry with sizes: ${sizeBreakdownText}. Estimated budget: ₹${estimatedTotal.toLocaleString('en-IN')}`,
-      })
-      window.open(url, '_blank', 'noopener,noreferrer')
-    } else {
-      setActiveModalMethod(method)
-    }
+    const url = generateWhatsAppInquiryUrl({
+      apparelCategory: apparelName,
+      color: colorName,
+      customization: `Custom Bulk Artwork Print${sizeInfo}`,
+      approxQuantity: `${quantity} pcs`,
+      requirement: requirement || `Bulk ${apparelName} order enquiry with sizes: ${sizeBreakdownText}. Estimated investment: ₹${estimatedTotal.toLocaleString('en-IN')}`,
+    })
+    window.open(url, '_blank', 'noopener,noreferrer')
   }
+
+  // Calculate pricing breakdown items
+  const baseApparelCost = quantity * unitPrice
+  const isBulkDiscountApplied = quantity >= 50
 
   return (
     <div className="kala-bulk-discussion-wrap">
       {/* ====================================================================
-          ESTIMATED MONEY REQUIRED SUMMARY
-          (Displays calculated total without payment / place order options)
+          18. RIGHT-SIDE ESTIMATED INVESTMENT SUMMARY CARD
           ==================================================================== */}
       <div className="kala-bulk-estimate-card">
         <div className="kala-bulk-estimate-main">
@@ -53,7 +58,7 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
             <div className="kala-bulk-estimate-amount-row">
               <span className="kala-bulk-estimate-amount">₹{estimatedTotal.toLocaleString('en-IN')}</span>
               <span className="kala-bulk-estimate-unit-tag">
-                ({quantity} pcs @ ₹{unitPrice}/pc starting)
+                {quantity} pcs (₹{unitPrice}/pc)
               </span>
             </div>
             {sizeBreakdownText && (
@@ -66,53 +71,134 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
           <div className="kala-bulk-estimate-right">
             <span className="kala-bulk-estimate-pill">⚡ No Advance Payment Needed</span>
             <span className="kala-bulk-estimate-subnote">
-              Final quote confirmed via direct consultation below
+              Final quote confirmed via direct consultation
             </span>
           </div>
         </div>
-      </div>
 
-      {/* Discussion Header */}
-      <div className="kala-bulk-discussion-header">
-        <h4 className="kala-bulk-discussion-title">LET'S DISCUSS YOUR REQUIREMENT</h4>
-        <p className="kala-bulk-discussion-sub">
-          Choose your preferred way to connect with our custom apparel team.
-        </p>
-      </div>
-
-      {/* 4 Contact Buttons */}
-      <div className="kala-bulk-contact-grid" role="group" aria-label="Ways to connect with KALA team">
-        {CONTACT_OPTIONS.map((opt) => (
+        {/* 19. Collapsible Price Breakdown */}
+        <div className="kala-bulk-breakdown-wrapper">
           <button
-            key={opt.id}
             type="button"
-            className={`kala-bulk-contact-card ${opt.id === 'WhatsApp' ? 'whatsapp' : ''}`}
-            onClick={() => handleSelectContactMethod(opt.id)}
+            className="kala-bulk-breakdown-toggle"
+            onClick={() => setIsBreakdownOpen((prev) => !prev)}
+            aria-expanded={isBreakdownOpen}
           >
-            <span className="kala-bulk-contact-icon" aria-hidden="true">
-              {opt.icon}
-            </span>
-            <div className="kala-bulk-contact-info">
-              <strong className="kala-bulk-contact-label">{opt.label}</strong>
-              <span className="kala-bulk-contact-note">{opt.locationNote}</span>
-            </div>
+            <span>Price Breakdown</span>
+            <span className={`kala-bulk-breakdown-chevron ${isBreakdownOpen ? 'open' : ''}`}>▼</span>
           </button>
-        ))}
+
+          {isBreakdownOpen && (
+            <div className="kala-bulk-breakdown-content">
+              <div className="kala-bulk-breakdown-row">
+                <span>Apparel base cost ({quantity} × ₹{unitPrice})</span>
+                <strong>₹{baseApparelCost.toLocaleString('en-IN')}</strong>
+              </div>
+              <div className="kala-bulk-breakdown-row">
+                <span>Customization &amp; Print setup</span>
+                <strong className="kala-bulk-green-text">Included (Free)</strong>
+              </div>
+              {isBulkDiscountApplied && (
+                <div className="kala-bulk-breakdown-row highlight">
+                  <span>Bulk tier pricing</span>
+                  <span className="kala-bulk-green-text">Best rates applied ({quantity}+ pcs)</span>
+                </div>
+              )}
+              <div className="kala-bulk-breakdown-divider" />
+              <div className="kala-bulk-breakdown-row total">
+                <strong>Estimated Total</strong>
+                <strong className="kala-bulk-orange-total">₹{estimatedTotal.toLocaleString('en-IN')}</strong>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 20. Bulk Pricing Notice */}
+        {isBulkDiscountApplied && (
+          <div className="kala-bulk-pricing-banner">
+            <span className="kala-bulk-badge-mini">BULK PRICING</span>
+            <span>Bulk pricing applied — Best rates for larger orders</span>
+          </div>
+        )}
       </div>
 
-      <p className="kala-bulk-discussion-footer">
-        Meet in Bilaspur • Google Meet • Scheduled Call • WhatsApp Anytime
-      </p>
-
-      <div className="kala-bulk-disclaimer-box">
-        <p>Final price depends on quantity, fabric choice, print size and customization.</p>
+      {/* ====================================================================
+          21. PRIMARY CTA: REQUEST QUOTE →
+          ==================================================================== */}
+      <div className="kala-bulk-primary-cta-wrap">
+        <button
+          type="button"
+          className="kala-bulk-quote-cta-btn"
+          onClick={() => setIsQuoteModalOpen(true)}
+          aria-label="Request custom apparel quotation"
+        >
+          <span>REQUEST QUOTE</span>
+          <span className="kala-bulk-cta-arrow" aria-hidden="true">→</span>
+        </button>
       </div>
 
-      {/* Meeting Scheduler Modal for Google Meet, In-Person, Call */}
-      {activeModalMethod && (
+      {/* ====================================================================
+          22. SECONDARY CONTACT OPTIONS (WhatsApp & Call)
+          ==================================================================== */}
+      <div className="kala-bulk-contact-actions-row">
+        <button
+          type="button"
+          className="kala-bulk-contact-btn whatsapp"
+          onClick={handleWhatsAppClick}
+          aria-label="Contact on WhatsApp"
+        >
+          <span className="kala-bulk-contact-icon" aria-hidden="true">💬</span>
+          <span>Contact on WhatsApp</span>
+        </button>
+
+        <button
+          type="button"
+          className="kala-bulk-contact-btn call"
+          onClick={() => setIsCallModalOpen(true)}
+          aria-label="Request a Call"
+        >
+          <span className="kala-bulk-contact-icon" aria-hidden="true">📞</span>
+          <span>Request a Call</span>
+        </button>
+      </div>
+
+      {/* ====================================================================
+          23. COMPACT HELP CARD
+          ==================================================================== */}
+      <div className="kala-bulk-help-card">
+        <div className="kala-bulk-help-content">
+          <strong className="kala-bulk-help-title">Need Help?</strong>
+          <p className="kala-bulk-help-text">Talk to our team for custom requirements or immediate questions.</p>
+        </div>
+        <button
+          type="button"
+          className="kala-bulk-help-action-btn"
+          onClick={() => setIsCallModalOpen(true)}
+        >
+          Request a Call
+        </button>
+      </div>
+
+      {/* Quote Request Modal */}
+      <QuoteRequestModal
+        isOpen={isQuoteModalOpen}
+        onClose={() => setIsQuoteModalOpen(false)}
+        apparelName={apparelName}
+        colorName={colorName}
+        quantity={quantity}
+        sizeBreakdownText={sizeBreakdownText}
+        unitPrice={unitPrice}
+        estimatedTotal={estimatedTotal}
+        requirement={requirement}
+        currentArtworkName={currentArtworkName}
+        uploadedApparelFileName={uploadedApparelFileName}
+      />
+
+      {/* Meeting / Call Scheduler Modal */}
+      {isCallModalOpen && (
         <MeetingSchedulerModal
           isOpen={true}
-          method={activeModalMethod}
+          method="Call"
           apparelCategoryName={apparelName}
           colorName={colorName}
           customizationName="Custom Bulk Print"
@@ -120,7 +206,7 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
           sizeBreakdown={sizeBreakdownText}
           estimatedTotal={estimatedTotal}
           initialRequirement={requirement || ''}
-          onClose={() => setActiveModalMethod(null)}
+          onClose={() => setIsCallModalOpen(false)}
         />
       )}
     </div>

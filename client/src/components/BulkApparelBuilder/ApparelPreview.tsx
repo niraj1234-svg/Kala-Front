@@ -5,6 +5,7 @@ import {
   type ApparelSide,
   type SideCustomization,
   type ApparelCustomizationState,
+  type UploadedApparelImage,
 } from './types'
 import { APPAREL_CONFIGS, APPAREL_LIST } from './mockupAssets'
 
@@ -13,6 +14,7 @@ interface ApparelPreviewProps {
   selectedColor: ApparelColor
   selectedSide: ApparelSide
   customizationState: ApparelCustomizationState
+  uploadedApparel?: UploadedApparelImage | null
   onSelectApparel: (id: ApparelId) => void
   onSelectColor: (color: ApparelColor) => void
   onSelectSide: (side: ApparelSide) => void
@@ -24,6 +26,7 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
   selectedColor,
   selectedSide,
   customizationState,
+  uploadedApparel = null,
   onSelectApparel,
   onSelectColor,
   onSelectSide,
@@ -37,8 +40,16 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
   const [isDragging, setIsDragging] = useState(false)
   const dragStartRef = useRef<{ clientX: number; clientY: number; startX: number; startY: number } | null>(null)
 
-  // Current active garment image
-  const garmentImgSrc = currentConfig.mockups[selectedColor][selectedSide]
+  // Determine whether customer's uploaded apparel applies to currently viewed side
+  const isUploadedApparelActive = Boolean(
+    uploadedApparel &&
+    (!uploadedApparel.uploadedSide || uploadedApparel.uploadedSide === selectedSide)
+  )
+
+  // Current active garment image: uses uploaded customer apparel or standard KALA mockup
+  const garmentImgSrc = (isUploadedApparelActive && uploadedApparel)
+    ? uploadedApparel.dataUrl
+    : currentConfig.mockups[selectedColor][selectedSide]
 
   // Pointer drag interaction
   const handlePointerDown = (e: React.PointerEvent) => {
@@ -103,7 +114,9 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
       <div className="kala-bulk-preview-card" ref={stageRef}>
         {/* Top Floating Badges */}
         <div className="kala-bulk-preview-badges">
-          <span className="kala-bulk-badge-dark">{currentConfig.name}</span>
+          <span className="kala-bulk-badge-dark">
+            {isUploadedApparelActive ? `YOUR APPAREL (${currentConfig.name.toUpperCase()})` : currentConfig.name}
+          </span>
           <span className="kala-bulk-badge-price">From ₹{currentConfig.startingPrice}/pc</span>
         </div>
 
@@ -111,9 +124,9 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
         <button
           type="button"
           className="kala-bulk-preview-arrow kala-bulk-preview-arrow-left"
-          onClick={() => onSelectSide(selectedSide === 'front' ? 'back' : 'front')}
-          aria-label="Previous view (Toggle Front/Back)"
-          title={`Switch to ${selectedSide === 'front' ? 'Back' : 'Front'}`}
+          onClick={() => onSelectSide(selectedSide === 'back' ? 'front' : 'back')}
+          aria-label="Previous view (Front/Back)"
+          title={selectedSide === 'back' ? 'Switch to Front' : 'Switch to Back'}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
@@ -124,8 +137,8 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
           type="button"
           className="kala-bulk-preview-arrow kala-bulk-preview-arrow-right"
           onClick={() => onSelectSide(selectedSide === 'front' ? 'back' : 'front')}
-          aria-label="Next view (Toggle Front/Back)"
-          title={`Switch to ${selectedSide === 'front' ? 'Back' : 'Front'}`}
+          aria-label="Next view (Front/Back)"
+          title={selectedSide === 'front' ? 'Switch to Back' : 'Switch to Front'}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="9 18 15 12 9 6" />
@@ -136,8 +149,8 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
         <div className="kala-bulk-garment-stage">
           <img
             src={garmentImgSrc}
-            alt={`${currentConfig.name} ${selectedColor} ${selectedSide}`}
-            className="kala-bulk-garment-img"
+            alt={isUploadedApparelActive ? `Customer uploaded apparel: ${uploadedApparel?.fileName}` : `${currentConfig.name} ${selectedColor} ${selectedSide}`}
+            className={`kala-bulk-garment-img ${isUploadedApparelActive ? 'custom-uploaded' : ''}`}
             loading="eager"
             draggable={false}
           />

@@ -11,6 +11,7 @@ export interface CustomRequestInput {
   description: string
   additionalRequirements?: string
   fileName?: string
+  apparelFileName?: string
 }
 
 export interface BackendCustomRequest {
@@ -25,6 +26,7 @@ export interface BackendCustomRequest {
   description: string
   additionalRequirements?: string
   fileName?: string
+  apparelFileName?: string
   status: string
   createdAt: string
   updatedAt?: string

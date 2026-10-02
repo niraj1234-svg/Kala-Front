@@ -20,6 +20,7 @@ export interface ICustomRequest extends Document {
   description: string
   additionalRequirements?: string
   fileName?: string
+  apparelFileName?: string
   status: CustomRequestStatus
   createdAt: Date
   updatedAt: Date
@@ -83,6 +84,11 @@ const CustomRequestSchema = new Schema<ICustomRequest>(
       default: '',
     },
     fileName: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    apparelFileName: {
       type: String,
       trim: true,
       default: '',

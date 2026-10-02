@@ -1,9 +1,20 @@
 import { Router } from 'express'
-import { createRazorpayOrder, verifyRazorpayPayment, handleRazorpayWebhook } from '../controllers/paymentController'
+import {
+  createRazorpayOrder,
+  verifyRazorpayPayment,
+  handleRazorpayWebhook,
+  checkRazorpayConfig,
+} from '../controllers/paymentController'
 import { orderLimiter } from '../middleware/rateLimiter'
 import { requireAuth } from '../middleware/authMiddleware'
 
 export const paymentRouter = Router()
+
+/**
+ * GET /api/check-config and GET /api/payment/check-config
+ * Diagnostic endpoint to check if Razorpay API keys are active and authenticating.
+ */
+paymentRouter.get('/check-config', checkRazorpayConfig)
 
 /**
  * POST /api/create-order

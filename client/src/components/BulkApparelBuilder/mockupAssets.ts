@@ -6,8 +6,8 @@ export const APPAREL_CONFIGS: Record<ApparelId, ApparelProductConfig> = {
   tshirt: {
     id: 'tshirt',
     name: 'T-SHIRTS',
-    startingPrice: 175,
-    startingPriceLabel: 'STARTING FROM ₹175 /pc',
+    startingPrice: 170,
+    startingPriceLabel: 'From ₹170',
     features: [
       'Lightweight and comfortable 220 GSM cotton',
       'High-definition screen & DTF print available',
@@ -33,7 +33,7 @@ export const APPAREL_CONFIGS: Record<ApparelId, ApparelProductConfig> = {
     id: 'hoodie',
     name: 'HOODIES',
     startingPrice: 680,
-    startingPriceLabel: 'STARTING FROM ₹680 /pc',
+    startingPriceLabel: 'From ₹680',
     features: [
       'Premium 380 GSM heavyweight fleece fabric',
       'Double-layered hood with kangaroo pocket',
@@ -58,8 +58,8 @@ export const APPAREL_CONFIGS: Record<ApparelId, ApparelProductConfig> = {
   jersey: {
     id: 'jersey',
     name: 'JERSEYS',
-    startingPrice: 350,
-    startingPriceLabel: 'STARTING FROM ₹350 /pc',
+    startingPrice: 730,
+    startingPriceLabel: 'From ₹730',
     features: [
       'Moisture-wicking dry-fit athletic polyester',
       'Custom name, number and sponsor branding',

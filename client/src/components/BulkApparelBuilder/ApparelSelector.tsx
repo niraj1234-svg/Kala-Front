@@ -41,7 +41,7 @@ export const ApparelSelector: React.FC<ApparelSelectorProps> = ({
               <div className="kala-bulk-card-info">
                 <span className="kala-bulk-card-name">{item.name}</span>
                 <span className="kala-bulk-card-price">
-                  STARTING FROM <strong className="kala-bulk-price-highlight">₹{item.startingPrice}</strong> /pc
+                  From <strong className="kala-bulk-price-highlight">₹{item.startingPrice}</strong>
                 </span>
               </div>
 

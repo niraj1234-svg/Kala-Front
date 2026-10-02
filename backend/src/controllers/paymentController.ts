@@ -1,6 +1,12 @@
 import { Request, Response } from 'express'
 import crypto from 'crypto'
-import { getRazorpayClient, getRazorpayKeySecret } from '../config/razorpay'
+import {
+  getRazorpayClient,
+  getRazorpayKeySecret,
+  getRazorpayKeyId,
+  getMaskedKey,
+  testRazorpayConnection,
+} from '../config/razorpay'
 import { Order } from '../models/Order'
 import { getAuthenticatedUser, AuthResult } from '../middleware/authMiddleware'
 import { sendOrderPaidNotifications } from '../services/notificationService'
@@ -183,15 +189,37 @@ export const createRazorpayOrder = async (req: Request, res: Response): Promise<
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency,
       receipt: razorpayOrder.receipt,
-      key_id: process.env.RAZORPAY_KEY_ID?.trim() || '',
+      key_id: getRazorpayKeyId(),
     })
   } catch (error: any) {
-    console.error('[PaymentController] createRazorpayOrder error:', error)
+    const attemptedKey = getRazorpayKeyId()
+    const maskedKey = getMaskedKey(attemptedKey)
+    const isLive = attemptedKey.startsWith('rzp_live_')
+    const isTest = attemptedKey.startsWith('rzp_test_')
+    const isPlaceholder = attemptedKey.includes('your_') || attemptedKey.includes('placeholder') || !attemptedKey
 
-    if (error?.statusCode === 401 || (error?.error?.code === 'BAD_REQUEST_ERROR' && error?.error?.description?.includes('auth'))) {
+    console.error('[PaymentController] createRazorpayOrder failed:', {
+      keyId: maskedKey,
+      keyType: isLive ? 'live' : isTest ? 'test' : 'unknown',
+      statusCode: error?.statusCode,
+      errorDescription: error?.error?.description || error?.message,
+    })
+
+    if (error?.statusCode === 401 || (error?.error?.code === 'BAD_REQUEST_ERROR' && error?.error?.description?.toLowerCase().includes('auth'))) {
+      let diagnosticHint = 'Razorpay rejected the API key or secret.'
+      if (isPlaceholder) {
+        diagnosticHint = 'The server is currently using placeholder credentials (e.g. your_razorpay_key_id). Please configure active keys from Razorpay Dashboard.'
+      } else if (isTest) {
+        diagnosticHint = 'The server is using Test keys (rzp_test_...). For live payments, configure Live keys (rzp_live_) and matching live secret.'
+      } else {
+        diagnosticHint = 'Please verify that RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET match in your hosting dashboard and do not contain extra quotes or outdated secrets.'
+      }
+
       res.status(401).json({
         success: false,
         message: 'Razorpay authentication failed. Please verify API keys.',
+        diagnosticHint,
+        key_id_masked: maskedKey,
       })
       return
     }
@@ -428,3 +456,40 @@ export const handleRazorpayWebhook = async (req: Request, res: Response): Promis
     res.status(500).json({ status: 'error', message: 'Webhook processing error' })
   }
 }
+
+/**
+ * GET /api/payment/check-config
+ * Diagnostic health check endpoint to verify Razorpay configuration and live connection.
+ * Tests live connection without charging or creating dummy orders.
+ */
+export const checkRazorpayConfig = async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const keyId = getRazorpayKeyId()
+    if (!keyId) {
+      res.status(200).json({
+        success: false,
+        configured: false,
+        authenticated: false,
+        message: 'RAZORPAY_KEY_ID is missing from the server environment.',
+      })
+      return
+    }
+
+    const testResult = await testRazorpayConnection()
+    res.status(testResult.connected ? 200 : 401).json({
+      success: testResult.connected,
+      configured: true,
+      authenticated: testResult.connected,
+      mode: testResult.mode,
+      key_id_masked: testResult.keyIdMasked,
+      message: testResult.message,
+      ...(testResult.error ? { error: testResult.error } : {}),
+    })
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err?.message || 'Failed to verify Razorpay configuration.',
+    })
+  }
+}
+

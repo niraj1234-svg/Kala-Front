@@ -31,6 +31,7 @@ export const createCustomRequest = async (req: Request, res: Response) => {
       description,
       additionalRequirements,
       fileName,
+      apparelFileName,
     } = req.body
 
     // 1. Validate Required Fields
@@ -106,6 +107,7 @@ export const createCustomRequest = async (req: Request, res: Response) => {
       description: description.trim(),
       additionalRequirements: typeof additionalRequirements === 'string' ? additionalRequirements.trim() : '',
       fileName: typeof fileName === 'string' ? fileName.trim() : '',
+      apparelFileName: typeof apparelFileName === 'string' ? apparelFileName.trim() : '',
       status: 'pending',
     })
 

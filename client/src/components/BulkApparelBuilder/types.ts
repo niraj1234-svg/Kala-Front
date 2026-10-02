@@ -2,6 +2,14 @@ export type ApparelId = 'tshirt' | 'hoodie' | 'jersey'
 export type ApparelColor = 'black' | 'white'
 export type ApparelSide = 'front' | 'back'
 
+export interface UploadedApparelImage {
+  dataUrl: string
+  fileName: string
+  fileType: string
+  fileSize: number
+  uploadedSide?: ApparelSide
+}
+
 export interface SideCustomization {
   artworkUrl: string // URL or data URL
   artworkName: string
