@@ -2,21 +2,12 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
-import { PRODUCTS } from '../data/products'
 import '../styles/Cart.css'
 
 export const Cart: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
   const { cartItems, cartCount, cartSubtotal, removeFromCart, updateQuantity } = useCart()
-
-  const hasFreeShipping =
-    cartSubtotal >= 2000 ||
-    cartItems.some((item) => {
-      if (item.productId === 'streetwear-oversized-acid-tee') return true
-      const p = PRODUCTS.find((prod) => prod.id === item.productId)
-      return p?.freeShipping ?? false
-    })
 
   const handleProceedToCheckout = () => {
     if (!isAuthenticated) {
@@ -221,8 +212,8 @@ export const Cart: React.FC = () => {
 
           <div className="kala-summary-row">
             <span>Shipping</span>
-            <span style={hasFreeShipping ? { color: '#16a34a', fontWeight: 600 } : undefined}>
-              {hasFreeShipping ? 'FREE' : 'Calculated at checkout'}
+            <span style={{ color: '#16a34a', fontWeight: 600 }}>
+              FREE
             </span>
           </div>
 

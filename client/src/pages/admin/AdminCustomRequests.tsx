@@ -216,7 +216,7 @@ export const AdminCustomRequests: React.FC = () => {
                   <th>Quantity</th>
                   <th>Submitted</th>
                   <th>Status</th>
-                  <th className="text-right">Actions</th>
+                  <th className="text-right" style={{ whiteSpace: 'nowrap', minWidth: '140px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -237,7 +237,7 @@ export const AdminCustomRequests: React.FC = () => {
                         {req.status.toUpperCase()}
                       </span>
                     </td>
-                    <td className="text-right">
+                    <td className="text-right" style={{ whiteSpace: 'nowrap', minWidth: '140px' }}>
                       <button
                         type="button"
                         className="admin-btn-action"

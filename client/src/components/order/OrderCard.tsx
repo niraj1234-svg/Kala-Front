@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import type { BackendOrder } from '../../services/orderApi'
+import '../../styles/OrderDetails.css'
 
 interface OrderCardProps {
   order: BackendOrder
@@ -23,129 +24,112 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     }
   }
 
-  const statusLabel = (st: string): string => {
-    const map: Record<string, string> = {
-      pending: 'Order Placed',
-      confirmed: 'Confirmed',
-      processing: 'Processing',
-      packed: 'Packed',
-      shipped: 'Shipped',
-      out_for_delivery: 'Out for Delivery',
-      delivered: 'Delivered',
-      cancelled: 'Cancelled',
+  const resolveImageUrl = (img?: string): string => {
+    if (!img) return ''
+    if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:') || img.startsWith('/')) {
+      return img
     }
-    return map[st.toLowerCase()] || st.replace(/_/g, ' ')
+    return `/${img}`
   }
 
   const isCancelled = order.status?.toLowerCase() === 'cancelled'
   const isDelivered = order.status?.toLowerCase() === 'delivered'
+  const isPaid = order.payment?.status === 'paid'
   const totalQuantity = (order.items || []).reduce((sum, it) => sum + (it.quantity || 1), 0)
 
   return (
-    <div className="bg-white border border-[#222222] p-5 sm:p-6 transition-all hover:border-[#D94700]">
+    <article className="kala-order-card-preview">
       {/* Top Bar: Order ID, Date, Status */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#EEEEEE]">
+      <div className="kala-order-card-preview-top">
         <div>
-          <span className="text-[11px] font-mono tracking-widest text-[#777777] uppercase block">
-            Order Reference
-          </span>
-          <span className="text-sm font-bold font-mono text-[#111111]">{order.orderId}</span>
-          <span className="text-xs text-[#666666] ml-2 block sm:inline">
-            Placed on {formatDate(order.createdAt)}
-          </span>
+          <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6b7280' }}>
+            ORDER REFERENCE
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.15rem' }}>
+            <span style={{ fontFamily: 'var(--kala-font-mono, monospace)', fontWeight: 800, fontSize: '0.95rem', color: '#111111' }}>
+              #{order.orderId}
+            </span>
+            <span style={{ fontSize: '0.8rem', color: '#6b7280' }}>
+              • {formatDate(order.createdAt)}
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {order.payment?.status && (
-            <span
-              className={`text-[11px] font-semibold font-mono uppercase px-2 py-0.5 border ${
-                order.payment.status === 'paid'
-                  ? 'bg-green-50 text-green-700 border-green-200'
-                  : 'bg-amber-50 text-amber-700 border-amber-200'
-              }`}
-            >
-              {order.payment.status}
-            </span>
-          )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <span className={`kala-badge ${isPaid ? 'kala-badge-payment-paid' : 'kala-badge-payment-pending'}`}>
+            {isPaid ? 'PAID' : order.payment?.status?.toUpperCase() || 'PENDING'}
+          </span>
 
           <span
-            className={`text-xs font-semibold uppercase px-2.5 py-0.5 border tracking-wider ${
+            className={`kala-badge kala-badge-status ${
               isCancelled
-                ? 'bg-red-50 text-red-700 border-red-200'
+                ? 'cancelled'
                 : isDelivered
-                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                : 'bg-[#D94700]/10 text-[#D94700] border-[#D94700]/30'
+                ? 'delivered'
+                : (order.status || 'pending').toLowerCase()
             }`}
           >
-            {statusLabel(order.status)}
+            {(order.status || 'pending').toUpperCase()}
           </span>
         </div>
       </div>
 
       {/* Items Preview */}
-      <div className="py-4 space-y-3">
-        {(order.items || []).map((item, idx) => (
-          <div key={idx} className="flex items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-3 min-w-0">
-              {item.image && (
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-12 h-12 object-cover border border-[#E5E5E5] shrink-0"
-                />
-              )}
-              <div className="min-w-0">
-                <p className="font-semibold text-[#111111] truncate">{item.name}</p>
-                <p className="text-[#666666] text-[11px] mt-0.5">
-                  Size: <span className="font-semibold">{item.size}</span>
-                  {item.color && (
-                    <>
-                      {' '}
-                      • Color: <span className="font-semibold">{item.color}</span>
-                    </>
-                  )}
-                  {item.customization?.backText && (
-                    <>
-                      {' '}
-                      • Custom Back: "{item.customization.backText}"
-                    </>
-                  )}
-                </p>
+      <div className="kala-order-card-preview-items">
+        {(order.items || []).map((item, idx) => {
+          const imgUrl = resolveImageUrl(item.image)
+          return (
+            <div key={idx} className="kala-order-card-preview-row">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minWidth: 0 }}>
+                {imgUrl ? (
+                  <img
+                    src={imgUrl}
+                    alt={item.name}
+                    style={{ width: '48px', height: '52px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #e5e7eb', flexShrink: 0 }}
+                  />
+                ) : (
+                  <div style={{ width: '48px', height: '52px', backgroundColor: '#f3f4f6', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
+                    👕
+                  </div>
+                )}
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, color: '#111111', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {item.name}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.15rem' }}>
+                    Size: <strong>{item.size}</strong> {item.color && <>• Color: <strong>{item.color}</strong></>} • Qty: <strong>{item.quantity}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'right', flexShrink: 0, fontFamily: 'var(--kala-font-mono, monospace)', fontWeight: 700, color: '#111111' }}>
+                {formatINR((item.price || 0) * (item.quantity || 1))}
               </div>
             </div>
-
-            <div className="text-right shrink-0">
-              <span className="text-[#777777] block">Qty: {item.quantity}</span>
-              <span className="font-semibold text-[#111111] font-mono">
-                {formatINR((item.price || 0) * (item.quantity || 1))}
-              </span>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Footer: Total & View Details Button */}
-      <div className="pt-4 border-t border-[#EEEEEE] flex flex-wrap items-center justify-between gap-3">
+      <div className="kala-order-card-preview-bottom">
         <div>
-          <span className="text-[11px] text-[#777777] uppercase block font-mono">
-            {totalQuantity} {totalQuantity === 1 ? 'item' : 'items'} • Total Amount
-          </span>
-          <span className="text-base font-bold text-[#111111] font-mono">
+          <div style={{ fontSize: '0.7rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            {totalQuantity} {totalQuantity === 1 ? 'ITEM' : 'ITEMS'} • TOTAL PAID
+          </div>
+          <div style={{ fontSize: '1.15rem', fontWeight: 900, fontFamily: 'var(--kala-font-mono, monospace)', color: 'var(--kala-orange, #D94700)' }}>
             {formatINR(order.pricing?.total || 0)}
-          </span>
+          </div>
         </div>
 
         <Link
-          to={`/orders/${order.orderId}`}
-          className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#111111] hover:bg-[#D94700] text-white text-xs font-semibold uppercase tracking-wider transition-colors"
+          to={`/account/orders/${order.orderId}`}
+          className="kala-btn kala-btn-secondary"
+          style={{ padding: '0.5rem 1rem', fontSize: '0.75rem' }}
         >
-          <span>View Details</span>
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+          VIEW ORDER DETAILS →
         </Link>
       </div>
-    </div>
+    </article>
   )
 }
 

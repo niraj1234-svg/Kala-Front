@@ -961,6 +961,8 @@ export interface AdminDashboardOrders {
 export interface AdminDashboardRequests {
   customApparelPending: number
   businessBrandingPending: number
+  customApparelTotal?: number
+  businessBrandingTotal?: number
 }
 
 export interface AdminDashboardSummaryData {

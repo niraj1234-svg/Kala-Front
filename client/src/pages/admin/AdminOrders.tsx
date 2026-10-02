@@ -274,7 +274,7 @@ export const AdminOrders: React.FC = () => {
                   <th>Payment Status</th>
                   <th>Order Status</th>
                   <th>Change Status</th>
-                  <th className="text-right">Actions</th>
+                  <th className="text-right" style={{ whiteSpace: 'nowrap', minWidth: '130px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -328,7 +328,7 @@ export const AdminOrders: React.FC = () => {
                           ))}
                         </select>
                       </td>
-                      <td className="text-right">
+                      <td className="text-right" style={{ whiteSpace: 'nowrap', minWidth: '130px' }}>
                         <Link
                           to={`/admin/orders/${order.orderId}`}
                           className="admin-btn-action"

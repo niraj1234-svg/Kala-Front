@@ -251,15 +251,6 @@ export const OrderConfirmation: React.FC = () => {
               </p>
               <p>{order.customer.email}</p>
               <p>{order.customer.phone}</p>
-              {order.contactVerified && (
-                <div style={{ marginTop: '0.6rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', background: '#DCFCE7', color: '#14532D', padding: '0.2rem 0.6rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 800 }}>
-                  <span>✓</span>
-                  <span>
-                    Verified via {order.verifiedContactType === 'phone' ? 'Mobile OTP' : 'Email OTP'}
-                    {order.verifiedContactTarget ? ` (${order.verifiedContactTarget})` : ''}
-                  </span>
-                </div>
-              )}
             </div>
           </div>
 

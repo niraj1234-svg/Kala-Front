@@ -27,6 +27,7 @@ export interface CustomDesignDetails {
   position?: 'front' | 'back' | 'left' | 'right' | string
   artworkUrl?: string
   previewUrl?: string
+  requirementDetails?: string
   artwork?: CustomArtworkCoordinates
 }
 
@@ -68,7 +69,6 @@ export interface OrderBundleInfo {
 }
 
 export interface CreateOrderPayload {
-  verificationToken: string
   customer: {
     firstName: string
     lastName: string

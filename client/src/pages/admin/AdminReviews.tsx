@@ -298,7 +298,7 @@ export const AdminReviews: React.FC = () => {
                   <th>Review Preview</th>
                   <th>Status</th>
                   <th>Submitted</th>
-                  <th className="text-right">Actions</th>
+                  <th className="text-right" style={{ whiteSpace: 'nowrap', minWidth: '180px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -378,8 +378,8 @@ export const AdminReviews: React.FC = () => {
                     </td>
 
                     {/* Actions */}
-                    <td className="text-right">
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <td className="text-right" style={{ whiteSpace: 'nowrap', minWidth: '180px' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', justifyContent: 'flex-end' }}>
                         <Link
                           to={`/admin/reviews/${rev._id}`}
                           className="admin-btn-action"

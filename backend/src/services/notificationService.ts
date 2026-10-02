@@ -1,4 +1,6 @@
 import { IOrder } from '../models/Order'
+import { ICustomRequest } from '../models/CustomRequest'
+import { IBusinessRequest } from '../models/BusinessRequest'
 import { NotificationLog } from '../models/NotificationLog'
 import {
   sendEmail,
@@ -9,6 +11,8 @@ import {
   renderAdminNewOrderEmail,
   renderCustomerOrderConfirmationEmail,
   renderCustomerOrderStatusUpdateEmail,
+  renderAdminCustomRequestEmail,
+  renderAdminBusinessRequestEmail,
   type FirstVisitEmailData,
 } from './emailTemplates'
 
@@ -193,6 +197,123 @@ export async function sendOrderStatusUpdateNotification(
     },
     { upsert: true, new: true }
   ).catch((err) => console.error('[NotificationService] Status update log error:', err))
+
+  return result.success
+}
+
+/**
+ * 4. ORDER PLACED ALERT (To Admin dhoreniraj83@gmail.com)
+ * Triggered immediately when a customer creates/places an order on the storefront.
+ */
+export async function sendOrderPlacedAlert(order: IOrder): Promise<boolean> {
+  const adminKey = `admin_order_placed:${order.orderId}`
+  const existingLog = await NotificationLog.findOne({ notificationKey: adminKey })
+
+  if (existingLog && existingLog.status === 'sent') {
+    return true
+  }
+
+  const adminEmail = getAdminEmail()
+  const { subject, html } = renderAdminNewOrderEmail(order)
+
+  const result = await sendEmail({
+    to: adminEmail,
+    subject,
+    html,
+  })
+
+  await NotificationLog.findOneAndUpdate(
+    { notificationKey: adminKey },
+    {
+      notificationKey: adminKey,
+      type: 'admin_order',
+      orderId: order.orderId,
+      recipient: adminEmail,
+      status: result.success ? 'sent' : 'failed',
+      providerMessageId: result.messageId || '',
+      error: result.error || '',
+      sentAt: new Date(),
+    },
+    { upsert: true, new: true }
+  ).catch((err) => console.error('[NotificationService] Admin order placed log error:', err))
+
+  return result.success
+}
+
+/**
+ * 5. CUSTOM APPAREL INQUIRY ALERT (To Admin dhoreniraj83@gmail.com)
+ * Dispatches an email notification whenever a user submits a custom apparel inquiry.
+ */
+export async function sendCustomRequestAlert(customRequest: ICustomRequest): Promise<boolean> {
+  const adminKey = `admin_custom_request:${customRequest.requestId}`
+  const existingLog = await NotificationLog.findOne({ notificationKey: adminKey })
+
+  if (existingLog && existingLog.status === 'sent') {
+    return true
+  }
+
+  const adminEmail = getAdminEmail()
+  const { subject, html } = renderAdminCustomRequestEmail(customRequest)
+
+  const result = await sendEmail({
+    to: adminEmail,
+    subject,
+    html,
+  })
+
+  await NotificationLog.findOneAndUpdate(
+    { notificationKey: adminKey },
+    {
+      notificationKey: adminKey,
+      type: 'admin_custom_request',
+      requestId: customRequest.requestId,
+      recipient: adminEmail,
+      status: result.success ? 'sent' : 'failed',
+      providerMessageId: result.messageId || '',
+      error: result.error || '',
+      sentAt: new Date(),
+    },
+    { upsert: true, new: true }
+  ).catch((err) => console.error('[NotificationService] Custom request log error:', err))
+
+  return result.success
+}
+
+/**
+ * 6. BUSINESS BRANDING QUOTE ALERT (To Admin dhoreniraj83@gmail.com)
+ * Dispatches an email notification whenever a business submits a branding quote inquiry.
+ */
+export async function sendBusinessRequestAlert(businessRequest: IBusinessRequest): Promise<boolean> {
+  const adminKey = `admin_business_request:${businessRequest.requestId}`
+  const existingLog = await NotificationLog.findOne({ notificationKey: adminKey })
+
+  if (existingLog && existingLog.status === 'sent') {
+    return true
+  }
+
+  const adminEmail = getAdminEmail()
+  const { subject, html } = renderAdminBusinessRequestEmail(businessRequest)
+
+  const result = await sendEmail({
+    to: adminEmail,
+    subject,
+    html,
+  })
+
+  await NotificationLog.findOneAndUpdate(
+    { notificationKey: adminKey },
+    {
+      notificationKey: adminKey,
+      type: 'admin_business_request',
+      requestId: businessRequest.requestId,
+      recipient: adminEmail,
+      status: result.success ? 'sent' : 'failed',
+      providerMessageId: result.messageId || '',
+      error: result.error || '',
+      sentAt: new Date(),
+    },
+    { upsert: true, new: true }
+  ).catch((err) => console.error('[NotificationService] Business request log error:', err))
 
   return result.success
 }

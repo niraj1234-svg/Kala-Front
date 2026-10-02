@@ -4,7 +4,7 @@ import { Order } from '../models/Order'
 import { Product } from '../models/Product'
 import { Coupon } from '../models/Coupon'
 import { AuthenticatedUser } from '../middleware/authMiddleware'
-import { validateVerificationToken } from '../services/otpService'
+import { sendOrderPlacedAlert } from '../services/notificationService'
 import mongoose from 'mongoose'
 
 const VALID_SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'BULK', 'BULK (MIXED S-XXL)', 'FREE SIZE', 'CUSTOM']
@@ -162,48 +162,6 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       res.status(400).json({
         success: false,
         message: 'Invalid order data: Complete customer information (firstName, lastName, phone) is required.',
-      })
-      return
-    }
-
-    // 1.1 Mandatory Contact OTP Verification (Security Rule: never trust frontend state)
-    const { verificationToken } = req.body
-    if (!verificationToken || typeof verificationToken !== 'string' || !verificationToken.trim()) {
-      res.status(403).json({
-        success: false,
-        message: 'Contact verification required: Please verify your mobile number or email via OTP before placing your order.',
-      })
-      return
-    }
-
-    const tokenValidation = await validateVerificationToken(verificationToken)
-    if (!tokenValidation.valid || !tokenValidation.type || !tokenValidation.target) {
-      res.status(403).json({
-        success: false,
-        message: tokenValidation.message || 'Contact verification is invalid or expired. Please re-verify your contact details.',
-      })
-      return
-    }
-
-    // Verify token contact target matches order customer details
-    const customerPhoneDigits = customer.phone.replace(/\D/g, '').slice(-10)
-    const customerEmailNorm = (customer.email || authenticatedEmail).trim().toLowerCase()
-    const verifiedTargetNorm = tokenValidation.target.trim().toLowerCase()
-    const verifiedTargetDigits = tokenValidation.target.replace(/\D/g, '').slice(-10)
-
-    const isPhoneMatched =
-      tokenValidation.type === 'phone' &&
-      verifiedTargetDigits.length >= 10 &&
-      customerPhoneDigits === verifiedTargetDigits
-
-    const isEmailMatched =
-      tokenValidation.type === 'email' &&
-      (customerEmailNorm === verifiedTargetNorm || authenticatedEmail === verifiedTargetNorm)
-
-    if (!isPhoneMatched && !isEmailMatched) {
-      res.status(403).json({
-        success: false,
-        message: 'The verified contact does not match the customer details entered for this order. Please verify your contact information.',
       })
       return
     }
@@ -663,15 +621,8 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     }
 
     // 10. Shipping & Authoritative Total Calculation
-    // Consistent KALA Shipping Policy: subtotal >= 2000 -> free shipping, else 99
-    // Promotional / free shipping items (e.g. streetwear-oversized-acid-tee) have 0 shipping charges
-    const hasFreeShipping =
-      subtotal >= 2000 ||
-      items.some((item) => {
-        const dbProd = productMap.get(item.productId.trim())
-        return dbProd?.freeShipping === true || item.productId.trim() === 'streetwear-oversized-acid-tee'
-      })
-    const shipping = hasFreeShipping ? 0 : 99
+    // Free shipping policy on all orders / T-shirts (0 shipping charges)
+    const shipping = 0
     const total = subtotal - discountAmount + shipping
 
     // 11. Generate Unique Order ID
@@ -694,9 +645,6 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
           email: authenticatedEmail,
           phone: customer.phone.trim(),
         },
-        contactVerified: true,
-        verifiedContactType: tokenValidation.type,
-        verifiedContactTarget: tokenValidation.target,
         shippingAddress: {
           address: shippingAddress.address.trim(),
           city: shippingAddress.city.trim(),
@@ -720,6 +668,11 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
             note: 'Order placed by customer',
           },
         ],
+      })
+
+      // Dispatch order alert email to admin dhoreniraj83@gmail.com
+      sendOrderPlacedAlert(newOrder).catch((alertErr) => {
+        console.error('[OrderController] Failed to send order placed alert to admin:', alertErr)
       })
 
       res.status(201).json({

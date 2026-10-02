@@ -1,4 +1,6 @@
 import { IOrder } from '../models/Order'
+import { ICustomRequest } from '../models/CustomRequest'
+import { IBusinessRequest } from '../models/BusinessRequest'
 
 export interface FirstVisitEmailData {
   visitorId: string
@@ -589,6 +591,155 @@ export function renderCustomerOrderStatusUpdateEmail(
     <p style="font-size: 12px; color: #6B7280; text-align: center; margin-top: 16px;">
       Thank you for shopping with KALA.
     </p>
+  `
+
+  return {
+    subject,
+    html: emailLayout(subject, body),
+  }
+}
+
+/**
+ * 5. ADMIN CUSTOM APPAREL INQUIRY ALERT (To Admin dhoreniraj83@gmail.com)
+ */
+export function renderAdminCustomRequestEmail(req: ICustomRequest): { subject: string; html: string } {
+  const subject = `[Custom Apparel Inquiry] ${req.requestId} - ${req.name} (${req.quantity} pcs ${req.apparelType})`
+
+  const body = `
+    <div class="badge" style="background: #FFF7ED; color: #C2410C; border: 1px solid #FFEDD5;">Custom Apparel Inquiry</div>
+    <h2 class="headline">New Custom Request: ${req.requestId}</h2>
+    <p class="subtext">A customer has submitted a new custom apparel inquiry on the KALA store.</p>
+
+    <div class="section-title">Customer Contact Details</div>
+    <table class="data-table">
+      <tr>
+        <td class="data-label">Name:</td>
+        <td class="data-val"><strong>${req.name}</strong></td>
+      </tr>
+      <tr>
+        <td class="data-label">Email:</td>
+        <td class="data-val"><a href="mailto:${req.email}" style="color: #111111; text-decoration: none;">${req.email}</a></td>
+      </tr>
+      <tr>
+        <td class="data-label">Phone:</td>
+        <td class="data-val"><a href="tel:${req.phone}" style="color: #111111; text-decoration: none;">${req.phone}</a></td>
+      </tr>
+      <tr>
+        <td class="data-label">Submitted On:</td>
+        <td class="data-val">${formatIST(req.createdAt || new Date())}</td>
+      </tr>
+    </table>
+
+    <div class="section-title">Project Specifications</div>
+    <table class="data-table">
+      <tr>
+        <td class="data-label">Apparel Type:</td>
+        <td class="data-val"><strong>${req.apparelType}</strong></td>
+      </tr>
+      <tr>
+        <td class="data-label">Quantity:</td>
+        <td class="data-val">${req.quantity} units</td>
+      </tr>
+      <tr>
+        <td class="data-label">Size Range:</td>
+        <td class="data-val">${req.sizeRange || 'Mixed Sizes'}</td>
+      </tr>
+      <tr>
+        <td class="data-label">Printing Type:</td>
+        <td class="data-val">${req.printingType || 'Screen Printing'}</td>
+      </tr>
+      ${req.fileName ? `
+      <tr>
+        <td class="data-label">Attached Artwork:</td>
+        <td class="data-val" style="font-family: monospace;">${req.fileName}</td>
+      </tr>` : ''}
+    </table>
+
+    <div class="section-title">Design Description & Requirements</div>
+    <div style="font-size: 13px; line-height: 1.6; color: #374151; background: #F9FAFB; padding: 14px; border-radius: 8px; border: 1px solid #E5E7EB;">
+      <strong>Design Description:</strong><br>
+      ${req.description || 'No description provided.'}
+      ${req.additionalRequirements ? `<br><br><strong>Additional Requirements:</strong><br>${req.additionalRequirements}` : ''}
+    </div>
+  `
+
+  return {
+    subject,
+    html: emailLayout(subject, body),
+  }
+}
+
+/**
+ * 6. ADMIN BUSINESS BRANDING QUOTE ALERT (To Admin dhoreniraj83@gmail.com)
+ */
+export function renderAdminBusinessRequestEmail(req: IBusinessRequest): { subject: string; html: string } {
+  const subject = `[Business Branding Quote] ${req.requestId} - ${req.organization} (${req.name})`
+
+  const body = `
+    <div class="badge" style="background: #F0FDF4; color: #15803D; border: 1px solid #DCFCE7;">Business Branding Quote</div>
+    <h2 class="headline">New Corporate Inquiry: ${req.organization}</h2>
+    <p class="subtext">A business client has requested a bulk branding consultation and quotation.</p>
+
+    <div class="section-title">Organization & Contact Person</div>
+    <table class="data-table">
+      <tr>
+        <td class="data-label">Organization:</td>
+        <td class="data-val"><strong>${req.organization}</strong></td>
+      </tr>
+      <tr>
+        <td class="data-label">Organization Type:</td>
+        <td class="data-val">${req.organizationType || 'Company'}</td>
+      </tr>
+      <tr>
+        <td class="data-label">Contact Person:</td>
+        <td class="data-val">${req.name}</td>
+      </tr>
+      <tr>
+        <td class="data-label">Email:</td>
+        <td class="data-val"><a href="mailto:${req.email}" style="color: #111111; text-decoration: none;">${req.email}</a></td>
+      </tr>
+      <tr>
+        <td class="data-label">Phone:</td>
+        <td class="data-val"><a href="tel:${req.phone}" style="color: #111111; text-decoration: none;">${req.phone}</a></td>
+      </tr>
+      <tr>
+        <td class="data-label">Submitted On:</td>
+        <td class="data-val">${formatIST(req.createdAt || new Date())}</td>
+      </tr>
+    </table>
+
+    <div class="section-title">Order Scope & Requirements</div>
+    <table class="data-table">
+      <tr>
+        <td class="data-label">Apparel Required:</td>
+        <td class="data-val"><strong>${req.apparelRequired}</strong></td>
+      </tr>
+      <tr>
+        <td class="data-label">Target Quantity:</td>
+        <td class="data-val">${req.quantity} pcs</td>
+      </tr>
+      <tr>
+        <td class="data-label">Target Delivery Date:</td>
+        <td class="data-val">${req.requiredBy || 'To be discussed'}</td>
+      </tr>
+      <tr>
+        <td class="data-label">Preferred Meeting:</td>
+        <td class="data-val">${req.preferredMeetingMethod || 'Google Meet / Call'}</td>
+      </tr>
+      ${req.meetingDate ? `
+      <tr>
+        <td class="data-label">Meeting Slot:</td>
+        <td class="data-val">${req.meetingDate} at ${req.meetingTime || req.preferredMeetingTime || 'TBD'}</td>
+      </tr>` : ''}
+    </table>
+
+    <div class="section-title">Branding Requirements & Details</div>
+    <div style="font-size: 13px; line-height: 1.6; color: #374151; background: #F9FAFB; padding: 14px; border-radius: 8px; border: 1px solid #E5E7EB;">
+      <strong>Branding Goals:</strong><br>
+      ${req.brandingRequirements || 'Not specified'}<br><br>
+      <strong>Project Details:</strong><br>
+      ${req.details || 'None provided.'}
+    </div>
   `
 
   return {

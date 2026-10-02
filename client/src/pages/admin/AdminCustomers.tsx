@@ -72,8 +72,8 @@ export const AdminCustomers: React.FC = () => {
       </header>
 
       {/* Controls / Search Bar */}
-      <div className="admin-controls-bar">
-        <form onSubmit={handleSearchSubmit} className="admin-search-bar">
+      <div className="admin-controls-card">
+        <form onSubmit={handleSearchSubmit} className="admin-search-form">
           <input
             type="text"
             className="admin-search-input"
@@ -139,7 +139,7 @@ export const AdminCustomers: React.FC = () => {
                   <th>Account Role</th>
                   <th>Order History</th>
                   <th>Member Since</th>
-                  <th className="text-right">Actions</th>
+                  <th className="text-right" style={{ whiteSpace: 'nowrap', minWidth: '130px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -172,7 +172,7 @@ export const AdminCustomers: React.FC = () => {
                       </span>
                     </td>
                     <td className="text-muted text-sm">{formatDate(cust.createdAt)}</td>
-                    <td className="text-right">
+                    <td className="text-right" style={{ whiteSpace: 'nowrap', minWidth: '130px' }}>
                       <Link
                         to={`/admin/customers/${cust.userId}`}
                         className="admin-btn-action"

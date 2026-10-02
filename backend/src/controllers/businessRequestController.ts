@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { BusinessRequest } from '../models/BusinessRequest'
+import { sendBusinessRequestAlert } from '../services/notificationService'
 import mongoose from 'mongoose'
 
 /**
@@ -197,6 +198,11 @@ export const createBusinessRequest = async (req: Request, res: Response) => {
           ? bulkOrderDetails
           : undefined,
       status: resolvedMeetingDate ? 'confirmed' : 'pending',
+    })
+
+    // Dispatch email alert to admin dhoreniraj83@gmail.com
+    sendBusinessRequestAlert(newRequest).catch((alertErr) => {
+      console.error('[BusinessRequestController] Failed to send business request alert to admin:', alertErr)
     })
 
     res.status(201).json({

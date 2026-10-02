@@ -5,12 +5,15 @@ export type NotificationType =
   | 'admin_order'
   | 'customer_confirmation'
   | 'customer_status_update'
+  | 'admin_custom_request'
+  | 'admin_business_request'
 
 export interface INotificationLog extends Document {
   notificationKey: string // unique compound key e.g. "customer_confirmation:KALA-20260916-HKX79Z" or "first_visit:vis_abc123"
   type: NotificationType
   orderId?: string
   visitorId?: string
+  requestId?: string
   recipient: string
   status: 'sent' | 'failed' | 'skipped'
   providerMessageId?: string
@@ -37,6 +40,8 @@ const NotificationLogSchema = new Schema<INotificationLog>(
         'admin_order',
         'customer_confirmation',
         'customer_status_update',
+        'admin_custom_request',
+        'admin_business_request',
       ],
       index: true,
     },

@@ -165,8 +165,8 @@ export const AdminProducts: React.FC = () => {
       )}
 
       {/* 2. Controls: Search Bar & Filters */}
-      <div className="admin-controls-bar">
-        <form onSubmit={handleSearchSubmit} className="admin-search-bar">
+      <div className="admin-controls-card">
+        <form onSubmit={handleSearchSubmit} className="admin-search-form">
           <input
             type="text"
             className="admin-search-input"
@@ -191,37 +191,39 @@ export const AdminProducts: React.FC = () => {
           )}
         </form>
 
-        <div className="admin-filter-group">
-          <label htmlFor="category-filter" className="admin-filter-label">
-            Category:
-          </label>
-          <select
-            id="category-filter"
-            className="admin-select"
-            value={categoryFilter}
-            onChange={handleCategoryChange}
-          >
-            <option value="All">All Categories</option>
-            <option value="Streetwear">Streetwear</option>
-            <option value="Gaming">Gaming</option>
-            <option value="Gymwear">Gymwear</option>
-          </select>
-        </div>
+        <div className="admin-filters-wrapper">
+          <div className="admin-filter-group">
+            <label htmlFor="category-filter" className="admin-filter-label">
+              Category:
+            </label>
+            <select
+              id="category-filter"
+              className="admin-select"
+              value={categoryFilter}
+              onChange={handleCategoryChange}
+            >
+              <option value="All">All Categories</option>
+              <option value="Streetwear">Streetwear</option>
+              <option value="Gaming">Gaming</option>
+              <option value="Gymwear">Gymwear</option>
+            </select>
+          </div>
 
-        <div className="admin-filter-group">
-          <label htmlFor="available-filter" className="admin-filter-label">
-            Stock:
-          </label>
-          <select
-            id="available-filter"
-            className="admin-select"
-            value={availableFilter}
-            onChange={handleAvailableChange}
-          >
-            <option value="all">All Statuses</option>
-            <option value="true">In Stock Only</option>
-            <option value="false">Out of Stock Only</option>
-          </select>
+          <div className="admin-filter-group">
+            <label htmlFor="available-filter" className="admin-filter-label">
+              Stock:
+            </label>
+            <select
+              id="available-filter"
+              className="admin-select"
+              value={availableFilter}
+              onChange={handleAvailableChange}
+            >
+              <option value="all">All Statuses</option>
+              <option value="true">In Stock Only</option>
+              <option value="false">Out of Stock Only</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -265,7 +267,7 @@ export const AdminProducts: React.FC = () => {
                   <th>Category</th>
                   <th>Price</th>
                   <th>Stock Availability</th>
-                  <th className="text-right">Actions</th>
+                  <th className="text-right" style={{ whiteSpace: 'nowrap', minWidth: '220px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -305,8 +307,8 @@ export const AdminProducts: React.FC = () => {
                         {prod.available ? 'IN STOCK' : 'OUT OF STOCK'}
                       </span>
                     </td>
-                    <td className="text-right">
-                      <div className="admin-action-row">
+                    <td className="text-right" style={{ whiteSpace: 'nowrap', minWidth: '220px' }}>
+                      <div className="admin-action-row" style={{ display: 'inline-flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
                         <button
                           type="button"
                           className={`admin-btn-action ${prod.available ? 'text-warning' : 'text-success'}`}

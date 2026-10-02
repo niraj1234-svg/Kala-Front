@@ -76,37 +76,4 @@ export const inquiryLimiter = rateLimit({
   },
 })
 
-const isProduction = process.env.NODE_ENV === 'production'
-
-/**
- * OTP Generation & Sending Rate Limiter
- * Applied to: POST /api/otp/send
- * Limits to 15 OTP generation requests per 15 minutes window per IP in production.
- */
-export const otpSendLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: isProduction ? 15 : 200,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    message: 'Too many OTP requests from this connection. Please try again after 15 minutes.',
-  },
-})
-
-/**
- * OTP Verification Rate Limiter
- * Applied to: POST /api/otp/verify
- * Limits to 25 verification attempts per 15 minutes window per IP to prevent brute-force attacks.
- */
-export const otpVerifyLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: isProduction ? 25 : 300,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    message: 'Too many verification attempts. Please wait 15 minutes before trying again.',
-  },
-})
 

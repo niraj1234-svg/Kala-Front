@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { CustomRequest } from '../models/CustomRequest'
+import { sendCustomRequestAlert } from '../services/notificationService'
 import mongoose from 'mongoose'
 
 /**
@@ -106,6 +107,11 @@ export const createCustomRequest = async (req: Request, res: Response) => {
       additionalRequirements: typeof additionalRequirements === 'string' ? additionalRequirements.trim() : '',
       fileName: typeof fileName === 'string' ? fileName.trim() : '',
       status: 'pending',
+    })
+
+    // Dispatch email alert to admin dhoreniraj83@gmail.com
+    sendCustomRequestAlert(newRequest).catch((alertErr) => {
+      console.error('[CustomRequestController] Failed to send custom request alert to admin:', alertErr)
     })
 
     res.status(201).json({

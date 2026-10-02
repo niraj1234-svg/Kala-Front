@@ -7,8 +7,6 @@ import type { CreateOrderPayload, ValidateCouponResponse } from '../services/ord
 import { createRazorpayOrder, verifyRazorpayPayment, loadRazorpayScript } from '../services/paymentApi'
 import type { RazorpayOptions, RazorpaySuccessResponse, RazorpayErrorResponse } from '../types/razorpay'
 import { saveOrder } from '../types/order'
-import { PRODUCTS } from '../data/products'
-import { ContactVerification } from '../components/checkout/ContactVerification'
 import '../styles/Checkout.css'
 
 interface FormData {
@@ -100,28 +98,6 @@ export const Checkout: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [orderError, setOrderError] = useState<string | null>(null)
   const [pendingOrderId, setPendingOrderId] = useState<string | null>(null)
-
-  // OTP Contact Verification State
-  const [isContactVerified, setIsContactVerified] = useState<boolean>(false)
-  const [verificationToken, setVerificationToken] = useState<string | null>(null)
-  const [verifiedContact, setVerifiedContact] = useState<{
-    type: 'phone' | 'email'
-    target: string
-  } | null>(null)
-
-  const handleVerificationSuccess = (token: string, contact: { type: 'phone' | 'email'; target: string }) => {
-    setIsContactVerified(true)
-    setVerificationToken(token)
-    setVerifiedContact(contact)
-    setOrderError(null)
-  }
-
-  const handleResetVerification = () => {
-    setIsContactVerified(false)
-    setVerificationToken(null)
-    setVerifiedContact(null)
-    setPendingOrderId(null)
-  }
 
   // Coupon state
   const [couponInput, setCouponInput] = useState<string>('')
@@ -244,28 +220,16 @@ export const Checkout: React.FC = () => {
   }
 
   // Pricing calculations (Server is ultimate authority; frontend displays responsive values)
-  const hasFreeShippingItem = checkoutItems.some((item: any) => {
-    if (item.productId === 'streetwear-oversized-acid-tee') return true
-    const p = PRODUCTS.find((prod) => prod.id === item.productId)
-    return p?.freeShipping ?? false
-  })
   const baseSubtotal = isBundleCheckout && activeBundle ? activeBundle.price : cartSubtotal
-  const baseShippingCost = isBundleCheckout ? 99 : (baseSubtotal >= 2000 || hasFreeShippingItem ? 0 : 99)
   const displaySubtotal = appliedCoupon ? appliedCoupon.subtotal : baseSubtotal
   const displayDiscount = appliedCoupon ? appliedCoupon.discount : 0
-  const displayShipping = appliedCoupon ? appliedCoupon.shipping : baseShippingCost
   const displayTotal = appliedCoupon
     ? appliedCoupon.total
-    : baseSubtotal + baseShippingCost
+    : baseSubtotal
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
-
-    // If customer changes their phone or email after verification, reset verification
-    if (isContactVerified && (name === 'phone' || name === 'email')) {
-      handleResetVerification()
-    }
 
     // Clear error for field being edited
     if (errors[name as keyof FormData]) {
@@ -327,12 +291,6 @@ export const Checkout: React.FC = () => {
       newErrors.pinCode = 'PIN code is required.'
     } else if (!pinRegex.test(formData.pinCode.trim())) {
       newErrors.pinCode = 'Please enter a valid 6-digit Indian PIN code.'
-    }
-
-    // 9. Contact OTP Verification Check
-    if (!isContactVerified || !verificationToken) {
-      setOrderError('Please verify your contact details via OTP before proceeding to payment.')
-      return false
     }
 
     setErrors(newErrors)
@@ -409,11 +367,6 @@ export const Checkout: React.FC = () => {
       return
     }
 
-    if (!isContactVerified || !verificationToken) {
-      setOrderError('Please verify your contact details via OTP before proceeding to payment.')
-      return
-    }
-
     if (!validateForm()) {
       return
     }
@@ -429,7 +382,6 @@ export const Checkout: React.FC = () => {
 
     // Construct server-safe payload (server authoritatively calculates discount & total)
     const payload: CreateOrderPayload = {
-      verificationToken: verificationToken,
       customer: {
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
@@ -692,20 +644,7 @@ export const Checkout: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 2: Contact Verification via OTP */}
-          <ContactVerification
-            phone={formData.phone}
-            email={formData.email}
-            onPhoneChange={(p) => setFormData((prev) => ({ ...prev, phone: p }))}
-            onEmailChange={(e) => setFormData((prev) => ({ ...prev, email: e }))}
-            isVerified={isContactVerified}
-            verificationToken={verificationToken}
-            verifiedContact={verifiedContact}
-            onVerificationSuccess={handleVerificationSuccess}
-            onResetVerification={handleResetVerification}
-          />
-
-          {/* Section 3: Shipping Address */}
+          {/* Section 2: Shipping Address */}
           <section className="kala-checkout-section" aria-labelledby="shipping-heading">
             <h2 id="shipping-heading" className="kala-checkout-section-title">
               SHIPPING ADDRESS
@@ -934,7 +873,7 @@ export const Checkout: React.FC = () => {
 
             <div className="kala-checkout-pricing-row">
               <span>Shipping</span>
-              <span>{displayShipping === 0 ? 'FREE' : `₹${displayShipping}`}</span>
+              <span style={{ color: '#16a34a', fontWeight: 600 }}>FREE</span>
             </div>
 
             <div className="kala-checkout-pricing-row total">
@@ -962,24 +901,15 @@ export const Checkout: React.FC = () => {
 
           <button
             type="submit"
-            disabled={isSubmitting || !isContactVerified}
-            className={`kala-btn kala-btn-primary kala-place-order-btn ${!isContactVerified ? 'unverified' : ''}`}
+            disabled={isSubmitting}
+            className="kala-btn kala-btn-primary kala-place-order-btn"
           >
             {isSubmitting
               ? 'PROCESSING PAYMENT...'
-              : !isContactVerified
-                ? 'VERIFY CONTACT TO PAY'
-                : pendingOrderId && orderError
-                  ? `RETRY PAYMENT (₹${displayTotal.toLocaleString('en-IN')})`
-                  : `PROCEED TO PAYMENT (₹${displayTotal.toLocaleString('en-IN')}) →`}
+              : pendingOrderId && orderError
+                ? `RETRY PAYMENT (₹${displayTotal.toLocaleString('en-IN')})`
+                : `PROCEED TO PAYMENT (₹${displayTotal.toLocaleString('en-IN')}) →`}
           </button>
-
-          {!isContactVerified && (
-            <div className="kala-verification-notice">
-              <span>🔒</span>
-              <span>Verify your mobile or email via OTP to enable payment</span>
-            </div>
-          )}
 
           <div
             style={{

@@ -1,48 +1,58 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { getCustomerOrderDetail, type BackendOrder } from '../services/customerApi'
-import { OrderStatusTimeline } from '../components/order/OrderStatusTimeline'
+import { fetchOrderById, type BackendOrder } from '../services/orderApi'
+import { OrderTrackingTimeline } from '../components/orders/OrderTrackingTimeline'
+import '../styles/OrderDetails.css'
 
 export const OrderDetails: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>()
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth()
+
   const [order, setOrder] = useState<BackendOrder | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const fetchOrder = async () => {
+  const loadOrder = useCallback(async () => {
     if (!orderId) return
     try {
       setErrorMessage(null)
-      const data = await getCustomerOrderDetail(orderId)
+      const data = await fetchOrderById(orderId)
       if (data) {
         setOrder(data)
       } else {
         setErrorMessage('Order not found.')
       }
     } catch (err: any) {
-      setErrorMessage(err.message || 'Unable to retrieve order details.')
+      if (err.status === 401) {
+        setErrorMessage('Authentication required to view this order.')
+      } else if (err.status === 403) {
+        setErrorMessage('Access denied: This order belongs to another account.')
+      } else if (err.status === 404) {
+        setErrorMessage(`Order #${orderId} was not found.`)
+      } else {
+        setErrorMessage(err.message || 'Unable to retrieve order details. Please try again.')
+      }
     } finally {
       setIsLoading(false)
       setIsRefreshing(false)
     }
-  }
+  }, [orderId])
 
   useEffect(() => {
     if (!isAuthLoading) {
       if (isAuthenticated && orderId) {
-        fetchOrder()
+        loadOrder()
       } else if (!isAuthenticated) {
         setIsLoading(false)
       }
     }
-  }, [orderId, isAuthenticated, isAuthLoading])
+  }, [orderId, isAuthenticated, isAuthLoading, loadOrder])
 
   const handleRefresh = () => {
     setIsRefreshing(true)
-    fetchOrder()
+    loadOrder()
   }
 
   const formatINR = (amt: number): string => `₹${Math.round(amt).toLocaleString('en-IN')}`
@@ -63,240 +73,337 @@ export const OrderDetails: React.FC = () => {
     }
   }
 
+  const resolveImageUrl = (img?: string): string => {
+    if (!img) return ''
+    if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:') || img.startsWith('/')) {
+      return img
+    }
+    return `/${img}`
+  }
+
+  // --------------------------------------------------------------------------
+  // RENDER: LOADING STATE
+  // --------------------------------------------------------------------------
   if (isAuthLoading || isLoading) {
     return (
-      <main className="min-h-[70vh] bg-[#FAF9F6] py-16 px-4 text-center">
-        <div className="max-w-md mx-auto">
-          <div className="w-8 h-8 border-2 border-[#111111] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-xs font-mono uppercase tracking-widest text-[#666666]">
-            Loading order details...
-          </p>
+      <main className="kala-order-details-page">
+        <div className="kala-order-details-container">
+          <div className="kala-order-loading-box">
+            <div className="kala-order-spinner" />
+            <div className="kala-order-loading-text">Loading Order Details...</div>
+          </div>
         </div>
       </main>
     )
   }
 
+  // --------------------------------------------------------------------------
+  // RENDER: AUTHENTICATION REQUIRED
+  // --------------------------------------------------------------------------
   if (!isAuthenticated) {
     return (
-      <main className="min-h-[70vh] bg-[#FAF9F6] py-16 px-4">
-        <div className="max-w-md mx-auto bg-white border border-[#222222] p-8 text-center shadow-sm">
-          <h1 className="text-xl font-bold uppercase tracking-wider text-[#111111] mb-2">
-            Authentication Required
-          </h1>
-          <p className="text-xs text-[#666666] mb-6">
-            Please log in to view the tracking details for this order.
-          </p>
-          <Link
-            to="/login"
-            className="inline-block w-full py-3 bg-[#111111] hover:bg-[#D94700] text-white text-xs font-semibold uppercase tracking-wider transition-colors"
-          >
-            Log In
-          </Link>
+      <main className="kala-order-details-page">
+        <div className="kala-order-details-container">
+          <div className="kala-order-error-box">
+            <div className="kala-order-error-icon">🔒</div>
+            <h1 className="kala-order-error-title">Authentication Required</h1>
+            <p className="kala-order-error-msg">
+              Please sign in to your KALA account to view tracking and receipt details for this order.
+            </p>
+            <Link to={`/account?redirect=/account/orders/${orderId || ''}`} className="kala-btn kala-btn-primary">
+              Sign In to View Order
+            </Link>
+          </div>
         </div>
       </main>
     )
   }
 
+  // --------------------------------------------------------------------------
+  // RENDER: ERROR / NOT FOUND
+  // --------------------------------------------------------------------------
   if (errorMessage || !order) {
     return (
-      <main className="min-h-[70vh] bg-[#FAF9F6] py-16 px-4">
-        <div className="max-w-md mx-auto bg-white border border-[#222222] p-8 text-center shadow-sm">
-          <h1 className="text-lg font-bold uppercase tracking-wider text-[#111111] mb-2">
-            Unable to Load Order
-          </h1>
-          <p className="text-xs text-red-600 mb-6">{errorMessage || 'Order not found.'}</p>
-          <Link
-            to="/orders"
-            className="inline-block px-6 py-2.5 bg-[#111111] text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#D94700] transition-colors"
-          >
-            Back to Orders
-          </Link>
+      <main className="kala-order-details-page">
+        <div className="kala-order-details-container">
+          <div className="kala-order-error-box">
+            <div className="kala-order-error-icon">📦</div>
+            <h1 className="kala-order-error-title">Unable to Find Order</h1>
+            <p className="kala-order-error-msg">{errorMessage || 'The requested order could not be found.'}</p>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link to="/account" className="kala-btn kala-btn-primary">
+                Back to My Orders
+              </Link>
+              <Link to="/shop" className="kala-btn kala-btn-secondary">
+                Explore Shop
+              </Link>
+            </div>
+          </div>
         </div>
       </main>
     )
   }
 
+  // --------------------------------------------------------------------------
+  // RENDER: ORDER DETAILS
+  // --------------------------------------------------------------------------
+  const normalizedStatus = (order.status || 'pending').toLowerCase()
+  const isPaid = order.payment?.status === 'paid'
+  const itemsCount = (order.items || []).reduce((sum, it) => sum + (it.quantity || 1), 0)
+
+  const addressLine = order.shippingAddress?.address || ''
+  const landmark = order.shippingAddress?.landmark
+  const city = order.shippingAddress?.city || ''
+  const state = order.shippingAddress?.state || ''
+  const pincode = order.shippingAddress?.pincode || ''
+
+  const subtotal = order.pricing?.subtotal || 0
+  const discount = order.pricing?.discount || 0
+  const total = order.pricing?.total || 0
+
   return (
-    <main className="min-h-[75vh] bg-[#FAF9F6] py-10 px-4 sm:px-6 lg:px-8 text-[#111111]">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Navigation & Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#222222]">
-          <div>
-            <Link
-              to="/orders"
-              className="inline-flex items-center gap-1 text-xs font-mono uppercase text-[#777777] hover:text-[#111111] mb-2 transition-colors"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              <span>Back to All Orders</span>
-            </Link>
-            <h1 className="text-xl sm:text-2xl font-bold font-mono tracking-tight text-[#111111]">
-              Order #{order.orderId}
+    <main className="kala-order-details-page">
+      <div className="kala-order-details-container">
+        {/* Navigation Breadcrumb */}
+        <nav className="kala-order-back-nav" aria-label="Order navigation">
+          <Link to="/account" className="kala-order-back-link">
+            <span>←</span>
+            <span>Back to My Orders</span>
+          </Link>
+        </nav>
+
+        {/* Top Header Bar */}
+        <header className="kala-order-header-bar">
+          <div className="kala-order-header-main">
+            <h1 className="kala-order-ref-title">
+              <span>Order</span>
+              <span className="kala-order-id-highlight">#{order.orderId}</span>
             </h1>
-            <p className="text-xs text-[#666666] mt-0.5">
-              Placed on {formatDate(order.createdAt)}
-            </p>
+            <div className="kala-order-meta-info">
+              <span>Placed on {formatDate(order.createdAt)}</span>
+              {order.updatedAt && order.updatedAt !== order.createdAt && (
+                <span>• Updated on {formatDate(order.updatedAt)}</span>
+              )}
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="kala-order-header-badges">
+            <span className={`kala-badge kala-badge-status ${normalizedStatus}`}>
+              Status: {normalizedStatus.replace(/_/g, ' ')}
+            </span>
             <span
-              className={`text-xs font-semibold uppercase px-3 py-1 border tracking-wider ${
-                order.payment?.status === 'paid'
-                  ? 'bg-green-50 text-green-700 border-green-200'
-                  : 'bg-amber-50 text-amber-700 border-amber-200'
+              className={`kala-badge ${
+                isPaid ? 'kala-badge-payment-paid' : 'kala-badge-payment-pending'
               }`}
             >
-              Payment: {order.payment?.status || 'Pending'}
+              Payment: {isPaid ? 'Paid' : order.payment?.status || 'Pending'}
             </span>
           </div>
-        </div>
+        </header>
 
-        {/* ORDER STATUS TIMELINE (Requirement 7) */}
-        <div>
-          <OrderStatusTimeline
-            order={order}
-            onRefresh={handleRefresh}
-            isRefreshing={isRefreshing}
-          />
-        </div>
+        {/* Live Fulfillment & Shipping Tracker */}
+        <OrderTrackingTimeline
+          order={order}
+          onRefresh={handleRefresh}
+          isRefreshing={isRefreshing}
+        />
 
-        {/* 2-Column Info: Items & Delivery Details */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Purchased Items List (2 cols) */}
-          <div className="md:col-span-2 bg-white border border-[#222222] p-5 sm:p-6 shadow-sm">
-            <h2 className="text-xs font-mono uppercase tracking-widest text-[#777777] mb-4 pb-2 border-b border-[#EEEEEE]">
-              Purchased Items ({(order.items || []).reduce((s: number, i: any) => s + (i.quantity || 1), 0)})
-            </h2>
+        {/* 2-Column Responsive Layout */}
+        <div className="kala-order-grid">
+          {/* Main Column: Ordered Items List */}
+          <div className="kala-order-col-main">
+            <section className="kala-order-card" aria-labelledby="purchased-items-title">
+              <div className="kala-order-card-header">
+                <h2 id="purchased-items-title" className="kala-order-card-title">
+                  <span>🛍️</span>
+                  <span>Purchased Items</span>
+                </h2>
+                <span className="kala-order-card-count">
+                  {itemsCount} {itemsCount === 1 ? 'item' : 'items'}
+                </span>
+              </div>
 
-            <div className="divide-y divide-[#EEEEEE]">
-              {(order.items || []).map((item: any, idx: number) => (
-                <div key={idx} className="py-3.5 first:pt-0 last:pb-0 flex items-start gap-4">
-                  {item.image && (
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-16 h-16 object-cover border border-[#E5E5E5] shrink-0"
-                    />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-[#111111]">{item.name}</p>
-                    <p className="text-xs text-[#666666] mt-0.5 font-mono">
-                      Product ID: {item.productId}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-3 text-xs text-[#555555] mt-1">
-                      <span>
-                        Size: <strong className="text-[#111111]">{item.size}</strong>
-                      </span>
-                      {item.color && (
-                        <span>
-                          Color: <strong className="text-[#111111]">{item.color}</strong>
-                        </span>
+              <div className="kala-order-items-list">
+                {(order.items || []).map((item, idx) => {
+                  const itemImg = resolveImageUrl(item.image)
+                  const unitPrice = item.price || 0
+                  const itemQty = item.quantity || 1
+                  const itemTotal = unitPrice * itemQty
+
+                  return (
+                    <article key={`${item.productId}-${idx}`} className="kala-order-item-row">
+                      {itemImg ? (
+                        <img
+                          src={itemImg}
+                          alt={item.name}
+                          className="kala-order-item-thumb"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="kala-order-item-thumb-fallback">👕</div>
                       )}
-                      <span>
-                        Qty: <strong className="text-[#111111]">{item.quantity}</strong>
-                      </span>
-                    </div>
 
-                    {item.customization?.frontText && (
-                      <div className="mt-2 text-xs font-mono bg-[#FAFAFA] border border-[#E5E5E5] p-2 text-[#333333]">
-                        <span className="font-semibold text-[#D94700]">Custom Front Text:</span> "
-                        {item.customization.frontText}"
-                      </div>
-                    )}
+                      <div className="kala-order-item-details">
+                        <h3 className="kala-order-item-name">{item.name}</h3>
 
-                    {item.customization?.backText && (
-                      <div className="mt-2 text-xs font-mono bg-[#FAFAFA] border border-[#E5E5E5] p-2 text-[#333333]">
-                        <span className="font-semibold text-[#D94700]">Custom Back Text:</span> "
-                        {item.customization.backText}" {!item.customization?.frontText && `(+₹${item.customization.price || 25})`}
-                      </div>
-                    )}
-
-                    {(item.customization?.customDesign || item.customization?.position) && (
-                      <div className="mt-2 text-xs font-mono bg-[#FAFAFA] border border-[#E5E5E5] p-2.5 text-[#333333] space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="font-semibold text-[#D94700] uppercase tracking-wide">Custom Artwork Design</span>
-                          <span className="text-[10px] bg-[#111111] text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider">
-                            {item.customization.position || item.customization.customDesign?.position || 'Front'}
+                        <div className="kala-order-item-meta-chips">
+                          <span className="kala-item-chip">
+                            Size: <strong>{item.size}</strong>
+                          </span>
+                          {item.color && (
+                            <span className="kala-item-chip">
+                              Color: <strong>{item.color}</strong>
+                            </span>
+                          )}
+                          <span className="kala-item-chip">
+                            Qty: <strong>{itemQty}</strong>
                           </span>
                         </div>
-                        <div className="text-[11px] text-[#666666] flex flex-wrap gap-x-3 gap-y-1 pt-0.5">
-                          <span>Apparel: <strong className="text-[#111111] uppercase">{item.customization.apparelType || item.customization.customDesign?.apparelType || 'Custom'}</strong></span>
-                          <span>Color: <strong className="text-[#111111] uppercase">{item.customization.color || item.customization.customDesign?.color || item.color || 'Standard'}</strong></span>
-                        </div>
+
+                        {/* Custom Print / Artwork Details if present */}
+                        {(item.customization?.frontText ||
+                          item.customization?.backText ||
+                          item.customization?.position ||
+                          item.customization?.requirementDetails) && (
+                          <div className="kala-order-item-customization">
+                            <span className="kala-custom-badge-tag">Custom Print Specification</span>
+                            {item.customization.position && (
+                              <div>
+                                Print Position: <strong>{item.customization.position.toUpperCase()}</strong>
+                              </div>
+                            )}
+                            {item.customization.frontText && (
+                              <div>
+                                Front Text: <strong>"{item.customization.frontText}"</strong>
+                              </div>
+                            )}
+                            {item.customization.backText && (
+                              <div>
+                                Back Text: <strong>"{item.customization.backText}"</strong>
+                              </div>
+                            )}
+                            {item.customization.requirementDetails && (
+                              <div>
+                                Note: <em>{item.customization.requirementDetails}</em>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  <div className="text-right shrink-0">
-                    <span className="text-xs text-[#777777] block font-mono">
-                      {formatINR(item.price || 0)} each
-                    </span>
-                    <span className="text-sm font-bold font-mono text-[#111111] mt-0.5 block">
-                      {formatINR((item.price || 0) * (item.quantity || 1))}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                      <div className="kala-order-item-pricing">
+                        <div className="kala-item-unit-price">{formatINR(unitPrice)} each</div>
+                        <div className="kala-item-total-price">{formatINR(itemTotal)}</div>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            </section>
           </div>
 
-          {/* Shipping & Payment Summary (1 col) */}
-          <div className="space-y-6">
+          {/* Side Column: Shipping Details & Price Summary */}
+          <aside className="kala-order-col-side">
             {/* Delivery Address Card */}
-            <div className="bg-white border border-[#222222] p-5 shadow-sm">
-              <h2 className="text-xs font-mono uppercase tracking-widest text-[#777777] mb-3 pb-2 border-b border-[#EEEEEE]">
-                Shipping Address
-              </h2>
-              <div className="text-xs space-y-1 text-[#333333]">
-                <p className="font-bold text-sm text-[#111111]">
+            <section className="kala-order-card" aria-labelledby="shipping-address-title">
+              <div className="kala-order-card-header">
+                <h2 id="shipping-address-title" className="kala-order-card-title">
+                  <span>📍</span>
+                  <span>Delivery Address</span>
+                </h2>
+              </div>
+
+              <div className="kala-address-block">
+                <div className="kala-address-name">
                   {order.customerName ||
-                    `${order.customer?.firstName || ''} ${order.customer?.lastName || ''}`.trim()}
-                </p>
-                <p>{order.shippingAddress?.address}</p>
-                {order.shippingAddress?.landmark && (
-                  <p className="text-[#666666]">Landmark: {order.shippingAddress.landmark}</p>
-                )}
-                <p>
-                  {order.shippingAddress?.city}, {order.shippingAddress?.state} -{' '}
-                  <span className="font-mono font-semibold">{order.shippingAddress?.pincode}</span>
-                </p>
-                <div className="pt-2 mt-2 border-t border-[#EEEEEE] font-mono text-[11px] text-[#666666] space-y-0.5">
-                  <p>Mobile: {order.customer?.phone}</p>
-                  <p>Email: {order.customer?.email}</p>
+                    `${order.customer?.firstName || ''} ${order.customer?.lastName || ''}`.trim() ||
+                    'Customer'}
+                </div>
+                <div className="kala-address-line">{addressLine}</div>
+                {landmark && <div className="kala-address-line" style={{ color: '#6b7280' }}>Landmark: {landmark}</div>}
+                <div className="kala-address-line">
+                  {city}, {state} - <strong>{pincode}</strong>
+                </div>
+                <div className="kala-address-line">India</div>
+
+                <div className="kala-address-contact">
+                  {order.customer?.phone && (
+                    <div className="kala-address-contact-item">
+                      <span>📞</span>
+                      <span>+91 {order.customer.phone}</span>
+                    </div>
+                  )}
+                  {order.customer?.email && (
+                    <div className="kala-address-contact-item">
+                      <span>✉️</span>
+                      <span>{order.customer.email}</span>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
+            </section>
 
-            {/* Price Details Card */}
-            <div className="bg-white border border-[#222222] p-5 shadow-sm">
-              <h2 className="text-xs font-mono uppercase tracking-widest text-[#777777] mb-3 pb-2 border-b border-[#EEEEEE]">
-                Price Summary
-              </h2>
-              <div className="text-xs space-y-2 font-mono text-[#444444]">
-                <div className="flex justify-between">
+            {/* Price Summary Card */}
+            <section className="kala-order-card" aria-labelledby="price-summary-title">
+              <div className="kala-order-card-header">
+                <h2 id="price-summary-title" className="kala-order-card-title">
+                  <span>💳</span>
+                  <span>Price Summary</span>
+                </h2>
+              </div>
+
+              <div className="kala-price-breakdown">
+                <div className="kala-price-row">
                   <span>Subtotal</span>
-                  <span>{formatINR(order.pricing?.subtotal || 0)}</span>
+                  <span>{formatINR(subtotal)}</span>
                 </div>
-                {(order.pricing?.discount || 0) > 0 && (
-                  <div className="flex justify-between text-green-700">
-                    <span>Discount</span>
-                    <span>-{formatINR(order.pricing?.discount || 0)}</span>
+
+                {discount > 0 && (
+                  <div className="kala-price-row discount">
+                    <span>Discount {order.coupon?.code ? `(${order.coupon.code})` : ''}</span>
+                    <span>-{formatINR(discount)}</span>
                   </div>
                 )}
-                <div className="flex justify-between">
-                  <span>Shipping Fee</span>
-                  <span>
-                    {(order.pricing?.shipping || 0) === 0 ? 'FREE' : formatINR(order.pricing.shipping)}
-                  </span>
+
+                <div className="kala-price-row">
+                  <span>Shipping</span>
+                  <span className="kala-shipping-free-pill">FREE</span>
                 </div>
-                <div className="pt-2 border-t border-[#222222] flex justify-between font-bold text-sm text-[#111111]">
-                  <span>Total Paid</span>
-                  <span className="text-[#D94700]">{formatINR(order.pricing?.total || 0)}</span>
+
+                <div className="kala-price-divider" />
+
+                <div className="kala-price-row grand-total">
+                  <span>Total Amount</span>
+                  <span className="kala-total-val">{formatINR(total)}</span>
                 </div>
+
+                {order.payment?.method && (
+                  <div style={{ fontSize: '0.78rem', color: '#6b7280', marginTop: '0.4rem' }}>
+                    Paid via: <strong style={{ color: '#111111' }}>{order.payment.method.toUpperCase()}</strong>
+                  </div>
+                )}
               </div>
-            </div>
-          </div>
+            </section>
+
+            {/* Need Help Card */}
+            <section className="kala-support-card">
+              <div className="kala-support-title">Need help with this order?</div>
+              <div className="kala-support-desc">
+                If you have questions about sizing, delivery, or custom print artwork, our support team is available.
+              </div>
+              <div className="kala-support-actions">
+                <a
+                  href="mailto:support@kala.com?subject=Inquiry%20regarding%20Order%20"
+                  className="kala-support-btn"
+                >
+                  ✉️ Email Support
+                </a>
+                <Link to="/shop" className="kala-support-btn">
+                  🛍️ Shop More
+                </Link>
+              </div>
+            </section>
+          </aside>
         </div>
       </div>
     </main>

@@ -107,14 +107,6 @@ export const createRazorpayOrder = async (req: Request, res: Response): Promise<
         return
       }
 
-      if (existingOrder.contactVerified === false) {
-        res.status(403).json({
-          success: false,
-          message: 'Cannot initialize payment: Contact details must be verified via OTP before payment.',
-        })
-        return
-      }
-
       // Authoritative amount in paise from MongoDB
       numericAmount = Math.round(existingOrder.pricing.total * 100)
       cleanReceipt = existingOrder.orderId.slice(0, 40)

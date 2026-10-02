@@ -1,0 +1,651 @@
+/* ==========================================================================
+   KALA ORDER DETAILS PAGE STYLES
+   Minimal Luxury Streetwear Aesthetic
+   ========================================================================== */
+
+@import './OrderTracking.css';
+
+.kala-order-details-page {
+  min-height: 80vh;
+  background-color: var(--kala-bg-warm, #FAF9F6);
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  color: var(--kala-black, #111111);
+  font-family: var(--kala-font-primary);
+}
+
+.kala-order-details-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+}
+
+/* --------------------------------------------------------------------------
+   Top Navigation & Header
+   -------------------------------------------------------------------------- */
+.kala-order-back-nav {
+  margin-bottom: 1.5rem;
+}
+
+.kala-order-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.kala-order-back-link:hover {
+  color: var(--kala-black, #111111);
+  transform: translateX(-3px);
+}
+
+.kala-order-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 2px solid var(--kala-black, #111111);
+  margin-bottom: 2rem;
+}
+
+.kala-order-header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.kala-order-ref-title {
+  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--kala-black, #111111);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.kala-order-id-highlight {
+  font-family: var(--kala-font-mono, monospace);
+  color: var(--kala-orange, #D94700);
+}
+
+.kala-order-meta-info {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.kala-order-header-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+/* Badges */
+.kala-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 4px;
+}
+
+.kala-badge-payment-paid {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.kala-badge-payment-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.kala-badge-status {
+  background-color: #ffffff;
+  border: 1.5px solid var(--kala-black, #111111);
+  color: var(--kala-black, #111111);
+}
+
+.kala-badge-status.confirmed {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border-color: #7dd3fc;
+}
+
+.kala-badge-status.processing {
+  background-color: #ffedd5;
+  color: #c2410c;
+  border-color: #fdba74;
+}
+
+.kala-badge-status.shipped {
+  background-color: #f3e8ff;
+  color: #7e22ce;
+  border-color: #d8b4fe;
+}
+
+.kala-badge-status.delivered {
+  background-color: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.kala-badge-status.cancelled {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+/* --------------------------------------------------------------------------
+   2-Column Layout Grid
+   -------------------------------------------------------------------------- */
+.kala-order-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 900px) {
+  .kala-order-grid {
+    grid-template-columns: 1.7fr 1fr;
+    align-items: flex-start;
+  }
+}
+
+.kala-order-col-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.kala-order-col-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Cards Style
+   -------------------------------------------------------------------------- */
+.kala-order-card {
+  background: #ffffff;
+  border: 1px solid var(--kala-border, #E5E2DD);
+  border-radius: 8px;
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.kala-order-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f0eee9;
+  margin-bottom: 1.25rem;
+}
+
+.kala-order-card-title {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--kala-black, #111111);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.kala-order-card-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* --------------------------------------------------------------------------
+   Purchased Items List
+   -------------------------------------------------------------------------- */
+.kala-order-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.kala-order-item-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.kala-order-item-row:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.kala-order-item-thumb {
+  width: 76px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background-color: #faf9f6;
+  flex-shrink: 0;
+}
+
+.kala-order-item-thumb-fallback {
+  width: 76px;
+  height: 84px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.kala-order-item-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.kala-order-item-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+  margin-bottom: 0.25rem;
+  line-height: 1.35;
+}
+
+.kala-order-item-meta-chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.kala-item-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  color: #4b5563;
+}
+
+.kala-item-chip strong {
+  color: var(--kala-black, #111111);
+}
+
+/* Custom Text / Artwork Badges */
+.kala-order-item-customization {
+  margin-top: 0.65rem;
+  background: #fffaf7;
+  border: 1px solid #fed7aa;
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.78rem;
+  color: #7c2d12;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.kala-custom-badge-tag {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.7rem;
+  color: var(--kala-orange, #D94700);
+}
+
+.kala-order-item-pricing {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.kala-item-unit-price {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-family: var(--kala-font-mono, monospace);
+  margin-bottom: 0.15rem;
+}
+
+.kala-item-total-price {
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-family: var(--kala-font-mono, monospace);
+  color: var(--kala-black, #111111);
+}
+
+/* --------------------------------------------------------------------------
+   Shipping Address & Customer Cards
+   -------------------------------------------------------------------------- */
+.kala-address-block {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #374151;
+}
+
+.kala-address-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--kala-black, #111111);
+  margin-bottom: 0.4rem;
+}
+
+.kala-address-line {
+  margin: 0.15rem 0;
+}
+
+.kala-address-contact {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #f3f4f6;
+  font-size: 0.8rem;
+  color: #4b5563;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.kala-address-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* --------------------------------------------------------------------------
+   Price Summary Card
+   -------------------------------------------------------------------------- */
+.kala-price-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.kala-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #4b5563;
+  font-family: var(--kala-font-mono, monospace);
+}
+
+.kala-price-row.discount {
+  color: #15803d;
+  font-weight: 700;
+}
+
+.kala-shipping-free-pill {
+  background-color: #dcfce7;
+  color: #15803d;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  letter-spacing: 0.05em;
+}
+
+.kala-price-divider {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 0.25rem 0;
+}
+
+.kala-price-row.grand-total {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--kala-black, #111111);
+  padding-top: 0.25rem;
+}
+
+.kala-price-row.grand-total .kala-total-val {
+  color: var(--kala-orange, #D94700);
+}
+
+/* --------------------------------------------------------------------------
+   Need Help / Support Card
+   -------------------------------------------------------------------------- */
+.kala-support-card {
+  background: #fbfbfa;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 1.25rem;
+  font-size: 0.825rem;
+}
+
+.kala-support-title {
+  font-weight: 800;
+  color: var(--kala-black, #111111);
+  margin-bottom: 0.35rem;
+  font-size: 0.875rem;
+}
+
+.kala-support-desc {
+  color: #6b7280;
+  margin-bottom: 0.85rem;
+  line-height: 1.45;
+}
+
+.kala-support-actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.kala-support-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.4rem 0.85rem;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  color: #111111;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.kala-support-btn:hover {
+  border-color: var(--kala-black, #111111);
+  background: #f3f4f6;
+}
+
+/* --------------------------------------------------------------------------
+   Loading and Error States
+   -------------------------------------------------------------------------- */
+.kala-order-loading-box,
+.kala-order-error-box {
+  background: #ffffff;
+  border: 1px solid var(--kala-border, #E5E2DD);
+  border-radius: 8px;
+  padding: 4rem 2rem;
+  text-align: center;
+  max-width: 500px;
+  margin: 3rem auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.kala-order-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e7eb;
+  border-top-color: var(--kala-orange, #D94700);
+  border-radius: 50%;
+  animation: kalaSpin 0.75s linear infinite;
+  margin: 0 auto 1.25rem;
+}
+
+@keyframes kalaSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.kala-order-loading-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+.kala-order-error-icon {
+  font-size: 2.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.kala-order-error-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--kala-black, #111111);
+  margin-bottom: 0.5rem;
+}
+
+.kala-order-error-msg {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile Adjustments
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .kala-order-item-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .kala-order-item-pricing {
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed #e5e7eb;
+  }
+
+  .kala-order-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .kala-order-header-badges {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Orders List Page & Card Styles
+   -------------------------------------------------------------------------- */
+.kala-orders-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--kala-black, #111111);
+  margin-bottom: 2rem;
+}
+
+.kala-orders-title {
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--kala-black, #111111);
+  margin: 0;
+}
+
+.kala-order-card-preview {
+  background: #ffffff;
+  border: 1px solid var(--kala-border, #E5E2DD);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  margin-bottom: 1.25rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kala-order-card-preview:hover {
+  border-color: var(--kala-orange, #D94700);
+  box-shadow: 0 4px 14px rgba(217, 71, 0, 0.08);
+}
+
+.kala-order-card-preview-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.kala-order-card-preview-items {
+  padding: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.kala-order-card-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.85rem;
+}
+
+.kala-order-card-preview-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f3f4f6;
+}
+
