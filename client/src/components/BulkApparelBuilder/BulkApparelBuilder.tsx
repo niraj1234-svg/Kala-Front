@@ -5,16 +5,17 @@ import {
   type ApparelColor,
   type ApparelSide,
   type ApparelCustomizationState,
+  type PoloModelId,
+  type TshirtModelId,
   type SizeKey,
   type SizeQuantities,
   type UploadedApparelImage,
 } from './types'
-import { APPAREL_CONFIGS, DEFAULT_EMBLEM_URL } from './mockupAssets'
+import { APPAREL_CONFIGS, POLO_PRODUCTS, TSHIRT_PRODUCTS, DEFAULT_EMBLEM_URL } from './mockupAssets'
 import ApparelPreview from './ApparelPreview'
 import ApparelSelector from './ApparelSelector'
 import ColorSelector from './ColorSelector'
 import DesignUploader from './DesignUploader'
-import DesignAdjuster from './DesignAdjuster'
 import QuantitySelector, { PRESET_DISTRIBUTIONS } from './QuantitySelector'
 import RequirementDetails from './RequirementDetails'
 import AccountShortcut from './AccountShortcut'
@@ -24,6 +25,8 @@ import './BulkApparelBuilder.css'
 export const BulkApparelBuilder: React.FC = () => {
   // 1. Core Selection State
   const [selectedApparel, setSelectedApparel] = useState<ApparelId>('tshirt')
+  const [selectedPoloModel, setSelectedPoloModel] = useState<PoloModelId>('regular-jmp')
+  const [selectedTshirtModel, setSelectedTshirtModel] = useState<TshirtModelId>('promotion-campaign')
   const [selectedColor, setSelectedColor] = useState<ApparelColor>('black')
   const [selectedSide, setSelectedSide] = useState<ApparelSide>('front')
   const [sizeQuantities, setSizeQuantities] = useState<SizeQuantities>({
@@ -46,6 +49,7 @@ export const BulkApparelBuilder: React.FC = () => {
         x: 50,
         y: 46,
         size: 80,
+        rotation: 0,
       },
       back: {
         artworkUrl: DEFAULT_EMBLEM_URL,
@@ -54,6 +58,7 @@ export const BulkApparelBuilder: React.FC = () => {
         x: 50,
         y: 44,
         size: 80,
+        rotation: 0,
       },
     },
     hoodie: {
@@ -64,6 +69,7 @@ export const BulkApparelBuilder: React.FC = () => {
         x: 50,
         y: 48,
         size: 80,
+        rotation: 0,
       },
       back: {
         artworkUrl: DEFAULT_EMBLEM_URL,
@@ -72,6 +78,7 @@ export const BulkApparelBuilder: React.FC = () => {
         x: 50,
         y: 44,
         size: 80,
+        rotation: 0,
       },
     },
     jersey: {
@@ -82,6 +89,7 @@ export const BulkApparelBuilder: React.FC = () => {
         x: 50,
         y: 46,
         size: 80,
+        rotation: 0,
       },
       back: {
         artworkUrl: DEFAULT_EMBLEM_URL,
@@ -90,6 +98,27 @@ export const BulkApparelBuilder: React.FC = () => {
         x: 50,
         y: 44,
         size: 80,
+        rotation: 0,
+      },
+    },
+    polo: {
+      front: {
+        artworkUrl: DEFAULT_EMBLEM_URL,
+        artworkName: 'Default KALA Emblem',
+        artworkType: 'image/svg+xml',
+        x: 50,
+        y: 48,
+        size: 80,
+        rotation: 0,
+      },
+      back: {
+        artworkUrl: DEFAULT_EMBLEM_URL,
+        artworkName: 'Default KALA Emblem',
+        artworkType: 'image/svg+xml',
+        x: 50,
+        y: 44,
+        size: 80,
+        rotation: 0,
       },
     },
   })
@@ -98,6 +127,8 @@ export const BulkApparelBuilder: React.FC = () => {
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
   const currentConfig = APPAREL_CONFIGS[selectedApparel]
+  const currentPoloConfig = POLO_PRODUCTS.find((p) => p.id === selectedPoloModel) || POLO_PRODUCTS[0]
+  const currentTshirtConfig = TSHIRT_PRODUCTS.find((t) => t.id === selectedTshirtModel) || TSHIRT_PRODUCTS[0]
   const currentSideData = customizationState[selectedApparel][selectedSide]
 
   // Mathematical Summation of Pieces Across All Sizes
@@ -115,8 +146,33 @@ export const BulkApparelBuilder: React.FC = () => {
     .map((sz) => `${sz}: ${sizeQuantities[sz]}`)
     .join(', ')
 
-  const estimatedUnitPrice = currentConfig.startingPrice
+  const activeApparelName =
+    selectedApparel === 'polo'
+      ? currentPoloConfig.name
+      : selectedApparel === 'tshirt'
+      ? currentTshirtConfig.name
+      : currentConfig.name
+
+  const estimatedUnitPrice =
+    selectedApparel === 'polo'
+      ? currentPoloConfig.startingPrice
+      : selectedApparel === 'tshirt'
+      ? currentTshirtConfig.startingPrice
+      : currentConfig.startingPrice
+
   const estimatedTotal = estimatedUnitPrice * totalQuantity
+
+  const handleSelectTshirtModel = (modelId: TshirtModelId) => {
+    setSelectedTshirtModel(modelId)
+    setSelectedColor('black')
+    setSelectedSide('front')
+  }
+
+  const handleSelectPoloModel = (modelId: PoloModelId) => {
+    setSelectedPoloModel(modelId)
+    setSelectedColor('black')
+    setSelectedSide('front')
+  }
 
   const handleUpdateSizeQuantity = (size: SizeKey, qty: number) => {
     setSizeQuantities((prev) => ({
@@ -162,6 +218,20 @@ export const BulkApparelBuilder: React.FC = () => {
         [selectedSide]: {
           ...prev[selectedApparel][selectedSide],
           size,
+        },
+      },
+    }))
+  }
+
+  // Update rotation of active design
+  const handleUpdateRotation = (rotation: number) => {
+    setCustomizationState((prev) => ({
+      ...prev,
+      [selectedApparel]: {
+        ...prev[selectedApparel],
+        [selectedSide]: {
+          ...prev[selectedApparel][selectedSide],
+          rotation,
         },
       },
     }))
@@ -223,6 +293,7 @@ export const BulkApparelBuilder: React.FC = () => {
           artworkName: 'Default KALA Emblem',
           artworkType: 'image/svg+xml',
           size: 80,
+          rotation: 0,
         },
       },
     }))
@@ -286,10 +357,12 @@ export const BulkApparelBuilder: React.FC = () => {
             TWO-COLUMN BUILDER CONTAINER (Large Rounded Bordered Box)
             ==================================================================== */}
         <div className="kala-bulk-builder-card">
-          {/* LEFT COLUMN: Live Product Preview (~40% Desktop) */}
+          {/* LEFT COLUMN: Live Product Preview + Upload Design + Adjuster + Requirements */}
           <div className="kala-bulk-col-left">
             <ApparelPreview
               selectedApparel={selectedApparel}
+              currentPoloConfig={currentPoloConfig}
+              currentTshirtConfig={currentTshirtConfig}
               selectedColor={selectedColor}
               selectedSide={selectedSide}
               customizationState={customizationState}
@@ -298,30 +371,11 @@ export const BulkApparelBuilder: React.FC = () => {
               onSelectColor={setSelectedColor}
               onSelectSide={setSelectedSide}
               onUpdatePosition={handleUpdatePosition}
-            />
-          </div>
-
-          {/* RIGHT COLUMN: Configuration Controls (~60% Desktop) */}
-          <div className="kala-bulk-col-right">
-            {/* Top-Right Account Shortcut */}
-            <div className="kala-bulk-top-row">
-              <AccountShortcut />
-            </div>
-
-            {/* Step 1: Select Apparel */}
-            <ApparelSelector
-              selectedApparel={selectedApparel}
-              onSelectApparel={setSelectedApparel}
+              onUpdateSize={handleUpdateSize}
+              onUpdateRotation={handleUpdateRotation}
             />
 
-            {/* Step 2: Select Color */}
-            <ColorSelector
-              apparelName={currentConfig.name}
-              selectedColor={selectedColor}
-              onSelectColor={setSelectedColor}
-            />
-
-            {/* Step 3: Upload Your Design */}
+            {/* 2nd Image: Upload Your Design & Upload Own Apparel */}
             <DesignUploader
               currentArtworkName={currentSideData.artworkName}
               currentArtworkUrl={currentSideData.artworkUrl}
@@ -332,10 +386,36 @@ export const BulkApparelBuilder: React.FC = () => {
               onRemoveApparel={handleRemoveApparel}
             />
 
-            {/* Step 4: Design Preview & Adjust */}
-            <DesignAdjuster
-              size={currentSideData.size}
-              onSizeChange={handleUpdateSize}
+            {/* 3rd Section: Requirement Details */}
+            <RequirementDetails
+              value={requirement}
+              onChange={setRequirement}
+            />
+          </div>
+
+          {/* RIGHT COLUMN: Configuration Controls */}
+          <div className="kala-bulk-col-right">
+            {/* Top-Right Account Shortcut */}
+            <div className="kala-bulk-top-row">
+              <AccountShortcut />
+            </div>
+
+            {/* Step 1: Select Apparel */}
+            <ApparelSelector
+              selectedApparel={selectedApparel}
+              selectedPoloModel={selectedPoloModel}
+              selectedTshirtModel={selectedTshirtModel}
+              selectedColor={selectedColor}
+              onSelectApparel={setSelectedApparel}
+              onSelectPoloModel={handleSelectPoloModel}
+              onSelectTshirtModel={handleSelectTshirtModel}
+            />
+
+            {/* Step 2: Select Color */}
+            <ColorSelector
+              apparelName={activeApparelName}
+              selectedColor={selectedColor}
+              onSelectColor={setSelectedColor}
             />
 
             {/* Step 5: Approximate Quantity by Size */}
@@ -348,17 +428,13 @@ export const BulkApparelBuilder: React.FC = () => {
               estimatedTotal={estimatedTotal}
             />
 
-            {/* Step 6: Requirement Details */}
-            <RequirementDetails
-              value={requirement}
-              onChange={setRequirement}
-            />
-
             {/* Discussion Options & Estimated Investment Display */}
             <DiscussionOptions
-              apparelName={currentConfig.name}
+              apparelId={selectedApparel}
+              apparelName={activeApparelName}
               colorName={selectedColor === 'black' ? 'Black' : 'White'}
               quantity={totalQuantity}
+              sizeQuantities={sizeQuantities}
               sizeBreakdownText={sizeBreakdownText}
               unitPrice={estimatedUnitPrice}
               estimatedTotal={estimatedTotal}
@@ -368,7 +444,16 @@ export const BulkApparelBuilder: React.FC = () => {
                   : requirement
               }
               currentArtworkName={currentSideData.artworkName}
+              currentArtworkUrl={currentSideData.artworkUrl}
               uploadedApparelFileName={uploadedApparel?.fileName}
+              apparelPreviewImage={
+                uploadedApparel?.dataUrl ||
+                (selectedApparel === 'polo' && currentPoloConfig
+                  ? currentPoloConfig.mockups[selectedColor]?.[selectedSide] || currentPoloConfig.mockups.black?.front
+                  : selectedApparel === 'tshirt' && currentTshirtConfig
+                  ? currentTshirtConfig.mockups[selectedColor]?.[selectedSide] || currentTshirtConfig.mockups.black?.front
+                  : currentConfig.mockups[selectedColor]?.[selectedSide] || currentConfig.mockups.black?.front)
+              }
             />
           </div>
         </div>

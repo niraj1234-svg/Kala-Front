@@ -15,8 +15,8 @@ export interface AuthContextType {
   currentUser: User | null
   isAuthenticated: boolean
   isLoading: boolean
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
-  register: (userData: RegisterRequest) => Promise<{ success: boolean; error?: string }>
+  login: (email: string, password: string) => Promise<{ success: boolean; user?: User; error?: string }>
+  register: (userData: RegisterRequest) => Promise<{ success: boolean; user?: User; error?: string }>
   logout: () => void
 }
 
@@ -89,7 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (
     userData: RegisterRequest
-  ): Promise<{ success: boolean; error?: string }> => {
+  ): Promise<{ success: boolean; user?: User; error?: string }> => {
     try {
       const res = await registerUser(userData)
       if (res && res.success && res.user) {
@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(res.user))
         } catch {}
-        return { success: true }
+        return { success: true, user: res.user }
       }
       return { success: false, error: res?.message || 'Registration failed.' }
     } catch (err: any) {
@@ -108,7 +108,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (
     email: string,
     password: string
-  ): Promise<{ success: boolean; error?: string }> => {
+  ): Promise<{ success: boolean; user?: User; error?: string }> => {
     try {
       const res = await loginUser({ email, password })
       if (res && res.success && res.user) {
@@ -116,7 +116,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(res.user))
         } catch {}
-        return { success: true }
+        return { success: true, user: res.user }
       }
       return { success: false, error: res?.message || 'Invalid email or password.' }
     } catch (err: any) {

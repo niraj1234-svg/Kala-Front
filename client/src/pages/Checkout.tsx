@@ -41,7 +41,7 @@ export const Checkout: React.FC = () => {
     return null
   })
 
-  const { cartItems, cartCount, cartSubtotal, clearCart } = useCart()
+  const { cartItems, cartCount, cartSubtotal, isCartLoading, clearCart } = useCart()
   const { currentUser, isAuthenticated, isLoading } = useAuth()
 
   // Normalize items array: either bundle items or standard cartItems
@@ -88,7 +88,7 @@ export const Checkout: React.FC = () => {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       const redirectUrl = isBundleCheckout ? '/checkout?bundle=true' : '/checkout'
-      navigate(`/account?redirect=${encodeURIComponent(redirectUrl)}&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.`, {
+      navigate(`/account?redirect=${encodeURIComponent(redirectUrl)}&message=Please%20log%20in%20or%20create%20an%20account%20to%20continue%20with%20your%20purchase.`, {
         replace: true,
       })
     }
@@ -172,11 +172,11 @@ export const Checkout: React.FC = () => {
     }
   }, [cartKey])
 
-  // Authentication loading state
-  if (isLoading) {
+  // Authentication or cart synchronization loading state
+  if (isLoading || isCartLoading) {
     return (
       <main className="kala-container kala-checkout-page" style={{ minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p className="kala-body" style={{ color: 'var(--kala-text-secondary)', letterSpacing: '0.1em' }}>CHECKING AUTHENTICATION...</p>
+        <p className="kala-body" style={{ color: 'var(--kala-text-secondary)', letterSpacing: '0.1em' }}>LOADING YOUR CART...</p>
       </main>
     )
   }

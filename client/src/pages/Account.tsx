@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
 import { fetchMyOrders } from '../services/orderApi'
 import type { BackendOrder } from '../services/orderApi'
 import logoImg from '../assets/logo.png'
@@ -10,6 +11,7 @@ import '../styles/OrderTracking.css'
 export const Account: React.FC = () => {
   const navigate = useNavigate()
   const { currentUser, isAuthenticated, isLoading, login, register, logout } = useAuth()
+  const { mergeGuestCart } = useCart()
   const [searchParams] = useSearchParams()
   const tabParam = searchParams.get('tab')
   const redirectParam = searchParams.get('redirect')
@@ -19,12 +21,14 @@ export const Account: React.FC = () => {
     return tabParam === 'register' ? 'register' : 'login'
   })
 
-  // If already authenticated and visiting with redirect, navigate immediately
+  // If already authenticated and visiting with redirect, merge any pending guest items then navigate
   useEffect(() => {
     if (!isLoading && isAuthenticated && currentUser && redirectParam) {
-      navigate(redirectParam, { replace: true })
+      mergeGuestCart(currentUser.id).finally(() => {
+        navigate(redirectParam, { replace: true })
+      })
     }
-  }, [isLoading, isAuthenticated, currentUser, redirectParam, navigate])
+  }, [isLoading, isAuthenticated, currentUser, redirectParam, navigate, mergeGuestCart])
 
   useEffect(() => {
     if (tabParam === 'register' || tabParam === 'login') {
@@ -125,6 +129,11 @@ export const Account: React.FC = () => {
     try {
       const result = await login(loginEmail, loginPassword)
       if (result.success) {
+        try {
+          await mergeGuestCart(result.user?.id)
+        } catch (mergeErr) {
+          console.warn('[Account] Failed to merge guest cart on login:', mergeErr)
+        }
         if (redirectParam) {
           navigate(redirectParam, { replace: true })
         }
@@ -221,6 +230,11 @@ export const Account: React.FC = () => {
       })
 
       if (result.success) {
+        try {
+          await mergeGuestCart(result.user?.id)
+        } catch (mergeErr) {
+          console.warn('[Account] Failed to merge guest cart on register:', mergeErr)
+        }
         if (redirectParam) {
           navigate(redirectParam, { replace: true })
         }

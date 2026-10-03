@@ -1,6 +1,55 @@
-export type ApparelId = 'tshirt' | 'hoodie' | 'jersey'
+export type ApparelId = 'tshirt' | 'hoodie' | 'jersey' | 'polo'
 export type ApparelColor = 'black' | 'white'
 export type ApparelSide = 'front' | 'back'
+
+export type PoloModelId = 'regular-jmp' | 'sap-matty' | 'cotton-matty' | 'mfl-cotton'
+
+export interface PoloProductOption {
+  id: PoloModelId
+  name: string
+  startingPrice: number
+  startingPriceLabel: string
+  description: string
+  specifications: string[]
+  gsm: string
+  mockups: {
+    black: {
+      front: string
+      back: string
+    }
+    white: {
+      front: string
+      back: string
+    }
+  }
+}
+
+export type TshirtModelId =
+  | 'promotion-campaign'
+  | 'regular-fit'
+  | 'basic-collar'
+  | 'dot-net'
+  | 'dot-net-polo'
+
+export interface TshirtProductOption {
+  id: TshirtModelId
+  name: string
+  startingPrice: number
+  startingPriceLabel: string
+  description: string
+  specifications: string[]
+  gsm: string
+  mockups: {
+    black: {
+      front: string
+      back: string
+    }
+    white: {
+      front: string
+      back: string
+    }
+  }
+}
 
 export interface UploadedApparelImage {
   dataUrl: string
@@ -30,6 +79,10 @@ export interface ApparelCustomizationState {
     back: SideCustomization
   }
   jersey: {
+    front: SideCustomization
+    back: SideCustomization
+  }
+  polo: {
     front: SideCustomization
     back: SideCustomization
   }
@@ -74,12 +127,14 @@ export interface BulkApparelSubmission {
     fileName: string
     position: { x: number; y: number }
     size: number
+    rotation?: number
   }
   back: {
     design: string
     fileName: string
     position: { x: number; y: number }
     size: number
+    rotation?: number
   }
   requirementDetails: string
   timestamp: string

@@ -89,9 +89,9 @@ export const addItem = async (req: Request, res: Response): Promise<void> => {
     // Handle customization (front/back text ONLY allowed for Bihar Story T-Shirt)
     const isCustomTextAllowed = cleanProductId === 'kala-bihari-story-premium-t-shirt' || Boolean(dbProduct?.customPrintTextEnabled)
     const rawFrontText = isCustomTextAllowed ? (customization?.frontText || (typeof req.body.frontText === 'string' ? req.body.frontText : '')) : ''
-    const cleanFrontText = typeof rawFrontText === 'string' && rawFrontText.trim() ? rawFrontText.trim().slice(0, 30) : ''
+    const cleanFrontText = typeof rawFrontText === 'string' && rawFrontText.trim() ? rawFrontText.trim().slice(0, 50) : ''
     const rawBackText = isCustomTextAllowed ? (customization?.backText || (typeof req.body.backText === 'string' ? req.body.backText : '')) : ''
-    const cleanBackText = typeof rawBackText === 'string' && rawBackText.trim() ? rawBackText.trim().slice(0, 30) : ''
+    const cleanBackText = typeof rawBackText === 'string' && rawBackText.trim() ? rawBackText.trim().slice(0, 50) : ''
     const hasCustomText = Boolean(cleanFrontText || cleanBackText)
     const customPrice = hasCustomText ? (dbProduct?.customPrintTextPrice || 25) : 0
     const basePrice = typeof dbProduct?.price === 'number' ? dbProduct.price : (typeof price === 'number' && price >= 0 ? price : 0)
@@ -377,13 +377,18 @@ export const syncCart = async (req: Request, res: Response): Promise<void> => {
       if (!productId || !size) continue
 
       const rawFrontText = rawItem.customization?.frontText || (typeof rawItem.frontText === 'string' ? rawItem.frontText : '')
-      const cleanFrontText = typeof rawFrontText === 'string' && rawFrontText.trim() ? rawFrontText.trim().slice(0, 30) : ''
+      const cleanFrontText = typeof rawFrontText === 'string' && rawFrontText.trim() ? rawFrontText.trim().slice(0, 50) : ''
       const rawBackText = rawItem.customization?.backText || (typeof rawItem.backText === 'string' ? rawItem.backText : '')
-      const cleanBackText = typeof rawBackText === 'string' && rawBackText.trim() ? rawBackText.trim().slice(0, 30) : ''
+      const cleanBackText = typeof rawBackText === 'string' && rawBackText.trim() ? rawBackText.trim().slice(0, 50) : ''
       const hasCustomText = Boolean(cleanFrontText || cleanBackText)
-      const customPrice = hasCustomText ? 25 : 0
+      const customPrice = (typeof rawItem.customization?.price === 'number' && rawItem.customization.price > 0)
+        ? rawItem.customization.price
+        : (hasCustomText ? 25 : 0)
 
-      const custKey = `${cleanFrontText}_${cleanBackText}_${rawItem.customization?.artworkUrl || ''}_${rawItem.customization?.position || ''}`
+      const itemColor = String(rawItem.customization?.color || rawItem.color || '').trim().toLowerCase()
+      const itemApparel = String(rawItem.customization?.apparelType || '').trim().toLowerCase()
+      const itemReqs = String(rawItem.customization?.requirementDetails || '').trim()
+      const custKey = `${cleanFrontText}_${cleanBackText}_${rawItem.customization?.artworkUrl || ''}_${rawItem.customization?.position || ''}_${itemColor}_${itemApparel}_${itemReqs}`
       const key = `${productId}:${size}:${custKey}`
       const existing = consolidatedMap.get(key)
       if (existing) {
@@ -392,9 +397,11 @@ export const syncCart = async (req: Request, res: Response): Promise<void> => {
         // Fetch DB product if possible
         const dbProduct = await Product.findOne({ id: productId })
         const resolvedName = dbProduct?.name || String(rawItem.name || productId).trim()
-        const resolvedImage = dbProduct?.image || String(rawItem.image || '/favicon.png').trim()
+        const resolvedImage = (typeof rawItem.image === 'string' && rawItem.image.trim())
+          ? rawItem.image.trim()
+          : (dbProduct?.image || '/favicon.png')
         const basePrice = typeof dbProduct?.price === 'number' ? dbProduct.price : (typeof rawItem.price === 'number' && rawItem.price >= 0 ? rawItem.price : 0)
-        const resolvedPrice = basePrice + customPrice
+        const resolvedPrice = basePrice + (hasCustomText && !rawItem.customization?.price ? 25 : (rawItem.customization?.price || 0))
 
         let mergedCustomization: any = undefined
         if (rawItem.customization || hasCustomText) {

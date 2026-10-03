@@ -9,9 +9,15 @@ export function getProductImage(filename: string): string {
   if (filename.startsWith('http://') || filename.startsWith('https://') || filename.startsWith('data:')) {
     return filename
   }
+  if (filename.startsWith('/custom-apparel/') || filename.startsWith('custom-apparel/')) {
+    return filename.startsWith('/') ? filename : `/${filename}`
+  }
+  if (filename.includes('kala-custom-hero-floating.png')) {
+    return '/custom-apparel/kala-custom-hero-floating.png'
+  }
   const cleanName = filename.replace(/^\/?(images\/)?/, '')
   const path = `/images/${cleanName}`
-  return imageMap[path] || imageMap[decodeURIComponent(path)] || path
+  return imageMap[path] || imageMap[decodeURIComponent(path)] || (filename.startsWith('/') ? filename : path)
 }
 
 export interface ProductColorVariant {
@@ -87,25 +93,25 @@ export function getProductHighlights(product: Product): ProductHighlight[] {
     highlights.push({ label: 'Sleeve', value: 'Half Sleeve' })
   }
 
-  // 2. Fabric (derived from verified product description)
+  // 2. Fabric
   if (desc.includes('220 gsm') || name.includes('220 gsm')) {
     highlights.push({ label: 'Fabric', value: '220 GSM Premium Cotton' })
   } else if (desc.includes('280 gsm') || name.includes('280 gsm')) {
     highlights.push({ label: 'Fabric', value: '280 GSM Cotton' })
-  } else if (desc.includes('300 gsm') || name.includes('300 gsm')) {
-    highlights.push({ label: 'Fabric', value: '300 GSM Cotton' })
-  } else if (desc.includes('combed ringspun') || desc.includes('ringspun')) {
+  } else if (desc.includes('450 gsm') || name.includes('450 gsm')) {
+    highlights.push({ label: 'Fabric', value: '450 GSM French Terry Cotton' })
+  } else if (desc.includes('fleece') || name.includes('fleece')) {
+    highlights.push({ label: 'Fabric', value: 'Brushed Cotton Fleece' })
+  } else if (desc.includes('combed') || name.includes('vintage')) {
     highlights.push({ label: 'Fabric', value: 'Combed Ringspun Cotton' })
-  } else if (desc.includes('4-way stretch') || desc.includes('compression')) {
-    highlights.push({ label: 'Fabric', value: '4-Way Stretch Poly-Spandex' })
-  } else if (desc.includes('dry-fit') || desc.includes('dryfit') || name.includes('dry-fit')) {
-    highlights.push({ label: 'Fabric', value: 'Dry-Fit Polyester' })
   } else if (desc.includes('cotton blend') || name.includes('cotton blend')) {
     highlights.push({ label: 'Fabric', value: 'Cotton Blend' })
   } else if (desc.includes('cotton')) {
     highlights.push({ label: 'Fabric', value: '100% Cotton' })
   } else if (desc.includes('moisture-wicking') || name.includes('jersey')) {
     highlights.push({ label: 'Fabric', value: 'Moisture-Wicking Polyester' })
+  } else {
+    highlights.push({ label: 'Fabric', value: 'Comfortable Cotton Blend' })
   }
 
   // 3. Neck Type
@@ -128,6 +134,8 @@ export function getProductHighlights(product: Product): ProductHighlight[] {
     highlights.push({ label: 'Pattern', value: 'Esports Print' })
   } else if (desc.includes('solid') || name.includes('compression') || name.includes('dry-fit') || name.includes('pump cover')) {
     highlights.push({ label: 'Pattern', value: 'Solid' })
+  } else {
+    highlights.push({ label: 'Pattern', value: 'Graphic Print' })
   }
 
   return highlights
@@ -231,7 +239,137 @@ export const PRODUCTS: Product[] = [
     available: true,
   },
 
-  // Gaming (5 items)
+  // 8 New Original Streetwear Products
+  {
+    id: 'midnight-tokyo-tshirt',
+    name: 'Midnight Tokyo T-Shirt',
+    category: 'Streetwear',
+    price: 499,
+    image: getProductImage('midnight-tokyo-tshirt.png'),
+    description: 'Original anime-inspired urban artwork built for late-night streetwear.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Streetwear fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Graphic print' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'no-signal-tshirt',
+    name: 'No Signal T-Shirt',
+    category: 'Streetwear',
+    price: 449,
+    image: getProductImage('no-signal-tshirt.png'),
+    description: 'Minimal glitch-inspired streetwear for an always-connected generation.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Streetwear fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Glitch graphic' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'after-dark-tshirt',
+    name: 'After Dark T-Shirt',
+    category: 'Streetwear',
+    price: 499,
+    image: getProductImage('after-dark-tshirt.png'),
+    description: 'Original night-themed streetwear with moonlight and dark urban aesthetic.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Streetwear fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Graphic print' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'lost-in-thought-tshirt',
+    name: 'Lost In Thought T-Shirt',
+    category: 'Streetwear',
+    price: 499,
+    image: getProductImage('lost-in-thought-tshirt.png'),
+    description: 'Original anime-inspired reflective artwork in an oversized graphic aesthetic.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Oversized-inspired design' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Artistic graphic' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'offline-society-tshirt',
+    name: 'Offline Society T-Shirt',
+    category: 'Streetwear',
+    price: 399,
+    image: getProductImage('offline-society-tshirt.png'),
+    description: 'Minimalist typography-driven streetwear for disconnecting with purpose.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Streetwear style' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Minimal typography' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'future-is-loading-tshirt',
+    name: 'Future Is Loading T-Shirt',
+    category: 'Streetwear',
+    price: 449,
+    image: getProductImage('future-is-loading-tshirt.png'),
+    description: 'Futuristic loading interface graphic designed for next-gen street style.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Streetwear fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Tech UI graphic' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'rebel-mind-tshirt',
+    name: 'Rebel Mind T-Shirt',
+    category: 'Streetwear',
+    price: 499,
+    image: getProductImage('rebel-mind-tshirt.png'),
+    description: 'Bold and edgy illustrated streetwear graphic for an independent mindset.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Streetwear fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Bold graphic' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'urban-chaos-tshirt',
+    name: 'Urban Chaos T-Shirt',
+    category: 'Streetwear',
+    price: 499,
+    image: getProductImage('urban-chaos-tshirt.png'),
+    description: 'Abstract geometric street graphic built for modern oversized streetwear.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Oversized streetwear' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Abstract geometric' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+
+  // Gaming (5 existing items)
   {
     id: 'gaming-cyber-pro-jersey-01',
     name: 'KALA Apex Cyber Esports Jersey',
@@ -278,7 +416,105 @@ export const PRODUCTS: Product[] = [
     available: true,
   },
 
-  // Gymwear (9 items)
+  // 6 New Original Gaming Products
+  {
+    id: 'respawn-mode-tshirt',
+    name: 'Respawn Mode T-Shirt',
+    category: 'Gaming',
+    price: 449,
+    image: getProductImage('respawn-mode-tshirt.png'),
+    description: 'Futuristic gaming graphics built for your next level.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Comfortable fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Gaming HUD graphic' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'night-raid-tshirt',
+    name: 'Night Raid T-Shirt',
+    category: 'Gaming',
+    price: 499,
+    image: getProductImage('night-raid-tshirt.png'),
+    description: 'Tactical cyberpunk operative graphic inspired by high-stakes night missions.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Streetwear style' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Tactical cyberpunk graphic' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'level-up-tshirt',
+    name: 'Level Up T-Shirt',
+    category: 'Gaming',
+    price: 399,
+    image: getProductImage('level-up-tshirt.png'),
+    description: 'Clean pixel and futuristic graphics built for everyday gaming style.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Comfortable fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Pixel typography' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'critical-hit-tshirt',
+    name: 'Critical Hit T-Shirt',
+    category: 'Gaming',
+    price: 449,
+    image: getProductImage('critical-hit-tshirt.png'),
+    description: 'Energetic high-impact typography with dynamic dark gaming aesthetic.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Streetwear fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Dynamic gaming typography' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'cyber-player-tshirt',
+    name: 'Cyber Player T-Shirt',
+    category: 'Gaming',
+    price: 499,
+    image: getProductImage('cyber-player-tshirt.png'),
+    description: 'Cyberpunk-inspired player artwork crafted with sleek neon accents.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Comfortable fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Cyberpunk graphic' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'game-over-never-tshirt',
+    name: 'Game Over Never T-Shirt',
+    category: 'Gaming',
+    price: 399,
+    image: getProductImage('game-over-never-tshirt.png'),
+    description: 'Motivational minimalist gaming typography with digital glitch detailing.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Casual fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Motivational typography' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+
+  // Gymwear (7 existing items)
   {
     id: 'gymwear-performance-compression-tee-01',
     name: 'KALA Aerodynamic Compression Tee',
@@ -353,5 +589,103 @@ export const PRODUCTS: Product[] = [
     image: getProductImage('Gymwear09.png'),
     description: 'Plush ribbed athletic recovery trackpants.',
     available: true,
+  },
+
+  // 6 New Original Gymwear Products
+  {
+    id: 'built-different-tshirt',
+    name: 'Built Different T-Shirt',
+    category: 'Gymwear',
+    price: 499,
+    image: getProductImage('built-different-tshirt.png'),
+    description: 'Minimal athletic streetwear for people who train with purpose.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Athletic fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Minimal athletic typography' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'no-days-off-tshirt',
+    name: 'No Days Off T-Shirt',
+    category: 'Gymwear',
+    price: 449,
+    image: getProductImage('no-days-off-tshirt.png'),
+    description: 'Bold monochrome athletic typography built for relentless daily consistency.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Gym-ready style' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Monochrome typography' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'discipline-tshirt',
+    name: 'Discipline T-Shirt',
+    category: 'Gymwear',
+    price: 499,
+    image: getProductImage('discipline-tshirt.png'),
+    description: 'Minimalist strength graphic honoring discipline over fleeting motivation.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Athletic fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Strength graphic' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'train-insane-tshirt',
+    name: 'Train Insane T-Shirt',
+    category: 'Gymwear',
+    price: 499,
+    image: getProductImage('train-insane-tshirt.png'),
+    description: 'High-performance gym aesthetic engineered for aggressive training sessions.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Performance fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Bold gym graphic' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'iron-mind-tshirt',
+    name: 'Iron Mind T-Shirt',
+    category: 'Gymwear',
+    price: 499,
+    image: getProductImage('iron-mind-tshirt.png'),
+    description: 'Industrial metallic graphic representing an unbreakable training mindset.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Gym-ready style' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Industrial graphic' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
+  },
+  {
+    id: 'earn-your-strength-tshirt',
+    name: 'Earn Your Strength T-Shirt',
+    category: 'Gymwear',
+    price: 449,
+    image: getProductImage('earn-your-strength-tshirt.png'),
+    description: 'Clean motivational fitness graphic designed for dedicated lifters.',
+    available: true,
+    highlights: [
+      { label: 'Fit', value: 'Athletic fit' },
+      { label: 'Fabric', value: 'Comfortable cotton blend' },
+      { label: 'Pattern', value: 'Motivational fitness graphic' },
+      { label: 'Neck Type', value: 'Round Neck' },
+      { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+    ],
   },
 ]

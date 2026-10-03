@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react'
 import { PRODUCTS } from '../data/products'
 import type { Product } from '../data/products'
+import { fetchProducts } from '../services/productApi'
 
 export interface WishlistContextType {
   wishlistIds: string[]
@@ -18,6 +19,22 @@ const WISHLIST_STORAGE_KEY = 'kala_wishlist'
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined)
 
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [liveProducts, setLiveProducts] = useState<Product[]>(PRODUCTS)
+
+  useEffect(() => {
+    let isMounted = true
+    fetchProducts()
+      .then((data) => {
+        if (isMounted && data && data.length > 0) {
+          setLiveProducts(data)
+        }
+      })
+      .catch(() => {})
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   // Initialize wishlist IDs from localStorage with error tolerance
   const [wishlistIds, setWishlistIds] = useState<string[]>(() => {
     try {
@@ -29,7 +46,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           const validProductIds = new Set(PRODUCTS.map((p) => p.id))
           return parsed
             .map((id) => (id === 'gymwear-oversized-pump-cover-05' ? 'gymwear-dynamic-stretch-shorts-06' : id))
-            .filter((id) => typeof id === 'string' && validProductIds.has(id))
+            .filter((id) => typeof id === 'string' && (validProductIds.has(id) || !id.startsWith('gymwear-oversized-pump-cover')))
             .filter((id, index, arr) => arr.indexOf(id) === index)
         }
       }
@@ -51,9 +68,9 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Resolve valid product objects from product IDs
   const wishlistItems = useMemo(() => {
     return wishlistIds
-      .map((id) => PRODUCTS.find((p) => p.id === id))
+      .map((id) => liveProducts.find((p) => p.id === id) || PRODUCTS.find((p) => p.id === id))
       .filter((product): product is Product => Boolean(product))
-  }, [wishlistIds])
+  }, [wishlistIds, liveProducts])
 
   const wishlistCount = wishlistItems.length
 

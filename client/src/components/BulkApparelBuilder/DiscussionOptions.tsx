@@ -1,33 +1,43 @@
 import React, { useState } from 'react'
 import { generateWhatsAppInquiryUrl } from '../../services/businessInquiryApi'
+import { type ContactMethodType } from '../../data/businessSlots'
+import { type ApparelId, type SizeQuantities } from './types'
 import MeetingSchedulerModal from '../business/MeetingSchedulerModal'
 import QuoteRequestModal from './QuoteRequestModal'
 
 interface DiscussionOptionsProps {
+  apparelId?: ApparelId
   apparelName: string
   colorName: string
   quantity: number
+  sizeQuantities?: SizeQuantities
   sizeBreakdownText: string
   unitPrice: number
   estimatedTotal: number
   requirement: string
   currentArtworkName?: string
+  currentArtworkUrl?: string
   uploadedApparelFileName?: string
+  apparelPreviewImage?: string
 }
 
 export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
+  apparelId,
   apparelName,
   colorName,
   quantity,
+  sizeQuantities,
   sizeBreakdownText,
   unitPrice,
   estimatedTotal,
   requirement,
   currentArtworkName,
+  currentArtworkUrl,
   uploadedApparelFileName,
+  apparelPreviewImage,
 }) => {
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
-  const [isCallModalOpen, setIsCallModalOpen] = useState(false)
+  const [activeMeetingMethod, setActiveMeetingMethod] = useState<ContactMethodType | null>(null)
   const [isBreakdownOpen, setIsBreakdownOpen] = useState(false)
 
   const handleWhatsAppClick = () => {
@@ -138,67 +148,91 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
       </div>
 
       {/* ====================================================================
-          22. SECONDARY CONTACT OPTIONS (WhatsApp & Call)
+          22. 4 DIRECT CONSULTATION & DISCUSSION OPTIONS
           ==================================================================== */}
-      <div className="kala-bulk-contact-actions-row">
-        <button
-          type="button"
-          className="kala-bulk-contact-btn whatsapp"
-          onClick={handleWhatsAppClick}
-          aria-label="Contact on WhatsApp"
-        >
-          <span className="kala-bulk-contact-icon" aria-hidden="true">💬</span>
-          <span>Contact on WhatsApp</span>
-        </button>
+      <div className="kala-bulk-contact-section">
+        <div className="kala-bulk-contact-grid">
+          {/* Option 1: WhatsApp */}
+          <button
+            type="button"
+            className="kala-bulk-contact-card whatsapp"
+            onClick={handleWhatsAppClick}
+            aria-label="Chat on WhatsApp"
+          >
+            <span className="kala-bulk-contact-icon" aria-hidden="true">💬</span>
+            <div className="kala-bulk-contact-info">
+              <span className="kala-bulk-contact-label">Chat on WhatsApp</span>
+              <span className="kala-bulk-contact-note">Instant chat &amp; fast reply</span>
+            </div>
+          </button>
 
-        <button
-          type="button"
-          className="kala-bulk-contact-btn call"
-          onClick={() => setIsCallModalOpen(true)}
-          aria-label="Request a Call"
-        >
-          <span className="kala-bulk-contact-icon" aria-hidden="true">📞</span>
-          <span>Request a Call</span>
-        </button>
-      </div>
+          {/* Option 2: Direct Call */}
+          <a
+            href="tel:+919406030116"
+            className="kala-bulk-contact-card call"
+            aria-label="Direct call to +91 94060 30116"
+          >
+            <span className="kala-bulk-contact-icon" aria-hidden="true">📞</span>
+            <div className="kala-bulk-contact-info">
+              <span className="kala-bulk-contact-label">Direct Call</span>
+              <span className="kala-bulk-contact-note">+91 94060 30116</span>
+            </div>
+          </a>
 
-      {/* ====================================================================
-          23. COMPACT HELP CARD
-          ==================================================================== */}
-      <div className="kala-bulk-help-card">
-        <div className="kala-bulk-help-content">
-          <strong className="kala-bulk-help-title">Need Help?</strong>
-          <p className="kala-bulk-help-text">Talk to our team for custom requirements or immediate questions.</p>
+          {/* Option 3: Google Meet */}
+          <button
+            type="button"
+            className="kala-bulk-contact-card meet"
+            onClick={() => setActiveMeetingMethod('Google Meet')}
+            aria-label="Book a Google Meet"
+          >
+            <span className="kala-bulk-contact-icon" aria-hidden="true">📹</span>
+            <div className="kala-bulk-contact-info">
+              <span className="kala-bulk-contact-label">Book a Google Meet</span>
+              <span className="kala-bulk-contact-note">1-on-1 video consultation</span>
+            </div>
+          </button>
+
+          {/* Option 4: Meet Us in Bilaspur (Offline) */}
+          <button
+            type="button"
+            className="kala-bulk-contact-card inperson"
+            onClick={() => setActiveMeetingMethod('In-Person Meeting')}
+            aria-label="Meet Us at Bilaspur Offline"
+          >
+            <span className="kala-bulk-contact-icon" aria-hidden="true">📍</span>
+            <div className="kala-bulk-contact-info">
+              <span className="kala-bulk-contact-label">Meet Us at Bilaspur</span>
+              <span className="kala-bulk-contact-note">Offline meeting at our office</span>
+            </div>
+          </button>
         </div>
-        <button
-          type="button"
-          className="kala-bulk-help-action-btn"
-          onClick={() => setIsCallModalOpen(true)}
-        >
-          Request a Call
-        </button>
       </div>
 
       {/* Quote Request Modal */}
       <QuoteRequestModal
         isOpen={isQuoteModalOpen}
         onClose={() => setIsQuoteModalOpen(false)}
+        apparelId={apparelId}
         apparelName={apparelName}
         colorName={colorName}
         quantity={quantity}
+        sizeQuantities={sizeQuantities}
         sizeBreakdownText={sizeBreakdownText}
         unitPrice={unitPrice}
         estimatedTotal={estimatedTotal}
         requirement={requirement}
         currentArtworkName={currentArtworkName}
+        currentArtworkUrl={currentArtworkUrl}
         uploadedApparelFileName={uploadedApparelFileName}
+        apparelPreviewImage={apparelPreviewImage}
       />
 
-      {/* Meeting / Call Scheduler Modal */}
-      {isCallModalOpen && (
+      {/* Meeting / Call / Consultation Scheduler Modal */}
+      {activeMeetingMethod && (
         <MeetingSchedulerModal
           isOpen={true}
-          method="Call"
+          method={activeMeetingMethod}
           apparelCategoryName={apparelName}
           colorName={colorName}
           customizationName="Custom Bulk Print"
@@ -206,7 +240,7 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
           sizeBreakdown={sizeBreakdownText}
           estimatedTotal={estimatedTotal}
           initialRequirement={requirement || ''}
-          onClose={() => setIsCallModalOpen(false)}
+          onClose={() => setActiveMeetingMethod(null)}
         />
       )}
     </div>

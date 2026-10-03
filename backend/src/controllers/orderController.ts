@@ -339,6 +339,27 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         image: '/mockups/jersey-white-front.svg',
         apparelType: 'jersey',
       },
+      'custom-polo': {
+        id: 'custom-polo',
+        name: 'KALA Custom Polo T-Shirt',
+        price: 299,
+        image: '/custom-apparel/polos/regular-jmp-polo.png',
+        apparelType: 'polo',
+      },
+      'polo': {
+        id: 'custom-polo',
+        name: 'KALA Custom Polo T-Shirt',
+        price: 299,
+        image: '/custom-apparel/polos/regular-jmp-polo.png',
+        apparelType: 'polo',
+      },
+      'bulk-polo': {
+        id: 'custom-polo',
+        name: 'KALA Custom Polo T-Shirt (Bulk)',
+        price: 299,
+        image: '/custom-apparel/polos/regular-jmp-polo.png',
+        apparelType: 'polo',
+      },
     }
 
     const productIds = items.map((i) => i.productId.trim())
@@ -349,7 +370,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     for (const item of items) {
       const pid = item.productId.trim().toLowerCase()
       const dbProduct = productMap.get(item.productId.trim())
-      const isCustomCatalog = CUSTOM_APPAREL_CATALOG[pid]
+      const isCustomCatalog = CUSTOM_APPAREL_CATALOG[pid] || pid.startsWith('custom-') || pid.startsWith('bulk-')
 
       if (!dbProduct && !isCustomCatalog) {
         res.status(404).json({

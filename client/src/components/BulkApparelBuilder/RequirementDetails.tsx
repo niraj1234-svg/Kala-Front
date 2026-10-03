@@ -12,7 +12,7 @@ export const RequirementDetails: React.FC<RequirementDetailsProps> = ({
   return (
     <div className="kala-bulk-step-block">
       <div className="kala-bulk-step-heading">
-        <span className="kala-bulk-step-num">6</span>
+        <span className="kala-bulk-step-num">4</span>
         <h3 className="kala-bulk-step-title">
           REQUIREMENT DETAILS <span className="kala-bulk-optional-tag">(Optional)</span>
         </h3>

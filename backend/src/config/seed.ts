@@ -31,35 +31,6 @@ export const SEED_PRODUCTS = [
     customPrintTextPrice: 25,
   },
 
-  // Custom Apparel Products (Customizer flow)
-  {
-    id: 'custom-t-shirt',
-    name: 'KALA Custom Printed T-Shirt',
-    category: 'Streetwear',
-    price: 349,
-    image: '/custom-apparel/kala-custom-hero-floating.png',
-    description: 'Custom printed heavyweight cotton T-shirt customized with your original artwork.',
-    available: true,
-  },
-  {
-    id: 'custom-hoodie',
-    name: 'KALA Custom Printed Hoodie',
-    category: 'Streetwear',
-    price: 699,
-    image: 'Streetwear -02.png',
-    description: 'Custom printed heavyweight French Terry boxy hoodie customized with your original artwork.',
-    available: true,
-  },
-  {
-    id: 'custom-jersey',
-    name: 'KALA Custom Printed Jersey',
-    category: 'Gaming',
-    price: 429,
-    image: 'gaming 01.png',
-    description: 'Custom tournament esports athletic jersey customized with your original artwork.',
-    available: true,
-  },
-
   // Streetwear (6 items)
   {
     id: 'streetwear-oversized-acid-tee',
@@ -117,7 +88,81 @@ export const SEED_PRODUCTS = [
     available: true,
   },
 
-  // Gaming (5 items)
+  // 8 New Original Streetwear Products
+  {
+    id: 'midnight-tokyo-tshirt',
+    name: 'Midnight Tokyo T-Shirt',
+    category: 'Streetwear',
+    price: 499,
+    image: 'midnight-tokyo-tshirt.png',
+    description: 'Original anime-inspired urban artwork built for late-night streetwear.',
+    available: true,
+  },
+  {
+    id: 'no-signal-tshirt',
+    name: 'No Signal T-Shirt',
+    category: 'Streetwear',
+    price: 449,
+    image: 'no-signal-tshirt.png',
+    description: 'Minimal glitch-inspired streetwear for an always-connected generation.',
+    available: true,
+  },
+  {
+    id: 'after-dark-tshirt',
+    name: 'After Dark T-Shirt',
+    category: 'Streetwear',
+    price: 499,
+    image: 'after-dark-tshirt.png',
+    description: 'Original night-themed streetwear with moonlight and dark urban aesthetic.',
+    available: true,
+  },
+  {
+    id: 'lost-in-thought-tshirt',
+    name: 'Lost In Thought T-Shirt',
+    category: 'Streetwear',
+    price: 499,
+    image: 'lost-in-thought-tshirt.png',
+    description: 'Original anime-inspired reflective artwork in an oversized graphic aesthetic.',
+    available: true,
+  },
+  {
+    id: 'offline-society-tshirt',
+    name: 'Offline Society T-Shirt',
+    category: 'Streetwear',
+    price: 399,
+    image: 'offline-society-tshirt.png',
+    description: 'Minimalist typography-driven streetwear for disconnecting with purpose.',
+    available: true,
+  },
+  {
+    id: 'future-is-loading-tshirt',
+    name: 'Future Is Loading T-Shirt',
+    category: 'Streetwear',
+    price: 449,
+    image: 'future-is-loading-tshirt.png',
+    description: 'Futuristic loading interface graphic designed for next-gen street style.',
+    available: true,
+  },
+  {
+    id: 'rebel-mind-tshirt',
+    name: 'Rebel Mind T-Shirt',
+    category: 'Streetwear',
+    price: 499,
+    image: 'rebel-mind-tshirt.png',
+    description: 'Bold and edgy illustrated streetwear graphic for an independent mindset.',
+    available: true,
+  },
+  {
+    id: 'urban-chaos-tshirt',
+    name: 'Urban Chaos T-Shirt',
+    category: 'Streetwear',
+    price: 499,
+    image: 'urban-chaos-tshirt.png',
+    description: 'Abstract geometric street graphic built for modern oversized streetwear.',
+    available: true,
+  },
+
+  // Gaming (5 existing items)
   {
     id: 'gaming-cyber-pro-jersey-01',
     name: 'KALA Apex Cyber Esports Jersey',
@@ -164,7 +209,63 @@ export const SEED_PRODUCTS = [
     available: true,
   },
 
-  // Gymwear (9 items)
+  // 6 New Original Gaming Products
+  {
+    id: 'respawn-mode-tshirt',
+    name: 'Respawn Mode T-Shirt',
+    category: 'Gaming',
+    price: 449,
+    image: 'respawn-mode-tshirt.png',
+    description: 'Futuristic gaming graphics built for your next level.',
+    available: true,
+  },
+  {
+    id: 'night-raid-tshirt',
+    name: 'Night Raid T-Shirt',
+    category: 'Gaming',
+    price: 499,
+    image: 'night-raid-tshirt.png',
+    description: 'Tactical cyberpunk operative graphic inspired by high-stakes night missions.',
+    available: true,
+  },
+  {
+    id: 'level-up-tshirt',
+    name: 'Level Up T-Shirt',
+    category: 'Gaming',
+    price: 399,
+    image: 'level-up-tshirt.png',
+    description: 'Clean pixel and futuristic graphics built for everyday gaming style.',
+    available: true,
+  },
+  {
+    id: 'critical-hit-tshirt',
+    name: 'Critical Hit T-Shirt',
+    category: 'Gaming',
+    price: 449,
+    image: 'critical-hit-tshirt.png',
+    description: 'Energetic high-impact typography with dynamic dark gaming aesthetic.',
+    available: true,
+  },
+  {
+    id: 'cyber-player-tshirt',
+    name: 'Cyber Player T-Shirt',
+    category: 'Gaming',
+    price: 499,
+    image: 'cyber-player-tshirt.png',
+    description: 'Cyberpunk-inspired player artwork crafted with sleek neon accents.',
+    available: true,
+  },
+  {
+    id: 'game-over-never-tshirt',
+    name: 'Game Over Never T-Shirt',
+    category: 'Gaming',
+    price: 399,
+    image: 'game-over-never-tshirt.png',
+    description: 'Motivational minimalist gaming typography with digital glitch detailing.',
+    available: true,
+  },
+
+  // Gymwear (7 existing items)
   {
     id: 'gymwear-performance-compression-tee-01',
     name: 'KALA Aerodynamic Compression Tee',
@@ -240,17 +341,77 @@ export const SEED_PRODUCTS = [
     description: 'Plush ribbed athletic recovery trackpants.',
     available: true,
   },
+
+  // 6 New Original Gymwear Products
+  {
+    id: 'built-different-tshirt',
+    name: 'Built Different T-Shirt',
+    category: 'Gymwear',
+    price: 499,
+    image: 'built-different-tshirt.png',
+    description: 'Minimal athletic streetwear for people who train with purpose.',
+    available: true,
+  },
+  {
+    id: 'no-days-off-tshirt',
+    name: 'No Days Off T-Shirt',
+    category: 'Gymwear',
+    price: 449,
+    image: 'no-days-off-tshirt.png',
+    description: 'Bold monochrome athletic typography built for relentless daily consistency.',
+    available: true,
+  },
+  {
+    id: 'discipline-tshirt',
+    name: 'Discipline T-Shirt',
+    category: 'Gymwear',
+    price: 499,
+    image: 'discipline-tshirt.png',
+    description: 'Minimalist strength graphic honoring discipline over fleeting motivation.',
+    available: true,
+  },
+  {
+    id: 'train-insane-tshirt',
+    name: 'Train Insane T-Shirt',
+    category: 'Gymwear',
+    price: 499,
+    image: 'train-insane-tshirt.png',
+    description: 'High-performance gym aesthetic engineered for aggressive training sessions.',
+    available: true,
+  },
+  {
+    id: 'iron-mind-tshirt',
+    name: 'Iron Mind T-Shirt',
+    category: 'Gymwear',
+    price: 499,
+    image: 'iron-mind-tshirt.png',
+    description: 'Industrial metallic graphic representing an unbreakable training mindset.',
+    available: true,
+  },
+  {
+    id: 'earn-your-strength-tshirt',
+    name: 'Earn Your Strength T-Shirt',
+    category: 'Gymwear',
+    price: 449,
+    image: 'earn-your-strength-tshirt.png',
+    description: 'Clean motivational fitness graphic designed for dedicated lifters.',
+    available: true,
+  },
 ]
 
 /**
- * Safely updates prices and simplified descriptions in MongoDB Atlas in-place without modifying _id, names,
- * categories, or images.
+ * Synchronizes the 40 authoritative products in MongoDB Atlas in-place without modifying _id
+ * and removes any legacy non-catalog items.
  */
 export const syncProductPrices = async () => {
   try {
-    // Safely remove duplicate legacy cards if present
-    await Product.deleteOne({ id: 'gymwear-oversized-pump-cover-05' })
-    await Product.deleteOne({ id: 'gymwear-seamless-muscle-tank-02' })
+    const validIds = SEED_PRODUCTS.map((p) => p.id)
+
+    // Remove obsolete test/custom IDs so the collection has strictly the 40 catalog products
+    const deleteRes = await Product.deleteMany({ id: { $nin: validIds } })
+    if (deleteRes.deletedCount > 0) {
+      console.log(`[MongoDB] Cleaned up ${deleteRes.deletedCount} non-catalog items.`)
+    }
 
     let updatedCount = 0
     for (const item of SEED_PRODUCTS) {
@@ -271,6 +432,13 @@ export const syncProductPrices = async () => {
       if ((item as any).freeShipping !== undefined) {
         updateData.freeShipping = (item as any).freeShipping
       }
+      if ((item as any).customPrintTextEnabled !== undefined) {
+        updateData.customPrintTextEnabled = (item as any).customPrintTextEnabled
+      }
+      if ((item as any).customPrintTextPrice !== undefined) {
+        updateData.customPrintTextPrice = (item as any).customPrintTextPrice
+      }
+
       const res = await Product.updateOne(
         { id: item.id },
         {
@@ -291,7 +459,7 @@ export const syncProductPrices = async () => {
         updatedCount++
       }
     }
-    console.log(`[MongoDB] Successfully synchronized authoritative catalog for ${updatedCount} products in MongoDB.`)
+    console.log(`[MongoDB] Successfully synchronized catalog for ${updatedCount} products in MongoDB.`)
   } catch (error) {
     console.error('[MongoDB] Error updating product catalog:', error)
   }
@@ -301,7 +469,7 @@ export const seedProducts = async (force: boolean = false) => {
   try {
     const count = await Product.countDocuments()
     if (count > 0 && !force) {
-      console.log(`[MongoDB] Products collection contains ${count} items. Synchronizing authoritative catalog...`)
+      console.log(`[MongoDB] Products collection contains ${count} items. Synchronizing catalog...`)
       await syncProductPrices()
       return
     }
@@ -318,11 +486,13 @@ export const seedProducts = async (force: boolean = false) => {
   }
 }
 
-// Standalone execution support: tsx src/config/seed.ts
+// Standalone execution support: npx ts-node src/config/seed.ts
 if (require.main === module || process.argv[1]?.includes('seed')) {
   ;(async () => {
     await connectDB()
     await syncProductPrices()
+    const finalCount = await Product.countDocuments()
+    console.log(`[MongoDB] Final verified product count: ${finalCount}`)
     process.exit(0)
   })()
 }

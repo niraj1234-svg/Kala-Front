@@ -6,6 +6,8 @@ import {
   updateServerCartItemQty,
   removeServerCartItem,
   clearServerCart,
+  syncServerCart,
+  type ServerCartItem,
 } from '../services/cartApi'
 
 export interface CartItemCustomization {
@@ -67,6 +69,8 @@ export interface CartContextType {
   cartItems: CartItem[]
   cartCount: number
   cartSubtotal: number
+  isCartLoading: boolean
+  mergeGuestCart: (targetUserId?: string) => Promise<boolean>
   addToCart: (
     product: { id: string; name: string; image: string; price: number; color?: string },
     size: string,
@@ -88,23 +92,119 @@ export interface CartContextType {
 
 const GUEST_CART_STORAGE_KEY = 'kala_guest_cart'
 
-function getUserCartKey(userId?: string | null): string {
+export function getUserCartKey(userId?: string | null): string {
   if (userId && userId.trim()) {
     return `kala_cart_${userId.trim()}`
   }
   return GUEST_CART_STORAGE_KEY
 }
 
+/**
+ * Checks whether two cart items represent the identical product, size, and customization.
+ * If identical, their quantities can safely be combined.
+ * If size or any customization property differs, they remain separate distinct line items.
+ */
+export function areCartItemsEqual(a: CartItem, b: CartItem): boolean {
+  if (a.productId !== b.productId) return false
+  if (a.size.trim().toUpperCase() !== b.size.trim().toUpperCase()) return false
+  if ((a.color || '').trim().toLowerCase() !== (b.color || '').trim().toLowerCase()) return false
+
+  const aCustom = a.customization
+  const bCustom = b.customization
+
+  if (!aCustom && !bCustom) return true
+  if (!aCustom || !bCustom) return false
+
+  if ((aCustom.frontText || '').trim() !== (bCustom.frontText || '').trim()) return false
+  if ((aCustom.backText || '').trim() !== (bCustom.backText || '').trim()) return false
+  if ((aCustom.artworkUrl || '') !== (bCustom.artworkUrl || '')) return false
+  if ((aCustom.previewUrl || '') !== (bCustom.previewUrl || '')) return false
+  if ((aCustom.position || '') !== (bCustom.position || '')) return false
+  if ((aCustom.apparelType || '') !== (bCustom.apparelType || '')) return false
+  if ((aCustom.requirementDetails || '').trim() !== (bCustom.requirementDetails || '').trim()) return false
+  if ((aCustom.frontArtwork?.fileName || '') !== (bCustom.frontArtwork?.fileName || '')) return false
+  if ((aCustom.backArtwork?.fileName || '') !== (bCustom.backArtwork?.fileName || '')) return false
+
+  if (aCustom.artwork || bCustom.artwork) {
+    if (!aCustom.artwork || !bCustom.artwork) return false
+    if (aCustom.artwork.x !== bCustom.artwork.x) return false
+    if (aCustom.artwork.y !== bCustom.artwork.y) return false
+    if (aCustom.artwork.rotation !== bCustom.artwork.rotation) return false
+    if (aCustom.artwork.scale !== bCustom.artwork.scale) return false
+  }
+
+  return true
+}
+
+/**
+ * Safely merges incoming items (e.g. from guest cart) into base items (e.g. from account cart).
+ * If product + size + customization match, quantities are merged.
+ * Otherwise, items are appended as separate rows.
+ */
+export function mergeCartItems(baseItems: CartItem[], incomingItems: CartItem[]): CartItem[] {
+  const result: CartItem[] = baseItems.map((item) => ({
+    ...item,
+    customization: item.customization ? { ...item.customization } : undefined,
+  }))
+
+  for (const incoming of incomingItems) {
+    const existingIndex = result.findIndex((existing) => areCartItemsEqual(existing, incoming))
+    if (existingIndex > -1) {
+      result[existingIndex] = {
+        ...result[existingIndex],
+        quantity: Math.min(1000000, result[existingIndex].quantity + incoming.quantity),
+      }
+    } else {
+      result.push({
+        ...incoming,
+        customization: incoming.customization ? { ...incoming.customization } : undefined,
+      })
+    }
+  }
+
+  return result
+}
+
+function mapServerToCartItems(items: ServerCartItem[]): CartItem[] {
+  return items.map((it) => ({
+    productId: it.productId,
+    name: it.name,
+    image: it.image,
+    price: it.price,
+    size: it.size,
+    color: it.customization?.color || undefined,
+    quantity: it.quantity,
+    ...(it.customization ? { customization: it.customization as CartItemCustomization } : {}),
+  }))
+}
+
+function mapCartToServerItems(items: CartItem[]): ServerCartItem[] {
+  return items.map((it) => ({
+    productId: it.productId,
+    name: it.name,
+    image: it.image,
+    price: it.price,
+    size: it.size,
+    quantity: it.quantity,
+    ...(it.customization ? { customization: it.customization } : {}),
+  }))
+}
+
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { currentUser, isAuthenticated } = useAuth()
+  const { currentUser, isAuthenticated, isLoading: isAuthLoading } = useAuth()
   const activeUserId = currentUser?.id || null
 
-  // Ref to track user transition across renders
   const previousUserIdRef = useRef<string | null>(activeUserId)
-  // Flag to avoid saving empty cart to server right after logout
   const isSyncingServerRef = useRef<boolean>(false)
+  const mergeLockRef = useRef<Promise<boolean> | null>(null)
+
+  const [isCartLoading, setIsCartLoading] = useState<boolean>(() => {
+    // If active user is present, cart will be loaded/synchronized
+    if (activeUserId) return true
+    return false
+  })
 
   // Clean up any legacy, un-namespaced 'kala_cart' key immediately
   useEffect(() => {
@@ -132,8 +232,105 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return []
   })
 
-  // Synchronize cart state on user change (Login, Logout, Account Switching)
+  /**
+   * Deterministically restores the temporary guest cart, merges it with the authenticated
+   * user's server cart, persists the merged result to MongoDB via PUT /api/cart,
+   * updates the local cache, and ONLY then clears the temporary guest cart.
+   * Completely idempotent: simultaneous calls return the existing pending promise.
+   */
+  const mergeGuestCart = async (targetUserId?: string): Promise<boolean> => {
+    const userId = targetUserId || activeUserId
+    if (!userId) return false
+
+    if (mergeLockRef.current) {
+      return mergeLockRef.current
+    }
+
+    const task = (async (): Promise<boolean> => {
+      setIsCartLoading(true)
+      isSyncingServerRef.current = true
+
+      try {
+        // 1. Read guest cart from localStorage
+        let guestItems: CartItem[] = []
+        try {
+          const raw = localStorage.getItem(GUEST_CART_STORAGE_KEY)
+          if (raw) {
+            const parsed = JSON.parse(raw)
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              guestItems = parsed
+            }
+          }
+        } catch (e) {
+          console.warn('[CartContext] Failed to parse guest cart:', e)
+        }
+
+        // 2. Fetch authenticated customer's server cart
+        let serverItems: CartItem[] = []
+        try {
+          const res = await fetchServerCart()
+          if (res && res.success && res.cart && Array.isArray(res.cart.items)) {
+            serverItems = mapServerToCartItems(res.cart.items)
+          }
+        } catch (fetchErr) {
+          console.warn('[CartContext] fetchServerCart in merge warning:', fetchErr)
+        }
+
+        // If there are no guest items to merge, simply load the server cart
+        if (guestItems.length === 0) {
+          setCartItems(serverItems)
+          try {
+            localStorage.setItem(getUserCartKey(userId), JSON.stringify(serverItems))
+          } catch {}
+          return true
+        }
+
+        // 3. Merge server cart + guest cart safely
+        const merged = mergeCartItems(serverItems, guestItems)
+
+        // 4. Authoritatively sync merged cart to MongoDB
+        const syncRes = await syncServerCart(mapCartToServerItems(merged))
+
+        if (syncRes && syncRes.success) {
+          const finalItems = syncRes.cart?.items
+            ? mapServerToCartItems(syncRes.cart.items)
+            : merged
+          setCartItems(finalItems)
+
+          try {
+            localStorage.setItem(getUserCartKey(userId), JSON.stringify(finalItems))
+          } catch {}
+
+          // 7. Remove temporary guest cart ONLY after successful synchronization
+          try {
+            localStorage.removeItem(GUEST_CART_STORAGE_KEY)
+          } catch {}
+          return true
+        } else {
+          // Sync failed or returned unsuccessful -> Preserve guest cart
+          console.warn('[CartContext] syncServerCart returned unsuccessful, preserving guest cart')
+          setCartItems(merged)
+          return false
+        }
+      } catch (err) {
+        console.error('[CartContext] Cart merge error:', err)
+        return false
+      } finally {
+        isSyncingServerRef.current = false
+        setIsCartLoading(false)
+        mergeLockRef.current = null
+      }
+    })()
+
+    mergeLockRef.current = task
+    return task
+  }
+
+  // Synchronize cart state on user change (Login, Logout, Account Switching, Mount)
   useEffect(() => {
+    // If auth state is still initializing on mount, wait before resolving cart
+    if (isAuthLoading) return
+
     const previousUserId = previousUserIdRef.current
     previousUserIdRef.current = activeUserId
 
@@ -141,12 +338,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (previousUserId && !activeUserId) {
       isSyncingServerRef.current = true
       try {
-        // Clear previous user's local cache
         localStorage.removeItem(getUserCartKey(previousUserId))
         localStorage.removeItem('kala_cart')
         localStorage.removeItem(GUEST_CART_STORAGE_KEY)
       } catch {}
       setCartItems([])
+      setIsCartLoading(false)
       setTimeout(() => {
         isSyncingServerRef.current = false
       }, 50)
@@ -163,9 +360,27 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // CASE 3: Authenticated User Logged In / Mounted
     if (activeUserId && isAuthenticated) {
-      isSyncingServerRef.current = true
+      // Check if there is a pending guest cart to merge
+      const rawGuest = localStorage.getItem(GUEST_CART_STORAGE_KEY)
+      let hasGuestItems = false
+      if (rawGuest) {
+        try {
+          const parsed = JSON.parse(rawGuest)
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            hasGuestItems = true
+          }
+        } catch {}
+      }
 
-      // Load fast cached version if available
+      if (hasGuestItems) {
+        // Deterministically merge guest cart into user's account
+        mergeGuestCart(activeUserId)
+        return
+      }
+
+      // No guest items: load cached version immediately if available
+      setIsCartLoading(true)
+      isSyncingServerRef.current = true
       try {
         const cached = localStorage.getItem(getUserCartKey(activeUserId))
         if (cached) {
@@ -173,26 +388,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (Array.isArray(parsed)) {
             setCartItems(parsed)
           }
-        } else {
-          setCartItems([])
         }
-      } catch {
-        setCartItems([])
-      }
+      } catch {}
 
       // Authoritatively fetch the server cart from MongoDB
       fetchServerCart()
         .then((res) => {
           if (res && res.success && res.cart && Array.isArray(res.cart.items)) {
-            const mappedItems: CartItem[] = res.cart.items.map((it) => ({
-              productId: it.productId,
-              name: it.name,
-              image: it.image,
-              price: it.price,
-              size: it.size,
-              quantity: it.quantity,
-              ...(it.customization ? { customization: it.customization } : {}),
-            }))
+            const mappedItems = mapServerToCartItems(res.cart.items)
             setCartItems(mappedItems)
             try {
               localStorage.setItem(getUserCartKey(activeUserId), JSON.stringify(mappedItems))
@@ -204,12 +407,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         })
         .finally(() => {
           isSyncingServerRef.current = false
+          setIsCartLoading(false)
         })
       return
     }
 
     // CASE 4: Unauthenticated / Guest state
     if (!activeUserId) {
+      setIsCartLoading(false)
       try {
         const stored = localStorage.getItem(GUEST_CART_STORAGE_KEY)
         if (stored) {
@@ -222,7 +427,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch {}
       setCartItems([])
     }
-  }, [activeUserId, isAuthenticated])
+  }, [activeUserId, isAuthenticated, isAuthLoading])
 
   // Save current cartItems to namespaced local storage whenever it changes
   useEffect(() => {
@@ -280,17 +485,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const existingIndex = prevItems.findIndex(
         (item) =>
           item.productId === product.id &&
-          item.size === size &&
+          item.size.trim().toUpperCase() === size.trim().toUpperCase() &&
           (!item.image || item.image === product.image) &&
-          (item.color || '') === itemColor &&
+          (item.color || '').trim().toLowerCase() === itemColor.trim().toLowerCase() &&
           (item.customization?.frontText || '') === cleanFrontText &&
           (item.customization?.backText || '') === cleanBackText &&
           (!item.customization?.artworkUrl || item.customization.artworkUrl === customization?.artworkUrl) &&
           (item.customization?.position || '') === (customization?.position || '')
       )
 
+      let updated: CartItem[]
       if (existingIndex > -1) {
-        const updated = [...prevItems]
+        updated = [...prevItems]
         const currentQty = updated[existingIndex].quantity
         updated[existingIndex] = {
           ...updated[existingIndex],
@@ -299,7 +505,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           color: itemColor,
           ...(finalCustomization ? { customization: finalCustomization } : {}),
         }
-        return updated
       } else {
         const newItem: CartItem = {
           productId: product.id,
@@ -311,8 +516,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           quantity: validQuantity,
           ...(finalCustomization ? { customization: finalCustomization } : {}),
         }
-        return [...prevItems, newItem]
+        updated = [...prevItems, newItem]
       }
+
+      // Synchronously persist immediately to storage to guarantee preservation before navigation
+      try {
+        const storageKey = getUserCartKey(activeUserId)
+        localStorage.setItem(storageKey, JSON.stringify(updated))
+      } catch {}
+
+      return updated
     })
 
     // If authenticated, persist to MongoDB backend
@@ -374,9 +587,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const existingIndex = updated.findIndex(
           (item) =>
             item.productId === entry.product.id &&
-            item.size === entry.size &&
+            item.size.trim().toUpperCase() === entry.size.trim().toUpperCase() &&
             (!item.image || item.image === entry.product.image) &&
-            (item.color || '') === itemColor &&
+            (item.color || '').trim().toLowerCase() === itemColor.trim().toLowerCase() &&
             (item.customization?.frontText || '') === cleanFrontText &&
             (item.customization?.backText || '') === cleanBackText &&
             (!item.customization?.artworkUrl ||
@@ -407,6 +620,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           updated.push(newItem)
         }
       }
+
+      // Synchronously persist immediately to storage to guarantee preservation before navigation
+      try {
+        const storageKey = getUserCartKey(activeUserId)
+        localStorage.setItem(storageKey, JSON.stringify(updated))
+      } catch {}
+
       return updated
     })
 
@@ -459,17 +679,22 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   const removeFromCart = (productId: string, size: string, image?: string, backText?: string) => {
-    setCartItems((prevItems) =>
-      prevItems.filter(
+    setCartItems((prevItems) => {
+      const updated = prevItems.filter(
         (item) =>
           !(
             item.productId === productId &&
-            item.size === size &&
+            item.size.trim().toUpperCase() === size.trim().toUpperCase() &&
             (!image || item.image === image) &&
             (backText === undefined || (item.customization?.backText || '') === backText)
           )
       )
-    )
+      try {
+        const storageKey = getUserCartKey(activeUserId)
+        localStorage.setItem(storageKey, JSON.stringify(updated))
+      } catch {}
+      return updated
+    })
 
     // If authenticated, persist deletion to MongoDB backend
     if (isAuthenticated && activeUserId) {
@@ -493,11 +718,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const finalQuantity = Math.max(1, Math.floor(quantity))
 
-    setCartItems((prevItems) =>
-      prevItems.map((item) => {
+    setCartItems((prevItems) => {
+      const updated = prevItems.map((item) => {
         if (
           item.productId === productId &&
-          item.size === size &&
+          item.size.trim().toUpperCase() === size.trim().toUpperCase() &&
           (!image || item.image === image) &&
           (backText === undefined || (item.customization?.backText || '') === backText)
         ) {
@@ -505,7 +730,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         return item
       })
-    )
+      try {
+        const storageKey = getUserCartKey(activeUserId)
+        localStorage.setItem(storageKey, JSON.stringify(updated))
+      } catch {}
+      return updated
+    })
 
     // If authenticated, persist quantity change to MongoDB backend
     if (isAuthenticated && activeUserId) {
@@ -536,6 +766,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         cartItems,
         cartCount,
         cartSubtotal,
+        isCartLoading,
+        mergeGuestCart,
         addToCart,
         addMultipleToCart,
         removeFromCart,

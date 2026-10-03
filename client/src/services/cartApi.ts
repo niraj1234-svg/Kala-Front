@@ -14,12 +14,19 @@ export interface ServerCartItem {
     backText?: string
     frontPosition?: { x: number; y: number }
     backPosition?: { x: number; y: number }
+    frontFontSize?: number
+    backFontSize?: number
     price?: number
     apparelType?: string
     color?: string
     position?: string
     artworkUrl?: string
     previewUrl?: string
+    frontPreviewUrl?: string
+    backPreviewUrl?: string
+    frontArtworkUrl?: string
+    backArtworkUrl?: string
+    requirementDetails?: string
     artwork?: {
       x?: number
       y?: number
@@ -27,6 +34,18 @@ export interface ServerCartItem {
       height?: number
       rotation?: number
       scale?: number
+    }
+    frontArtwork?: {
+      x?: number
+      y?: number
+      scale?: number
+      fileName?: string
+    }
+    backArtwork?: {
+      x?: number
+      y?: number
+      scale?: number
+      fileName?: string
     }
   }
 }

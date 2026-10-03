@@ -3,7 +3,11 @@
  * Resolves the backend API base URL using Vite environment variable `VITE_API_BASE_URL`
  * with a fallback to local development URL (http://localhost:5000/api).
  */
-const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').trim().replace(/\/+$/, '')
+const rawBaseUrl = (
+  (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_BASE_URL) ||
+  (typeof globalThis !== 'undefined' && (globalThis as any).process?.env?.VITE_API_BASE_URL) ||
+  'http://localhost:5000'
+).trim().replace(/\/+$/, '')
 
 export const API_BASE_URL = rawBaseUrl.endsWith('/api')
   ? rawBaseUrl

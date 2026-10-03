@@ -7,14 +7,22 @@ import '../styles/Cart.css'
 export const Cart: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
-  const { cartItems, cartCount, cartSubtotal, removeFromCart, updateQuantity } = useCart()
+  const { cartItems, cartCount, cartSubtotal, isCartLoading, removeFromCart, updateQuantity } = useCart()
 
   const handleProceedToCheckout = () => {
     if (!isAuthenticated) {
-      navigate('/account?redirect=/checkout&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.')
+      navigate('/account?redirect=/checkout&message=Please%20log%20in%20or%20create%20an%20account%20to%20continue%20with%20your%20purchase.')
       return
     }
     navigate('/checkout')
+  }
+
+  if (isCartLoading) {
+    return (
+      <main className="kala-container kala-cart-page" style={{ minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p className="kala-body" style={{ color: 'var(--kala-text-secondary)', letterSpacing: '0.1em' }}>LOADING YOUR CART...</p>
+      </main>
+    )
   }
 
   if (cartItems.length === 0) {

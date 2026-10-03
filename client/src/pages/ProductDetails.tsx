@@ -400,7 +400,7 @@ export const ProductDetails: React.FC = () => {
     addMultipleToCart(itemsToAdd)
 
     if (!isAuthenticated) {
-      navigate('/account?redirect=/checkout&message=Please%20log%20in%20to%20continue%20with%20your%20purchase.')
+      navigate('/account?redirect=/checkout&message=Please%20log%20in%20or%20create%20an%20account%20to%20continue%20with%20your%20purchase.')
       return
     }
 
