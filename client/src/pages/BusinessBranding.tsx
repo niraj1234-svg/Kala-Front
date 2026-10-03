@@ -4,6 +4,9 @@ import {
   createBusinessRequest,
   type BackendBusinessRequest,
 } from '../services/businessRequestApi'
+import MeetingSchedulerModal from '../components/business/MeetingSchedulerModal'
+import { generateWhatsAppInquiryUrl } from '../services/businessInquiryApi'
+import { type ContactMethodType } from '../data/businessSlots'
 import '../styles/BusinessBranding.css'
 
 export const BusinessBranding: React.FC = () => {
@@ -62,20 +65,6 @@ export const BusinessBranding: React.FC = () => {
     'Other',
   ]
 
-  const MEETING_METHODS = [
-    { id: 'Phone Call', label: 'Phone Call' },
-    { id: 'WhatsApp', label: 'WhatsApp' },
-    { id: 'Google Meet', label: 'Google Meet' },
-    { id: 'In-Person Meeting', label: 'In-Person Meeting' },
-  ]
-
-  const MEETING_TIMES = [
-    'Morning (9 AM – 12 PM)',
-    'Afternoon (12 PM – 3 PM)',
-    'Evening (3 PM – 6 PM)',
-    'Anytime',
-  ]
-
   // Form State
   const [name, setName] = useState('')
   const [organization, setOrganization] = useState('')
@@ -91,6 +80,25 @@ export const BusinessBranding: React.FC = () => {
   const [projectDetails, setProjectDetails] = useState('')
   const [preferredMeetingMethod, setPreferredMeetingMethod] = useState('Phone Call')
   const [preferredMeetingTime, setPreferredMeetingTime] = useState('Anytime')
+  const [activeMeetingMethod, setActiveMeetingMethod] = useState<ContactMethodType | null>(null)
+
+  const handleWhatsAppClick = () => {
+    setPreferredMeetingMethod('WhatsApp')
+    const topics = discussionTopics.join(', ') || 'Business Branding & Custom Apparel'
+    const apparels = apparelTypes.join(', ') || 'Custom Apparel'
+    const orgInfo = organization ? `${organization} (${organizationType})` : 'our company'
+    const contactInfo = name ? `Contact: ${name}${phone ? ' (' + phone + ')' : ''}` : ''
+    const details = projectDetails.trim() ? `\nDetails: ${projectDetails.trim()}` : ''
+
+    const url = generateWhatsAppInquiryUrl({
+      apparelCategory: apparels,
+      color: 'Custom Requirements',
+      customization: topics,
+      approxQuantity: `${estimatedQuantity} pcs`,
+      requirement: `Hello KALA, I would like to discuss a Business Branding order for ${orgInfo}.${contactInfo ? ' ' + contactInfo : ''}\nApparel: ${apparels}\nTopics: ${topics}${details}`,
+    })
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
 
   // Validation & Submission State
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -1136,89 +1144,68 @@ export const BusinessBranding: React.FC = () => {
                       <div className="kala-b2b-section-divider" aria-hidden="true" />
                     </div>
 
-                    {/* Preferred Meeting Method */}
-                    <div className="kala-b2b-field full-width" style={{ marginBottom: '1.25rem' }}>
-                      <label className="kala-b2b-label">
-                        Preferred Meeting Method
-                      </label>
-                      <div className="kala-b2b-methods-grid" role="radiogroup" aria-label="Preferred meeting method">
-                        {MEETING_METHODS.map((method) => {
-                          const isSelected = preferredMeetingMethod === method.id
-                          return (
-                            <button
-                              key={method.id}
-                              type="button"
-                              role="radio"
-                              aria-checked={isSelected}
-                              className={`kala-b2b-method-card ${isSelected ? 'active' : ''}`}
-                              onClick={() => setPreferredMeetingMethod(method.id)}
-                            >
-                              <div className="kala-b2b-method-icon" aria-hidden="true">
-                                {method.id === 'Phone Call' && (
-                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                                  </svg>
-                                )}
-                                {method.id === 'WhatsApp' && (
-                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-                                  </svg>
-                                )}
-                                {method.id === 'Google Meet' && (
-                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <polygon points="23 7 16 12 23 17 23 7" />
-                                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-                                  </svg>
-                                )}
-                                {method.id === 'In-Person Meeting' && (
-                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                    <circle cx="9" cy="7" r="4" />
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                  </svg>
-                                )}
-                              </div>
-                              <span className="kala-b2b-method-title">{method.label}</span>
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
+                    <div className="kala-b2b-contact-grid" role="group" aria-label="Direct consultation options">
+                      {/* Option 1: WhatsApp */}
+                      <button
+                        type="button"
+                        className={`kala-b2b-contact-card whatsapp ${preferredMeetingMethod === 'WhatsApp' ? 'active' : ''}`}
+                        onClick={handleWhatsAppClick}
+                        aria-label="Chat on WhatsApp"
+                      >
+                        <span className="kala-b2b-contact-icon whatsapp-icon" aria-hidden="true">💬</span>
+                        <div className="kala-b2b-contact-info">
+                          <span className="kala-b2b-contact-label">Chat on WhatsApp</span>
+                          <span className="kala-b2b-contact-note">Instant chat &amp; fast reply</span>
+                        </div>
+                      </button>
 
-                    {/* Preferred Time to Connect */}
-                    <div className="kala-b2b-field full-width">
-                      <label className="kala-b2b-label" htmlFor="meeting-time">
-                        Preferred Time to Connect
-                      </label>
-                      <div className="kala-b2b-input-wrap select-wrap">
-                        <span className="kala-b2b-input-icon" aria-hidden="true">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10" />
-                            <polyline points="12 6 12 12 16 14" />
-                          </svg>
-                        </span>
-                        <select
-                          id="meeting-time"
-                          className="kala-b2b-select"
-                          value={preferredMeetingTime}
-                          onChange={(e) => setPreferredMeetingTime(e.target.value)}
-                        >
-                          {MEETING_TIMES.map((timeOption) => (
-                            <option key={timeOption} value={timeOption}>
-                              {timeOption}
-                            </option>
-                          ))}
-                        </select>
-                        <span className="kala-b2b-chevron" aria-hidden="true">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="6 9 12 15 18 9" />
-                          </svg>
-                        </span>
-                      </div>
-                      <p className="kala-b2b-field-note">
-                        Preference only — our team will reach out to confirm a mutually convenient discussion time.
-                      </p>
+                      {/* Option 2: Direct Call */}
+                      <a
+                        href="tel:+919406030116"
+                        className={`kala-b2b-contact-card call ${preferredMeetingMethod === 'Phone Call' ? 'active' : ''}`}
+                        onClick={() => setPreferredMeetingMethod('Phone Call')}
+                        aria-label="Direct call to +91 94060 30116"
+                      >
+                        <span className="kala-b2b-contact-icon call-icon" aria-hidden="true">📞</span>
+                        <div className="kala-b2b-contact-info">
+                          <span className="kala-b2b-contact-label">Direct Call</span>
+                          <span className="kala-b2b-contact-note">+91 94060 30116</span>
+                        </div>
+                      </a>
+
+                      {/* Option 3: Google Meet */}
+                      <button
+                        type="button"
+                        className={`kala-b2b-contact-card meet ${preferredMeetingMethod === 'Google Meet' ? 'active' : ''}`}
+                        onClick={() => {
+                          setPreferredMeetingMethod('Google Meet')
+                          setActiveMeetingMethod('Google Meet')
+                        }}
+                        aria-label="Book a Google Meet"
+                      >
+                        <span className="kala-b2b-contact-icon meet-icon" aria-hidden="true">📹</span>
+                        <div className="kala-b2b-contact-info">
+                          <span className="kala-b2b-contact-label">Book a Google Meet</span>
+                          <span className="kala-b2b-contact-note">1-on-1 video consultation</span>
+                        </div>
+                      </button>
+
+                      {/* Option 4: Meet Us at Bilaspur */}
+                      <button
+                        type="button"
+                        className={`kala-b2b-contact-card inperson ${preferredMeetingMethod === 'In-Person Meeting' ? 'active' : ''}`}
+                        onClick={() => {
+                          setPreferredMeetingMethod('In-Person Meeting')
+                          setActiveMeetingMethod('In-Person Meeting')
+                        }}
+                        aria-label="Meet Us at Bilaspur Offline"
+                      >
+                        <span className="kala-b2b-contact-icon inperson-icon" aria-hidden="true">📍</span>
+                        <div className="kala-b2b-contact-info">
+                          <span className="kala-b2b-contact-label">Meet Us at Bilaspur</span>
+                          <span className="kala-b2b-contact-note">Offline meeting at our office</span>
+                        </div>
+                      </button>
                     </div>
                   </div>
 
@@ -1273,6 +1260,20 @@ export const BusinessBranding: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Direct Consultation Scheduler Modal */}
+      {activeMeetingMethod && (
+        <MeetingSchedulerModal
+          isOpen={true}
+          method={activeMeetingMethod}
+          apparelCategoryName={apparelTypes.join(', ') || 'Corporate Apparel'}
+          colorName="Custom Branding"
+          customizationName={discussionTopics.join(', ') || 'Branding & Apparel'}
+          approxQuantity={estimatedQuantity}
+          initialRequirement={projectDetails || `Business Branding Consultation for ${organization ? organization + ' (' + organizationType + ')' : 'our company'}. Contact: ${name || 'Client'}${phone ? ' (' + phone + ')' : ''}. Apparels: ${apparelTypes.join(', ') || 'T-Shirts'}. Topics: ${discussionTopics.join(', ') || 'Custom Branding'}.`}
+          onClose={() => setActiveMeetingMethod(null)}
+        />
+      )}
     </main>
   )
 }

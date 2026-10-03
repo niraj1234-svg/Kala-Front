@@ -1449,6 +1449,121 @@
   color: #FFFFFF;
 }
 
+/* 4 Direct Consultation & Meeting Cards (matching Custom Apparel 2nd image) */
+.kala-b2b-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .kala-b2b-contact-grid {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+}
+
+.kala-b2b-contact-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.85rem 1.1rem;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.kala-b2b-contact-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.kala-b2b-contact-card.whatsapp {
+  background-color: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.kala-b2b-contact-card.whatsapp:hover,
+.kala-b2b-contact-card.whatsapp.active {
+  border-color: #22c55e;
+  background-color: #dcfce7;
+}
+
+.kala-b2b-contact-card.call {
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.kala-b2b-contact-card.call:hover,
+.kala-b2b-contact-card.call.active {
+  border-color: #e11d48;
+  background-color: #fff1f2;
+}
+
+.kala-b2b-contact-card.meet {
+  background-color: #fffbeb;
+  border-color: #fed7aa;
+}
+
+.kala-b2b-contact-card.meet:hover,
+.kala-b2b-contact-card.meet.active {
+  border-color: #ea580c;
+  background-color: #ffedd5;
+}
+
+.kala-b2b-contact-card.inperson {
+  background-color: #faf5ff;
+  border-color: #e9d5ff;
+}
+
+.kala-b2b-contact-card.inperson:hover,
+.kala-b2b-contact-card.inperson.active {
+  border-color: #9333ea;
+  background-color: #f3e8ff;
+}
+
+.kala-b2b-contact-card.active {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+}
+
+.kala-b2b-contact-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kala-b2b-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.kala-b2b-contact-label {
+  font-family: var(--kala-font-primary);
+  font-size: 0.925rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.25;
+}
+
+.kala-b2b-contact-note {
+  font-family: var(--kala-font-primary);
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.25;
+}
+
 /* Preferred Meeting Method Options */
 .kala-b2b-methods-grid {
   display: grid;
