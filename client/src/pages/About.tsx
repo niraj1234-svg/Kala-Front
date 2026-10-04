@@ -580,15 +580,15 @@ export const About: React.FC = () => {
               <div className="kala-business-features">
                 <div className="kala-biz-feature-item">
                   <span className="kala-biz-check" aria-hidden="true">✓</span>
-                  <span>Corporate bulk discounts with tiered pricing calculator</span>
+                  <span className="kala-biz-feature-text">Corporate bulk discounts with tiered pricing calculator</span>
                 </div>
                 <div className="kala-biz-feature-item">
                   <span className="kala-biz-check" aria-hidden="true">✓</span>
-                  <span>Custom packaging, tags, stickers &amp; carry bags</span>
+                  <span className="kala-biz-feature-text">Custom packaging, tags, stickers &amp; carry bags</span>
                 </div>
                 <div className="kala-biz-feature-item">
                   <span className="kala-biz-check" aria-hidden="true">✓</span>
-                  <span>Dedicated B2B coordination &amp; pre-dispatch quality checks</span>
+                  <span className="kala-biz-feature-text">Dedicated B2B coordination &amp; pre-dispatch quality checks</span>
                 </div>
               </div>
               <div className="kala-business-cta-box">

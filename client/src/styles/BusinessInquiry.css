@@ -418,7 +418,8 @@
   gap: 0.25rem;
 }
 
-.kala-biz-feature-item {
+.kala-biz-category-card .kala-biz-feature-item,
+.kala-biz-features-list .kala-biz-feature-item {
   font-size: 0.8rem;
   font-weight: 500;
   color: #1F2937 !important;

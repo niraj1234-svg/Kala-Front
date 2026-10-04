@@ -52,6 +52,194 @@
   padding: 1rem;
   display: block;
   transition: opacity 0.2s ease;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Slick View Toggle Pill (Front / Back Switch) */
+.kala-slick-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 4px;
+  border-radius: 9999px;
+  border: 1.5px solid var(--kala-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  gap: 4px;
+  margin-bottom: 0.35rem;
+}
+
+.kala-slick-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kala-slick-toggle-btn:hover {
+  color: var(--kala-black);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.kala-slick-toggle-btn.active {
+  background: var(--kala-black);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Slick Card Side Navigation Arrows */
+.kala-preview-side-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 15;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kala-preview-side-arrow.prev {
+  left: 14px;
+}
+
+.kala-preview-side-arrow.next {
+  right: 14px;
+}
+
+.kala-preview-side-arrow:hover {
+  background: #ffffff;
+  color: var(--kala-orange);
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  border-color: var(--kala-orange);
+}
+
+.kala-preview-side-arrow:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* View Indicator Badge */
+.kala-preview-view-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 12;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  pointer-events: none;
+}
+
+.kala-preview-view-badge .kala-badge-dot {
+  color: var(--kala-orange);
+  font-size: 0.6rem;
+}
+
+/* Slider Track & Slide Transition */
+.kala-slider-track {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-slider-track.slide-left {
+  animation: slickSlideLeft 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.kala-slider-track.slide-right {
+  animation: slickSlideRight 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes slickSlideLeft {
+  0% {
+    transform: translateX(25px);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slickSlideRight {
+  0% {
+    transform: translateX(-25px);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slick Dots */
+.kala-slick-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 12;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(4px);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.kala-slick-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: #cbd5e1;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.kala-slick-dot:hover {
+  background: #94a3b8;
+}
+
+.kala-slick-dot.active {
+  background: var(--kala-orange);
+  width: 22px;
 }
 
 /* Horizontal Gallery Slider Bar (Centered below Main Image) */

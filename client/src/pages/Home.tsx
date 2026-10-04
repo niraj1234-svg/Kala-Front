@@ -362,32 +362,131 @@ export const Home: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          5. SERVICE / TRUST SECTION (Strictly 3 Core Guarantees)
+          5. SERVICE / TRUST SECTION (Modern 3D Trust Card Banner)
           ==================================================================== */}
       <section className="kala-trust-bar-section" aria-label="Trust & Guarantees">
         <div className="kala-trust-bar-container">
-          <div className="kala-trust-item">
-            <svg className="kala-trust-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <rect x="1" y="3" width="15" height="13" />
-              <polygon points="16 8 20 8 23 11 23 16 16 16 8" />
-              <circle cx="5.5" cy="18.5" r="2.5" />
-              <circle cx="18.5" cy="18.5" r="2.5" />
+          <div className="kala-trust-card-banner">
+            {/* Background Ambient Fluid Wave Curves */}
+            <svg className="kala-trust-card-bg-waves" preserveAspectRatio="none" viewBox="0 0 1200 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="kala-trust-wave-l1" x1="0%" y1="100%" x2="35%" y2="0%">
+                  <stop offset="0%" stopColor="#FF7A30" stopOpacity="0.25" />
+                  <stop offset="60%" stopColor="#FFA67A" stopOpacity="0.10" />
+                  <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="kala-trust-wave-l2" x1="0%" y1="100%" x2="25%" y2="10%">
+                  <stop offset="0%" stopColor="#FFA070" stopOpacity="0.18" />
+                  <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="kala-trust-wave-r1" x1="100%" y1="100%" x2="65%" y2="0%">
+                  <stop offset="0%" stopColor="#FF7A30" stopOpacity="0.25" />
+                  <stop offset="60%" stopColor="#FFA67A" stopOpacity="0.10" />
+                  <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="kala-trust-wave-r2" x1="100%" y1="100%" x2="75%" y2="10%">
+                  <stop offset="0%" stopColor="#FFA070" stopOpacity="0.18" />
+                  <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path d="M-20 180 C60 150 140 100 60 40 C20 10 -20 20 -40 180 Z" fill="url(#kala-trust-wave-l1)" />
+              <path d="M-10 180 C80 170 170 140 110 70 C70 20 0 40 -30 180 Z" fill="url(#kala-trust-wave-l2)" />
+              <path d="M1220 180 C1140 150 1060 100 1140 40 C1180 10 1220 20 1240 180 Z" fill="url(#kala-trust-wave-r1)" />
+              <path d="M1210 180 C1120 170 1030 140 1090 70 C1130 20 1200 40 1230 180 Z" fill="url(#kala-trust-wave-r2)" />
             </svg>
-            <span className="kala-trust-text">PAN-INDIA DELIVERY</span>
-          </div>
 
-          <div className="kala-trust-item">
-            <svg className="kala-trust-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-            <span className="kala-trust-text">SECURE PAYMENTS</span>
-          </div>
+            {/* Left Decorative Dot Grid */}
+            <div className="kala-trust-dots kala-trust-dots-left" aria-hidden="true">
+              <span /><span /><span /><span /><span />
+              <span /><span /><span /><span /><span />
+              <span /><span /><span /><span /><span />
+            </div>
 
-          <div className="kala-trust-item">
-            <svg className="kala-trust-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-            </svg>
-            <span className="kala-trust-text">PREMIUM QUALITY</span>
+            {/* Trust Items Grid */}
+            <div className="kala-trust-features-row">
+              {/* Feature 1: Pan-India Delivery */}
+              <div className="kala-trust-feature-item">
+                <div className="kala-trust-badge-wrap">
+                  <div className="kala-trust-badge-tile" aria-hidden="true">
+                    <svg className="kala-trust-tile-icon" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {/* Speed motion lines */}
+                      <path d="M3 9H12M5 14H10M2 19H8" stroke="#FF5E1E" strokeWidth="2.5" strokeLinecap="round" />
+                      {/* Main cargo truck body */}
+                      <rect x="12" y="5" width="16" height="16" rx="2.5" fill="#FF5E1E" />
+                      {/* Truck driver cab */}
+                      <path d="M28 10H33.5C34.35 10 35.1 10.55 35.38 11.35L37.1 16.5C37.3 17.1 37.4 17.65 37.4 18.2V20C37.4 20.55 36.95 21 36.4 21H28V10Z" fill="#FF5E1E" />
+                      {/* Cab window */}
+                      <path d="M29.5 12H33L34.5 16.5H29.5V12Z" fill="#FFFFFF" fillOpacity="0.9" />
+                      {/* Wheels with rim details */}
+                      <circle cx="17.5" cy="22.5" r="3.5" fill="#FF5E1E" />
+                      <circle cx="17.5" cy="22.5" r="1.5" fill="#FFFFFF" />
+                      <circle cx="32.5" cy="22.5" r="3.5" fill="#FF5E1E" />
+                      <circle cx="32.5" cy="22.5" r="1.5" fill="#FFFFFF" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="kala-trust-info">
+                  <h3 className="kala-trust-title">PAN–INDIA DELIVERY</h3>
+                  <p className="kala-trust-desc">Fast &amp; reliable delivery to 26000+ pin codes across India.</p>
+                </div>
+              </div>
+
+              {/* Vertical Divider 1 */}
+              <div className="kala-trust-col-divider" aria-hidden="true" />
+
+              {/* Feature 2: Secure Payments */}
+              <div className="kala-trust-feature-item">
+                <div className="kala-trust-badge-wrap has-sparkle">
+                  {/* Subtle celebratory sunburst rays */}
+                  <span className="kala-trust-sparkle-rays" aria-hidden="true">
+                    <span className="kala-ray ray-left" />
+                    <span className="kala-ray ray-center" />
+                    <span className="kala-ray ray-right" />
+                  </span>
+                  <div className="kala-trust-badge-tile" aria-hidden="true">
+                    <svg className="kala-trust-tile-icon" viewBox="0 0 32 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M16 2L3.5 7.8V16.5C3.5 24.8 9.1 32.5 16 34.5C22.9 32.5 28.5 24.8 28.5 16.5V7.8L16 2Z" fill="#FF5E1E" />
+                      <path d="M11 17.5L14.5 21L21.5 13.5" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="kala-trust-info">
+                  <h3 className="kala-trust-title">SECURE PAYMENTS</h3>
+                  <p className="kala-trust-desc">100% secure transactions with trusted payment partners.</p>
+                </div>
+              </div>
+
+              {/* Vertical Divider 2 */}
+              <div className="kala-trust-col-divider" aria-hidden="true" />
+
+              {/* Feature 3: Premium Quality */}
+              <div className="kala-trust-feature-item">
+                <div className="kala-trust-badge-wrap has-sparkle">
+                  {/* Subtle celebratory sunburst rays */}
+                  <span className="kala-trust-sparkle-rays" aria-hidden="true">
+                    <span className="kala-ray ray-left" />
+                    <span className="kala-ray ray-center" />
+                    <span className="kala-ray ray-right" />
+                  </span>
+                  <div className="kala-trust-badge-tile" aria-hidden="true">
+                    <svg className="kala-trust-tile-icon" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17 2.5L21.2 11.8L31.3 13.1L23.9 20L25.8 30L17 25.1L8.2 30L10.1 20L2.7 13.1L12.8 11.8L17 2.5Z" fill="#FF5E1E" stroke="#FF5E1E" strokeWidth="1.5" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="kala-trust-info">
+                  <h3 className="kala-trust-title">PREMIUM QUALITY</h3>
+                  <p className="kala-trust-desc">High-quality fabric, long-lasting prints and customer-approved.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Decorative Dot Grid */}
+            <div className="kala-trust-dots kala-trust-dots-right" aria-hidden="true">
+              <span /><span /><span /><span /><span />
+              <span /><span /><span /><span /><span />
+              <span /><span /><span /><span /><span />
+            </div>
           </div>
         </div>
       </section>

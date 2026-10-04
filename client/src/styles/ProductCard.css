@@ -269,12 +269,18 @@
 }
 
 .kala-product-category {
-  font-size: 0.725rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--kala-orange);
-  margin-bottom: 0.35rem;
+  color: #FF5E1E;
+  background: #FFF1E8;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 0.45rem;
+  width: fit-content;
 }
 
 .kala-product-name {

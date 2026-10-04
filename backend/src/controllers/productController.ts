@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { Product } from '../models/Product'
+import { SEED_PRODUCTS } from '../config/seed'
 import mongoose from 'mongoose'
 
 // GET /api/products
@@ -12,13 +13,12 @@ export const getProducts = async (req: Request, res: Response) => {
       filter.category = category
     }
 
-    const rawProducts = await Product.find(filter).sort({ createdAt: 1 })
+    const rawProducts = await Product.find(filter)
+    const idOrder = new Map(SEED_PRODUCTS.map((p, idx) => [p.id, idx]))
     const products = rawProducts.sort((a, b) => {
-      if (a.id === 'ai-data-science-polo-t-shirt') return -1
-      if (b.id === 'ai-data-science-polo-t-shirt') return 1
-      if (a.id === 'kala-bihari-story-premium-t-shirt') return -1
-      if (b.id === 'kala-bihari-story-premium-t-shirt') return 1
-      return 0
+      const idxA = idOrder.get(a.id) ?? 9999
+      const idxB = idOrder.get(b.id) ?? 9999
+      return idxA - idxB
     })
 
     res.status(200).json({

@@ -45,6 +45,28 @@ const PRODUCT_METRIC_MAP: Record<string, ProductRatingMetric> = {
   'gymwear-stringer-vest-07': { rating: 4.2, purchaseCount: '70' },
   'gymwear-power-lifting-tee-08': { rating: 4.7, purchaseCount: '83' },
   'gymwear-runner-windbreaker-09': { rating: 4.5, purchaseCount: '90' },
+
+  // 20 New Gymwear Sets (exact ratings & purchase counts matching reference grid)
+  'kala-apex-compression-set': { rating: 4.8, purchaseCount: '124' },
+  'kala-discipline-set': { rating: 4.6, purchaseCount: '98' },
+  'kala-oni-training-set': { rating: 4.7, purchaseCount: '112' },
+  'kala-grind-mode-set': { rating: 4.5, purchaseCount: '76' },
+  'kala-everyday-set': { rating: 4.6, purchaseCount: '91' },
+  'kala-evolve-set': { rating: 4.7, purchaseCount: '105' },
+  'kala-no-limits-set': { rating: 4.6, purchaseCount: '87' },
+  'kala-wings-set': { rating: 4.8, purchaseCount: '134' },
+  'kala-relentless-set': { rating: 4.5, purchaseCount: '69' },
+  'kala-overthink-set': { rating: 4.7, purchaseCount: '118' },
+  'kala-nature-set': { rating: 4.6, purchaseCount: '72' },
+  'kala-iron-mind-set': { rating: 4.7, purchaseCount: '97' },
+  'kala-good-mood-set': { rating: 4.5, purchaseCount: '83' },
+  'kala-zen-set': { rating: 4.8, purchaseCount: '126' },
+  'kala-tech-set': { rating: 4.6, purchaseCount: '88' },
+  'kala-purpose-set': { rating: 4.7, purchaseCount: '110' },
+  'kala-focus-set': { rating: 4.5, purchaseCount: '79' },
+  'kala-progress-set': { rating: 4.8, purchaseCount: '121' },
+  'kala-chaos-set': { rating: 4.6, purchaseCount: '94' },
+  'kala-repeat-set': { rating: 4.5, purchaseCount: '68' },
 }
 
 const DETERMINISTIC_PURCHASE_COUNTS = [

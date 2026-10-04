@@ -15,6 +15,7 @@ export interface IProduct extends Document {
   images?: string[]
   description: string
   available: boolean
+  badge?: string
   variants?: IProductVariant[]
   freeShipping?: boolean
   customPrintTextEnabled?: boolean
@@ -62,6 +63,10 @@ const ProductSchema = new Schema<IProduct>(
     available: {
       type: Boolean,
       default: true,
+    },
+    badge: {
+      type: String,
+      trim: true,
     },
     freeShipping: {
       type: Boolean,

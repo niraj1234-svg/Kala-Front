@@ -11,6 +11,40 @@ interface ProductCardProps {
   product: Product
 }
 
+const getBadgeStyle = (badge?: string): React.CSSProperties => {
+  const b = (badge || '').toUpperCase()
+  switch (b) {
+    case 'ANIME':
+      return { color: '#E11D48', backgroundColor: '#FFE4E6' }
+    case 'TRAVEL':
+      return { color: '#0284C7', backgroundColor: '#E0F2FE' }
+    case 'STREETWEAR':
+      return { color: '#0891B2', backgroundColor: '#E0F7FA' }
+    case 'MINIMAL':
+      return { color: '#6366F1', backgroundColor: '#EEF2FF' }
+    case 'VIBE':
+      return { color: '#EA580C', backgroundColor: '#FFEDD5' }
+    case 'GYMWEAR':
+      return { color: '#E11D48', backgroundColor: '#FFE4E6' }
+    case 'ART':
+      return { color: '#9333EA', backgroundColor: '#F3E8FF' }
+    case 'SPACE':
+      return { color: '#7C3AED', backgroundColor: '#EDE9FE' }
+    case 'LIFESTYLE':
+      return { color: '#F43F5E', backgroundColor: '#FFE4E6' }
+    case 'OUTDOOR':
+      return { color: '#16A34A', backgroundColor: '#DCFCE7' }
+    case 'CREATIVE':
+      return { color: '#C026D3', backgroundColor: '#FAE8FF' }
+    case 'MOTIVATIONAL':
+      return { color: '#DC2626', backgroundColor: '#FEE2E2' }
+    case 'NATURE':
+      return { color: '#059669', backgroundColor: '#D1FAE5' }
+    default:
+      return {}
+  }
+}
+
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { isInWishlist, toggleWishlist } = useWishlist()
   const { addToCart } = useCart()
@@ -157,7 +191,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         <div className="kala-product-info">
-          <span className="kala-product-category">{product.category}</span>
+          <span
+            className="kala-product-category"
+            style={getBadgeStyle(product.badge || product.category)}
+          >
+            {product.badge || product.category}
+          </span>
           <h3 className="kala-product-name">{product.name}</h3>
 
           {/* Color Variant Swatches */}

@@ -7,25 +7,10 @@ export const NewEventsSection: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0)
   const [isPaused, setIsPaused] = useState<boolean>(false)
 
-  // Find events strictly by ID to guarantee sequence and type safety
-  const featuredProductEvent = KALA_EVENTS.find((e) => e.id === 'kala-bihari-story') as ProductEvent | undefined
-  const bundleEvent = KALA_EVENTS.find((e) => e.id === 'tshirt-stack-bundle') as BundleEvent | undefined
-  const upcomingEvent = KALA_EVENTS.find((e) => e.id === 'designathon-idea') as UpcomingEvent | undefined
+  // Track front/back image toggle per product event
+  const [productViews, setProductViews] = useState<Record<string, string>>({})
 
-  // Bihari Story Front / Back toggle state
-  const [bihariStoryImage, setBihariStoryImage] = useState<string>(
-    featuredProductEvent?.frontImage || ''
-  )
-
-  // Update front image if event data changes
-  useEffect(() => {
-    if (featuredProductEvent?.frontImage && !bihariStoryImage) {
-      setBihariStoryImage(featuredProductEvent.frontImage)
-    }
-  }, [featuredProductEvent, bihariStoryImage])
-
-  // Total slides is strictly 3
-  const totalSlides = 3
+  const totalSlides = KALA_EVENTS.length
 
   // Swipe & Drag tracking refs
   const touchStartX = useRef<number | null>(null)
@@ -46,8 +31,7 @@ export const NewEventsSection: React.FC = () => {
     setCurrentIndex(index)
   }, [])
 
-  // Auto-slide effect: automatically changes slide every 3 seconds
-  // When currentIndex changes (manually or auto), the 3-second timer resets automatically!
+  // Auto-slide effect: changes slide every 3 seconds (~3s per event)
   useEffect(() => {
     if (isPaused) return
 
@@ -134,7 +118,7 @@ export const NewEventsSection: React.FC = () => {
       onKeyDown={handleKeyDown}
       tabIndex={0}
       aria-roledescription="carousel"
-      aria-label="KALA New Events and Offers Carousel"
+      aria-label="KALA Events and Fresh Drops Carousel"
     >
       <div className="kala-new-events-container">
         {/* ================================================================
@@ -143,19 +127,19 @@ export const NewEventsSection: React.FC = () => {
         <header className="kala-new-events-header">
           <div className="kala-new-events-eyebrow">
             <span className="kala-eyebrow-accent-dot" aria-hidden="true" />
-            <span className="kala-eyebrow-text">KALA • EXCLUSIVE RELEASES</span>
+            <span className="kala-eyebrow-text">KALA • EXCLUSIVE DROPS & UPCOMING EVENTS</span>
           </div>
           <h2 id="new-events-heading" className="kala-new-events-title">
-            FRESH DROPS
+            FRESH DROPS & UPCOMING EVENTS
           </h2>
           <p className="kala-new-events-subtitle">
-            Limited pieces. Fresh ideas. Made to stand out.
+            Limited pieces. Fresh ideas. Something exciting is coming to KALA.
           </p>
         </header>
 
         {/* ================================================================
             CAROUSEL ROW: [ PREV ARROW ]  [ EVENT CARD VIEWPORT ]  [ NEXT ARROW ]
-            Arrows are vertically centered on the left and right sides.
+            Side arrows are vertically centered on the left and right.
             ================================================================ */}
         <div className="kala-new-events-carousel-outer">
           {/* Circular Previous Button (Left Side) */}
@@ -198,354 +182,355 @@ export const NewEventsSection: React.FC = () => {
                   transform: `translateX(-${currentIndex * 100}%)`,
                 }}
               >
-                {/* ------------------------------------------------------------
-                    SLIDE 1: FEATURED DROP — KALA Bihari Story Premium T-Shirt
-                    ------------------------------------------------------------ */}
-                {featuredProductEvent && (
-                  <div
-                    className="kala-carousel-slide"
-                    role="group"
-                    aria-roledescription="slide"
-                    aria-label="Slide 1 of 3: Featured Drop — KALA Bihari Story Premium T-Shirt"
-                  >
-                    <article className="kala-event-card-single kala-card-product">
-                      {/* Visual Media Stage */}
-                      <div className="kala-event-media-stage">
-                        <div className="kala-stage-topbar">
-                          <span className="kala-stage-badge dark">
-                            <span className="kala-badge-dot" aria-hidden="true" />
-                            FEATURED DROP
-                          </span>
-                          <span className="kala-stage-price-pill">
-                            {featuredProductEvent.currency}{featuredProductEvent.price}
-                          </span>
-                        </div>
+                {KALA_EVENTS.map((event, idx) => {
+                  /* ------------------------------------------------------------
+                     CASE 1: PRODUCT DROP EVENT (e.g. Bihari Story Premium T-Shirt)
+                     ------------------------------------------------------------ */
+                  if (event.type === 'product') {
+                    const prod = event as ProductEvent
+                    const activeImg = productViews[prod.id] || prod.frontImage
 
-                        <div className="kala-stage-image-wrap">
-                          <img
-                            src={bihariStoryImage || featuredProductEvent.frontImage}
-                            alt={featuredProductEvent.title}
-                            className="kala-stage-main-img"
-                            loading="eager"
-                            draggable={false}
-                          />
-                        </div>
+                    return (
+                      <div
+                        key={prod.id}
+                        className="kala-carousel-slide"
+                        role="group"
+                        aria-roledescription="slide"
+                        aria-label={`Slide ${idx + 1} of ${totalSlides}: ${prod.title}`}
+                      >
+                        <article className="kala-event-card-single kala-card-product">
+                          <div className="kala-event-media-stage">
+                            <div className="kala-stage-topbar">
+                              <span className="kala-stage-badge dark">
+                                <span className="kala-badge-dot" aria-hidden="true" />
+                                {prod.badge}
+                              </span>
+                              <span className="kala-stage-price-pill">
+                                {prod.currency}{prod.price}
+                              </span>
+                            </div>
 
-                        {/* Front / Back Toggle Chip */}
-                        {featuredProductEvent.backImage && (
-                          <div
-                            className="kala-card-view-toggle"
-                            title="Toggle front or back view"
-                          >
-                            <button
-                              type="button"
-                              className={`kala-toggle-chip ${(bihariStoryImage || featuredProductEvent.frontImage) === featuredProductEvent.frontImage ? 'active' : ''}`}
-                              onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                setBihariStoryImage(featuredProductEvent.frontImage)
-                              }}
-                              aria-label="View front of T-shirt"
-                            >
-                              Front
-                            </button>
-                            <button
-                              type="button"
-                              className={`kala-toggle-chip ${bihariStoryImage === featuredProductEvent.backImage ? 'active' : ''}`}
-                              onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                setBihariStoryImage(featuredProductEvent.backImage!)
-                              }}
-                              aria-label="View back of T-shirt"
-                            >
-                              Back
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                            <div className="kala-stage-image-wrap">
+                              <img
+                                src={activeImg}
+                                alt={prod.title}
+                                className="kala-stage-main-img"
+                                loading="eager"
+                                draggable={false}
+                              />
+                            </div>
 
-                      {/* Content Body */}
-                      <div className="kala-event-body">
-                        <div className="kala-body-heading-group">
-                          <div className="kala-title-row">
-                            <h3 className="kala-event-main-title">{featuredProductEvent.title}</h3>
-                          </div>
-                          <div className="kala-event-price-line">
-                            <span className="kala-price-amount">
-                              {featuredProductEvent.currency}{featuredProductEvent.price}
-                            </span>
-                            <span className="kala-stock-tag">{featuredProductEvent.status}</span>
-                          </div>
-                        </div>
-
-                        <p className="kala-event-desc">{featuredProductEvent.description}</p>
-
-                        {/* Feature Badges: 220 GSM, Premium Comfort, Durable Fabric, Comfortable Fit */}
-                        <div className="kala-feature-badges-row" aria-label="Key Features">
-                          {featuredProductEvent.features.map((feature, fIdx) => (
-                            <span key={fIdx} className="kala-feature-badge-item">
-                              <svg
-                                width="12"
-                                height="12"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                aria-hidden="true"
-                              >
-                                <polyline points="20 6 9 17 4 12" />
-                              </svg>
-                              <span>{feature}</span>
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* Action CTA Button */}
-                        <div className="kala-event-cta-wrap">
-                          <Link
-                            to={featuredProductEvent.link}
-                            className="kala-btn kala-btn-primary kala-event-action-btn"
-                            aria-label={`View ${featuredProductEvent.title} product details`}
-                          >
-                            <span>{featuredProductEvent.ctaText}</span>
-                            <svg
-                              className="kala-arrow-icon"
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              aria-hidden="true"
-                            >
-                              <line x1="5" y1="12" x2="19" y2="12" />
-                              <polyline points="12 5 19 12 12 19" />
-                            </svg>
-                          </Link>
-                        </div>
-                      </div>
-                    </article>
-                  </div>
-                )}
-
-                {/* ------------------------------------------------------------
-                    SLIDE 2: MULTI-BUY OFFER — Build Your T-Shirt Stack
-                    ------------------------------------------------------------ */}
-                {bundleEvent && (
-                  <div
-                    className="kala-carousel-slide"
-                    role="group"
-                    aria-roledescription="slide"
-                    aria-label="Slide 2 of 3: Multi-Buy Offer — Build Your T-Shirt Stack"
-                  >
-                    <article className="kala-event-card-single kala-card-bundle">
-                      {/* Visual Media Stage */}
-                      <div className="kala-event-media-stage kala-stage-bundle">
-                        <div className="kala-stage-topbar">
-                          <span className="kala-stage-badge orange">
-                            <span className="kala-badge-pulse" aria-hidden="true" />
-                            {bundleEvent.badge}
-                          </span>
-                          {bundleEvent.subBadge && (
-                            <span className="kala-stage-sub-badge">{bundleEvent.subBadge}</span>
-                          )}
-                        </div>
-
-                        {/* 3-Shirt Stack Visual */}
-                        <div className="kala-bundle-stack-visual" aria-hidden="true">
-                          <img
-                            src={bundleEvent.stackImages[0]}
-                            alt=""
-                            className="kala-stack-tee tee-left"
-                            loading="eager"
-                            draggable={false}
-                          />
-                          <img
-                            src={bundleEvent.stackImages[1]}
-                            alt=""
-                            className="kala-stack-tee tee-center"
-                            loading="eager"
-                            draggable={false}
-                          />
-                          <img
-                            src={bundleEvent.stackImages[2]}
-                            alt=""
-                            className="kala-stack-tee tee-right"
-                            loading="eager"
-                            draggable={false}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Content Body */}
-                      <div className="kala-event-body">
-                        <div className="kala-body-heading-group">
-                          <h3 className="kala-event-main-title">{bundleEvent.title}</h3>
-                          <p className="kala-event-sub-label">{bundleEvent.subtitle}</p>
-                        </div>
-
-                        {/* 3 Interactive Bundle Offer Rows:
-                            - 2 T-SHIRTS — ₹499
-                            - 3 T-SHIRTS — ₹699
-                            - 5 T-SHIRTS — ₹999 — BEST VALUE
-                        */}
-                        <div className="kala-bundle-tiers-group" aria-label="Available Bundle Tiers">
-                          {bundleEvent.options.map((option) => (
-                            <Link
-                              key={option.count}
-                              to={option.link}
-                              className={`kala-bundle-tier-link ${option.highlight ? 'highlight' : ''}`}
-                              aria-label={`Select ${option.count} T-Shirts bundle for ₹${option.price}`}
-                            >
-                              <div className="kala-tier-left">
-                                <span className="kala-tier-qty">{option.count} T-SHIRTS</span>
-                                {option.highlight && (
-                                  <span className="kala-tier-best-tag">{option.highlight}</span>
-                                )}
+                            {prod.backImage && (
+                              <div className="kala-card-view-toggle" title="Toggle front or back view">
+                                <button
+                                  type="button"
+                                  className={`kala-toggle-chip ${activeImg === prod.frontImage ? 'active' : ''}`}
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    setProductViews((prev) => ({ ...prev, [prod.id]: prod.frontImage }))
+                                  }}
+                                  aria-label="View front of T-shirt"
+                                >
+                                  Front
+                                </button>
+                                <button
+                                  type="button"
+                                  className={`kala-toggle-chip ${activeImg === prod.backImage ? 'active' : ''}`}
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    setProductViews((prev) => ({ ...prev, [prod.id]: prod.backImage! }))
+                                  }}
+                                  aria-label="View back of T-shirt"
+                                >
+                                  Back
+                                </button>
                               </div>
-                              <span className="kala-tier-dots" aria-hidden="true" />
-                              <span className="kala-tier-price">₹{option.price}</span>
-                              <svg
-                                className="kala-tier-arrow"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.4"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                aria-hidden="true"
+                            )}
+                          </div>
+
+                          <div className="kala-event-body">
+                            <div className="kala-body-heading-group">
+                              <div className="kala-title-row">
+                                <h3 className="kala-event-main-title">{prod.title}</h3>
+                              </div>
+                              <div className="kala-event-price-line">
+                                <span className="kala-price-amount">
+                                  {prod.currency}{prod.price}
+                                </span>
+                                <span className="kala-stock-tag">{prod.status}</span>
+                              </div>
+                            </div>
+
+                            <p className="kala-event-desc">{prod.description}</p>
+
+                            <div className="kala-feature-badges-row" aria-label="Key Features">
+                              {prod.features.map((feature, fIdx) => (
+                                <span key={fIdx} className="kala-feature-badge-item">
+                                  <svg
+                                    width="12"
+                                    height="12"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2.8"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    aria-hidden="true"
+                                  >
+                                    <polyline points="20 6 9 17 4 12" />
+                                  </svg>
+                                  <span>{feature}</span>
+                                </span>
+                              ))}
+                            </div>
+
+                            <div className="kala-event-cta-wrap">
+                              <Link
+                                to={prod.link}
+                                className="kala-btn kala-btn-primary kala-event-action-btn"
+                                aria-label={`View ${prod.title} product details`}
                               >
-                                <polyline points="9 18 15 12 9 6" />
-                              </svg>
-                            </Link>
-                          ))}
-                        </div>
-
-                        <p className="kala-event-desc">{bundleEvent.description}</p>
-
-                        {/* Action CTA Button */}
-                        <div className="kala-event-cta-wrap">
-                          <Link
-                            to={bundleEvent.link}
-                            className="kala-btn kala-btn-primary kala-event-action-btn kala-bundle-cta"
-                            aria-label="Shop the bundle offer and select your T-shirts"
-                          >
-                            <span>{bundleEvent.ctaText}</span>
-                            <svg
-                              className="kala-arrow-icon"
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              aria-hidden="true"
-                            >
-                              <line x1="5" y1="12" x2="19" y2="12" />
-                              <polyline points="12 5 19 12 12 19" />
-                            </svg>
-                          </Link>
-                        </div>
+                                <span>{prod.ctaText}</span>
+                                <svg
+                                  className="kala-arrow-icon"
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  aria-hidden="true"
+                                >
+                                  <line x1="5" y1="12" x2="19" y2="12" />
+                                  <polyline points="12 5 19 12 12 19" />
+                                </svg>
+                              </Link>
+                            </div>
+                          </div>
+                        </article>
                       </div>
-                    </article>
-                  </div>
-                )}
+                    )
+                  }
 
-                {/* ------------------------------------------------------------
-                    SLIDE 3: UPCOMING EVENT — Designathon Idea
-                    ------------------------------------------------------------ */}
-                {upcomingEvent && (
-                  <div
-                    className="kala-carousel-slide"
-                    role="group"
-                    aria-roledescription="slide"
-                    aria-label="Slide 3 of 3: Upcoming Event — Designathon Idea"
-                  >
-                    <article className="kala-event-card-single kala-card-upcoming">
-                      {/* Visual Media Stage with Mystery Blur & Lock Overlay */}
-                      <div className="kala-event-media-stage kala-stage-upcoming">
-                        {/* Subtle Blurred Background Graphic */}
-                        {upcomingEvent.backgroundGraphic && (
+                  /* ------------------------------------------------------------
+                     CASE 2: MULTI-BUY BUNDLE EVENT (e.g. Build Your T-Shirt Stack)
+                     ------------------------------------------------------------ */
+                  if (event.type === 'bundle') {
+                    const bundle = event as BundleEvent
+
+                    return (
+                      <div
+                        key={bundle.id}
+                        className="kala-carousel-slide"
+                        role="group"
+                        aria-roledescription="slide"
+                        aria-label={`Slide ${idx + 1} of ${totalSlides}: ${bundle.title}`}
+                      >
+                        <article className="kala-event-card-single kala-card-bundle">
+                          <div className="kala-event-media-stage kala-stage-bundle">
+                            <div className="kala-stage-topbar">
+                              <span className="kala-stage-badge orange">
+                                <span className="kala-badge-pulse" aria-hidden="true" />
+                                {bundle.badge}
+                              </span>
+                              {bundle.subBadge && (
+                                <span className="kala-stage-sub-badge">{bundle.subBadge}</span>
+                              )}
+                            </div>
+
+                            <div className="kala-bundle-stack-visual" aria-hidden="true">
+                              <img
+                                src={bundle.stackImages[0]}
+                                alt=""
+                                className="kala-stack-tee tee-left"
+                                loading="eager"
+                                draggable={false}
+                              />
+                              <img
+                                src={bundle.stackImages[1]}
+                                alt=""
+                                className="kala-stack-tee tee-center"
+                                loading="eager"
+                                draggable={false}
+                              />
+                              <img
+                                src={bundle.stackImages[2]}
+                                alt=""
+                                className="kala-stack-tee tee-right"
+                                loading="eager"
+                                draggable={false}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="kala-event-body">
+                            <div className="kala-body-heading-group">
+                              <h3 className="kala-event-main-title">{bundle.title}</h3>
+                              <p className="kala-event-sub-label">{bundle.subtitle}</p>
+                            </div>
+
+                            <div className="kala-bundle-tiers-group" aria-label="Available Bundle Tiers">
+                              {bundle.options.map((option) => (
+                                <Link
+                                  key={option.count}
+                                  to={option.link}
+                                  className={`kala-bundle-tier-link ${option.highlight ? 'highlight' : ''}`}
+                                  aria-label={`Select ${option.count} T-Shirts bundle for ₹${option.price}`}
+                                >
+                                  <div className="kala-tier-left">
+                                    <span className="kala-tier-qty">{option.count} T-SHIRTS</span>
+                                    {option.highlight && (
+                                      <span className="kala-tier-best-tag">{option.highlight}</span>
+                                    )}
+                                  </div>
+                                  <span className="kala-tier-dots" aria-hidden="true" />
+                                  <span className="kala-tier-price">₹{option.price}</span>
+                                  <svg
+                                    className="kala-tier-arrow"
+                                    width="14"
+                                    height="14"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2.4"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    aria-hidden="true"
+                                  >
+                                    <polyline points="9 18 15 12 9 6" />
+                                  </svg>
+                                </Link>
+                              ))}
+                            </div>
+
+                            <p className="kala-event-desc">{bundle.description}</p>
+
+                            <div className="kala-event-cta-wrap">
+                              <Link
+                                to={bundle.link}
+                                className="kala-btn kala-btn-primary kala-event-action-btn kala-bundle-cta"
+                                aria-label="Shop the bundle offer and select your T-shirts"
+                              >
+                                <span>{bundle.ctaText}</span>
+                                <svg
+                                  className="kala-arrow-icon"
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  aria-hidden="true"
+                                >
+                                  <line x1="5" y1="12" x2="19" y2="12" />
+                                  <polyline points="12 5 19 12 12 19" />
+                                </svg>
+                              </Link>
+                            </div>
+                          </div>
+                        </article>
+                      </div>
+                    )
+                  }
+
+                  /* ------------------------------------------------------------
+                     CASE 3: UPCOMING EVENT (e.g. Creator Royalty, Designer Royalty, Collab)
+                     ------------------------------------------------------------ */
+                  const upcoming = event as UpcomingEvent
+
+                  return (
+                    <div
+                      key={upcoming.id}
+                      className="kala-carousel-slide"
+                      role="group"
+                      aria-roledescription="slide"
+                      aria-label={`Slide ${idx + 1} of ${totalSlides}: ${upcoming.title}`}
+                    >
+                      <article className="kala-event-card-single kala-card-upcoming">
+                        {/* Visual Media Stage (LEFT: dark visual/event area) */}
+                        <div className="kala-event-media-stage kala-stage-upcoming">
                           <img
-                            src={upcomingEvent.backgroundGraphic}
+                            src={upcoming.image}
                             alt=""
                             className="kala-upcoming-bg-art"
                             aria-hidden="true"
                             draggable={false}
                           />
-                        )}
 
-                        <div className="kala-upcoming-stage-overlay" />
+                          <div className="kala-upcoming-stage-overlay" />
 
-                        <div className="kala-stage-topbar">
-                          <span className="kala-stage-badge lock-badge">
-                            <span className="kala-lock-icon" aria-hidden="true">🔒</span>
-                            UPCOMING EVENT
-                          </span>
-                          <span className="kala-stage-sub-badge upcoming-badge">
-                            {upcomingEvent.icon} MYSTERY DROP
-                          </span>
-                        </div>
-
-                        {/* Center Mystery Gift / Lock Focal Element */}
-                        <div className="kala-upcoming-focal" aria-hidden="true">
-                          <div className="kala-mystery-gift-icon-wrap">
-                            <span className="kala-gift-symbol">{upcomingEvent.icon}</span>
+                          <div className="kala-stage-topbar">
+                            <span className="kala-stage-badge lock-badge">
+                              <span className="kala-lock-icon" aria-hidden="true">🔒</span>
+                              <span>{upcoming.topLeftBadge}</span>
+                            </span>
+                            <span className={`kala-stage-sub-badge upcoming-badge ${upcoming.badgeModifier || ''}`}>
+                              <span className="kala-badge-symbol" aria-hidden="true">{upcoming.topRightIcon}</span>
+                              <span>{upcoming.topRightBadge}</span>
+                            </span>
                           </div>
-                          <span className="kala-mystery-caption">CREATOR INITIATIVE</span>
-                        </div>
-                      </div>
 
-                      {/* Content Body */}
-                      <div className="kala-event-body kala-upcoming-body">
-                        <div className="kala-body-heading-group">
-                          <div className="kala-upcoming-concept-pill">
-                            {upcomingEvent.conceptTag}
+                          <div className="kala-upcoming-visual-frame" aria-hidden="true">
+                            <img
+                              src={upcoming.image}
+                              alt=""
+                              className="kala-upcoming-showcase-img"
+                              draggable={false}
+                            />
+                            <div className="kala-upcoming-frame-border" />
                           </div>
-                          <h3 className="kala-event-main-title kala-upcoming-title">
-                            {upcomingEvent.title}
-                          </h3>
-                        </div>
 
-                        <p className="kala-event-desc kala-upcoming-desc">
-                          {upcomingEvent.description}
-                        </p>
-
-                        {/* Release Date Box */}
-                        <div className="kala-release-date-box" aria-label={`Releasing on ${upcomingEvent.releaseDate}`}>
-                          <div className="kala-release-date-label">RELEASING:</div>
-                          <div className="kala-release-date-value">
-                            <strong>{upcomingEvent.releaseDate}</strong>
-                            <span className="kala-release-month">({upcomingEvent.releaseDateLabel})</span>
+                          <div className="kala-upcoming-focal-caption">
+                            <span className="kala-focal-accent-dot" aria-hidden="true" />
+                            <span className="kala-focal-text">{upcoming.focalTag}</span>
                           </div>
                         </div>
 
-                        {/* Non-Clickable Locked CTA */}
-                        <div className="kala-event-cta-wrap">
-                          <button
-                            type="button"
-                            disabled
-                            aria-disabled="true"
-                            className="kala-btn kala-locked-btn"
-                            title="This upcoming event is locked and will be available soon"
-                          >
-                            <span className="kala-btn-lock-icon" aria-hidden="true">🔒</span>
-                            <span>LOCKED • RELEASING SOON</span>
-                          </button>
+                        {/* Content Body (RIGHT: event information panel) */}
+                        <div className="kala-event-body kala-upcoming-body">
+                          <div className="kala-body-heading-group">
+                            <div className="kala-upcoming-concept-pill">
+                              {upcoming.categoryBadge}
+                            </div>
+                            <h3 className="kala-event-main-title kala-upcoming-title">
+                              {upcoming.title}
+                            </h3>
+                          </div>
+
+                          <p className="kala-event-desc kala-upcoming-desc">
+                            {upcoming.description}
+                          </p>
+
+                          <div className="kala-release-date-box" aria-label={`Date: ${upcoming.date}`}>
+                            <div className="kala-release-date-label">DATE:</div>
+                            <div className="kala-release-date-value">
+                              <strong>{upcoming.date}</strong>
+                            </div>
+                          </div>
+
+                          <div className="kala-event-cta-wrap">
+                            <button
+                              type="button"
+                              disabled
+                              aria-disabled="true"
+                              className="kala-btn kala-locked-btn"
+                              title="This upcoming event is locked and will be available soon"
+                            >
+                              <span className="kala-btn-lock-icon" aria-hidden="true">🔒</span>
+                              <span>{upcoming.status}</span>
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    </article>
-                  </div>
-                )}
+                      </article>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -574,35 +559,19 @@ export const NewEventsSection: React.FC = () => {
           </button>
         </div>
 
-        {/* ================================================================
-            INDICATOR DOTS (Slide 1, 2, 3)
-            Placed centered beneath the carousel row to show active slide
-            ================================================================ */}
-        <div className="kala-carousel-indicators" role="tablist" aria-label="Event slides navigation">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={currentIndex === 0}
-            aria-label="Go to slide 1: Featured Drop"
-            className={`kala-indicator-dot ${currentIndex === 0 ? 'active' : ''}`}
-            onClick={() => goToSlide(0)}
-          />
-          <button
-            type="button"
-            role="tab"
-            aria-selected={currentIndex === 1}
-            aria-label="Go to slide 2: Multi-Buy Offer"
-            className={`kala-indicator-dot ${currentIndex === 1 ? 'active' : ''}`}
-            onClick={() => goToSlide(1)}
-          />
-          <button
-            type="button"
-            role="tab"
-            aria-selected={currentIndex === 2}
-            aria-label="Go to slide 3: Upcoming Event"
-            className={`kala-indicator-dot ${currentIndex === 2 ? 'active' : ''}`}
-            onClick={() => goToSlide(2)}
-          />
+        {/* Indicator Dots */}
+        <div className="kala-carousel-indicators" role="tablist" aria-label="Events carousel navigation">
+          {KALA_EVENTS.map((event, idx) => (
+            <button
+              key={event.id}
+              type="button"
+              role="tab"
+              aria-selected={currentIndex === idx}
+              aria-label={`Go to slide ${idx + 1}: ${event.title}`}
+              className={`kala-indicator-dot ${currentIndex === idx ? 'active' : ''}`}
+              onClick={() => goToSlide(idx)}
+            />
+          ))}
         </div>
       </div>
     </section>

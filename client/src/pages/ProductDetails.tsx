@@ -175,7 +175,13 @@ export const ProductDetails: React.FC = () => {
       ? [product.image, getProductImage('kala-bihari-story-back.png')].filter(Boolean)
       : product.id === 'ai-data-science-polo-t-shirt'
         ? [getProductImage('ai-data-science-polo-front.png'), getProductImage('ai-data-science-polo-back.png')].filter(Boolean)
-        : [product.image].filter(Boolean)
+        : (product.id.startsWith('kala-') && product.id.endsWith('-set'))
+          ? [product.image, getProductImage(`${product.id}-back.png`)].filter(Boolean)
+          : [product.image].filter(Boolean)
+
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null)
+  const touchStartRef = useRef<number | null>(null)
+  const mouseStartRef = useRef<number | null>(null)
 
   const highlights = getProductHighlights(product)
   const isWishlisted = isInWishlist(product.id)
@@ -189,6 +195,61 @@ export const ProductDetails: React.FC = () => {
     )
   )
   const safeImgIndex = currentImgIndex >= 0 ? currentImgIndex : 0
+
+  const goToSlide = (newIndex: number, direction: 'left' | 'right') => {
+    if (newIndex === safeImgIndex || !galleryImages[newIndex]) return
+    setSlideDirection(direction)
+    setActiveImage(galleryImages[newIndex])
+    setTimeout(() => setSlideDirection(null), 320)
+  }
+
+  const handleNextSlide = () => {
+    if (galleryImages.length <= 1) return
+    const nextIdx = (safeImgIndex + 1) % galleryImages.length
+    goToSlide(nextIdx, 'left')
+  }
+
+  const handlePrevSlide = () => {
+    if (galleryImages.length <= 1) return
+    const prevIdx = (safeImgIndex - 1 + galleryImages.length) % galleryImages.length
+    goToSlide(prevIdx, 'right')
+  }
+
+  const handleCardTouchStart = (e: React.TouchEvent) => {
+    if (isDraggingText) return
+    touchStartRef.current = e.touches[0].clientX
+  }
+
+  const handleCardTouchEnd = (e: React.TouchEvent) => {
+    if (isDraggingText || touchStartRef.current === null) return
+    const deltaX = touchStartRef.current - e.changedTouches[0].clientX
+    if (Math.abs(deltaX) > 40) {
+      if (deltaX > 0) {
+        handleNextSlide()
+      } else {
+        handlePrevSlide()
+      }
+    }
+    touchStartRef.current = null
+  }
+
+  const handleCardMouseDown = (e: React.MouseEvent) => {
+    if (isDraggingText) return
+    mouseStartRef.current = e.clientX
+  }
+
+  const handleCardMouseUp = (e: React.MouseEvent) => {
+    if (isDraggingText || mouseStartRef.current === null) return
+    const deltaX = mouseStartRef.current - e.clientX
+    if (Math.abs(deltaX) > 45) {
+      if (deltaX > 0) {
+        handleNextSlide()
+      } else {
+        handlePrevSlide()
+      }
+    }
+    mouseStartRef.current = null
+  }
 
   // Detect whether current view is Front or Back
   const activeImageStr = (activeImage || product.image).toLowerCase()
@@ -481,26 +542,59 @@ export const ProductDetails: React.FC = () => {
             (Clean layout: standalone floating arrow block & bottom chips removed)
             ==================================================================== */}
         <div className="kala-details-gallery">
-          <div className="kala-details-main-image-card" ref={previewCardRef}>
+          {/* Slick View Toggle Pill above image if multiple images */}
+          {galleryImages.length > 1 && (
+            <div className="kala-slick-view-toggle" role="tablist" aria-label="Product side view selector">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={!isBackView}
+                className={`kala-slick-toggle-btn ${!isBackView ? 'active' : ''}`}
+                onClick={() => goToSlide(0, 'right')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
+                </svg>
+                FRONT VIEW
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={isBackView}
+                className={`kala-slick-toggle-btn ${isBackView ? 'active' : ''}`}
+                onClick={() => goToSlide(1, 'left')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
+                </svg>
+                BACK VIEW
+              </button>
+            </div>
+          )}
+
+          <div
+            className="kala-details-main-image-card"
+            ref={previewCardRef}
+            onTouchStart={handleCardTouchStart}
+            onTouchEnd={handleCardTouchEnd}
+            onMouseDown={handleCardMouseDown}
+            onMouseUp={handleCardMouseUp}
+          >
             {/* View Indicator Badge on Preview */}
             {galleryImages.length > 1 && (
               <div className="kala-preview-view-badge" aria-label={`Currently viewing ${isBackView ? 'Back' : 'Front'} side`}>
+                <span className="kala-badge-dot">●</span>
                 {isBackView ? 'BACK VIEW' : 'FRONT VIEW'}
               </div>
             )}
 
             {/* Side Navigation Arrow: Previous (Front) */}
-            {galleryImages.length > 1 && currentImgIndex > 0 && (
+            {galleryImages.length > 1 && (
               <button
                 type="button"
                 className="kala-preview-side-arrow prev"
-                onClick={() => {
-                  const prevIdx = currentImgIndex - 1
-                  if (galleryImages[prevIdx]) {
-                    setActiveImage(galleryImages[prevIdx])
-                  }
-                }}
-                aria-label="View front of product"
+                onClick={handlePrevSlide}
+                aria-label="View previous image"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <polyline points="15 18 9 12 15 6" />
@@ -509,17 +603,12 @@ export const ProductDetails: React.FC = () => {
             )}
 
             {/* Side Navigation Arrow: Next (Back) */}
-            {galleryImages.length > 1 && currentImgIndex < galleryImages.length - 1 && (
+            {galleryImages.length > 1 && (
               <button
                 type="button"
                 className="kala-preview-side-arrow next"
-                onClick={() => {
-                  const nextIdx = currentImgIndex + 1
-                  if (galleryImages[nextIdx]) {
-                    setActiveImage(galleryImages[nextIdx])
-                  }
-                }}
-                aria-label="View back of product"
+                onClick={handleNextSlide}
+                aria-label="View next image"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <polyline points="9 18 15 12 9 6" />
@@ -527,14 +616,35 @@ export const ProductDetails: React.FC = () => {
               </button>
             )}
 
-            {/* Main T-Shirt Image */}
-            <img
-              src={activeImage || product.image}
-              alt={`${product.name} — ${isBackView ? 'Back View' : 'Front View'}`}
-              className="kala-preview-main-img"
-              loading="eager"
-              draggable={false}
-            />
+            {/* Main T-Shirt Image with animated slide track */}
+            <div className={`kala-slider-track ${slideDirection ? `slide-${slideDirection}` : ''}`}>
+              <img
+                src={activeImage || product.image}
+                alt={`${product.name} — ${isBackView ? 'Back View' : 'Front View'}`}
+                className="kala-preview-main-img"
+                loading="eager"
+                draggable={false}
+              />
+            </div>
+
+            {/* Slick Slide Indicator Dots */}
+            {galleryImages.length > 1 && (
+              <div className="kala-slick-dots" aria-label="Slide indicators">
+                {galleryImages.map((_, idx) => {
+                  const isActive = idx === safeImgIndex
+                  return (
+                    <button
+                      key={`dot-${idx}`}
+                      type="button"
+                      className={`kala-slick-dot ${isActive ? 'active' : ''}`}
+                      onClick={() => goToSlide(idx, idx > safeImgIndex ? 'left' : 'right')}
+                      aria-label={`Go to slide ${idx + 1}`}
+                      aria-current={isActive}
+                    />
+                  )
+                })}
+              </div>
+            )}
 
             {/* Subtle Safe Printable Boundary Box (Visible while dragging or if custom text exists) */}
             {supportsCustomText && (currentTextToDisplay || isDraggingText) && (
@@ -578,6 +688,57 @@ export const ProductDetails: React.FC = () => {
               </div>
             )}
           </div>
+
+          {/* Horizontal Gallery Thumbnail Bar below preview card */}
+          {galleryImages.length > 1 && (
+            <div className="kala-gallery-slider-bar" aria-label="Gallery thumbnails">
+              <button
+                type="button"
+                className="kala-gallery-nav-btn prev"
+                onClick={handlePrevSlide}
+                aria-label="Previous view"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+
+              <div className="kala-gallery-thumbnails-horizontal">
+                {galleryImages.map((img, idx) => {
+                  const isBack = img.toLowerCase().includes('back') || idx === 1
+                  const isSelected = idx === safeImgIndex
+                  return (
+                    <button
+                      key={`thumb-${idx}`}
+                      type="button"
+                      className={`kala-gallery-thumb-chip ${isSelected ? 'active' : ''}`}
+                      onClick={() => goToSlide(idx, idx > safeImgIndex ? 'left' : 'right')}
+                      aria-label={isBack ? 'Select Back View' : 'Select Front View'}
+                      aria-pressed={isSelected}
+                    >
+                      <div className="kala-thumb-img-wrap">
+                        <img src={img} alt={isBack ? 'Back preview' : 'Front preview'} loading="lazy" />
+                      </div>
+                      <span className="kala-thumb-chip-label">
+                        {isBack ? 'Back View' : 'Front View'}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <button
+                type="button"
+                className="kala-gallery-nav-btn next"
+                onClick={handleNextSlide}
+                aria-label="Next view"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* ====================================================================

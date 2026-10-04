@@ -43,14 +43,17 @@ export interface UpcomingEvent {
   id: string
   type: 'upcoming'
   locked: true
+  categoryBadge: string
   title: string
-  badge: string
-  icon: string
   description: string
-  releaseDate: string
-  releaseDateLabel: string
-  conceptTag: string
-  backgroundGraphic?: string
+  date: string
+  status: string
+  topLeftBadge: string
+  topRightBadge: string
+  topRightIcon: string
+  focalTag: string
+  image: string
+  badgeModifier?: string
 }
 
 export type KalaEvent = ProductEvent | BundleEvent | UpcomingEvent
@@ -113,19 +116,62 @@ export const KALA_EVENTS: KalaEvent[] = [
     ],
   },
 
-  // 3. Slide 3 — UPCOMING EVENT: Designathon Idea
+  // 3. Slide 3 — UPCOMING EVENT: KALA CULTURE DROPS
   {
-    id: 'designathon-idea',
+    id: 'kala-culture-drops',
     type: 'upcoming',
     locked: true,
-    title: 'DESIGNATHON IDEA',
-    badge: 'UPCOMING EVENT',
-    icon: '🎁',
+    categoryBadge: 'PAN-INDIA CULTURE DROPS',
+    title: 'KALA CULTURE DROPS',
     description:
-      'Create a T-shirt design and submit it through KALA. Once your design is selected and the T-shirt is available on KALA, you can earn a royalty whenever customers purchase your design.',
-    releaseDate: '25 / 10 / 2026',
-    releaseDateLabel: 'October 2026',
-    conceptTag: 'CREATOR ROYALTY PROGRAM',
-    backgroundGraphic: getProductImage('gaming 03.png') || '/images/gaming 03.png',
+      'Wear your roots with pride. Create, customize, and cop original oversized streetwear inspired by the iconic cultures, art, and slang of states across India — reimagined with raw Gen-Z energy. Rep your state and wear your story.',
+    date: 'COMING SOON',
+    status: '🔒 LOCKED • RELEASING SOON',
+    topLeftBadge: 'UPCOMING EVENT',
+    topRightBadge: 'CULTURE DROP',
+    topRightIcon: '🇮🇳',
+    focalTag: 'STATE CULTURE INITIATIVE',
+    image: '/events/culture-drops.jpg',
+    badgeModifier: 'culture-badge',
+  },
+
+  // 4. Slide 4 — UPCOMING EVENT: KALA CAMPUS IDEATHON
+  {
+    id: 'kala-campus-ideathon',
+    type: 'upcoming',
+    locked: true,
+    categoryBadge: 'CAMPUS DESIGN BATTLE',
+    title: 'KALA CAMPUS IDEATHON',
+    description:
+      'Got bold streetwear ideas? Pitch your original design concepts, battle with creators across campus, and turn your vision into real KALA drip. Free registration, winning designs get printed, and top creators take home exclusive custom apparel.',
+    date: 'COMING SOON',
+    status: '🔒 LOCKED • RELEASING SOON',
+    topLeftBadge: 'UPCOMING EVENT',
+    topRightBadge: 'CAMPUS BATTLE',
+    topRightIcon: '💡',
+    focalTag: 'COLLEGE CREATORS BATTLE',
+    image: '/events/campus-ideathon.jpg',
+    badgeModifier: 'ideathon-badge',
+  },
+
+  // 5. Slide 5 — UPCOMING EVENT: CREATOR × DESIGNER × KALA
+  {
+    id: 'creator-designer-kala',
+    type: 'upcoming',
+    locked: true,
+    categoryBadge: 'KALA COLLABORATION',
+    title: 'CREATOR × DESIGNER × KALA',
+    description:
+      'Creators bring the audience. Designers bring the ideas. KALA brings them to life. Collaborate, create original products, and earn together when your collection reaches customers.',
+    date: 'COMING SOON',
+    status: '🔒 LOCKED • RELEASING SOON',
+    topLeftBadge: 'UPCOMING EVENT',
+    topRightBadge: 'COLLAB DROP',
+    topRightIcon: '🤝',
+    focalTag: 'COLLABORATION INITIATIVE',
+    image: '/events/collab-royalty.jpg',
+    badgeModifier: 'collab-badge',
   },
 ]
+
+export const UPCOMING_EVENTS = KALA_EVENTS.filter((e): e is UpcomingEvent => e.type === 'upcoming')

@@ -63,6 +63,7 @@ function normalizeApiProduct(p: any): Product {
     id: p.id,
     name: p.name,
     category: p.category,
+    badge: p.badge || PRODUCTS.find((pr) => pr.id === p.id)?.badge,
     price: p.price,
     image: resolvedImage,
     images: resolvedImages,
@@ -72,16 +73,17 @@ function normalizeApiProduct(p: any): Product {
     highlights:
       Array.isArray(p.highlights) && p.highlights.length > 0
         ? p.highlights
-        : p.id === 'ai-data-science-polo-t-shirt'
-          ? [
-              { label: 'Collar', value: 'Polo collar' },
-              { label: 'Placket', value: '2-button front placket' },
-              { label: 'Color', value: 'Light grey' },
-              { label: 'Front Print', value: 'Front chest university logo' },
-              { label: 'Back Print', value: 'Large AI & Data Science back print' },
-              { label: 'Sizes', value: 'S, M, L, XL, XXL' },
-            ]
-          : undefined,
+        : (PRODUCTS.find((pr) => pr.id === p.id)?.highlights ??
+            (p.id === 'ai-data-science-polo-t-shirt'
+              ? [
+                  { label: 'Collar', value: 'Polo collar' },
+                  { label: 'Placket', value: '2-button front placket' },
+                  { label: 'Color', value: 'Light grey' },
+                  { label: 'Front Print', value: 'Front chest university logo' },
+                  { label: 'Back Print', value: 'Large AI & Data Science back print' },
+                  { label: 'Sizes', value: 'S, M, L, XL, XXL' },
+                ]
+              : undefined)),
     customPrintTextEnabled: p.customPrintTextEnabled ?? (p.id === 'kala-bihari-story-premium-t-shirt'),
     customPrintTextPrice: p.customPrintTextPrice ?? 25,
   }

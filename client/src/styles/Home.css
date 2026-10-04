@@ -399,36 +399,201 @@
    4. SERVICE / TRUST BAR
    -------------------------------------------------------------------------- */
 .kala-trust-bar-section {
-  padding: clamp(1.4rem, 2.5vw, 2.2rem) 0;
-  background-color: #FFFFFF;
-  border-top: 1px solid #EBE8E2;
-  border-bottom: 1px solid #EBE8E2;
+  padding: clamp(2.2rem, 4vw, 3.5rem) 0;
+  background-color: #FAFAF8;
+  position: relative;
 }
 
 .kala-trust-bar-container {
   max-width: 1360px;
   margin: 0 auto;
-  padding: 0 clamp(1.25rem, 4vw, 3.5rem);
+  padding: 0 clamp(1.25rem, 3.5vw, 2.5rem);
+}
+
+/* Modern Rounded 3D Trust Card Banner */
+.kala-trust-card-banner {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  width: 100%;
+  background: radial-gradient(130% 120% at 50% 15%, #FFFFFF 50%, #FFF7F0 85%, #FFEFE4 100%);
+  border: 1.5px solid rgba(255, 126, 46, 0.24);
+  border-radius: 28px;
+  box-shadow:
+    0 16px 45px -12px rgba(255, 94, 30, 0.09),
+    0 4px 18px rgba(0, 0, 0, 0.025);
+  overflow: hidden;
+  padding: clamp(1.5rem, 2.5vw, 2.2rem) clamp(1.5rem, 3.2vw, 2.8rem);
+  box-sizing: border-box;
 }
 
-.kala-trust-item {
+/* Ambient Fluid Wave Overlay */
+.kala-trust-card-bg-waves {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Decorative Dot Matrices (Left & Right) */
+.kala-trust-dots {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 4.5px);
+  grid-template-rows: repeat(5, 4.5px);
+  gap: 7px;
+  flex-shrink: 0;
+  opacity: 0.55;
+  user-select: none;
+}
+
+.kala-trust-dots span {
+  width: 4.5px;
+  height: 4.5px;
+  border-radius: 50%;
+  background-color: #FF9B66;
+  display: block;
+}
+
+/* Features Row */
+.kala-trust-features-row {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  color: #111111;
-  font-size: clamp(0.88rem, 1vw, 0.98rem);
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  justify-content: space-between;
+  flex: 1;
+  gap: clamp(1rem, 2.2vw, 2.75rem);
+  margin: 0 clamp(0.75rem, 1.8vw, 2.2rem);
 }
 
-.kala-trust-icon {
-  color: #111111;
+.kala-trust-feature-item {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.9rem, 1.4vw, 1.35rem);
+  flex: 1;
+  min-width: 0;
+}
+
+/* Vertical Thin Dividers */
+.kala-trust-col-divider {
+  width: 1.5px;
+  height: 58px;
+  background: linear-gradient(
+    180deg,
+    rgba(235, 226, 216, 0.15) 0%,
+    rgba(224, 212, 198, 0.8) 50%,
+    rgba(235, 226, 216, 0.15) 100%
+  );
   flex-shrink: 0;
+}
+
+/* 3D Elevated Badge Tile */
+.kala-trust-badge-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.kala-trust-badge-tile {
+  width: clamp(58px, 5vw, 68px);
+  height: clamp(58px, 5vw, 68px);
+  border-radius: 19px;
+  background: linear-gradient(145deg, #FFFFFF 0%, #FFF5EE 52%, #FFE8D6 100%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 10px 22px -4px rgba(255, 94, 30, 0.18),
+    0 3px 8px rgba(0, 0, 0, 0.03),
+    inset 0 2px 5px rgba(255, 255, 255, 0.95),
+    inset 0 -2px 4px rgba(255, 140, 80, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.kala-trust-feature-item:hover .kala-trust-badge-tile {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 14px 28px -4px rgba(255, 94, 30, 0.25),
+    0 4px 10px rgba(0, 0, 0, 0.04),
+    inset 0 2px 5px #FFFFFF,
+    inset 0 -2px 4px rgba(255, 140, 80, 0.18);
+}
+
+.kala-trust-tile-icon {
+  width: clamp(28px, 2.5vw, 36px);
+  height: clamp(28px, 2.5vw, 36px);
+  display: block;
+}
+
+/* Celebratory Sparkle Sunburst Rays (Above Tiles) */
+.kala-trust-sparkle-rays {
+  position: absolute;
+  top: -9px;
+  left: -5px;
+  width: 22px;
+  height: 14px;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2.5px;
+  z-index: 3;
+}
+
+.kala-ray {
+  background-color: #FF5E1E;
+  border-radius: 2px;
+  display: block;
+}
+
+.ray-left {
+  width: 2px;
+  height: 7px;
+  transform: rotate(-35deg);
+  transform-origin: bottom center;
+}
+
+.ray-center {
+  width: 2.2px;
+  height: 9.5px;
+  margin-bottom: 2px;
+}
+
+.ray-right {
+  width: 2px;
+  height: 7px;
+  transform: rotate(35deg);
+  transform-origin: bottom center;
+}
+
+/* Text Block */
+.kala-trust-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-trust-title {
+  font-size: clamp(0.92rem, 1.05vw, 1.05rem);
+  font-weight: 800;
+  color: #111111;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.22rem 0;
+  text-transform: uppercase;
+  line-height: 1.22;
+}
+
+.kala-trust-desc {
+  font-size: clamp(0.76rem, 0.85vw, 0.83rem);
+  color: #555555;
+  line-height: 1.45;
+  margin: 0;
+  font-weight: 450;
+  max-width: 290px;
 }
 
 /* --------------------------------------------------------------------------
@@ -733,24 +898,57 @@
     min-width: 36px;
   }
 
-  /* Trust Bar: 3 Guarantees */
-  .kala-trust-bar-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    padding: 0 0.5rem;
+  /* Trust Card Banner: Mobile & Tablet */
+  .kala-trust-dots {
+    display: none;
   }
 
-  .kala-trust-item {
-    font-size: 0.75rem;
-    gap: 0.4rem;
+  .kala-trust-card-banner {
+    padding: 1.5rem 1.25rem;
+    border-radius: 20px;
   }
 
-  .kala-trust-icon {
-    width: 16px;
-    height: 16px;
+  .kala-trust-features-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.25rem;
+    margin: 0;
+  }
+
+  .kala-trust-feature-item {
+    gap: 1rem;
+    max-width: 100%;
+  }
+
+  .kala-trust-col-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(224, 212, 198, 0.6) 50%,
+      transparent 100%
+    );
+  }
+
+  .kala-trust-badge-tile {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+  }
+
+  .kala-trust-tile-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .kala-trust-title {
+    font-size: 0.88rem;
+  }
+
+  .kala-trust-desc {
+    font-size: 0.76rem;
+    max-width: none;
   }
 
   /* Contact Us: Clean 2-Column Compact Grid */
