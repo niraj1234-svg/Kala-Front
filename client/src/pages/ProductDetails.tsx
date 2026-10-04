@@ -92,6 +92,48 @@ export const ProductDetails: React.FC = () => {
     XL: '0',
     XXL: '0',
   })
+  const [selectedMobileSize, setSelectedMobileSize] = useState<string>('S')
+  const [mobileQty, setMobileQty] = useState<number>(1)
+
+  const handleSelectMobileSize = (size: string) => {
+    setSelectedMobileSize(size)
+    const nextQty: Record<string, number> = { S: 0, M: 0, L: 0, XL: 0, XXL: 0 }
+    const nextInputs: Record<string, string> = { S: '0', M: '0', L: '0', XL: '0', XXL: '0' }
+    nextQty[size] = mobileQty
+    nextInputs[size] = String(mobileQty)
+    setSizeQuantities(nextQty)
+    setSizeInputs(nextInputs)
+    if (sizeError) setSizeError('')
+  }
+
+  const handleIncreaseMobileQty = () => {
+    const next = mobileQty + 1
+    setMobileQty(next)
+    setSizeQuantities((prev) => ({
+      ...prev,
+      [selectedMobileSize]: next,
+    }))
+    setSizeInputs((inputs) => ({
+      ...inputs,
+      [selectedMobileSize]: String(next),
+    }))
+    if (sizeError) setSizeError('')
+  }
+
+  const handleDecreaseMobileQty = () => {
+    if (mobileQty <= 1) return
+    const next = mobileQty - 1
+    setMobileQty(next)
+    setSizeQuantities((prev) => ({
+      ...prev,
+      [selectedMobileSize]: next,
+    }))
+    setSizeInputs((inputs) => ({
+      ...inputs,
+      [selectedMobileSize]: String(next),
+    }))
+  }
+
   const [sizeError, setSizeError] = useState<string>('')
   const [addedNotification, setAddedNotification] = useState<boolean>(false)
   const [shareFeedback, setShareFeedback] = useState<string>('')
@@ -102,6 +144,8 @@ export const ProductDetails: React.FC = () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
     setSizeQuantities({ S: 1, M: 0, L: 0, XL: 0, XXL: 0 })
     setSizeInputs({ S: '1', M: '0', L: '0', XL: '0', XXL: '0' })
+    setSelectedMobileSize('S')
+    setMobileQty(1)
     setSizeError('')
     if (!id) return
     let isMounted = true
@@ -689,7 +733,31 @@ export const ProductDetails: React.FC = () => {
             )}
           </div>
 
-          {/* Horizontal Gallery Thumbnail Bar below preview card */}
+          {/* Mobile-Only Clean Image Navigation Toggle: [ FRONT ] [ BACK ] */}
+          {galleryImages.length > 1 && (
+            <div className="kala-mobile-view-toggle" role="tablist" aria-label="Product side view selector">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={!isBackView}
+                className={`kala-mobile-view-chip ${!isBackView ? 'active' : ''}`}
+                onClick={() => goToSlide(0, 'right')}
+              >
+                FRONT VIEW
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={isBackView}
+                className={`kala-mobile-view-chip ${isBackView ? 'active' : ''}`}
+                onClick={() => goToSlide(1, 'left')}
+              >
+                BACK VIEW
+              </button>
+            </div>
+          )}
+
+          {/* Horizontal Gallery Thumbnail Bar below preview card (Desktop) */}
           {galleryImages.length > 1 && (
             <div className="kala-gallery-slider-bar" aria-label="Gallery thumbnails">
               <button
@@ -882,98 +950,168 @@ export const ProductDetails: React.FC = () => {
               and direct typed input support.
               ==================================================================== */}
           <div className="kala-size-breakdown-section">
-            <div className="kala-size-label-row">
-              <span className="kala-section-label">Select Size & Quantity</span>
-              {sizeError && <span className="kala-size-error-msg">{sizeError}</span>}
-            </div>
-
-            <div className="kala-size-cards-grid" role="group" aria-label="Select quantity for each size">
-              {AVAILABLE_SIZES.map((size) => {
-                const qty = sizeQuantities[size] || 0
-                const inputValue = sizeInputs[size] !== undefined ? sizeInputs[size] : String(qty)
-                const isSelected = qty > 0
-
-                return (
-                  <div
-                    key={size}
-                    className={`kala-size-card ${isSelected ? 'has-qty' : 'is-zero'}`}
-                    onClick={(e) => handleCardClick(size, e)}
-                    tabIndex={0}
-                    role="button"
-                    aria-label={`Size ${size}, ${qty} pieces selected`}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        if (
-                          (e.target as HTMLElement).tagName !== 'INPUT' &&
-                          (e.target as HTMLElement).tagName !== 'BUTTON'
-                        ) {
-                          e.preventDefault()
-                          handleCardClick(size, e as any)
-                        }
-                      }
-                    }}
-                  >
-                    <div className="kala-size-card-header">
-                      <span className="kala-size-card-name">{size}</span>
-                    </div>
-
-                    <div className="kala-size-card-pcs">
-                      {qty} pcs
-                    </div>
-
-                    <div
-                      className="kala-size-card-stepper"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        type="button"
-                        className="kala-size-card-btn minus"
-                        onClick={() => handleDecreaseSizeQty(size)}
-                        disabled={qty <= 0}
-                        aria-label={`Decrease ${size} quantity`}
-                      >
-                        −
-                      </button>
-
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        className="kala-size-card-input"
-                        value={inputValue}
-                        onChange={(e) => handleSizeInputChange(size, e.target.value)}
-                        onBlur={() => handleSizeInputBlur(size)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            ;(e.target as HTMLInputElement).blur()
-                          }
-                        }}
-                        aria-label={`Quantity for size ${size}`}
-                      />
-
-                      <button
-                        type="button"
-                        className="kala-size-card-btn plus"
-                        onClick={() => handleIncreaseSizeQty(size)}
-                        aria-label={`Increase ${size} quantity`}
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Total Quantity & Total Price Snapshot */}
-            <div className="kala-size-qty-summary">
-              <div className="kala-summary-pill">
-                <span>Total Quantity:</span>
-                <strong>{totalQuantity} pcs</strong>
+            {/* Desktop Multi-Size Matrix */}
+            <div className="kala-size-breakdown-desktop">
+              <div className="kala-size-label-row">
+                <span className="kala-section-label">Select Size & Quantity</span>
+                {sizeError && <span className="kala-size-error-msg">{sizeError}</span>}
               </div>
-              <div className="kala-summary-pill">
-                <span>Total Price:</span>
-                <strong>₹{totalPrice.toLocaleString('en-IN')}</strong>
+
+              <div className="kala-size-cards-grid" role="group" aria-label="Select quantity for each size">
+                {AVAILABLE_SIZES.map((size) => {
+                  const qty = sizeQuantities[size] || 0
+                  const inputValue = sizeInputs[size] !== undefined ? sizeInputs[size] : String(qty)
+                  const isSelected = qty > 0
+
+                  return (
+                    <div
+                      key={size}
+                      className={`kala-size-card ${isSelected ? 'has-qty' : 'is-zero'}`}
+                      onClick={(e) => handleCardClick(size, e)}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Size ${size}, ${qty} pieces selected`}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          if (
+                            (e.target as HTMLElement).tagName !== 'INPUT' &&
+                            (e.target as HTMLElement).tagName !== 'BUTTON'
+                          ) {
+                            e.preventDefault()
+                            handleCardClick(size, e as any)
+                          }
+                        }
+                      }}
+                    >
+                      <div className="kala-size-card-header">
+                        <span className="kala-size-card-name">{size}</span>
+                      </div>
+
+                      <div className="kala-size-card-pcs">
+                        {qty} pcs
+                      </div>
+
+                      <div
+                        className="kala-size-card-stepper"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          type="button"
+                          className="kala-size-card-btn minus"
+                          onClick={() => handleDecreaseSizeQty(size)}
+                          disabled={qty <= 0}
+                          aria-label={`Decrease ${size} quantity`}
+                        >
+                          −
+                        </button>
+
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          className="kala-size-card-input"
+                          value={inputValue}
+                          onChange={(e) => handleSizeInputChange(size, e.target.value)}
+                          onBlur={() => handleSizeInputBlur(size)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              ;(e.target as HTMLInputElement).blur()
+                            }
+                          }}
+                          aria-label={`Quantity for size ${size}`}
+                        />
+
+                        <button
+                          type="button"
+                          className="kala-size-card-btn plus"
+                          onClick={() => handleIncreaseSizeQty(size)}
+                          aria-label={`Increase ${size} quantity`}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Total Quantity & Total Price Snapshot */}
+              <div className="kala-size-qty-summary">
+                <div className="kala-summary-pill">
+                  <span>Total Quantity:</span>
+                  <strong>{totalQuantity} pcs</strong>
+                </div>
+                <div className="kala-summary-pill">
+                  <span>Total Price:</span>
+                  <strong>₹{totalPrice.toLocaleString('en-IN')}</strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Dedicated Clean Size & Quantity Section */}
+            <div className="kala-size-breakdown-mobile">
+              {/* SELECT SIZE */}
+              <div className="kala-mobile-size-group">
+                <div className="kala-size-label-row">
+                  <span className="kala-section-label">SELECT SIZE</span>
+                  {sizeError && <span className="kala-size-error-msg">{sizeError}</span>}
+                </div>
+                <div className="kala-mobile-size-row" role="radiogroup" aria-label="Select size">
+                  {AVAILABLE_SIZES.map((size) => {
+                    const isSelected = selectedMobileSize === size
+                    return (
+                      <button
+                        key={`mob-${size}`}
+                        type="button"
+                        role="radio"
+                        aria-checked={isSelected}
+                        className={`kala-mobile-size-btn ${isSelected ? 'active' : ''}`}
+                        onClick={() => handleSelectMobileSize(size)}
+                      >
+                        {size}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* QUANTITY */}
+              <div className="kala-mobile-qty-group">
+                <span className="kala-section-label">QUANTITY</span>
+                <div className="kala-mobile-qty-stepper-wrap">
+                  <div className="kala-mobile-qty-stepper">
+                    <button
+                      type="button"
+                      className="kala-mobile-qty-btn minus"
+                      onClick={handleDecreaseMobileQty}
+                      disabled={mobileQty <= 1}
+                      aria-label="Decrease quantity"
+                    >
+                      −
+                    </button>
+                    <span className="kala-mobile-qty-display">{mobileQty}</span>
+                    <button
+                      type="button"
+                      className="kala-mobile-qty-btn plus"
+                      onClick={handleIncreaseMobileQty}
+                      aria-label="Increase quantity"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Clean Summary Box */}
+              <div className="kala-mobile-summary-card">
+                <div className="kala-mobile-summary-row">
+                  <span className="kala-mobile-summary-label">Total Quantity</span>
+                  <span className="kala-mobile-summary-val">{totalQuantity} pcs</span>
+                </div>
+                <div className="kala-mobile-summary-row">
+                  <span className="kala-mobile-summary-label">Total Price</span>
+                  <span className="kala-mobile-summary-val kala-mobile-price-val">₹{totalPrice.toLocaleString('en-IN')}</span>
+                </div>
               </div>
             </div>
           </div>

@@ -30,11 +30,11 @@ export const BulkApparelBuilder: React.FC = () => {
   const [selectedColor, setSelectedColor] = useState<ApparelColor>('black')
   const [selectedSide, setSelectedSide] = useState<ApparelSide>('front')
   const [sizeQuantities, setSizeQuantities] = useState<SizeQuantities>({
-    S: 10,
-    M: 35,
-    L: 35,
-    XL: 15,
-    XXL: 5,
+    S: 5,
+    M: 8,
+    L: 7,
+    XL: 3,
+    XXL: 2,
   })
   const [requirement, setRequirement] = useState<string>('')
   const [uploadedApparel, setUploadedApparel] = useState<UploadedApparelImage | null>(null)
@@ -132,14 +132,12 @@ export const BulkApparelBuilder: React.FC = () => {
   const currentSideData = customizationState[selectedApparel][selectedSide]
 
   // Mathematical Summation of Pieces Across All Sizes
-  const totalQuantity = Math.max(
-    1,
+  const totalQuantity =
     (sizeQuantities.S || 0) +
-      (sizeQuantities.M || 0) +
-      (sizeQuantities.L || 0) +
-      (sizeQuantities.XL || 0) +
-      (sizeQuantities.XXL || 0)
-  )
+    (sizeQuantities.M || 0) +
+    (sizeQuantities.L || 0) +
+    (sizeQuantities.XL || 0) +
+    (sizeQuantities.XXL || 0)
 
   const sizeBreakdownText = (['S', 'M', 'L', 'XL', 'XXL'] as SizeKey[])
     .filter((sz) => (sizeQuantities[sz] || 0) > 0)
@@ -323,6 +321,10 @@ export const BulkApparelBuilder: React.FC = () => {
           </div>
 
           <div className="kala-dedicated-trust-row" aria-label="KALA Custom Apparel Highlights">
+            <span className="kala-dedicated-trust-item highlight-moq">
+              <span className="dot">●</span>
+              <span>Minimum Order: 25 Pcs</span>
+            </span>
             <span className="kala-dedicated-trust-item">
               <span className="dot">●</span>
               <span>Premium Quality</span>

@@ -86,7 +86,7 @@ export const Wishlist: React.FC = () => {
                   to={`/product/${product.id}`}
                   className="kala-btn kala-btn-primary kala-wishlist-action-btn"
                 >
-                  SELECT SIZE & ADD TO CART
+                  <span className="kala-wishlist-btn-text">SELECT SIZE & ADD TO CART</span>
                 </Link>
                 <Link
                   to={`/product/${product.id}`}

@@ -904,11 +904,22 @@ export const Checkout: React.FC = () => {
             disabled={isSubmitting}
             className="kala-btn kala-btn-primary kala-place-order-btn"
           >
-            {isSubmitting
-              ? 'PROCESSING PAYMENT...'
-              : pendingOrderId && orderError
-                ? `RETRY PAYMENT (₹${displayTotal.toLocaleString('en-IN')})`
-                : `PROCEED TO PAYMENT (₹${displayTotal.toLocaleString('en-IN')}) →`}
+            {isSubmitting ? (
+              'PROCESSING PAYMENT...'
+            ) : pendingOrderId && orderError ? (
+              <span className="kala-place-order-content">
+                <span>RETRY PAYMENT</span>
+                <span className="kala-place-order-dot">•</span>
+                <span>₹{displayTotal.toLocaleString('en-IN')}</span>
+              </span>
+            ) : (
+              <span className="kala-place-order-content">
+                <span className="kala-place-order-title">PROCEED TO PAYMENT</span>
+                <span className="kala-place-order-dot">•</span>
+                <span className="kala-place-order-amount">₹{displayTotal.toLocaleString('en-IN')}</span>
+                <span className="kala-place-order-arrow" aria-hidden="true">→</span>
+              </span>
+            )}
           </button>
 
           <div

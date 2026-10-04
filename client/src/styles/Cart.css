@@ -70,7 +70,9 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 0.5rem;
   margin-bottom: 0.35rem;
+  min-width: 0;
 }
 
 .kala-cart-item-title {
@@ -79,7 +81,10 @@
   color: var(--kala-black);
   text-decoration: none;
   line-height: 1.35;
-  margin-right: 0.5rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .kala-cart-item-title:hover {
@@ -88,19 +93,28 @@
 
 .kala-cart-item-remove-btn {
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   color: var(--kala-text-secondary);
   font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
-  padding: 0.25rem;
-  transition: color var(--kala-transition-fast);
+  padding: 0.25rem 0.5rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  border-radius: 4px;
+  transition: all var(--kala-transition-fast);
 }
 
 .kala-cart-item-remove-btn:hover {
   color: #dc2626;
+  background-color: #fee2e2;
+  border-color: #fca5a5;
 }
 
 .kala-cart-item-size {
@@ -318,6 +332,18 @@
   .kala-cart-item-size {
     font-size: 0.75rem;
     margin-bottom: 0.35rem;
+  }
+
+  .kala-cart-item-remove-btn {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.45rem;
+    min-height: 30px;
+    background-color: #f9f9fa;
+    border: 1px solid #e5e7eb;
+    color: #4b5563;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .kala-cart-summary {

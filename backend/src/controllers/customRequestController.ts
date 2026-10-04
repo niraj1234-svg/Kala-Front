@@ -70,10 +70,10 @@ export const createCustomRequest = async (req: Request, res: Response) => {
     }
 
     const qty = Number(quantity)
-    if (!Number.isInteger(qty) || qty < 1) {
+    if (!Number.isInteger(qty) || qty < 25) {
       res.status(400).json({
         success: false,
-        message: 'Invalid request: Quantity must be a positive integer of at least 1.',
+        message: 'Invalid request: Minimum order quantity for custom apparel is 25 pieces.',
       })
       return
     }

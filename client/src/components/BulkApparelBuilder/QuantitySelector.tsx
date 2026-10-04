@@ -1,16 +1,18 @@
 import React from 'react'
-import { type SizeKey, type SizeQuantities } from './types'
+import { type SizeKey, type SizeQuantities, MIN_CUSTOM_APPAREL_QTY } from './types'
 
 export const SIZES: SizeKey[] = ['S', 'M', 'L', 'XL', 'XXL']
 
 export const PRESET_OPTIONS = [
-  { label: '10 each', value: 50 },
-  { label: '25 each', value: 125 },
-  { label: '50 each', value: 250 },
-  { label: '100 each', value: 500 },
+  { label: '25 pcs (Min MOQ)', value: 25 },
+  { label: '50 pcs (10 each)', value: 50 },
+  { label: '125 pcs (25 each)', value: 125 },
+  { label: '250 pcs (50 each)', value: 250 },
+  { label: '500 pcs (100 each)', value: 500 },
 ]
 
 export const PRESET_DISTRIBUTIONS: Record<number, SizeQuantities> = {
+  25: { S: 5, M: 5, L: 5, XL: 5, XXL: 5 },
   50: { S: 10, M: 10, L: 10, XL: 10, XXL: 10 },
   125: { S: 25, M: 25, L: 25, XL: 25, XXL: 25 },
   250: { S: 50, M: 50, L: 50, XL: 50, XXL: 50 },
@@ -34,6 +36,9 @@ export const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   unitPrice,
   estimatedTotal,
 }) => {
+  const isUnderMoq = totalQuantity < MIN_CUSTOM_APPAREL_QTY
+  const piecesNeeded = MIN_CUSTOM_APPAREL_QTY - totalQuantity
+
   const handleInputChange = (size: SizeKey, value: string) => {
     const parsed = parseInt(value, 10)
     if (isNaN(parsed) || parsed < 0) {
@@ -53,12 +58,12 @@ export const QuantitySelector: React.FC<QuantitySelectorProps> = ({
       <div className="kala-bulk-step-heading">
         <span className="kala-bulk-step-num">5</span>
         <h3 className="kala-bulk-step-title">
-          APPROXIMATE QUANTITY BY SIZE <span className="kala-bulk-optional-tag">(Optional)</span>
+          ORDER QUANTITY BY SIZE <span className="kala-bulk-moq-pill-badge">MOQ: 25 PCS</span>
         </h3>
       </div>
 
       <p className="kala-bulk-step-subdesc">
-        Enter required pieces for each size. Total quantity and price are calculated automatically.
+        Enter required pieces for each size. Minimum order quantity for custom apparel is <strong>25 pieces</strong>. Total quantity and price are calculated automatically.
       </p>
 
       {/* Per-Size Quantity Inputs Grid */}
@@ -137,10 +142,27 @@ export const QuantitySelector: React.FC<QuantitySelectorProps> = ({
         </div>
       </div>
 
+      {/* MOQ Warning Banner if under 25 pieces */}
+      {isUnderMoq && (
+        <div className="kala-bulk-moq-warning-banner" role="alert">
+          <span className="kala-bulk-moq-warning-icon" aria-hidden="true">⚠️</span>
+          <div className="kala-bulk-moq-warning-text">
+            <strong>Minimum order quantity is 25 pieces.</strong> Current total is {totalQuantity} pcs. Please add <strong>{piecesNeeded} more piece{piecesNeeded > 1 ? 's' : ''}</strong> across any sizes to request an official quote.
+          </div>
+        </div>
+      )}
+
       {/* Live Mathematics Summary Box */}
       <div className="kala-bulk-math-summary-box">
         <div className="kala-bulk-math-left">
-          <span className="kala-bulk-math-tag">MATHEMATICAL TOTAL</span>
+          <div className="kala-bulk-math-tag-row">
+            <span className="kala-bulk-math-tag">ORDER QUANTITY TOTAL</span>
+            {isUnderMoq ? (
+              <span className="kala-bulk-moq-status-badge under">Below Minimum ({totalQuantity}/25 pcs)</span>
+            ) : (
+              <span className="kala-bulk-moq-status-badge valid">✓ MOQ Met ({totalQuantity}/25+ pcs)</span>
+            )}
+          </div>
           <div className="kala-bulk-math-count-row">
             <strong className="kala-bulk-math-total">{totalQuantity} pcs</strong>
             <span className="kala-bulk-math-equation">

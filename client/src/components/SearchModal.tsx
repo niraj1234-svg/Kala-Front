@@ -290,6 +290,15 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
               <span>SEARCH KALA</span>
             </div>
             <span className="kala-search-quick-hint">Press ESC to exit</span>
+            <button
+              type="button"
+              className="kala-search-mobile-close-btn"
+              onClick={onClose}
+              aria-label="Close search"
+              title="Close search"
+            >
+              ×
+            </button>
           </div>
 
           <form className="kala-search-input-box" onSubmit={handleSubmit} role="search">

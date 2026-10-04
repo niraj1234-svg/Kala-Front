@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { generateWhatsAppInquiryUrl } from '../../services/businessInquiryApi'
 import { type ContactMethodType } from '../../data/businessSlots'
-import { type ApparelId, type SizeQuantities } from './types'
+import { type ApparelId, type SizeQuantities, MIN_CUSTOM_APPAREL_QTY } from './types'
 import MeetingSchedulerModal from '../business/MeetingSchedulerModal'
 import QuoteRequestModal from './QuoteRequestModal'
 
@@ -40,14 +40,17 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
   const [activeMeetingMethod, setActiveMeetingMethod] = useState<ContactMethodType | null>(null)
   const [isBreakdownOpen, setIsBreakdownOpen] = useState(false)
 
+  const isUnderMoq = quantity < MIN_CUSTOM_APPAREL_QTY
+  const piecesNeeded = MIN_CUSTOM_APPAREL_QTY - quantity
+
   const handleWhatsAppClick = () => {
     const sizeInfo = sizeBreakdownText ? ` (${sizeBreakdownText})` : ''
     const url = generateWhatsAppInquiryUrl({
       apparelCategory: apparelName,
       color: colorName,
       customization: `Custom Bulk Artwork Print${sizeInfo}`,
-      approxQuantity: `${quantity} pcs`,
-      requirement: requirement || `Bulk ${apparelName} order enquiry with sizes: ${sizeBreakdownText}. Estimated investment: ₹${estimatedTotal.toLocaleString('en-IN')}`,
+      approxQuantity: `${quantity} pcs (MOQ 25 pcs)`,
+      requirement: requirement || `Custom ${apparelName} order enquiry (MOQ: 25 pcs) with sizes: ${sizeBreakdownText}. Estimated: ₹${estimatedTotal.toLocaleString('en-IN')}`,
     })
     window.open(url, '_blank', 'noopener,noreferrer')
   }
@@ -79,6 +82,15 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
           </div>
 
           <div className="kala-bulk-estimate-right">
+            {isUnderMoq ? (
+              <span className="kala-bulk-estimate-moq-pill under">
+                ⚠️ Min Order: 25 pcs (Add {piecesNeeded} more)
+              </span>
+            ) : (
+              <span className="kala-bulk-estimate-moq-pill valid">
+                ✓ Min 25 pcs MOQ Satisfied
+              </span>
+            )}
             <span className="kala-bulk-estimate-pill">⚡ No Advance Payment Needed</span>
             <span className="kala-bulk-estimate-subnote">
               Final quote confirmed via direct consultation
@@ -138,13 +150,32 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
       <div className="kala-bulk-primary-cta-wrap">
         <button
           type="button"
-          className="kala-bulk-quote-cta-btn"
-          onClick={() => setIsQuoteModalOpen(true)}
-          aria-label="Request custom apparel quotation"
+          className={`kala-bulk-quote-cta-btn ${isUnderMoq ? 'disabled' : ''}`}
+          onClick={() => {
+            if (isUnderMoq) return
+            setIsQuoteModalOpen(true)
+          }}
+          disabled={isUnderMoq}
+          aria-label={
+            isUnderMoq
+              ? `Minimum 25 pieces required (Currently ${quantity} pcs)`
+              : 'Request custom apparel quotation'
+          }
+          title={
+            isUnderMoq
+              ? `Minimum order quantity is 25 pieces. Please add ${piecesNeeded} more piece(s).`
+              : 'Request official quote'
+          }
         >
-          <span>REQUEST QUOTE</span>
+          <span>{isUnderMoq ? `MINIMUM 25 PIECES REQUIRED (${quantity}/25)` : 'REQUEST QUOTE'}</span>
           <span className="kala-bulk-cta-arrow" aria-hidden="true">→</span>
         </button>
+
+        {isUnderMoq && (
+          <p className="kala-bulk-cta-moq-note">
+            ⚠️ Custom apparel production requires a minimum order of <strong>25 pieces</strong>. Add <strong>{piecesNeeded} more pcs</strong> above to request a quote.
+          </p>
+        )}
       </div>
 
       {/* ====================================================================

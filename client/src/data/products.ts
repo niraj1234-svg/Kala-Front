@@ -386,7 +386,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-apex-compression-set',
     name: 'KALA Apex Compression Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-apex-compression-set.png'),
@@ -422,7 +421,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-discipline-set',
     name: 'KALA Discipline Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-discipline-set.png'),
@@ -458,7 +456,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-oni-training-set',
     name: 'KALA Oni Training Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-oni-training-set.png'),
@@ -494,7 +491,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-grind-mode-set',
     name: 'KALA Grind Mode Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 499,
     image: getProductImage('kala-grind-mode-set.png'),
@@ -530,7 +526,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-everyday-set',
     name: 'KALA Everyday Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-everyday-set.png'),
@@ -566,7 +561,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-evolve-set',
     name: 'KALA Evolve Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 499,
     image: getProductImage('kala-evolve-set.png'),
@@ -602,7 +596,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-no-limits-set',
     name: 'KALA No Limits Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-no-limits-set.png'),
@@ -638,7 +631,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-wings-set',
     name: 'KALA Wings Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-wings-set.png'),
@@ -674,7 +666,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-relentless-set',
     name: 'KALA Relentless Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-relentless-set.png'),
@@ -710,7 +701,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-overthink-set',
     name: 'KALA Overthink Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-overthink-set.png'),
@@ -746,7 +736,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-nature-set',
     name: 'KALA Nature Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 499,
     image: getProductImage('kala-nature-set.png'),
@@ -782,7 +771,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-iron-mind-set',
     name: 'KALA Iron Mind Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-iron-mind-set.png'),
@@ -818,7 +806,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-good-mood-set',
     name: 'KALA Good Mood Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 499,
     image: getProductImage('kala-good-mood-set.png'),
@@ -854,7 +841,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-zen-set',
     name: 'KALA Zen Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-zen-set.png'),
@@ -872,7 +858,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'discipline-builds-freedom-tshirt',
     name: 'Discipline Builds Freedom T-Shirt',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 399,
     image: getProductImage('discipline-builds-freedom-tshirt.png'),
@@ -890,7 +875,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-tech-set',
     name: 'KALA Tech Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 499,
     image: getProductImage('kala-tech-set.png'),
@@ -926,7 +910,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-purpose-set',
     name: 'KALA Purpose Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-purpose-set.png'),
@@ -962,7 +945,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-focus-set',
     name: 'KALA Focus Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 499,
     image: getProductImage('kala-focus-set.png'),
@@ -998,7 +980,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-progress-set',
     name: 'KALA Progress Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-progress-set.png'),
@@ -1034,7 +1015,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-chaos-set',
     name: 'KALA Chaos Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 549,
     image: getProductImage('kala-chaos-set.png'),
@@ -1070,7 +1050,6 @@ export const PRODUCTS: Product[] = [
   {
     id: 'kala-repeat-set',
     name: 'KALA Repeat Set',
-    badge: 'GYMWEAR',
     category: 'Gymwear',
     price: 499,
     image: getProductImage('kala-repeat-set.png'),

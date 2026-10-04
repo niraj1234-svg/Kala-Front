@@ -110,6 +110,10 @@
   color: #8C8883;
 }
 
+.kala-search-mobile-close-btn {
+  display: none;
+}
+
 /* Search Input Box (60-68px height) */
 .kala-search-input-box {
   display: flex;
@@ -706,47 +710,119 @@
 /* 10. Mobile Responsiveness */
 @media (max-width: 640px) {
   .kala-search-overlay-backdrop {
-    padding: 0.75rem 0.5rem;
+    padding: 16px 12px;
     align-items: flex-start;
+    justify-content: center;
   }
 
   .kala-search-modal-panel {
-    border-radius: 20px;
-    max-height: calc(100vh - 1.5rem);
+    width: calc(100% - 24px);
+    max-width: 580px;
+    max-height: calc(100vh - 32px);
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   .kala-search-modal-header {
-    padding: 1rem 0.85rem 0.75rem;
+    padding: 0.85rem 1rem 0.75rem;
+  }
+
+  .kala-search-brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .kala-search-quick-hint {
+    display: none !important;
+  }
+
+  .kala-search-mobile-close-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    background: transparent;
+    border: none;
+    font-size: 1.65rem;
+    line-height: 1;
+    font-weight: 300;
+    color: #111111;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 0;
+    margin-right: -6px;
+    touch-action: manipulation;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .kala-search-mobile-close-btn:hover {
+    color: #F25C05;
+    background-color: #F3F4F6;
   }
 
   .kala-search-input-box {
-    height: 56px;
+    height: 52px;
     border-radius: 14px;
     padding: 0 0.75rem 0 0.5rem;
     gap: 0.65rem;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .kala-search-icon-square {
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
     border-radius: 10px;
   }
 
   .kala-search-main-input {
     font-size: 0.95rem;
+    width: 100%;
+    min-width: 0;
   }
 
   .kala-search-esc-btn {
-    display: none; /* Mobile users use close icon or outside tap */
+    display: none !important;
   }
 
   .kala-search-categories-bar {
-    padding: 0.65rem 0.85rem 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .kala-search-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    overflow-x: visible;
+    padding-bottom: 0;
+  }
+
+  .kala-search-chip {
+    width: fit-content;
+    max-width: 100%;
+    white-space: nowrap;
+    min-height: 40px;
+    padding: 8px 14px;
+    font-size: 0.8125rem;
+    box-sizing: border-box;
   }
 
   .kala-search-modal-body {
-    padding: 0.85rem;
+    padding: 0.85rem 1rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
+    max-height: calc(100vh - 210px);
   }
 
   .kala-search-card {

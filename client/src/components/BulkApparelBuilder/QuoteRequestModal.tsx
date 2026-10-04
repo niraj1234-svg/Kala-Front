@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
 import { createCustomRequest, type CustomRequestInput } from '../../services/customRequestApi'
 import { generateWhatsAppInquiryUrl } from '../../services/businessInquiryApi'
-import { type ApparelId, type SizeQuantities } from './types'
+import { type ApparelId, type SizeQuantities, MIN_CUSTOM_APPAREL_QTY } from './types'
 
 interface QuoteRequestModalProps {
   isOpen: boolean
@@ -73,6 +73,11 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
   if (!isOpen) return null
 
   const validate = (): boolean => {
+    if (quantity < MIN_CUSTOM_APPAREL_QTY) {
+      setError(`Minimum order quantity for custom apparel is ${MIN_CUSTOM_APPAREL_QTY} pieces. Current selection is ${quantity} pcs.`)
+      return false
+    }
+
     if (!fullName.trim()) {
       setError('Please enter your full name.')
       return false
@@ -229,7 +234,9 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
               </div>
               <div className="kala-bulk-modal-summary-row">
                 <span className="kala-bulk-modal-summary-label">Quantity</span>
-                <strong className="kala-bulk-modal-summary-val">{quantity} pcs ({sizeBreakdownText || 'Standard'})</strong>
+                <strong className="kala-bulk-modal-summary-val">
+                  {quantity} pcs ({sizeBreakdownText || 'Standard'}) {quantity >= MIN_CUSTOM_APPAREL_QTY ? '✓ MOQ Met' : `(Min: ${MIN_CUSTOM_APPAREL_QTY} pcs)`}
+                </strong>
               </div>
               <div className="kala-bulk-modal-summary-row">
                 <span className="kala-bulk-modal-summary-label">Design</span>
@@ -320,10 +327,14 @@ export const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
               <div className="kala-bulk-modal-actions">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || quantity < MIN_CUSTOM_APPAREL_QTY}
                   className="kala-bulk-modal-submit-btn"
                 >
-                  {isSubmitting ? 'ADDING TO BAG & SUBMITTING...' : 'CONFIRM & REQUEST QUOTE →'}
+                  {isSubmitting
+                    ? 'ADDING TO BAG & SUBMITTING...'
+                    : quantity < MIN_CUSTOM_APPAREL_QTY
+                    ? `MINIMUM 25 PIECES REQUIRED (${quantity}/25)`
+                    : 'CONFIRM & REQUEST QUOTE →'}
                 </button>
               </div>
 

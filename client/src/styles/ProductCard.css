@@ -262,10 +262,19 @@
 }
 
 .kala-product-info {
-  padding: 1.25rem;
+  padding: 1.15rem 1.25rem 1.25rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+}
+
+.kala-product-info.no-badge {
+  padding-top: 1rem;
+}
+
+.kala-product-info.no-badge .kala-product-name {
+  margin-top: 0;
+  margin-bottom: 0.65rem;
 }
 
 .kala-product-category {
@@ -381,6 +390,15 @@
 @media (max-width: 640px) {
   .kala-product-info {
     padding: 0.65rem 0.55rem 0.75rem;
+  }
+
+  .kala-product-info.no-badge {
+    padding-top: 0.65rem;
+  }
+
+  .kala-product-info.no-badge .kala-product-name {
+    margin-top: 0;
+    margin-bottom: 0.35rem;
   }
 
   .kala-product-category {

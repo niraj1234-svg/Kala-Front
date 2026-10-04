@@ -135,6 +135,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     ? `/product/${product.id}?color=${encodeURIComponent(selectedVariant.colorName)}`
     : `/product/${product.id}`
 
+  const rawBadge = product.badge || product.category
+  const isGymwearBadge = Boolean(rawBadge && rawBadge.trim().toUpperCase() === 'GYMWEAR')
+  const displayBadge = isGymwearBadge ? null : rawBadge
+
   return (
     <article className="kala-product-card">
       <Link to={productUrl} className="kala-product-link">
@@ -190,13 +194,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           )}
         </div>
 
-        <div className="kala-product-info">
-          <span
-            className="kala-product-category"
-            style={getBadgeStyle(product.badge || product.category)}
-          >
-            {product.badge || product.category}
-          </span>
+        <div className={`kala-product-info ${!displayBadge ? 'no-badge' : ''}`}>
+          {displayBadge && (
+            <span
+              className="kala-product-category"
+              style={getBadgeStyle(displayBadge)}
+            >
+              {displayBadge}
+            </span>
+          )}
           <h3 className="kala-product-name">{product.name}</h3>
 
           {/* Color Variant Swatches */}

@@ -2,6 +2,8 @@ export type ApparelId = 'tshirt' | 'hoodie' | 'jersey' | 'polo'
 export type ApparelColor = 'black' | 'white'
 export type ApparelSide = 'front' | 'back'
 
+export const MIN_CUSTOM_APPAREL_QTY = 25
+
 export type PoloModelId = 'regular-jmp' | 'sap-matty' | 'cotton-matty' | 'mfl-cotton'
 
 export interface PoloProductOption {

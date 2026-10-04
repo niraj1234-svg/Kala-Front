@@ -97,6 +97,17 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
+/* Mobile-only elements hidden on desktop */
+.kala-mobile-view-toggle {
+  display: none;
+}
+.kala-size-breakdown-mobile {
+  display: none;
+}
+.kala-size-breakdown-desktop {
+  display: block;
+}
+
 /* Slick Card Side Navigation Arrows */
 .kala-preview-side-arrow {
   position: absolute;
@@ -1534,8 +1545,10 @@
 
 @media (max-width: 640px) {
   .kala-preview-side-arrow {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
   }
   .kala-preview-side-arrow.prev {
     left: 8px;
@@ -1848,126 +1861,334 @@
   }
 
   .kala-details-grid {
-    gap: 1rem;
+    gap: 1.25rem;
+  }
+
+  /* Duplicate Gallery Controls Removed on Mobile */
+  .kala-slick-view-toggle {
+    display: none !important;
+  }
+
+  .kala-preview-view-badge {
+    display: none !important;
+  }
+
+  .kala-slick-dots {
+    display: none !important;
+  }
+
+  .kala-gallery-slider-bar {
+    display: none !important;
   }
 
   .kala-details-main-image-card {
-    border-radius: 12px;
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
   }
 
   .kala-details-main-image-card img {
     aspect-ratio: 4 / 5;
-    max-height: 330px;
+    max-height: 380px;
     padding: 0.5rem;
     object-fit: contain;
   }
 
+  /* Image navigation arrows: 44px circular buttons vertically centered */
   .kala-preview-side-arrow {
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+    z-index: 10;
+  }
+
+  .kala-preview-side-arrow.prev {
+    left: 8px;
+  }
+
+  .kala-preview-side-arrow.next {
+    right: 8px;
   }
 
   .kala-preview-side-arrow svg {
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
   }
 
-  .kala-preview-view-badge {
-    font-size: 0.65rem;
-    padding: 2px 7px;
-    top: 6px;
-    left: 6px;
+  /* Single Clean Mobile View Toggle below image */
+  .kala-mobile-view-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-top: 0.75rem;
+    width: 100%;
+  }
+
+  .kala-mobile-view-chip {
+    flex: 1;
+    max-width: 160px;
+    min-height: 42px;
+    border-radius: 8px;
+    font-family: var(--kala-font-primary);
+    font-size: 0.78rem;
+    font-weight: 750;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .kala-mobile-view-chip.active {
+    background-color: #111111;
+    color: #ffffff;
+    border: 1.5px solid #111111;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .kala-mobile-view-chip:not(.active) {
+    background-color: #F7F5F2;
+    color: #4B5563;
+    border: 1.5px solid #E5E1D8;
   }
 
   .kala-details-title {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     line-height: 1.25;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.35rem;
   }
 
   .kala-details-price {
-    font-size: 1.2rem;
-    margin-bottom: 0.2rem;
+    font-size: 1.3rem;
+    margin-bottom: 0.25rem;
   }
 
   .kala-details-stock-status {
-    margin-bottom: 0.4rem;
-    font-size: 0.78rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
   }
 
   .kala-details-spec-pills {
-    margin-bottom: 0.5rem;
-    gap: 4px;
+    margin-bottom: 0.65rem;
+    gap: 6px;
+    flex-wrap: wrap;
   }
 
   .kala-spec-pill {
-    font-size: 0.68rem;
-    padding: 2px 7px;
+    font-size: 0.72rem;
+    padding: 3px 9px;
   }
 
   .kala-details-desc-wrap {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.85rem;
   }
 
   .kala-details-description {
     font-size: 0.85rem;
-    line-height: 1.45;
+    line-height: 1.5;
   }
 
-  .kala-size-breakdown-section {
-    margin-bottom: 0.85rem;
+  /* Desktop size matrix hidden on mobile */
+  .kala-size-breakdown-desktop {
+    display: none !important;
   }
 
-  .kala-size-qty-summary {
-    margin-top: 0.45rem;
-    padding: 0.45rem 0.65rem;
-    font-size: 0.78rem;
+  /* Dedicated Mobile Size & Quantity Section */
+  .kala-size-breakdown-mobile {
+    display: flex !important;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #EAE7E1;
   }
 
-  .kala-summary-pill {
-    font-size: 0.78rem;
+  .kala-mobile-size-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .kala-mobile-size-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: 100%;
+  }
+
+  .kala-mobile-size-btn {
+    flex: 1;
+    min-height: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--kala-font-primary);
+    font-size: 0.925rem;
+    font-weight: 750;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    box-sizing: border-box;
+  }
+
+  .kala-mobile-size-btn.active {
+    background-color: #111111;
+    color: #ffffff;
+    border: 2px solid #111111;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  .kala-mobile-size-btn:not(.active) {
+    background-color: #FFFFFF;
+    color: #111111;
+    border: 1.5px solid #D1D5DB;
+  }
+
+  .kala-mobile-qty-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .kala-mobile-qty-stepper-wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .kala-mobile-qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: #FFFFFF;
+    border: 1.5px solid #D1D5DB;
+    border-radius: 12px;
+    padding: 6px 14px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  .kala-mobile-qty-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 8px;
+    background: #F3F4F6;
+    border: 1px solid #E5E7EB;
+    color: #111111;
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .kala-mobile-qty-btn:active:not(:disabled) {
+    background: #E5E7EB;
+    transform: scale(0.95);
+  }
+
+  .kala-mobile-qty-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .kala-mobile-qty-display {
+    font-family: var(--kala-font-primary);
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #111111;
+    min-width: 32px;
+    text-align: center;
+  }
+
+  /* Summary Box */
+  .kala-mobile-summary-card {
+    background: #F9F8F6;
+    border: 1px solid #EAE7E1;
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-top: 0.25rem;
+  }
+
+  .kala-mobile-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #4B5563;
+  }
+
+  .kala-mobile-summary-val {
+    font-weight: 750;
+    color: #111111;
+  }
+
+  .kala-mobile-summary-val.kala-mobile-price-val {
+    font-size: 1.05rem;
+    color: var(--kala-orange);
+    font-weight: 800;
   }
 
   .kala-details-actions {
-    margin-bottom: 0.65rem;
-    gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.85rem;
   }
 
   .kala-btn-full {
-    min-height: 44px;
-    font-size: 0.82rem;
-    padding: 0.65rem 1rem;
+    min-height: 50px;
+    font-size: 0.9rem;
+    font-weight: 750;
+    letter-spacing: 0.06em;
+    padding: 12px 16px;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .kala-details-secondary-bar,
   .kala-details-small-actions {
-    margin-top: 0.4rem;
+    display: flex;
+    gap: 0.65rem;
+    width: 100%;
+    margin-top: 0.5rem;
     margin-bottom: 1.25rem;
-    gap: 0.5rem;
   }
 
   .kala-secondary-action-btn,
   .kala-small-action-btn {
-    min-height: 40px;
-    font-size: 0.78rem;
-    padding: 0.5rem 0.75rem;
-  }
-
-  .kala-gallery-slider-bar {
-    gap: 0.4rem;
-  }
-
-  .kala-gallery-thumb-chip {
-    padding: 2px 8px 2px 2px;
-  }
-
-  .kala-thumb-img-wrap {
-    width: 30px;
-    height: 30px;
-  }
-
-  .kala-thumb-chip-label {
-    font-size: 0.68rem;
+    flex: 1;
+    min-height: 44px;
+    font-size: 0.825rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
 
   .kala-mobile-sticky-bar {

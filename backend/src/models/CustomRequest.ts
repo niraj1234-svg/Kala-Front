@@ -59,7 +59,7 @@ const CustomRequestSchema = new Schema<ICustomRequest>(
     quantity: {
       type: Number,
       required: true,
-      min: 1,
+      min: [25, 'Minimum quantity for custom apparel is 25 pieces'],
     },
     sizeRange: {
       type: String,

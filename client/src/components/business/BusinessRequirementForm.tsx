@@ -13,7 +13,7 @@ export const BusinessRequirementForm: React.FC<BusinessRequirementFormProps> = (
   onChangeQuantity,
   onChangeRequirement,
 }) => {
-  const QUANTITY_PRESETS = ['20', '50', '100', '250', '500+']
+  const QUANTITY_PRESETS = ['25', '50', '100', '250', '500+']
 
   return (
     <div className="kala-biz-req-section">

@@ -24,40 +24,56 @@
 
 @media (max-width: 640px) {
   .kala-wishlist-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    max-width: 460px;
+    margin: 0 auto;
   }
 
   .kala-wishlist-content {
-    padding: 0.75rem 0.65rem;
+    padding: 1.15rem 1rem;
   }
 
   .kala-wishlist-title {
-    font-size: 0.825rem;
-    line-height: 1.25;
+    font-size: 1rem;
+    line-height: 1.35;
   }
 
   .kala-wishlist-price {
-    font-size: 0.925rem;
+    font-size: 1.1rem;
   }
 
   .kala-wishlist-action-btn {
-    min-height: 40px;
-    font-size: 0.725rem;
-    padding: 0.5rem;
+    min-height: 50px;
+    font-size: 0.875rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    padding: 12px 16px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .kala-wishlist-btn-text {
+    display: inline-block;
+    max-width: 100%;
   }
 
   .kala-wishlist-remove-btn {
-    width: 32px;
-    height: 32px;
-    top: 6px;
-    right: 6px;
+    width: 36px;
+    height: 36px;
+    top: 8px;
+    right: 8px;
   }
 }
 
-@media (max-width: 350px) {
-  .kala-wishlist-grid {
-    gap: 0.5rem;
+@media (max-width: 360px) {
+  .kala-wishlist-action-btn {
+    min-height: 48px;
+    font-size: 0.8125rem;
+    padding: 10px 12px;
   }
 }
 

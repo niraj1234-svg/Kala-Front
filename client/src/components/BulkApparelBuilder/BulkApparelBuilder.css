@@ -228,7 +228,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
   z-index: 5;
+  box-sizing: border-box;
 }
 
 .kala-bulk-badge-dark {
@@ -236,10 +238,15 @@
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 750;
-  letter-spacing: 0.06em;
-  padding: 0.35rem 0.85rem;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.75rem;
   border-radius: 9999px;
   text-transform: uppercase;
+  max-width: 68%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
 .kala-bulk-badge-price {
@@ -248,8 +255,10 @@
   color: #ea580c;
   font-size: 0.75rem;
   font-weight: 750;
-  padding: 0.35rem 0.85rem;
+  padding: 0.35rem 0.7rem;
   border-radius: 9999px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Center Garment Stage */
@@ -1834,6 +1843,45 @@
   border-color: #111111;
 }
 
+/* MOQ Pill Badge */
+.kala-bulk-moq-pill-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  background-color: #fff7ed;
+  border: 1px solid #fdba74;
+  color: #ea580c;
+  vertical-align: middle;
+  margin-left: 0.45rem;
+}
+
+/* MOQ Warning Banner */
+.kala-bulk-moq-warning-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background-color: #fff7ed;
+  border: 1.5px solid #fdba74;
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: #9a3412;
+  line-height: 1.4;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.kala-bulk-moq-warning-icon {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.kala-bulk-moq-warning-text strong {
+  color: #7c2d12;
+}
+
 /* Live Mathematics Summary Box */
 .kala-bulk-math-summary-box {
   display: flex;
@@ -1851,7 +1899,14 @@
 .kala-bulk-math-left {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+}
+
+.kala-bulk-math-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .kala-bulk-math-tag {
@@ -1860,6 +1915,26 @@
   letter-spacing: 0.06em;
   color: #64748b;
   text-transform: uppercase;
+}
+
+.kala-bulk-moq-status-badge {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.kala-bulk-moq-status-badge.under {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.kala-bulk-moq-status-badge.valid {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
 }
 
 .kala-bulk-math-count-row {
@@ -2251,6 +2326,28 @@
   }
 }
 
+.kala-bulk-estimate-moq-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+}
+
+.kala-bulk-estimate-moq-pill.under {
+  background-color: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+}
+
+.kala-bulk-estimate-moq-pill.valid {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
 .kala-bulk-estimate-pill {
   display: inline-flex;
   align-items: center;
@@ -2485,6 +2582,15 @@
   font-size: 0.65rem;
 }
 
+.kala-dedicated-trust-item.highlight-moq {
+  background-color: #fff7ed;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  font-weight: 800;
+}
+
 /* ==========================================================================
    SIZE INPUTS ENHANCEMENTS (Rate & Subtotal)
    ========================================================================== */
@@ -2657,6 +2763,33 @@
 
 .kala-bulk-quote-cta-btn:hover .kala-bulk-cta-arrow {
   transform: translateX(4px);
+}
+
+.kala-bulk-quote-cta-btn:disabled,
+.kala-bulk-quote-cta-btn.disabled {
+  background: #9ca3af !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  opacity: 0.85;
+}
+
+.kala-bulk-quote-cta-btn:disabled:hover .kala-bulk-cta-arrow,
+.kala-bulk-quote-cta-btn.disabled:hover .kala-bulk-cta-arrow {
+  transform: none !important;
+}
+
+.kala-bulk-cta-moq-note {
+  font-size: 0.78rem;
+  color: #9a3412;
+  background-color: #fff7ed;
+  border: 1px dashed #fdba74;
+  border-radius: 8px;
+  padding: 0.55rem 0.85rem;
+  margin: 0.55rem 0 0;
+  text-align: center;
+  line-height: 1.4;
 }
 
 /* ==========================================================================
@@ -3034,6 +3167,71 @@
 @media (max-width: 640px) {
   .kala-bulk-modal-field-grid {
     grid-template-columns: 1fr;
+  }
+
+  .kala-bulk-preview-card {
+    padding: 0.85rem 0.75rem;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .kala-bulk-preview-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem;
+    margin-bottom: 0.35rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .kala-bulk-badge-dark {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.65rem;
+    max-width: 65%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.03em;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+
+  .kala-bulk-badge-price {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .kala-bulk-garment-stage {
+    max-width: 100%;
+    margin: 0.25rem auto;
+  }
+
+  .kala-bulk-preview-arrow {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 360px) {
+  .kala-bulk-preview-badges {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .kala-bulk-badge-dark {
+    max-width: 100%;
+    font-size: 0.68rem;
+  }
+
+  .kala-bulk-badge-price {
+    font-size: 0.68rem;
   }
 }
 
