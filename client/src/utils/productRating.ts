@@ -58,15 +58,6 @@ const PRODUCT_METRIC_MAP: Record<string, ProductRatingMetric> = {
   'kala-relentless-set': { rating: 4.5, purchaseCount: '69' },
   'kala-overthink-set': { rating: 4.7, purchaseCount: '118' },
   'kala-nature-set': { rating: 4.6, purchaseCount: '72' },
-  'kala-iron-mind-set': { rating: 4.7, purchaseCount: '97' },
-  'kala-good-mood-set': { rating: 4.5, purchaseCount: '83' },
-  'kala-zen-set': { rating: 4.8, purchaseCount: '126' },
-  'kala-tech-set': { rating: 4.6, purchaseCount: '88' },
-  'kala-purpose-set': { rating: 4.7, purchaseCount: '110' },
-  'kala-focus-set': { rating: 4.5, purchaseCount: '79' },
-  'kala-progress-set': { rating: 4.8, purchaseCount: '121' },
-  'kala-chaos-set': { rating: 4.6, purchaseCount: '94' },
-  'kala-repeat-set': { rating: 4.5, purchaseCount: '68' },
 }
 
 const DETERMINISTIC_PURCHASE_COUNTS = [

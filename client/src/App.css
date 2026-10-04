@@ -11,3 +11,20 @@
   display: flex;
   flex-direction: column;
 }
+
+/* Mobile & Tablet Bottom Navigation Clearance */
+@media (max-width: 768px) {
+  :root {
+    --kala-bottom-nav-height: 64px;
+  }
+
+  .kala-footer {
+    padding-bottom: calc(var(--kala-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 16px) !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  :root {
+    --kala-bottom-nav-height: 68px;
+  }
+}

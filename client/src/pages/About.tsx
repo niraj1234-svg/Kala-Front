@@ -620,7 +620,82 @@ export const About: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          8. CUSTOM APPAREL CTA — HAVE AN IDEA?
+          8. MEET THE FOUNDERS SECTION
+          ==================================================================== */}
+      <section className="kala-founders-section" aria-labelledby="founders-heading">
+        <div className="kala-container">
+          <div className="kala-section-header">
+            <span className="kala-about-eyebrow">OUR LEADERSHIP</span>
+            <h2 id="founders-heading" className="kala-section-title">
+              MEET THE FOUNDERS
+            </h2>
+            <p className="kala-section-sub">
+              Built by people who believe clothing should carry identity, creativity and culture.
+            </p>
+          </div>
+
+          <div className="kala-founders-grid">
+            {/* Founder Card 1: Sudhanshu Kumar */}
+            <article className="kala-founder-card">
+              <div className="kala-founder-photo-wrap">
+                <img
+                  src="/founders/sudhanshu-kumar.png"
+                  alt="Sudhanshu Kumar — Founder of KALA"
+                  className="kala-founder-photo"
+                  loading="lazy"
+                />
+                <span className="kala-founder-pill-tag">FOUNDER</span>
+              </div>
+              <div className="kala-founder-content">
+                <h3 className="kala-founder-name">Sudhanshu Kumar</h3>
+                <p className="kala-founder-role">Founder, KALA</p>
+                <div className="kala-founder-disciplines">
+                  <span>Vision</span>
+                  <span className="kala-founder-dot" aria-hidden="true">•</span>
+                  <span>Brand Strategy</span>
+                  <span className="kala-founder-dot" aria-hidden="true">•</span>
+                  <span>Creative Direction</span>
+                </div>
+                <div className="kala-founder-sep" aria-hidden="true" />
+                <p className="kala-founder-bio">
+                  Building KALA with a vision to create a modern apparel and creative brand focused on identity, quality and community.
+                </p>
+              </div>
+            </article>
+
+            {/* Founder Card 2: Niraj Dhore */}
+            <article className="kala-founder-card">
+              <div className="kala-founder-photo-wrap">
+                <img
+                  src="/founders/niraj-dhore.png"
+                  alt="Niraj Dhore — Co-Founder of KALA"
+                  className="kala-founder-photo"
+                  loading="lazy"
+                />
+                <span className="kala-founder-pill-tag highlight-orange">CO-FOUNDER</span>
+              </div>
+              <div className="kala-founder-content">
+                <h3 className="kala-founder-name">Niraj Dhore</h3>
+                <p className="kala-founder-role">Co-Founder, KALA</p>
+                <div className="kala-founder-disciplines">
+                  <span>Technology</span>
+                  <span className="kala-founder-dot" aria-hidden="true">•</span>
+                  <span>Business</span>
+                  <span className="kala-founder-dot" aria-hidden="true">•</span>
+                  <span>Brand Development</span>
+                </div>
+                <div className="kala-founder-sep" aria-hidden="true" />
+                <p className="kala-founder-bio">
+                  Niraj Dhore is the Co-Founder of KALA, working across technology, business and brand development. He is a B.Tech Information Technology student at Guru Ghasidas Vishwavidyalaya and contributes to building KALA's digital platform, technology, products and overall growth.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          9. CUSTOM APPAREL CTA — HAVE AN IDEA?
           ==================================================================== */}
       <section className="kala-custom-cta-section" aria-labelledby="custom-cta-heading">
         <div className="kala-container">
@@ -649,7 +724,7 @@ export const About: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          9. FINAL BRAND STATEMENT (Minimal, Premium, Whitespace)
+          10. FINAL BRAND STATEMENT (Minimal, Premium, Whitespace)
           ==================================================================== */}
       <section className="kala-final-statement-section" aria-label="Brand Signature">
         <div className="kala-container">

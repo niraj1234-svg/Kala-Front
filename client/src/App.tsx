@@ -45,6 +45,7 @@ import AdminLayout from './components/admin/AdminLayout'
 import NotFound from './pages/NotFound'
 import ScrollToTop from './components/ScrollToTop'
 import CartToast from './components/CartToast'
+import BottomNav from './components/BottomNav'
 import './App.css'
 
 function App() {
@@ -248,6 +249,7 @@ function App() {
                 </Routes>
               </div>
               {!isAdminPath && <Footer />}
+              {!isAdminPath && <BottomNav />}
             </div>
           </WishlistProvider>
         </CartProvider>

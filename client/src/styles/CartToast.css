@@ -108,9 +108,9 @@
   color: #FFFFFF;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .kala-cart-toast {
-    bottom: 16px;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 12px);
     left: 16px;
     right: 16px;
     min-width: auto;
