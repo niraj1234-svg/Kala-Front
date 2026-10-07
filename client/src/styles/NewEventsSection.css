@@ -35,8 +35,8 @@
 .kala-new-events-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.25rem 0.75rem;
+  gap: 0.35rem;
+  padding: 0.22rem 0.65rem;
   background-color: rgba(217, 71, 0, 0.08);
   border: 1px solid rgba(217, 71, 0, 0.25);
   border-radius: 9999px;
@@ -44,8 +44,8 @@
 }
 
 .kala-eyebrow-accent-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background-color: #D94700;
   box-shadow: 0 0 6px rgba(217, 71, 0, 0.6);
@@ -54,11 +54,12 @@
 
 .kala-eyebrow-text {
   font-family: var(--kala-font-primary);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #D94700;
+  white-space: nowrap;
 }
 
 .kala-new-events-title {
@@ -69,7 +70,8 @@
   letter-spacing: -0.03em;
   color: #111111;
   text-transform: uppercase;
-  margin: 0 0 0.35rem 0;
+  margin: 0 0 0.38rem 0;
+  text-wrap: balance;
 }
 
 .kala-new-events-subtitle {
@@ -78,6 +80,7 @@
   line-height: 1.45;
   color: #5F6368;
   margin: 0;
+  text-wrap: balance;
 }
 
 /* --------------------------------------------------------------------------
@@ -924,6 +927,35 @@
 }
 
 @media (max-width: 768px) {
+  .kala-new-events-header {
+    margin: 0 auto 1.35rem auto;
+    padding: 0 0.75rem;
+  }
+
+  .kala-new-events-eyebrow {
+    padding: 0.2rem 0.58rem;
+    gap: 0.35rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .kala-eyebrow-text {
+    font-size: 0.66rem;
+    letter-spacing: 0.11em;
+  }
+
+  .kala-new-events-title {
+    font-size: clamp(1.45rem, 4.2vw, 1.95rem);
+    margin-bottom: 0.35rem;
+    text-wrap: balance;
+  }
+
+  .kala-new-events-subtitle {
+    font-size: clamp(0.82rem, 1.8vw, 0.9rem);
+    max-width: 360px;
+    margin: 0 auto;
+    text-wrap: balance;
+  }
+
   .kala-new-events-container {
     padding: 0 0.5rem;
   }
@@ -1127,21 +1159,56 @@
 
 @media (max-width: 480px) {
   .kala-new-events-section {
-    padding: 1rem 0 1.35rem 0;
+    padding: 1.15rem 0 1.45rem 0;
   }
 
   .kala-new-events-header {
-    margin-bottom: 1rem;
+    margin: 0 auto 1.05rem auto;
+    padding: 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .kala-new-events-eyebrow {
+    padding: 0.18rem 0.52rem;
+    gap: 0.32rem;
+    margin-bottom: 0.45rem;
+    background-color: rgba(217, 71, 0, 0.07);
+    border: 1px solid rgba(217, 71, 0, 0.22);
+  }
+
+  .kala-eyebrow-accent-dot {
+    width: 4.5px;
+    height: 4.5px;
+  }
+
+  .kala-eyebrow-text {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.1;
+    white-space: nowrap;
   }
 
   .kala-new-events-title {
-    font-size: clamp(1.25rem, 5.5vw, 1.65rem);
-    margin-bottom: 0.2rem;
+    font-size: clamp(1.3rem, 5.8vw, 1.62rem);
+    font-weight: 900;
+    line-height: 1.16;
+    letter-spacing: -0.025em;
+    margin: 0 0 0.35rem 0;
+    text-wrap: balance;
+    word-break: normal;
   }
 
   .kala-new-events-subtitle {
-    font-size: 0.78rem;
-    line-height: 1.35;
+    font-size: clamp(0.76rem, 2.6vw, 0.82rem);
+    line-height: 1.4;
+    color: #666666;
+    letter-spacing: 0.005em;
+    text-wrap: balance;
+    max-width: 280px;
+    margin: 0 auto;
   }
 
   .kala-new-events-container {
@@ -1218,3 +1285,43 @@
     font-size: 0.82rem;
   }
 }
+
+@media (max-width: 360px) {
+  .kala-new-events-section {
+    padding: 1rem 0 1.25rem 0;
+  }
+
+  .kala-new-events-header {
+    margin-bottom: 0.85rem;
+    padding: 0 0.25rem;
+  }
+
+  .kala-new-events-eyebrow {
+    padding: 0.16rem 0.45rem;
+    gap: 0.28rem;
+    margin-bottom: 0.38rem;
+  }
+
+  .kala-eyebrow-accent-dot {
+    width: 4px;
+    height: 4px;
+  }
+
+  .kala-eyebrow-text {
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+  }
+
+  .kala-new-events-title {
+    font-size: 1.22rem;
+    line-height: 1.15;
+    margin-bottom: 0.3rem;
+  }
+
+  .kala-new-events-subtitle {
+    font-size: 0.72rem;
+    line-height: 1.35;
+    max-width: 250px;
+  }
+}
+

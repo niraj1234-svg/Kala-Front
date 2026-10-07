@@ -127,13 +127,13 @@ export const NewEventsSection: React.FC = () => {
         <header className="kala-new-events-header">
           <div className="kala-new-events-eyebrow">
             <span className="kala-eyebrow-accent-dot" aria-hidden="true" />
-            <span className="kala-eyebrow-text">KALA • EXCLUSIVE DROPS & UPCOMING EVENTS</span>
+            <span className="kala-eyebrow-text">KALA • WHAT’S NEXT</span>
           </div>
           <h2 id="new-events-heading" className="kala-new-events-title">
-            FRESH DROPS & UPCOMING EVENTS
+            FRESH DROPS &amp; EVENTS
           </h2>
           <p className="kala-new-events-subtitle">
-            Limited pieces. Fresh ideas. Something exciting is coming to KALA.
+            New pieces. New ideas. Coming soon.
           </p>
         </header>
 
