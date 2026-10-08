@@ -56,7 +56,7 @@ export const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   return (
     <div className="kala-bulk-step-block">
       <div className="kala-bulk-step-heading">
-        <span className="kala-bulk-step-num">5</span>
+        <span className="kala-bulk-step-num">3</span>
         <h3 className="kala-bulk-step-title">
           ORDER QUANTITY BY SIZE <span className="kala-bulk-moq-pill-badge">MOQ: 25 PCS</span>
         </h3>

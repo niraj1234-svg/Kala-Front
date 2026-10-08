@@ -170,8 +170,8 @@ export const DesignUploader: React.FC<DesignUploaderProps> = ({
   return (
     <div className="kala-bulk-step-block">
       <div className="kala-bulk-step-heading">
-        <span className="kala-bulk-step-num">3</span>
-        <h3 className="kala-bulk-step-title">UPLOAD YOUR DESIGN</h3>
+        <span className="kala-bulk-step-num studio-icon">✦</span>
+        <h3 className="kala-bulk-step-title">UPLOAD ARTWORK &amp; LOGO</h3>
       </div>
 
       {/* Upload 1: Artwork / Logo / Graphic */}

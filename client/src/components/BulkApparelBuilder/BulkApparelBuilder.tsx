@@ -14,6 +14,7 @@ import {
   type SizeQuantities,
   type UploadedApparelImage,
   type OrderMode,
+  MIN_CUSTOM_APPAREL_QTY,
 } from './types'
 import { APPAREL_CONFIGS, POLO_PRODUCTS, TSHIRT_PRODUCTS, DEFAULT_EMBLEM_URL } from './mockupAssets'
 import ApparelPreview from './ApparelPreview'
@@ -32,7 +33,7 @@ interface BulkApparelBuilderProps {
 
 export const BulkApparelBuilder: React.FC<BulkApparelBuilderProps> = ({ initialMode = 'bulk' }) => {
   const navigate = useNavigate()
-  const { addToCart } = useCart()
+  const { addToCart, addMultipleToCart } = useCart()
 
   // 1. Order Mode (Bulk vs Personal)
   const [orderMode, setOrderMode] = useState<OrderMode>(initialMode)
@@ -140,7 +141,7 @@ export const BulkApparelBuilder: React.FC<BulkApparelBuilderProps> = ({ initialM
   })
 
   // 3. Status & Notification State
-  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const [notification, setNotification] = useState<{ type: 'success' | 'error' | 'warning'; message: string } | null>(null)
 
   const currentConfig = APPAREL_CONFIGS[selectedApparel]
   const currentPoloConfig = POLO_PRODUCTS.find((p) => p.id === selectedPoloModel) || POLO_PRODUCTS[0]
@@ -222,6 +223,78 @@ export const BulkApparelBuilder: React.FC<BulkApparelBuilderProps> = ({ initialM
       setNotification({
         type: 'success',
         message: `Added ${personalQuantity}x Custom ${activeApparelName} (${personalSize}) to your bag!`,
+      })
+      setTimeout(() => setNotification(null), 4000)
+    }
+  }
+
+  const handleBulkAddToCart = (goToCheckout = false) => {
+    if (totalQuantity < MIN_CUSTOM_APPAREL_QTY) {
+      setNotification({
+        type: 'warning',
+        message: `Bulk orders require a minimum of 25 pieces (currently ${totalQuantity} pcs). Please adjust quantities or switch to Personal Piece mode.`,
+      })
+      setTimeout(() => setNotification(null), 5000)
+      return
+    }
+
+    const productId = `custom-bulk-${selectedApparel}`
+    const colorLabel = selectedColor === 'black' ? 'Black' : 'White'
+
+    const itemsToAdd = (Object.entries(sizeQuantities) as [SizeKey, number][])
+      .filter(([_, qty]) => qty > 0)
+      .map(([sz, qty]) => ({
+        product: {
+          id: `${productId}-${sz.toLowerCase()}`,
+          name: `Custom Bulk ${activeApparelName} (${colorLabel})`,
+          image: activeApparelPreviewImg || '/custom-apparel/kala-custom-hero-floating.png',
+          price: estimatedUnitPrice,
+          color: colorLabel,
+        },
+        size: sz,
+        quantity: qty,
+        customization: {
+          apparelType: activeApparelName,
+          color: colorLabel,
+          position: selectedSide,
+          artworkUrl: currentSideData.artworkUrl,
+          requirementDetails: requirement,
+          previewUrl: activeApparelPreviewImg,
+          ...(currentSideData.artworkName ? { frontArtwork: { fileName: currentSideData.artworkName } } : {}),
+        },
+      }))
+
+    if (itemsToAdd.length > 0) {
+      addMultipleToCart(itemsToAdd)
+    } else {
+      addToCart(
+        {
+          id: productId,
+          name: `Custom Bulk ${activeApparelName} (${colorLabel})`,
+          image: activeApparelPreviewImg || '/custom-apparel/kala-custom-hero-floating.png',
+          price: estimatedUnitPrice,
+          color: colorLabel,
+        },
+        sizeBreakdownText || 'Standard',
+        totalQuantity,
+        {
+          apparelType: activeApparelName,
+          color: colorLabel,
+          position: selectedSide,
+          artworkUrl: currentSideData.artworkUrl,
+          requirementDetails: requirement,
+          previewUrl: activeApparelPreviewImg,
+          ...(currentSideData.artworkName ? { frontArtwork: { fileName: currentSideData.artworkName } } : {}),
+        }
+      )
+    }
+
+    if (goToCheckout) {
+      navigate('/checkout')
+    } else {
+      setNotification({
+        type: 'success',
+        message: `Added ${totalQuantity}x Custom Bulk ${activeApparelName} (${sizeBreakdownText}) to your bag!`,
       })
       setTimeout(() => setNotification(null), 4000)
     }
@@ -420,7 +493,7 @@ export const BulkApparelBuilder: React.FC<BulkApparelBuilderProps> = ({ initialM
               onUpdateRotation={handleUpdateRotation}
             />
 
-            {/* 2nd Image: Upload Your Design & Upload Own Apparel */}
+            {/* Upload Your Design & Upload Own Apparel */}
             <DesignUploader
               currentArtworkName={currentSideData.artworkName}
               currentArtworkUrl={currentSideData.artworkUrl}
@@ -429,12 +502,6 @@ export const BulkApparelBuilder: React.FC<BulkApparelBuilderProps> = ({ initialM
               uploadedApparel={uploadedApparel}
               onUploadApparel={handleUploadApparel}
               onRemoveApparel={handleRemoveApparel}
-            />
-
-            {/* 3rd Section: Requirement Details */}
-            <RequirementDetails
-              value={requirement}
-              onChange={setRequirement}
             />
           </div>
 
@@ -505,26 +572,43 @@ export const BulkApparelBuilder: React.FC<BulkApparelBuilderProps> = ({ initialM
                   estimatedTotal={estimatedTotal}
                 />
 
-                {/* Discussion Options & Estimated Investment Display */}
-                <DiscussionOptions
-                  apparelId={selectedApparel}
-                  apparelName={activeApparelName}
-                  colorName={selectedColor === 'black' ? 'Black' : 'White'}
-                  quantity={totalQuantity}
-                  sizeQuantities={sizeQuantities}
-                  sizeBreakdownText={sizeBreakdownText}
-                  unitPrice={estimatedUnitPrice}
-                  estimatedTotal={estimatedTotal}
-                  requirement={
-                    uploadedApparel
-                      ? `${requirement ? `${requirement}\n` : ''}[Customer Uploaded Apparel: ${uploadedApparel.fileName}]`
-                      : requirement
-                  }
-                  currentArtworkName={currentSideData.artworkName}
-                  currentArtworkUrl={currentSideData.artworkUrl}
-                  uploadedApparelFileName={uploadedApparel?.fileName}
-                  apparelPreviewImage={activeApparelPreviewImg}
-                />
+                {/* Step 4: Checkout & Order */}
+                <div className="kala-bulk-step-block">
+                  <div className="kala-bulk-step-heading">
+                    <span className="kala-bulk-step-num">4</span>
+                    <h3 className="kala-bulk-step-title">CHECKOUT &amp; ORDER</h3>
+                  </div>
+
+                  {/* Step 4: Requirement Notes */}
+                  <RequirementDetails
+                    value={requirement}
+                    onChange={setRequirement}
+                    hideHeading={true}
+                  />
+
+                  {/* Discussion Options & Estimated Investment Display with 4 CTA buttons */}
+                  <DiscussionOptions
+                    apparelId={selectedApparel}
+                    apparelName={activeApparelName}
+                    colorName={selectedColor === 'black' ? 'Black' : 'White'}
+                    quantity={totalQuantity}
+                    sizeQuantities={sizeQuantities}
+                    sizeBreakdownText={sizeBreakdownText}
+                    unitPrice={estimatedUnitPrice}
+                    estimatedTotal={estimatedTotal}
+                    requirement={
+                      uploadedApparel
+                        ? `${requirement ? `${requirement}\n` : ''}[Customer Uploaded Apparel: ${uploadedApparel.fileName}]`
+                        : requirement
+                    }
+                    currentArtworkName={currentSideData.artworkName}
+                    currentArtworkUrl={currentSideData.artworkUrl}
+                    uploadedApparelFileName={uploadedApparel?.fileName}
+                    apparelPreviewImage={activeApparelPreviewImg}
+                    onAddToCart={() => handleBulkAddToCart(false)}
+                    onBuyNow={() => handleBulkAddToCart(true)}
+                  />
+                </div>
               </>
             ) : (
               <div className="kala-personal-flow-wrap">
@@ -634,14 +718,26 @@ export const BulkApparelBuilder: React.FC<BulkApparelBuilderProps> = ({ initialM
                       </button>
                     </div>
 
-                    <button
-                      type="button"
-                      className="kala-personal-btn whatsapp"
-                      onClick={handlePersonalWhatsAppOrder}
-                    >
-                      <span>Order Directly via WhatsApp</span>
-                      <span className="btn-arrow">→</span>
-                    </button>
+                    <div className="kala-personal-btn-grid">
+                      <button
+                        type="button"
+                        className="kala-personal-btn whatsapp"
+                        onClick={handlePersonalWhatsAppOrder}
+                      >
+                        <span>ORDER DIRECTLY VIA WHATSAPP</span>
+                        <span className="btn-arrow">→</span>
+                      </button>
+
+                      <a
+                        href="tel:9406030116"
+                        className="kala-personal-btn call"
+                        aria-label="Call KALA team at 9406030116"
+                      >
+                        <span className="btn-icon">📞</span>
+                        <span>CALL US (9406030116)</span>
+                        <span className="btn-arrow">→</span>
+                      </a>
+                    </div>
 
                     <div className="kala-personal-trust-footnotes">
                       <span>✓ 100% Combed Ringspun Cotton</span>

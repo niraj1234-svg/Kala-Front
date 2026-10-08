@@ -17,6 +17,8 @@ interface DiscussionOptionsProps {
   currentArtworkUrl?: string
   uploadedApparelFileName?: string
   apparelPreviewImage?: string
+  onAddToCart?: () => void
+  onBuyNow?: () => void
 }
 
 export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
@@ -33,6 +35,8 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
   currentArtworkUrl,
   uploadedApparelFileName,
   apparelPreviewImage,
+  onAddToCart,
+  onBuyNow,
 }) => {
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
   const [isBreakdownOpen, setIsBreakdownOpen] = useState(false)
@@ -142,54 +146,92 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
       </div>
 
       {/* ====================================================================
-          21. PRIMARY CTA: REQUEST QUOTE →
+          21. CHECKOUT & ORDER ACTIONS (4 OPTIONS)
           ==================================================================== */}
-      <div className="kala-bulk-primary-cta-wrap">
-        <button
-          type="button"
-          className={`kala-bulk-quote-cta-btn ${isUnderMoq ? 'disabled' : ''}`}
-          onClick={() => {
-            if (isUnderMoq) return
-            setIsQuoteModalOpen(true)
-          }}
-          disabled={isUnderMoq}
-          aria-label={
-            isUnderMoq
-              ? `Minimum 25 pieces required (Currently ${quantity} pcs)`
-              : 'Request custom apparel quotation'
-          }
-          title={
-            isUnderMoq
-              ? `Minimum order quantity is 25 pieces. Please add ${piecesNeeded} more piece(s).`
-              : 'Request official quote'
-          }
-        >
-          <span>{isUnderMoq ? `MINIMUM 25 PIECES REQUIRED (${quantity}/25)` : 'REQUEST QUOTE'}</span>
-          <span className="kala-bulk-cta-arrow" aria-hidden="true">→</span>
-        </button>
+      <div className="kala-personal-actions-card kala-bulk-actions-container">
+        {/* Row 1: Add to Cart and Buy Now */}
+        <div className="kala-personal-btn-grid">
+          <button
+            type="button"
+            className={`kala-personal-btn cart ${isUnderMoq ? 'disabled' : ''}`}
+            onClick={onAddToCart}
+            disabled={isUnderMoq}
+            title={isUnderMoq ? `Minimum 25 pieces required (Currently ${quantity} pcs)` : 'Add bulk order to bag'}
+          >
+            <span className="btn-icon">🛒</span>
+            <span>ADD TO CART</span>
+          </button>
+          <button
+            type="button"
+            className={`kala-personal-btn checkout ${isUnderMoq ? 'disabled' : ''}`}
+            onClick={onBuyNow}
+            disabled={isUnderMoq}
+            title={isUnderMoq ? `Minimum 25 pieces required (Currently ${quantity} pcs)` : 'Proceed directly to checkout'}
+          >
+            <span>BUY NOW</span>
+            <span className="btn-arrow">→</span>
+          </button>
+        </div>
 
+        {/* MOQ Warning Message when below 25 pcs */}
         {isUnderMoq && (
           <p className="kala-bulk-cta-moq-note">
-            ⚠️ Custom apparel production requires a minimum order of <strong>25 pieces</strong>. Add <strong>{piecesNeeded} more pcs</strong> above to request a quote.
+            ⚠️ Custom bulk production requires a minimum order of <strong>25 pieces</strong>. Add <strong>{piecesNeeded} more pcs</strong> above or switch to <strong>Personal Piece (1+ Pcs)</strong> mode.
           </p>
         )}
-      </div>
 
-      {/* ====================================================================
-          22. SUBTLE SECONDARY ASSISTANCE OPTION
-          ==================================================================== */}
-      <div className="kala-bulk-subtle-help-row">
-        <span className="kala-bulk-subtle-help-text">
-          Need assistance with bulk sizing, fabric samples, or custom artwork?
-        </span>
-        <button
-          type="button"
-          className="kala-bulk-subtle-help-link"
-          onClick={handleWhatsAppClick}
-        >
-          <span>Chat with KALA Team on WhatsApp</span>
-          <span aria-hidden="true">→</span>
-        </button>
+        {/* Row 2: WhatsApp & Call Us side by side */}
+        <div className="kala-personal-btn-grid">
+          <button
+            type="button"
+            className="kala-personal-btn whatsapp"
+            onClick={handleWhatsAppClick}
+          >
+            <span>ORDER DIRECTLY VIA WHATSAPP</span>
+            <span className="btn-arrow">→</span>
+          </button>
+
+          <a
+            href="tel:9406030116"
+            className="kala-personal-btn call"
+            aria-label="Call KALA team at 9406030116"
+          >
+            <span className="btn-icon">📞</span>
+            <span>CALL US (9406030116)</span>
+            <span className="btn-arrow">→</span>
+          </a>
+        </div>
+
+        {/* Formal Quotation Option - Big & Highlighted */}
+        <div className="kala-bulk-formal-quote-box highlighted">
+          <div className="kala-bulk-formal-quote-info">
+            <span className="kala-bulk-formal-quote-label">
+              Need an official GST quotation or invoice for organization?
+            </span>
+            <span className="kala-bulk-formal-quote-sub">
+              Itemized quote with PDF download for colleges, sports teams &amp; companies
+            </span>
+          </div>
+          <button
+            type="button"
+            className="kala-bulk-formal-quote-btn highlighted"
+            onClick={() => {
+              if (isUnderMoq) return
+              setIsQuoteModalOpen(true)
+            }}
+            disabled={isUnderMoq}
+            title={isUnderMoq ? `Minimum 25 pieces required (Currently ${quantity} pcs)` : 'Request formal GST quotation'}
+          >
+            <span>REQUEST OFFICIAL QUOTE</span>
+            <span className="btn-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        <div className="kala-personal-trust-footnotes">
+          <span>✓ GST Invoice Available</span>
+          <span>✓ High-Definition DTF / Screen Print</span>
+          <span>✓ Free Digital Mockup Approval</span>
+        </div>
       </div>
 
       {/* Quote Request Modal */}

@@ -749,6 +749,10 @@
   gap: 0.35rem;
 }
 
+.kala-biz-fields-grid .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
 .kala-biz-fields-grid .form-group label {
   font-size: 0.72rem;
   font-weight: 750;
@@ -818,61 +822,235 @@
   color: #6B7280;
 }
 
-.kala-biz-submit-row {
+/* Primary & Direct Connect Action Section */
+.kala-biz-actions-container {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
 }
 
+/* Primary Submit Button */
 .kala-biz-primary-submit-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
   background-color: #D94700;
   color: #FFFFFF;
   border: none;
-  border-radius: 10px;
-  padding: 0.95rem 1.25rem;
-  font-size: 0.85rem;
+  border-radius: 12px;
+  padding: 1.05rem 1.5rem;
+  font-size: 0.88rem;
   font-weight: 850;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 14px rgba(217, 71, 0, 0.25);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(217, 71, 0, 0.28);
+  width: 100%;
 }
 
 .kala-biz-primary-submit-btn:hover:not(:disabled) {
   background-color: #B83800;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(217, 71, 0, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(217, 71, 0, 0.38);
 }
 
 .kala-biz-primary-submit-btn:disabled {
-  opacity: 0.65;
+  opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
-.kala-biz-whatsapp-btn {
+.kala-biz-primary-submit-btn .btn-icon {
+  font-size: 1.15rem;
+}
+
+.kala-biz-primary-submit-btn .btn-arrow {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.kala-biz-primary-submit-btn:hover:not(:disabled) .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* Divider Header */
+.kala-biz-connect-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.35rem 0;
+}
+
+.kala-biz-connect-divider .divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: #E5E7EB;
+}
+
+.kala-biz-connect-divider .divider-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #6B7280;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* 2x2 Channels Grid */
+.kala-biz-channels-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .kala-biz-channels-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Individual Channel Card Button */
+.kala-biz-channel-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 11px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  border-width: 1.5px;
+  border-style: solid;
+}
+
+.kala-biz-channel-btn .channel-icon {
+  font-size: 1.35rem;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  background-color: #F0FDF4;
-  border: 1px solid #86EFAC;
-  color: #15803D;
-  border-radius: 10px;
-  padding: 0.75rem 1.25rem;
-  font-size: 0.8rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
 }
 
-.kala-biz-whatsapp-btn:hover {
+.kala-biz-channel-btn .channel-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.kala-biz-channel-btn .channel-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.25;
+}
+
+.kala-biz-channel-btn .channel-desc {
+  font-size: 0.68rem;
+  font-weight: 500;
+  opacity: 0.85;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.kala-biz-channel-btn .channel-arrow {
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: transform 0.18s ease;
+  flex-shrink: 0;
+}
+
+.kala-biz-channel-btn:hover {
+  transform: translateY(-1px);
+}
+
+.kala-biz-channel-btn:hover .channel-arrow {
+  transform: translateX(3px);
+}
+
+/* WhatsApp Channel */
+.kala-biz-channel-btn.whatsapp {
+  background-color: #F0FDF4;
+  border-color: #86EFAC;
+  color: #15803D;
+}
+.kala-biz-channel-btn.whatsapp:hover {
   background-color: #15803D;
+  border-color: #15803D;
   color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(21, 128, 61, 0.25);
+}
+
+/* Call Us Channel */
+.kala-biz-channel-btn.call {
+  background-color: #EFF6FF;
+  border-color: #93C5FD;
+  color: #1D4ED8;
+}
+.kala-biz-channel-btn.call:hover {
+  background-color: #1D4ED8;
+  border-color: #1D4ED8;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.25);
+}
+
+/* Bilaspur Studio Channel */
+.kala-biz-channel-btn.bilaspur {
+  background-color: #FEF2F2;
+  border-color: #FCA5A5;
+  color: #B91C1C;
+}
+.kala-biz-channel-btn.bilaspur:hover {
+  background-color: #B91C1C;
+  border-color: #B91C1C;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(185, 28, 28, 0.25);
+}
+
+/* Google Meet Channel */
+.kala-biz-channel-btn.gmeet {
+  background-color: #F5F3FF;
+  border-color: #C4B5FD;
+  color: #6D28D9;
+}
+.kala-biz-channel-btn.gmeet:hover {
+  background-color: #6D28D9;
+  border-color: #6D28D9;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(109, 40, 217, 0.25);
+}
+
+/* Trust Strip */
+.kala-biz-trust-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #6B7280;
+  padding-top: 0.35rem;
+}
+
+/* Success Channels */
+.kala-biz-success-channels {
+  margin: 1.25rem 0;
+  text-align: left;
+}
+
+.success-channels-title {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #374151;
+  margin-bottom: 0.75rem;
+  text-align: center;
 }
 
 /* Success View in Builder */

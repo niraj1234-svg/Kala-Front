@@ -9,7 +9,7 @@ import {
   type PoloProductOption,
   type TshirtProductOption,
 } from './types'
-import { APPAREL_CONFIGS, APPAREL_LIST } from './mockupAssets'
+import { APPAREL_CONFIGS } from './mockupAssets'
 
 interface ApparelPreviewProps {
   selectedApparel: ApparelId
@@ -20,7 +20,7 @@ interface ApparelPreviewProps {
   customizationState: ApparelCustomizationState
   uploadedApparel?: UploadedApparelImage | null
   customPriceLabel?: string
-  onSelectApparel: (id: ApparelId) => void
+  onSelectApparel?: (id: ApparelId) => void
   onSelectColor: (color: ApparelColor) => void
   onSelectSide: (side: ApparelSide) => void
   onUpdatePosition: (x: number, y: number) => void
@@ -37,7 +37,6 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
   customizationState,
   uploadedApparel = null,
   customPriceLabel,
-  onSelectApparel,
   onSelectColor,
   onSelectSide,
   onUpdatePosition,
@@ -556,79 +555,6 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
         </div>
       </div>
 
-      {/* 2. Apparel Category Tabs (T-Shirts | Hoodies | Jerseys) */}
-      <div className="kala-bulk-category-tabs" role="tablist" aria-label="Select apparel category">
-        {APPAREL_LIST.map((apparel) => {
-          const isSelected = selectedApparel === apparel.id
-          return (
-            <button
-              key={apparel.id}
-              type="button"
-              role="tab"
-              aria-selected={isSelected}
-              className={`kala-bulk-category-tab ${isSelected ? 'active' : ''}`}
-              onClick={() => onSelectApparel(apparel.id)}
-            >
-              <div className="kala-bulk-tab-icon-wrap">
-                <img
-                  src={apparel.mockups.black.front}
-                  alt=""
-                  aria-hidden="true"
-                  className="kala-bulk-tab-icon"
-                />
-              </div>
-              <span className="kala-bulk-tab-label">{apparel.name}</span>
-            </button>
-          )
-        })}
-      </div>
-
-      {/* 3. Variation Thumbnails (Front Black, Back Black, Front White, Back White) */}
-      <div className="kala-bulk-thumbnails-grid" aria-label="Apparel color and side options">
-        {variations.map((item, idx) => {
-          const isCurrent = selectedColor === item.color && selectedSide === item.side
-          const thumbMockup = activeMockups[item.color][item.side]
-          const sideData = customizationState[selectedApparel][item.side]
-
-          return (
-            <button
-              key={idx}
-              type="button"
-              className={`kala-bulk-thumb-card ${isCurrent ? 'active' : ''}`}
-              onClick={() => {
-                onSelectColor(item.color)
-                onSelectSide(item.side)
-              }}
-              title={`Switch to ${item.label}`}
-            >
-              <div className="kala-bulk-thumb-stage">
-                <img
-                  src={thumbMockup}
-                  alt=""
-                  aria-hidden="true"
-                  className="kala-bulk-thumb-img"
-                  loading="lazy"
-                />
-                {/* Scaled Artwork Preview on Thumbnail */}
-                {sideData.artworkUrl && (
-                  <div
-                    className="kala-bulk-thumb-art"
-                    style={{
-                      left: `${sideData.x}%`,
-                      top: `${sideData.y}%`,
-                      width: `${Math.round(sideData.size * 0.28)}px`,
-                      transform: `translate(-50%, -50%) rotate(${sideData.rotation || 0}deg)`,
-                    }}
-                  >
-                    <img src={sideData.artworkUrl} alt="" aria-hidden="true" />
-                  </div>
-                )}
-              </div>
-              <span className="kala-bulk-thumb-name">{item.label}</span>
-            </button>
-          )
-        })}
-      </div>
     </div>
   )
 }

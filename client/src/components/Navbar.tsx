@@ -165,30 +165,6 @@ export const Navbar: React.FC = () => {
               )}
             </Link>
 
-            {/* User Account Icon */}
-            <Link
-              to="/account"
-              className="kala-icon-btn kala-nav-account-btn"
-              aria-label="User account"
-              title="Account"
-              onClick={closeMobileMenu}
-            >
-              <svg
-                width="19"
-                height="19"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </Link>
-
             {/* Cart / Shopping Bag Icon */}
             <Link
               to="/cart"
@@ -221,6 +197,30 @@ export const Navbar: React.FC = () => {
                   {cartCount}
                 </span>
               )}
+            </Link>
+
+            {/* User Account Icon */}
+            <Link
+              to="/account"
+              className="kala-icon-btn kala-nav-account-btn"
+              aria-label="User account"
+              title="Account"
+              onClick={closeMobileMenu}
+            >
+              <svg
+                width="19"
+                height="19"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
             </Link>
           </div>
 

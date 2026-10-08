@@ -17,11 +17,13 @@ import ApparelSelector from '../BulkApparelBuilder/ApparelSelector'
 import ColorSelector from '../BulkApparelBuilder/ColorSelector'
 import DesignUploader from '../BulkApparelBuilder/DesignUploader'
 import QuantitySelector, { PRESET_DISTRIBUTIONS } from '../BulkApparelBuilder/QuantitySelector'
-import RequirementDetails from '../BulkApparelBuilder/RequirementDetails'
 import AccountShortcut from '../BulkApparelBuilder/AccountShortcut'
 import { createBusinessRequest } from '../../services/businessRequestApi'
 import { generateWhatsAppInquiryUrl } from '../../services/businessInquiryApi'
+import MeetingSchedulerModal from '../business/MeetingSchedulerModal'
+import { type ContactMethodType } from '../../data/businessSlots'
 import '../BulkApparelBuilder/BulkApparelBuilder.css'
+import '../../styles/BusinessBranding.css'
 
 const ORGANIZATION_TYPES = [
   'Company / Corporate',
@@ -38,6 +40,7 @@ const ORGANIZATION_TYPES = [
 export const BusinessApparelBuilder: React.FC = () => {
   // 1. Order Mode: 'bulk' (25+ Pcs) vs 'small' (1-24 Pcs Pilot)
   const [orderMode, setOrderMode] = useState<'bulk' | 'small'>('bulk')
+  const [meetingModalMethod, setMeetingModalMethod] = useState<ContactMethodType | null>(null)
 
   // 2. Apparel & Mockup State
   const [selectedApparel, setSelectedApparel] = useState<ApparelId>('polo')
@@ -446,11 +449,6 @@ export const BusinessApparelBuilder: React.FC = () => {
               </div>
             </div>
 
-            {/* Requirements Notes */}
-            <RequirementDetails
-              value={requirement}
-              onChange={setRequirement}
-            />
           </div>
 
           {/* ====================================================================
@@ -606,6 +604,65 @@ export const BusinessApparelBuilder: React.FC = () => {
                   <p className="success-message">
                     Thank you, <strong>{contactName}</strong>. Your inquiry for <strong>{companyName}</strong> (Ref: <code>{submittedRequestId}</code>) has been submitted. Our B2B coordinator will contact you shortly with your digital mockup &amp; GST quote.
                   </p>
+
+                  {/* Fast-track Direct Communication Options */}
+                  <div className="kala-biz-success-channels">
+                    <span className="success-channels-title">Want to fast-track your inquiry or speak directly?</span>
+                    <div className="kala-biz-channels-grid">
+                      <button
+                        type="button"
+                        className="kala-biz-channel-btn whatsapp"
+                        onClick={handleWhatsAppInquiry}
+                      >
+                        <span className="channel-icon">💬</span>
+                        <div className="channel-info">
+                          <strong className="channel-title">ORDER VIA WHATSAPP</strong>
+                          <span className="channel-desc">Instant replies &amp; custom catalogs</span>
+                        </div>
+                        <span className="channel-arrow" aria-hidden="true">&rarr;</span>
+                      </button>
+
+                      <a
+                        href="tel:9406030116"
+                        className="kala-biz-channel-btn call"
+                        aria-label="Call KALA corporate desk at 9406030116"
+                      >
+                        <span className="channel-icon">📞</span>
+                        <div className="channel-info">
+                          <strong className="channel-title">CALL US (9406030116)</strong>
+                          <span className="channel-desc">Direct corporate support desk</span>
+                        </div>
+                        <span className="channel-arrow" aria-hidden="true">&rarr;</span>
+                      </a>
+
+                      <button
+                        type="button"
+                        className="kala-biz-channel-btn bilaspur"
+                        onClick={() => setMeetingModalMethod('In-Person Meeting')}
+                      >
+                        <span className="channel-icon">📍</span>
+                        <div className="channel-info">
+                          <strong className="channel-title">MEET LIVE IN BILASPUR</strong>
+                          <span className="channel-desc">In-person studio consultation</span>
+                        </div>
+                        <span className="channel-arrow" aria-hidden="true">&rarr;</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        className="kala-biz-channel-btn gmeet"
+                        onClick={() => setMeetingModalMethod('Google Meet')}
+                      >
+                        <span className="channel-icon">📹</span>
+                        <div className="channel-info">
+                          <strong className="channel-title">SCHEDULE GOOGLE MEET</strong>
+                          <span className="channel-desc">Live virtual 1-on-1 video call</span>
+                        </div>
+                        <span className="channel-arrow" aria-hidden="true">&rarr;</span>
+                      </button>
+                    </div>
+                  </div>
+
                   <button
                     type="button"
                     className="kala-b2b-reset-btn"
@@ -692,6 +749,17 @@ export const BusinessApparelBuilder: React.FC = () => {
                         onChange={(e) => setGstin(e.target.value)}
                       />
                     </div>
+                    <div className="form-group full-width">
+                      <label htmlFor="biz-requirement">Project Requirements &amp; Notes (Optional)</label>
+                      <textarea
+                        id="biz-requirement"
+                        rows={2}
+                        placeholder="Tell us about your requirement (e.g. event date, logo placement, team details, sizing requirements)"
+                        value={requirement}
+                        onChange={(e) => setRequirement(e.target.value)}
+                        className="kala-bulk-textarea"
+                      />
+                    </div>
                   </div>
 
                   {submitError && (
@@ -714,25 +782,91 @@ export const BusinessApparelBuilder: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Primary CTA Buttons */}
-                  <div className="kala-biz-submit-row">
+                  {/* Primary & Direct Connect Action Section (4+ Options) */}
+                  <div className="kala-biz-actions-container">
+                    {/* Option 1: Primary Submit Button */}
                     <button
                       type="submit"
                       className="kala-biz-primary-submit-btn"
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? 'SUBMITTING INQUIRY...' : 'SUBMIT OFFICIAL QUOTE REQUEST'}
-                      <span aria-hidden="true">&rarr;</span>
+                      <span className="btn-icon">📋</span>
+                      <span>{isSubmitting ? 'SUBMITTING INQUIRY...' : 'SUBMIT OFFICIAL QUOTE REQUEST'}</span>
+                      <span className="btn-arrow" aria-hidden="true">&rarr;</span>
                     </button>
 
-                    <button
-                      type="button"
-                      className="kala-biz-whatsapp-btn"
-                      onClick={handleWhatsAppInquiry}
-                    >
-                      <span>Direct B2B Desk on WhatsApp</span>
-                      <span aria-hidden="true">&rarr;</span>
-                    </button>
+                    {/* Divider Header */}
+                    <div className="kala-biz-connect-divider">
+                      <span className="divider-line" />
+                      <span className="divider-badge">OR CONNECT DIRECTLY WITH OUR TEAM</span>
+                      <span className="divider-line" />
+                    </div>
+
+                    {/* 2x2 Channels Grid */}
+                    <div className="kala-biz-channels-grid">
+                      {/* Option 2: WhatsApp */}
+                      <button
+                        type="button"
+                        className="kala-biz-channel-btn whatsapp"
+                        onClick={handleWhatsAppInquiry}
+                      >
+                        <span className="channel-icon">💬</span>
+                        <div className="channel-info">
+                          <strong className="channel-title">ORDER VIA WHATSAPP</strong>
+                          <span className="channel-desc">Instant replies &amp; custom catalogs</span>
+                        </div>
+                        <span className="channel-arrow" aria-hidden="true">&rarr;</span>
+                      </button>
+
+                      {/* Option 3: Call Us */}
+                      <a
+                        href="tel:9406030116"
+                        className="kala-biz-channel-btn call"
+                        aria-label="Call KALA corporate desk at 9406030116"
+                      >
+                        <span className="channel-icon">📞</span>
+                        <div className="channel-info">
+                          <strong className="channel-title">CALL US (9406030116)</strong>
+                          <span className="channel-desc">Direct corporate support desk</span>
+                        </div>
+                        <span className="channel-arrow" aria-hidden="true">&rarr;</span>
+                      </a>
+
+                      {/* Option 4: Meet Live in Bilaspur */}
+                      <button
+                        type="button"
+                        className="kala-biz-channel-btn bilaspur"
+                        onClick={() => setMeetingModalMethod('In-Person Meeting')}
+                      >
+                        <span className="channel-icon">📍</span>
+                        <div className="channel-info">
+                          <strong className="channel-title">MEET LIVE IN BILASPUR</strong>
+                          <span className="channel-desc">In-person studio consultation</span>
+                        </div>
+                        <span className="channel-arrow" aria-hidden="true">&rarr;</span>
+                      </button>
+
+                      {/* Option 5: Schedule Google Meet */}
+                      <button
+                        type="button"
+                        className="kala-biz-channel-btn gmeet"
+                        onClick={() => setMeetingModalMethod('Google Meet')}
+                      >
+                        <span className="channel-icon">📹</span>
+                        <div className="channel-info">
+                          <strong className="channel-title">SCHEDULE GOOGLE MEET</strong>
+                          <span className="channel-desc">Live virtual 1-on-1 video call</span>
+                        </div>
+                        <span className="channel-arrow" aria-hidden="true">&rarr;</span>
+                      </button>
+                    </div>
+
+                    {/* Trust Footnotes */}
+                    <div className="kala-biz-trust-strip">
+                      <span>✓ 100% GST Invoiced</span>
+                      <span>✓ Official Input Tax Credit</span>
+                      <span>✓ Bilaspur Studio &amp; Nationwide Delivery</span>
+                    </div>
                   </div>
                 </form>
               )}
@@ -740,6 +874,22 @@ export const BusinessApparelBuilder: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Consultation & Meeting Scheduler Modal */}
+      <MeetingSchedulerModal
+        isOpen={Boolean(meetingModalMethod)}
+        method={meetingModalMethod}
+        apparelCategoryName={activeApparelName}
+        colorName={selectedColor === 'black' ? 'Black' : 'White'}
+        customizationName={currentSideData.artworkName || 'Corporate Customization'}
+        approxQuantity={`${totalQuantity} pcs`}
+        initialRequirement={
+          `Company: ${companyName.trim() || 'Corporate Client'}\nContact: ${contactName.trim() || 'Authorized Representative'}\nApparel: ${totalQuantity}x ${activeApparelName} (${sizeBreakdownText})\nBudget: ₹${estimatedTotal.toLocaleString('en-IN')}${requirement ? `\nNotes: ${requirement}` : ''}`
+        }
+        sizeBreakdown={sizeBreakdownText}
+        estimatedTotal={estimatedTotal}
+        onClose={() => setMeetingModalMethod(null)}
+      />
     </section>
   )
 }
