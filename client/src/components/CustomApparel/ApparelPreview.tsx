@@ -115,26 +115,23 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`kala-apparel-preview-container relative w-full select-none bg-[#F9FAFB] rounded-2xl border border-[#E5E7EB] p-3 sm:p-6 overflow-hidden flex items-center justify-center ${className}`}
-      style={{
-        boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.02), 0 8px 24px -6px rgba(0,0,0,0.04)',
-      }}
+      className={`kala-apparel-preview-container ${className}`}
     >
       {/* Upper Badge: View & Guide Indicator */}
-      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex items-center gap-2 pointer-events-none">
-        <span className="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider bg-white/90 text-[#111111] border border-[#E5E7EB] shadow-sm backdrop-blur-sm">
+      <div className="kala-preview-badge-row">
+        <span className="kala-preview-view-pill">
           {view} VIEW
         </span>
         {artwork && (
-          <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono text-[#D94700] bg-[#FFF5F0] border border-[#FFE0D1]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D94700] animate-pulse" />
+          <span className="kala-preview-live-indicator">
+            <span className="kala-preview-live-dot" />
             Live Preview
           </span>
         )}
       </div>
 
       {/* Main Vector Mockup Base Layer */}
-      <div className="w-full max-w-[480px] aspect-square relative">
+      <div className="kala-preview-stage-inner">
         <ApparelMockup
           apparelType={apparelType}
           view={view}
@@ -144,9 +141,7 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
           {/* Overlay Artwork Layer */}
           {artwork && (
             <div
-              className={`absolute cursor-move touch-none pointer-events-auto transition-shadow ${
-                isDragging ? 'opacity-95' : 'opacity-100'
-              }`}
+              className={`kala-preview-artwork-box ${isDragging ? 'dragging' : ''}`}
               style={{
                 left: `${transform.x}%`,
                 top: `${transform.y}%`,
@@ -163,17 +158,11 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
               aria-label={`Uploaded design: ${artwork.name}`}
             >
               {/* Subtle Dashed Box surrounding active artwork */}
-              <div
-                className={`w-full h-full relative ${
-                  isDragging
-                    ? 'ring-2 ring-[#D94700] ring-offset-2 ring-offset-transparent'
-                    : 'hover:ring-1 hover:ring-[#D94700]/70'
-                }`}
-              >
+              <div className="kala-preview-artwork-frame">
                 <img
                   src={artwork.dataUrl}
                   alt={artwork.name}
-                  className="w-full h-auto block select-none pointer-events-none drop-shadow-sm"
+                  className="kala-preview-artwork-img"
                   draggable={false}
                 />
               </div>
@@ -183,7 +172,7 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
       </div>
 
       {/* Subtle Bottom Helper Hint */}
-      <div className="absolute bottom-2 sm:bottom-3 text-center text-[10px] text-[#9CA3AF] pointer-events-none font-mono">
+      <div className="kala-preview-hint">
         {artwork
           ? 'Drag artwork to adjust position • Changes update live'
           : 'Upload your artwork on the right to preview on apparel'}

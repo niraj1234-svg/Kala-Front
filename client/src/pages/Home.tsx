@@ -102,7 +102,7 @@ export const Home: React.FC = () => {
           <Link
             to="/custom-apparel"
             className="kala-split-card kala-split-card-light"
-            aria-label="Custom Apparel — T-shirts, Hoodies, Jerseys made your way"
+            aria-label="Custom Apparel — Design custom apparel your way"
           >
             <div className="kala-split-card-visual">
               <img
@@ -118,8 +118,7 @@ export const Home: React.FC = () => {
                 APPAREL
               </h2>
               <p className="kala-split-card-desc">
-                T-shirts, hoodies &amp; jerseys.<br />
-                Made your way.
+                Design custom apparel your way.
               </p>
               <div className="kala-split-card-action">
                 <span className="kala-split-card-btn">
@@ -137,7 +136,7 @@ export const Home: React.FC = () => {
           <Link
             to="/business-branding"
             className="kala-split-card kala-split-card-dark"
-            aria-label="Business Branding — Packaging, Uniforms, Merch built for your brand"
+            aria-label="Business Branding — Custom branding made for your business"
           >
             <div className="kala-split-card-visual">
               <img
@@ -153,8 +152,7 @@ export const Home: React.FC = () => {
                 BRANDING
               </h2>
               <p className="kala-split-card-desc">
-                Packaging, uniforms &amp; merch.<br />
-                Built for your brand.
+                Custom branding made for your business.
               </p>
               <div className="kala-split-card-action">
                 <span className="kala-split-card-btn">

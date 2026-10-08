@@ -8,7 +8,6 @@ import { useWishlist } from '../context/WishlistContext'
 import { useAuth } from '../context/AuthContext'
 import ProductReviewsSection from '../components/reviews/ProductReviewsSection'
 import SimilarProducts from '../components/SimilarProducts'
-import CustomPrintText from '../components/CustomPrintText'
 import '../styles/ProductDetails.css'
 
 const AVAILABLE_SIZES = ['S', 'M', 'L', 'XL', 'XXL']
@@ -27,6 +26,18 @@ const SAFE_BOUNDS = {
   back: { minX: 28, maxX: 72, minY: 28, maxY: 65 },
 }
 
+// Standard Apparel Size Chart Data (Matches reference modal in inches)
+const SIZE_CHART_DATA = [
+  { size: 'XXS', chest: '34', shoulder: '14', length: '25' },
+  { size: 'XS', chest: '36', shoulder: '15', length: '26' },
+  { size: 'S', chest: '38', shoulder: '16', length: '27' },
+  { size: 'M', chest: '40', shoulder: '17', length: '28' },
+  { size: 'L', chest: '42', shoulder: '18', length: '29' },
+  { size: 'XL', chest: '44', shoulder: '19', length: '30' },
+  { size: 'XXL', chest: '46', shoulder: '20', length: '31' },
+  { size: '3XL', chest: '48', shoulder: '21', length: '32' },
+]
+
 export const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const [searchParams] = useSearchParams()
@@ -43,10 +54,17 @@ export const ProductDetails: React.FC = () => {
   const [backPosition, setBackPosition] = useState<{ x: number; y: number }>({ x: 50, y: 44 })
   const [frontFontSize, setFrontFontSize] = useState<number>(TEXT_SIZE_CONFIG.default)
   const [backFontSize, setBackFontSize] = useState<number>(TEXT_SIZE_CONFIG.default)
-  const [isDraggingText, setIsDraggingText] = useState<boolean>(false)
+  const [frontRotation, setFrontRotation] = useState<number>(0)
+  const [backRotation, setBackRotation] = useState<number>(0)
+  const [isTextSelected, setIsTextSelected] = useState<boolean>(true)
+  const [activeTransformMode, setActiveTransformMode] = useState<'move' | 'resize' | 'rotate' | null>(null)
 
   const dragStartRef = useRef<{ clientX: number; clientY: number; startX: number; startY: number } | null>(null)
+  const resizeStartRef = useRef<{ clientX: number; clientY: number; startFontSize: number } | null>(null)
+  const rotateCenterRef = useRef<{ centerX: number; centerY: number } | null>(null)
   const previewCardRef = useRef<HTMLDivElement>(null)
+  const textElementRef = useRef<HTMLDivElement>(null)
+  const textInputRef = useRef<HTMLInputElement>(null)
 
   const [product, setProduct] = useState<Product | null>(() => {
     return PRODUCTS.find((p) => p.id === id) || null
@@ -138,6 +156,25 @@ export const ProductDetails: React.FC = () => {
   const [addedNotification, setAddedNotification] = useState<boolean>(false)
   const [shareFeedback, setShareFeedback] = useState<string>('')
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState<boolean>(false)
+  const [isSizeChartOpen, setIsSizeChartOpen] = useState<boolean>(false)
+
+  // Prevent background scrolling and handle ESC when Size Chart modal is open
+  useEffect(() => {
+    if (isSizeChartOpen) {
+      const originalStyle = window.getComputedStyle(document.body).overflow
+      document.body.style.overflow = 'hidden'
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setIsSizeChartOpen(false)
+        }
+      }
+      window.addEventListener('keydown', handleKeyDown)
+      return () => {
+        document.body.style.overflow = originalStyle
+        window.removeEventListener('keydown', handleKeyDown)
+      }
+    }
+  }, [isSizeChartOpen])
 
   // Scroll to top and fetch fresh product data on route change
   useEffect(() => {
@@ -260,12 +297,12 @@ export const ProductDetails: React.FC = () => {
   }
 
   const handleCardTouchStart = (e: React.TouchEvent) => {
-    if (isDraggingText) return
+    if (activeTransformMode || isTextSelected) return
     touchStartRef.current = e.touches[0].clientX
   }
 
   const handleCardTouchEnd = (e: React.TouchEvent) => {
-    if (isDraggingText || touchStartRef.current === null) return
+    if (activeTransformMode || isTextSelected || touchStartRef.current === null) return
     const deltaX = touchStartRef.current - e.changedTouches[0].clientX
     if (Math.abs(deltaX) > 40) {
       if (deltaX > 0) {
@@ -278,12 +315,12 @@ export const ProductDetails: React.FC = () => {
   }
 
   const handleCardMouseDown = (e: React.MouseEvent) => {
-    if (isDraggingText) return
+    if (activeTransformMode || isTextSelected) return
     mouseStartRef.current = e.clientX
   }
 
   const handleCardMouseUp = (e: React.MouseEvent) => {
-    if (isDraggingText || mouseStartRef.current === null) return
+    if (activeTransformMode || isTextSelected || mouseStartRef.current === null) return
     const deltaX = mouseStartRef.current - e.clientX
     if (Math.abs(deltaX) > 45) {
       if (deltaX > 0) {
@@ -300,61 +337,181 @@ export const ProductDetails: React.FC = () => {
   const isBackView = activeImageStr.includes('back') || safeImgIndex === 1
   const currentViewKey = isBackView ? 'back' : 'front'
 
-  // Text, position, and font size to display on the active view
+  // Text, position, font size, and rotation to display on the active view
   const currentTextToDisplay = isBackView ? customBackText : customFrontText
   const currentPosition = isBackView ? backPosition : frontPosition
   const currentFontSize = isBackView ? backFontSize : frontFontSize
+  const currentRotation = isBackView ? backRotation : frontRotation
 
-  // Pointer Drag Handlers for Text Positioning
-  const handleTextPointerDown = (e: React.PointerEvent) => {
+  // Pointer Down on Move Handle (✥)
+  const handleMovePointerDown = (e: React.PointerEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setIsDraggingText(true)
+    setIsTextSelected(true)
+    setActiveTransformMode('move')
     dragStartRef.current = {
       clientX: e.clientX,
       clientY: e.clientY,
       startX: currentPosition.x,
       startY: currentPosition.y,
     }
-    try {
-      ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
-    } catch {
-      // fallback
-    }
-  }
-
-  const handleTextPointerMove = (e: React.PointerEvent) => {
-    if (!isDraggingText || !dragStartRef.current || !previewCardRef.current) return
-    e.preventDefault()
-
-    const rect = previewCardRef.current.getBoundingClientRect()
-    if (rect.width === 0 || rect.height === 0) return
-
-    const deltaXPercent = ((e.clientX - dragStartRef.current.clientX) / rect.width) * 100
-    const deltaYPercent = ((e.clientY - dragStartRef.current.clientY) / rect.height) * 100
-
-    const bounds = SAFE_BOUNDS[currentViewKey]
-    const targetX = dragStartRef.current.startX + deltaXPercent
-    const targetY = dragStartRef.current.startY + deltaYPercent
-
-    const clampedX = Math.max(bounds.minX, Math.min(bounds.maxX, +targetX.toFixed(1)))
-    const clampedY = Math.max(bounds.minY, Math.min(bounds.maxY, +targetY.toFixed(1)))
-
-    if (isBackView) {
-      setBackPosition({ x: clampedX, y: clampedY })
-    } else {
-      setFrontPosition({ x: clampedX, y: clampedY })
-    }
-  }
-
-  const handleTextPointerUp = (e: React.PointerEvent) => {
-    if (isDraggingText) {
-      setIsDraggingText(false)
-      dragStartRef.current = null
+    if (textElementRef.current) {
       try {
-        ;(e.target as HTMLElement).releasePointerCapture(e.pointerId)
+        textElementRef.current.setPointerCapture(e.pointerId)
       } catch {
         // fallback
+      }
+    }
+  }
+
+  // Pointer Down on Box container (Move / Drag when not clicking input)
+  const handleBoxPointerDown = (e: React.PointerEvent) => {
+    const target = e.target as HTMLElement
+    if (target.closest('.kala-text-handle')) return
+    if (target.tagName === 'INPUT') {
+      setIsTextSelected(true)
+      return
+    }
+
+    e.preventDefault()
+    e.stopPropagation()
+    setIsTextSelected(true)
+    setActiveTransformMode('move')
+    dragStartRef.current = {
+      clientX: e.clientX,
+      clientY: e.clientY,
+      startX: currentPosition.x,
+      startY: currentPosition.y,
+    }
+    if (textElementRef.current) {
+      try {
+        textElementRef.current.setPointerCapture(e.pointerId)
+      } catch {
+        // fallback
+      }
+    }
+  }
+
+  // Pointer Down on Resize Handle (↘)
+  const handleResizePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsTextSelected(true)
+    setActiveTransformMode('resize')
+    resizeStartRef.current = {
+      clientX: e.clientX,
+      clientY: e.clientY,
+      startFontSize: currentFontSize,
+    }
+    if (textElementRef.current) {
+      try {
+        textElementRef.current.setPointerCapture(e.pointerId)
+      } catch {
+        // fallback
+      }
+    }
+  }
+
+  // Pointer Down on Rotate Handle (↻)
+  const handleRotatePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsTextSelected(true)
+    setActiveTransformMode('rotate')
+
+    if (textElementRef.current) {
+      const rect = textElementRef.current.getBoundingClientRect()
+      rotateCenterRef.current = {
+        centerX: rect.left + rect.width / 2,
+        centerY: rect.top + rect.height / 2,
+      }
+      try {
+        textElementRef.current.setPointerCapture(e.pointerId)
+      } catch {
+        // fallback
+      }
+    }
+  }
+
+  // Unified Pointer Move (dispatches based on activeTransformMode)
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!activeTransformMode) return
+    e.preventDefault()
+
+    if (activeTransformMode === 'move') {
+      if (!dragStartRef.current || !previewCardRef.current) return
+      const rect = previewCardRef.current.getBoundingClientRect()
+      if (rect.width === 0 || rect.height === 0) return
+
+      const deltaXPercent = ((e.clientX - dragStartRef.current.clientX) / rect.width) * 100
+      const deltaYPercent = ((e.clientY - dragStartRef.current.clientY) / rect.height) * 100
+
+      const bounds = SAFE_BOUNDS[currentViewKey]
+      const targetX = dragStartRef.current.startX + deltaXPercent
+      const targetY = dragStartRef.current.startY + deltaYPercent
+
+      const clampedX = Math.max(bounds.minX, Math.min(bounds.maxX, +targetX.toFixed(1)))
+      const clampedY = Math.max(bounds.minY, Math.min(bounds.maxY, +targetY.toFixed(1)))
+
+      if (isBackView) {
+        setBackPosition({ x: clampedX, y: clampedY })
+      } else {
+        setFrontPosition({ x: clampedX, y: clampedY })
+      }
+    } else if (activeTransformMode === 'resize') {
+      if (!resizeStartRef.current) return
+      const deltaX = e.clientX - resizeStartRef.current.clientX
+      const deltaY = e.clientY - resizeStartRef.current.clientY
+      const sizeDelta = Math.round((deltaX + deltaY) * 0.28)
+      // Clamped between min 16px and max 54px
+      const newSize = Math.max(16, Math.min(54, resizeStartRef.current.startFontSize + sizeDelta))
+
+      if (isBackView) {
+        setBackFontSize(newSize)
+      } else {
+        setFrontFontSize(newSize)
+      }
+    } else if (activeTransformMode === 'rotate') {
+      if (!rotateCenterRef.current) return
+      const { centerX, centerY } = rotateCenterRef.current
+      const rad = Math.atan2(e.clientY - centerY, e.clientX - centerX)
+      // +90 because handle is at top (12 o'clock)
+      let deg = Math.round((rad * 180) / Math.PI) + 90
+      if (deg > 180) deg -= 360
+      if (deg < -180) deg += 360
+
+      // Snap within 4 degrees of straight angles
+      if (Math.abs(deg) <= 4) deg = 0
+      else if (Math.abs(deg - 90) <= 4) deg = 90
+      else if (Math.abs(deg + 90) <= 4) deg = -90
+      else if (Math.abs(deg - 180) <= 4 || Math.abs(deg + 180) <= 4) deg = 180
+
+      if (isBackView) {
+        setBackRotation(deg)
+      } else {
+        setFrontRotation(deg)
+      }
+    }
+  }
+
+  // Unified Pointer Up
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (activeTransformMode) {
+      setActiveTransformMode(null)
+      dragStartRef.current = null
+      resizeStartRef.current = null
+      rotateCenterRef.current = null
+      try {
+        ;(e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId)
+      } catch {
+        // fallback
+      }
+      if (textElementRef.current) {
+        try {
+          textElementRef.current.releasePointerCapture(e.pointerId)
+        } catch {
+          // fallback
+        }
       }
     }
   }
@@ -455,18 +612,22 @@ export const ProductDetails: React.FC = () => {
       backPosition: hasBackText ? backPosition : undefined,
       frontFontSize: hasFrontText ? frontFontSize : undefined,
       backFontSize: hasBackText ? backFontSize : undefined,
+      frontRotation: hasFrontText ? frontRotation : undefined,
+      backRotation: hasBackText ? backRotation : undefined,
       customText: {
         front: {
           text: customFrontText.trim(),
           x: +(frontPosition.x / 100).toFixed(3),
           y: +(frontPosition.y / 100).toFixed(3),
           fontSize: frontFontSize,
+          rotation: frontRotation,
         },
         back: {
           text: customBackText.trim(),
           x: +(backPosition.x / 100).toFixed(3),
           y: +(backPosition.y / 100).toFixed(3),
           fontSize: backFontSize,
+          rotation: backRotation,
         },
       },
       price: customizationFee,
@@ -623,15 +784,13 @@ export const ProductDetails: React.FC = () => {
             onTouchEnd={handleCardTouchEnd}
             onMouseDown={handleCardMouseDown}
             onMouseUp={handleCardMouseUp}
+            onClick={(e) => {
+              const target = e.target as HTMLElement
+              if (!target.closest('.kala-live-text-overlay')) {
+                setIsTextSelected(false)
+              }
+            }}
           >
-            {/* View Indicator Badge on Preview */}
-            {galleryImages.length > 1 && (
-              <div className="kala-preview-view-badge" aria-label={`Currently viewing ${isBackView ? 'Back' : 'Front'} side`}>
-                <span className="kala-badge-dot">●</span>
-                {isBackView ? 'BACK VIEW' : 'FRONT VIEW'}
-              </div>
-            )}
-
             {/* Side Navigation Arrow: Previous (Front) */}
             {galleryImages.length > 1 && (
               <button
@@ -671,27 +830,8 @@ export const ProductDetails: React.FC = () => {
               />
             </div>
 
-            {/* Slick Slide Indicator Dots */}
-            {galleryImages.length > 1 && (
-              <div className="kala-slick-dots" aria-label="Slide indicators">
-                {galleryImages.map((_, idx) => {
-                  const isActive = idx === safeImgIndex
-                  return (
-                    <button
-                      key={`dot-${idx}`}
-                      type="button"
-                      className={`kala-slick-dot ${isActive ? 'active' : ''}`}
-                      onClick={() => goToSlide(idx, idx > safeImgIndex ? 'left' : 'right')}
-                      aria-label={`Go to slide ${idx + 1}`}
-                      aria-current={isActive}
-                    />
-                  )
-                })}
-              </div>
-            )}
-
-            {/* Subtle Safe Printable Boundary Box (Visible while dragging or if custom text exists) */}
-            {supportsCustomText && (currentTextToDisplay || isDraggingText) && (
+            {/* Safe Printable Boundary Box (Orange dashed lines visible on shirt) */}
+            {supportsCustomText && (
               <div
                 className="kala-details-safe-boundary"
                 style={{
@@ -704,113 +844,142 @@ export const ProductDetails: React.FC = () => {
               />
             )}
 
-            {/* Live Text Overlay directly on the T-shirt image with customizable font size */}
-            {supportsCustomText && currentTextToDisplay && (
+            {/* Live Text Overlay directly on the T-shirt image with Direct Manipulation Handles */}
+            {supportsCustomText && (
               <div
-                className={`kala-live-text-overlay ${isDraggingText ? 'dragging' : ''}`}
+                ref={textElementRef}
+                className={`kala-live-text-overlay ${isTextSelected ? 'selected' : ''} ${
+                  activeTransformMode ? `transforming-${activeTransformMode}` : ''
+                }`}
                 style={{
                   left: `${currentPosition.x}%`,
                   top: `${currentPosition.y}%`,
+                  transform: `translate(-50%, -50%) rotate(${currentRotation}deg)`,
                 }}
-                onPointerDown={handleTextPointerDown}
-                onPointerMove={handleTextPointerMove}
-                onPointerUp={handleTextPointerUp}
-                onPointerCancel={handleTextPointerUp}
+                onPointerDown={handleBoxPointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsTextSelected(true)
+                  if ((e.target as HTMLElement).tagName !== 'INPUT' && !(e.target as HTMLElement).closest('.kala-text-handle')) {
+                    textInputRef.current?.focus()
+                  }
+                }}
                 role="region"
-                aria-label={`Live custom text on ${currentViewKey}: ${currentTextToDisplay}`}
-                title="Click and drag to adjust text position"
+                aria-label={`Custom text on ${currentViewKey}: ${currentTextToDisplay || 'Type text'}. Click to write text directly on shirt, or drag handles to reposition, resize, or rotate.`}
+                tabIndex={0}
               >
-                <div className="kala-live-text-badge">
+                <div className="kala-live-text-box">
+                  {/* Invisible auto-sizing mirror element */}
                   <span
-                    className="kala-live-text-content"
+                    className="kala-live-text-mirror"
                     style={{ fontSize: `${currentFontSize}px` }}
+                    aria-hidden="true"
                   >
-                    {currentTextToDisplay}
+                    {currentTextToDisplay || 'TYPE YOUR TEXT'}
                   </span>
-                  <span className="kala-live-text-drag-hint">Drag to move</span>
+
+                  {/* Customer Direct Text Input on shirt */}
+                  <input
+                    ref={textInputRef}
+                    type="text"
+                    className="kala-live-text-input"
+                    value={currentTextToDisplay}
+                    onChange={(e) => {
+                      const val = e.target.value.toUpperCase().slice(0, 30)
+                      if (isBackView) {
+                        setCustomBackText(val)
+                      } else {
+                        setCustomFrontText(val)
+                      }
+                      setIsTextSelected(true)
+                    }}
+                    placeholder="TYPE YOUR TEXT"
+                    maxLength={30}
+                    autoCapitalize="characters"
+                    spellCheck={false}
+                    autoComplete="off"
+                    style={{ fontSize: `${currentFontSize}px` }}
+                    onFocus={() => setIsTextSelected(true)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        (e.target as HTMLInputElement).blur()
+                      }
+                    }}
+                  />
+
+                  {/* Clean Direct Manipulation Handles shown when selected */}
+                  {isTextSelected && (
+                    <>
+                      {/* Top Stem & Rotation Handle (↻) */}
+                      <div className="kala-text-rotate-stem" aria-hidden="true" />
+                      <div
+                        className="kala-text-handle kala-text-handle-rotate"
+                        onPointerDown={handleRotatePointerDown}
+                        title="Drag to rotate text"
+                        aria-label="Drag to rotate text"
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <span className="kala-handle-icon" aria-hidden="true">↻</span>
+                      </div>
+
+                      {/* Top-Right Clear / Delete Handle (×) */}
+                      <button
+                        type="button"
+                        className="kala-text-handle kala-text-handle-delete"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (isBackView) setCustomBackText('')
+                          else setCustomFrontText('')
+                          if (textInputRef.current) {
+                            textInputRef.current.focus()
+                          }
+                        }}
+                        title="Clear custom text"
+                        aria-label="Clear custom text"
+                      >
+                        ×
+                      </button>
+
+                      {/* Bottom-Right Corner Resize Handle (↘) */}
+                      <div
+                        className="kala-text-handle kala-text-handle-resize"
+                        onPointerDown={handleResizePointerDown}
+                        title="Drag to resize text"
+                        aria-label="Drag to resize text"
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <span className="kala-handle-icon" aria-hidden="true">↘</span>
+                      </div>
+
+                      {/* Bottom-Left Corner Move Handle (✥) */}
+                      <div
+                        className="kala-text-handle kala-text-handle-move"
+                        onPointerDown={handleMovePointerDown}
+                        title="Drag to reposition text"
+                        aria-label="Drag to reposition text"
+                        role="button"
+                        tabIndex={0}
+                      >
+                        <span className="kala-handle-icon" aria-hidden="true">✥</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Mobile-Only Clean Image Navigation Toggle: [ FRONT ] [ BACK ] */}
-          {galleryImages.length > 1 && (
-            <div className="kala-mobile-view-toggle" role="tablist" aria-label="Product side view selector">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={!isBackView}
-                className={`kala-mobile-view-chip ${!isBackView ? 'active' : ''}`}
-                onClick={() => goToSlide(0, 'right')}
-              >
-                FRONT VIEW
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={isBackView}
-                className={`kala-mobile-view-chip ${isBackView ? 'active' : ''}`}
-                onClick={() => goToSlide(1, 'left')}
-              >
-                BACK VIEW
-              </button>
-            </div>
-          )}
 
-          {/* Horizontal Gallery Thumbnail Bar below preview card (Desktop) */}
-          {galleryImages.length > 1 && (
-            <div className="kala-gallery-slider-bar" aria-label="Gallery thumbnails">
-              <button
-                type="button"
-                className="kala-gallery-nav-btn prev"
-                onClick={handlePrevSlide}
-                aria-label="Previous view"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
 
-              <div className="kala-gallery-thumbnails-horizontal">
-                {galleryImages.map((img, idx) => {
-                  const isBack = img.toLowerCase().includes('back') || idx === 1
-                  const isSelected = idx === safeImgIndex
-                  return (
-                    <button
-                      key={`thumb-${idx}`}
-                      type="button"
-                      className={`kala-gallery-thumb-chip ${isSelected ? 'active' : ''}`}
-                      onClick={() => goToSlide(idx, idx > safeImgIndex ? 'left' : 'right')}
-                      aria-label={isBack ? 'Select Back View' : 'Select Front View'}
-                      aria-pressed={isSelected}
-                    >
-                      <div className="kala-thumb-img-wrap">
-                        <img src={img} alt={isBack ? 'Back preview' : 'Front preview'} loading="lazy" />
-                      </div>
-                      <span className="kala-thumb-chip-label">
-                        {isBack ? 'Back View' : 'Front View'}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-
-              <button
-                type="button"
-                className="kala-gallery-nav-btn next"
-                onClick={handleNextSlide}
-                aria-label="Next view"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-            </div>
-          )}
         </div>
 
         {/* ====================================================================
-            RIGHT: Product Information, Custom Text Controls, Size & Add to Cart
+            RIGHT: Product Information, Size & Add to Cart
             ==================================================================== */}
         <div className="kala-details-info">
           {/* Product Name */}
@@ -865,45 +1034,6 @@ export const ProductDetails: React.FC = () => {
             </p>
           </div>
 
-          {/* ====================================================================
-              Custom Print Text Component (Renders ONLY when enabled === true)
-              ==================================================================== */}
-          <CustomPrintText
-            enabled={supportsCustomText}
-            price={product.customPrintTextPrice || 25}
-            activeSide={currentViewKey}
-            onSelectSide={(side) => {
-              if (side === 'front') {
-                if (galleryImages[0]) setActiveImage(galleryImages[0])
-              } else {
-                const backImg = galleryImages[1] || getProductImage('kala-bihari-story-back.png')
-                if (backImg) setActiveImage(backImg)
-              }
-            }}
-            frontText={customFrontText}
-            backText={customBackText}
-            onChangeFrontText={(val) => {
-              setCustomFrontText(val)
-              if (isBackView && galleryImages[0]) {
-                setActiveImage(galleryImages[0])
-              }
-            }}
-            onChangeBackText={(val) => {
-              setCustomBackText(val)
-              const backImg = galleryImages[1] || getProductImage('kala-bihari-story-back.png')
-              if (!isBackView && backImg) {
-                setActiveImage(backImg)
-              }
-            }}
-            frontFontSize={frontFontSize}
-            backFontSize={backFontSize}
-            onChangeFrontFontSize={setFrontFontSize}
-            onChangeBackFontSize={setBackFontSize}
-            onResetFrontPosition={() => setFrontPosition({ x: 50, y: 52 })}
-            onResetBackPosition={() => setBackPosition({ x: 50, y: 44 })}
-            basePrice={product.price}
-          />
-
           {/* Color Variant Selector */}
           {product.variants && product.variants.length > 0 && (
             <div className="kala-details-color-section">
@@ -953,7 +1083,16 @@ export const ProductDetails: React.FC = () => {
             {/* Desktop Multi-Size Matrix */}
             <div className="kala-size-breakdown-desktop">
               <div className="kala-size-label-row">
-                <span className="kala-section-label">Select Size & Quantity</span>
+                <div className="kala-size-header-left">
+                  <span className="kala-section-label">Select Size</span>
+                  <button
+                    type="button"
+                    className="kala-size-chart-link-btn"
+                    onClick={() => setIsSizeChartOpen(true)}
+                  >
+                    Size Chart
+                  </button>
+                </div>
                 {sizeError && <span className="kala-size-error-msg">{sizeError}</span>}
               </div>
 
@@ -1053,7 +1192,16 @@ export const ProductDetails: React.FC = () => {
               {/* SELECT SIZE */}
               <div className="kala-mobile-size-group">
                 <div className="kala-size-label-row">
-                  <span className="kala-section-label">SELECT SIZE</span>
+                  <div className="kala-size-header-left">
+                    <span className="kala-section-label">Select Size</span>
+                    <button
+                      type="button"
+                      className="kala-size-chart-link-btn"
+                      onClick={() => setIsSizeChartOpen(true)}
+                    >
+                      Size Chart
+                    </button>
+                  </div>
                   {sizeError && <span className="kala-size-error-msg">{sizeError}</span>}
                 </div>
                 <div className="kala-mobile-size-row" role="radiogroup" aria-label="Select size">
@@ -1116,11 +1264,11 @@ export const ProductDetails: React.FC = () => {
             </div>
           </div>
 
-          {/* Primary Action Buttons: BUY NOW & ADD TO CART */}
-          <div className="kala-details-actions">
+          {/* Main Action Buttons: BUY NOW & ADD TO CART (Matches Image 1 reference, positioned right above Wishlist and Share) */}
+          <div className="kala-details-main-actions" role="group" aria-label="Purchase actions">
             <button
               type="button"
-              className="kala-btn kala-btn-primary kala-btn-full"
+              className="kala-main-action-btn kala-btn-buy-now"
               onClick={handleBuyNow}
               disabled={!product.available}
             >
@@ -1128,7 +1276,7 @@ export const ProductDetails: React.FC = () => {
             </button>
             <button
               type="button"
-              className="kala-btn kala-btn-outline kala-btn-full"
+              className="kala-main-action-btn kala-btn-add-cart"
               onClick={handleAddToCart}
               disabled={!product.available}
             >
@@ -1206,6 +1354,71 @@ export const ProductDetails: React.FC = () => {
 
       {/* 4 & 5. VOICE OF KALA / Customer Product Reviews Section */}
       <ProductReviewsSection productId={product.id} />
+
+      {/* Size Chart Modal (Matches Reference 1st Image) */}
+      {isSizeChartOpen && (
+        <div
+          className="kala-size-chart-overlay"
+          onClick={() => setIsSizeChartOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="size-chart-modal-title"
+        >
+          <div
+            className="kala-size-chart-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="kala-size-chart-header">
+              <h2 id="size-chart-modal-title" className="kala-size-chart-title">
+                {product.name}
+              </h2>
+              <button
+                type="button"
+                className="kala-size-chart-close-btn"
+                onClick={() => setIsSizeChartOpen(false)}
+                aria-label="Close size chart"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="kala-size-chart-body">
+              <div className="kala-size-chart-table-wrap">
+                <table className="kala-size-chart-table">
+                  <thead>
+                    <tr>
+                      <th>Size</th>
+                      <th>Chest/Bust</th>
+                      <th>Shoulder</th>
+                      <th>Length</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {SIZE_CHART_DATA.map((row) => {
+                      const isHighlighted =
+                        selectedMobileSize === row.size || (sizeQuantities[row.size] || 0) > 0
+                      return (
+                        <tr
+                          key={row.size}
+                          className={isHighlighted ? 'is-selected-size' : ''}
+                        >
+                          <td className="col-size">{row.size}</td>
+                          <td>{row.chest}</td>
+                          <td>{row.shoulder}</td>
+                          <td>{row.length}</td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <p className="kala-size-chart-footer-note">
+                * All measurements are in inches. Regular fit.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

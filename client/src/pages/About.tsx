@@ -1,692 +1,268 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getProductImage } from '../data/products'
 import '../styles/About.css'
 
 export const About: React.FC = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    document.title = 'About KALA | Who We Are & Our Vision'
   }, [])
 
   return (
     <main className="kala-about-page" id="main-content">
       {/* ====================================================================
-          1. HERO — WE ARE KALA (Split Editorial Composition)
+          1. HERO SECTION
           ==================================================================== */}
-      <section className="kala-about-hero" aria-label="We Are KALA Introduction">
-        <div className="kala-container kala-about-hero-grid">
-          {/* Left Column: Story & CTAs */}
-          <div className="kala-about-hero-left">
-            <span className="kala-about-eyebrow" aria-label="Section label">
-              OUR STORY
-            </span>
-            <h1 className="kala-about-hero-title">
-              WE ARE KALA.
+      <section className="kala-about-hero" aria-labelledby="about-hero-title">
+        <div className="kala-about-container">
+
+          <div className="kala-about-hero-content">
+            <div className="kala-about-badge">
+              <span className="about-badge-dot" aria-hidden="true" />
+              <span className="about-badge-text">ABOUT KALA</span>
+            </div>
+
+            <h1 id="about-hero-title" className="kala-about-hero-title">
+              WEAR YOUR IDENTITY.
             </h1>
-            <p className="kala-about-hero-desc">
-              KALA is a custom apparel and brand merchandise business built to help people, teams, businesses, colleges, events and communities turn ideas into something they can wear, use and share.
+
+            <p className="kala-about-hero-subtitle">
+              KALA is a custom apparel and merchandise brand built to turn ideas, identities and communities into something people can wear.
             </p>
+
             <div className="kala-about-hero-actions">
-              <Link to="/custom-apparel" className="kala-btn kala-about-btn-primary">
-                <span>CREATE YOURS</span>
-                <span className="kala-about-btn-arrow" aria-hidden="true">→</span>
+              <Link to="/custom-apparel" className="kala-about-btn primary">
+                <span>Start Creating</span>
+                <span className="btn-arrow" aria-hidden="true">&rarr;</span>
               </Link>
-              <Link to="/shop" className="kala-btn kala-about-btn-secondary">
-                <span>SHOP KALA</span>
+              <Link to="/shop" className="kala-about-btn secondary">
+                <span>Explore Shop</span>
               </Link>
-            </div>
-          </div>
-
-          {/* Right Column: Editorial Visual with Floating Labels */}
-          <div className="kala-about-hero-right" aria-label="Editorial visual campaign">
-            <div className="kala-about-editorial-visual">
-              <div className="kala-about-visual-backdrop" aria-hidden="true" />
-              <div className="kala-about-image-card">
-                <img
-                  src="/custom-apparel/kala-editorial-tee.jpg"
-                  onError={(e) => {
-                    // Fallback to local streetwear asset if path fails
-                    const target = e.currentTarget
-                    target.onerror = null
-                    target.src = getProductImage('Streetwear -02.png')
-                  }}
-                  alt="KALA Editorial Heavyweight Streetwear"
-                  className="kala-about-hero-img"
-                  loading="eager"
-                />
-                <div className="kala-about-image-overlay" aria-hidden="true" />
-              </div>
-
-              {/* Floating Label 1: Top Right */}
-              <div className="kala-floating-pill kala-floating-est" aria-label="Established Jan 2026">
-                <span className="kala-floating-dot" aria-hidden="true" />
-                <span className="kala-floating-text">EST. JAN 2026</span>
-              </div>
-
-              {/* Floating Label 2: Bottom Left */}
-              <div className="kala-floating-pill kala-floating-motto" aria-label="Ideas into Apparel">
-                <span className="kala-floating-badge-tag" aria-hidden="true">STUDIO</span>
-                <span className="kala-floating-text">IDEAS INTO APPAREL</span>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ====================================================================
-          2. BRAND STATEMENT SECTION
+          2. ABOUT KALA (The Story)
           ==================================================================== */}
-      <section className="kala-brand-statement-section" aria-labelledby="statement-title">
-        <div className="kala-container">
-          <div className="kala-statement-wrapper">
-            <span className="kala-statement-kicker" aria-hidden="true">
-              THE KALA ETHOS
-            </span>
-            <h2 id="statement-title" className="kala-statement-h2">
-              MORE THAN CLOTHES.
+      <section className="kala-about-story-section" aria-labelledby="story-title">
+        <div className="kala-about-container">
+          <div className="kala-story-card">
+            <span className="kala-about-kicker">OUR STORY</span>
+            <h2 id="story-title" className="kala-story-heading">
+              APPAREL SHOULD FEEL PERSONAL.
             </h2>
-            <p className="kala-statement-lead">
-              WE TURN <span className="kala-accent-word">IDEAS</span> INTO{' '}
-              <span className="kala-accent-word">SOMETHING YOU CAN WEAR</span>.
-            </p>
-            <p className="kala-statement-body-copy">
-              From a single custom T-shirt to apparel for teams, businesses, colleges and communities, KALA exists to make ideas{' '}
-              <span className="kala-accent-word">tangible</span>.
-            </p>
-            <div className="kala-statement-divider" aria-hidden="true" />
+            <div className="kala-story-paragraphs">
+              <p>
+                KALA is built around a simple idea — apparel should feel personal.
+              </p>
+              <p>
+                We create custom apparel and merchandise for individuals, teams, colleges, startups, businesses and communities. From a single personal design to large-scale custom orders, KALA brings ideas to life through apparel.
+              </p>
+              <p>
+                We combine design, technology and a direct-to-customer experience to make custom apparel simpler, more accessible and more personal.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ====================================================================
-          3. "WHY KALA?" SECTION
+          3. WHAT KALA DOES
           ==================================================================== */}
-      <section className="kala-why-section" aria-labelledby="why-kala-heading">
-        <div className="kala-container">
-          <div className="kala-section-header">
-            <span className="kala-about-eyebrow">OUR PILLARS</span>
-            <h2 id="why-kala-heading" className="kala-section-title">
-              WHY KALA?
+      <section className="kala-about-what-we-do-section" aria-labelledby="what-we-do-title">
+        <div className="kala-about-container">
+          <div className="kala-about-section-header">
+            <span className="kala-about-kicker">CATEGORIES</span>
+            <h2 id="what-we-do-title" className="kala-about-section-h2">
+              WHAT WE DO
             </h2>
-            <p className="kala-section-sub">
-              Engineered with precision, built for expression, and delivered across India.
+            <p className="kala-about-section-sub">
+              From one-of-a-kind personal pieces to scalable organization merchandise.
+            </p>
+          </div>
+
+          <div className="kala-what-we-do-grid">
+            {/* 1. Custom Apparel */}
+            <article className="kala-capability-card">
+              <div className="card-top-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z" />
+                </svg>
+              </div>
+              <h3 className="card-title">CUSTOM APPAREL</h3>
+              <p className="card-desc">
+                Personal designs, team apparel and custom merchandise made around your idea.
+              </p>
+              <Link to="/custom-apparel" className="card-link">
+                <span>Custom Studio</span>
+                <span aria-hidden="true">&rarr;</span>
+              </Link>
+            </article>
+
+            {/* 2. Business Branding */}
+            <article className="kala-capability-card">
+              <div className="card-top-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                </svg>
+              </div>
+              <h3 className="card-title">BUSINESS BRANDING</h3>
+              <p className="card-desc">
+                Branded apparel and merchandise for businesses, startups and organizations.
+              </p>
+              <Link to="/business-branding" className="card-link">
+                <span>Business Solutions</span>
+                <span aria-hidden="true">&rarr;</span>
+              </Link>
+            </article>
+
+            {/* 3. Bulk Orders */}
+            <article className="kala-capability-card">
+              <div className="card-top-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                  <line x1="12" y1="22.08" x2="12" y2="12" />
+                </svg>
+              </div>
+              <h3 className="card-title">BULK ORDERS</h3>
+              <p className="card-desc">
+                Scalable apparel solutions for teams, college events and large volume requirements.
+              </p>
+              <Link to="/custom-apparel" className="card-link">
+                <span>Bulk Pricing</span>
+                <span aria-hidden="true">&rarr;</span>
+              </Link>
+            </article>
+
+            {/* 4. Design Support */}
+            <article className="kala-capability-card">
+              <div className="card-top-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+              </div>
+              <h3 className="card-title">DESIGN SUPPORT</h3>
+              <p className="card-desc">
+                Helping turn ideas, references and brand assets into wearable designs.
+              </p>
+              <Link to="/business-branding" className="card-link">
+                <span>Design Services</span>
+                <span aria-hidden="true">&rarr;</span>
+              </Link>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          4. WHY KALA (The Philosophy)
+          ==================================================================== */}
+      <section className="kala-about-why-section" aria-labelledby="why-kala-title">
+        <div className="kala-about-container">
+          <div className="kala-about-section-header">
+            <span className="kala-about-kicker">OUR PRINCIPLES</span>
+            <h2 id="why-kala-title" className="kala-about-section-h2">
+              WHY KALA
+            </h2>
+            <p className="kala-about-section-sub">
+              Four principles that shape how we create, manufacture and deliver apparel.
             </p>
           </div>
 
           <div className="kala-why-grid">
-            {/* Card 01 — CUSTOM */}
-            <article className="kala-why-card">
-              <div className="kala-why-card-top">
-                <span className="kala-why-num">01</span>
-                <span className="kala-why-pill">BESPOKE</span>
-              </div>
-              <h3 className="kala-why-card-title">CUSTOM</h3>
-              <p className="kala-why-card-tagline">
-                Your idea. Your identity. Your apparel.
-              </p>
-              <p className="kala-why-card-desc">
-                Create apparel around your own ideas, designs, teams, communities and brands. Every piece is crafted to reflect your authentic aesthetic without generic templates.
-              </p>
-            </article>
-
-            {/* Card 02 — QUALITY */}
-            <article className="kala-why-card">
-              <div className="kala-why-card-top">
-                <span className="kala-why-num">02</span>
-                <span className="kala-why-pill">CRAFT</span>
-              </div>
-              <h3 className="kala-why-card-title">QUALITY</h3>
-              <p className="kala-why-card-tagline">
-                Built to be worn, not just printed.
-              </p>
-              <ul className="kala-why-specs-list" aria-label="Quality specifications">
-                <li><span className="kala-why-bullet">✦</span> Premium 220–450 GSM fabrics</li>
-                <li><span className="kala-why-bullet">✦</span> Multi-stage quality checking</li>
-                <li><span className="kala-why-bullet">✦</span> Durable high-density printing</li>
-                <li><span className="kala-why-bullet">✦</span> Comfortable everyday wear</li>
-              </ul>
-            </article>
-
-            {/* Card 03 — FOR EVERYONE */}
-            <article className="kala-why-card">
-              <div className="kala-why-card-top">
-                <span className="kala-why-num">03</span>
-                <span className="kala-why-pill">INCLUSIVE</span>
-              </div>
-              <h3 className="kala-why-card-title">FOR EVERYONE</h3>
-              <p className="kala-why-card-tagline">
-                People. Teams. Businesses. Communities.
-              </p>
-              <p className="kala-why-card-desc">
-                KALA serves individuals, college students, sports teams, businesses, startups, colleges, events, and culture collectives. Whether 1 piece or 500, we craft with equal dedication.
-              </p>
-            </article>
-
-            {/* Card 04 — PAN-INDIA */}
-            <article className="kala-why-card">
-              <div className="kala-why-card-top">
-                <span className="kala-why-num">04</span>
-                <span className="kala-why-pill">LOGISTICS</span>
-              </div>
-              <h3 className="kala-why-card-title">PAN-INDIA</h3>
-              <p className="kala-why-card-tagline">
-                Ideas can travel anywhere.
-              </p>
-              <p className="kala-why-card-desc">
-                Reliable Pan-India delivery with live tracking right to your doorstep. We coordinate with trusted partners to ensure safe, timely arrival in every state and pin code.
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          4. THE KALA JOURNEY (Timeline)
-          ==================================================================== */}
-      <section className="kala-journey-section" aria-labelledby="journey-heading">
-        <div className="kala-container">
-          <div className="kala-section-header">
-            <span className="kala-about-eyebrow">CHRONOLOGY</span>
-            <h2 id="journey-heading" className="kala-section-title">
-              FROM AN IDEA TO KALA.
-            </h2>
-            <p className="kala-section-sub">
-              How a simple vision evolved into a modern apparel and brand merchandise studio.
-            </p>
-          </div>
-
-          <div className="kala-timeline">
-            <div className="kala-timeline-track" aria-hidden="true" />
-
-            {/* Step 1 */}
-            <div className="kala-timeline-item">
-              <div className="kala-timeline-marker">
-                <span className="kala-timeline-dot" aria-hidden="true" />
-                <span className="kala-timeline-badge">01</span>
-              </div>
-              <div className="kala-timeline-card">
-                <span className="kala-timeline-date">JAN 2026</span>
-                <h3 className="kala-timeline-title">KALA begins.</h3>
-                <p className="kala-timeline-text">
-                  Founded with a clear purpose: eliminate the friction in creating custom streetwear and premium brand merchandise across India.
-                </p>
-              </div>
+            <div className="kala-why-item">
+              <span className="why-num">01</span>
+              <h3 className="why-title">DESIGN FIRST</h3>
+              <p className="why-desc">Every piece starts with an idea and thoughtful creative intention.</p>
             </div>
 
-            {/* Step 2 */}
-            <div className="kala-timeline-item">
-              <div className="kala-timeline-marker">
-                <span className="kala-timeline-dot" aria-hidden="true" />
-                <span className="kala-timeline-badge">02</span>
-              </div>
-              <div className="kala-timeline-card">
-                <span className="kala-timeline-date">PHASE ONE</span>
-                <h3 className="kala-timeline-title">THE IDEA</h3>
-                <p className="kala-timeline-text">
-                  Turn everyday ideas and identities into apparel. Moving beyond commoditized fast fashion to wearable personal statements that last.
-                </p>
-              </div>
+            <div className="kala-why-item">
+              <span className="why-num">02</span>
+              <h3 className="why-title">BUILT FOR EVERY SCALE</h3>
+              <p className="why-desc">From one custom piece for an individual to large runs for an entire community.</p>
             </div>
 
-            {/* Step 3 */}
-            <div className="kala-timeline-item">
-              <div className="kala-timeline-marker">
-                <span className="kala-timeline-dot" aria-hidden="true" />
-                <span className="kala-timeline-badge">03</span>
-              </div>
-              <div className="kala-timeline-card">
-                <span className="kala-timeline-date">PHASE TWO</span>
-                <h3 className="kala-timeline-title">THE BUILD</h3>
-                <p className="kala-timeline-text">
-                  Create products, experiment with designs and build the KALA experience. Establishing strict vetting standards, custom back-text personalization, and curated streetwear silhouettes.
-                </p>
-              </div>
+            <div className="kala-why-item">
+              <span className="why-num">03</span>
+              <h3 className="why-title">SIMPLE EXPERIENCE</h3>
+              <p className="why-desc">A straightforward, transparent process from upload and mockup to doorstep delivery.</p>
             </div>
 
-            {/* Step 4 */}
-            <div className="kala-timeline-item">
-              <div className="kala-timeline-marker">
-                <span className="kala-timeline-dot" aria-hidden="true" />
-                <span className="kala-timeline-badge">04</span>
-              </div>
-              <div className="kala-timeline-card">
-                <span className="kala-timeline-date">PHASE THREE</span>
-                <h3 className="kala-timeline-title">THE COMMUNITY</h3>
-                <p className="kala-timeline-text">
-                  Serve people, teams, businesses, colleges and communities. Becoming the go-to apparel partner for student collectives, esports squads, gyms, and innovative startups.
-                </p>
-              </div>
-            </div>
-
-            {/* Step 5 */}
-            <div className="kala-timeline-item">
-              <div className="kala-timeline-marker">
-                <span className="kala-timeline-dot" aria-hidden="true" />
-                <span className="kala-timeline-badge">05</span>
-              </div>
-              <div className="kala-timeline-card kala-timeline-card-future">
-                <span className="kala-timeline-date">ONWARD</span>
-                <h3 className="kala-timeline-title">WHAT'S NEXT</h3>
-                <p className="kala-timeline-text">
-                  Keep creating. Keep experimenting. Keep turning ideas into apparel. Continuously expanding categories, fabric innovations, and creator collaborations.
-                </p>
-              </div>
+            <div className="kala-why-item">
+              <span className="why-num">04</span>
+              <h3 className="why-title">MADE FOR COMMUNITIES</h3>
+              <p className="why-desc">Built for creators, friends, sports squads, college fests, startups and businesses.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* ====================================================================
-          5. "BUILT FOR PEOPLE WITH STORIES" (Immersive Editorial Canvas)
-          ==================================================================== */}
-      <section className="kala-stories-immersive-section" aria-labelledby="stories-heading">
-        <div className="kala-stories-bg-wrap">
-          <img
-            src="/home/statement-banner.jpg"
-            onError={(e) => {
-              const target = e.currentTarget
-              target.onerror = null
-              target.src = getProductImage('hero-rooted-in-bihar.png')
-            }}
-            alt="KALA Apparel Culture"
-            className="kala-stories-bg-img"
-          />
-          <div className="kala-stories-dark-scrim" aria-hidden="true" />
-        </div>
-
-        <div className="kala-container kala-stories-content-container">
-          <div className="kala-stories-text-center">
-            <span className="kala-stories-pill-label" aria-hidden="true">
-              CULTURE &amp; IDENTITY
-            </span>
-            <h2 id="stories-heading" className="kala-stories-main-title">
-              EVERYONE HAS A STORY.
-            </h2>
-            <p className="kala-stories-second-line">
-              WE JUST HELP YOU WEAR IT.
-            </p>
-            <p className="kala-stories-body">
-              Apparel is the canvas of our generation. It tells people who you represent, where you’re from, and what you stand for.
-            </p>
-          </div>
-
-          {/* Editorial / Campaign Annotations (Pins) */}
-          <div className="kala-annotations-grid" aria-label="Stories annotations">
-            <div className="kala-annotation-tag tag-pos-1">
-              <span className="kala-annotation-hash">#01</span>
-              <span className="kala-annotation-label">YOUR TEAM</span>
-            </div>
-            <div className="kala-annotation-tag tag-pos-2">
-              <span className="kala-annotation-hash">#02</span>
-              <span className="kala-annotation-label">YOUR COLLEGE</span>
-            </div>
-            <div className="kala-annotation-tag tag-pos-3">
-              <span className="kala-annotation-hash">#03</span>
-              <span className="kala-annotation-label">YOUR BRAND</span>
-            </div>
-            <div className="kala-annotation-tag tag-pos-4">
-              <span className="kala-annotation-hash">#04</span>
-              <span className="kala-annotation-label">YOUR CITY</span>
-            </div>
-            <div className="kala-annotation-tag tag-pos-5">
-              <span className="kala-annotation-hash">#05</span>
-              <span className="kala-annotation-label">YOUR PEOPLE</span>
-            </div>
-            <div className="kala-annotation-tag tag-pos-6 highlight-orange">
-              <span className="kala-annotation-hash">#06</span>
-              <span className="kala-annotation-label">YOUR STORY</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          6. WHAT WE CREATE (8 Rich Product / Category Cards)
-          ==================================================================== */}
-      <section className="kala-create-categories-section" aria-labelledby="create-heading">
-        <div className="kala-container">
-          <div className="kala-section-header">
-            <span className="kala-about-eyebrow">THE APPAREL CATALOG</span>
-            <h2 id="create-heading" className="kala-section-title">
-              WHAT WE CREATE
-            </h2>
-            <p className="kala-section-sub">
-              From signature streetwear drops to customized brand merchandise built for scale.
-            </p>
-          </div>
-
-          <div className="kala-categories-grid">
-            {/* 1. T-SHIRTS */}
-            <article className="kala-cat-card">
-              <div className="kala-cat-img-box">
-                <img
-                  src={getProductImage('Streetwear 04.png')}
-                  alt="KALA T-Shirts"
-                  className="kala-cat-img"
-                  loading="lazy"
-                />
-                <span className="kala-cat-badge">ESSENTIAL</span>
-              </div>
-              <div className="kala-cat-info">
-                <h3 className="kala-cat-title">T-SHIRTS</h3>
-                <p className="kala-cat-desc">
-                  Everyday premium statement tees crafted with 220 GSM combed ringspun cotton.
-                </p>
-                <Link to="/shop" className="kala-cat-link">
-                  <span>Explore T-Shirts</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </article>
-
-            {/* 2. OVERSIZED T-SHIRTS */}
-            <article className="kala-cat-card">
-              <div className="kala-cat-img-box">
-                <img
-                  src={getProductImage('Streetwear 01.png')}
-                  alt="KALA Oversized T-Shirts"
-                  className="kala-cat-img"
-                  loading="lazy"
-                />
-                <span className="kala-cat-badge">STREETWEAR</span>
-              </div>
-              <div className="kala-cat-info">
-                <h3 className="kala-cat-title">OVERSIZED T-SHIRTS</h3>
-                <p className="kala-cat-desc">
-                  Drop-shoulder 280 GSM heavyweight streetwear silhouette engineered for an effortless drape.
-                </p>
-                <Link to="/shop" className="kala-cat-link">
-                  <span>Explore Oversized</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </article>
-
-            {/* 3. GYMWEAR */}
-            <article className="kala-cat-card">
-              <div className="kala-cat-img-box">
-                <img
-                  src={getProductImage('Gymwear-05.png')}
-                  alt="KALA Gymwear"
-                  className="kala-cat-img"
-                  loading="lazy"
-                />
-                <span className="kala-cat-badge">PERFORMANCE</span>
-              </div>
-              <div className="kala-cat-info">
-                <h3 className="kala-cat-title">GYMWEAR</h3>
-                <p className="kala-cat-desc">
-                  High-density pump covers, moisture-wicking athletic tanks, and powerlifting training gear.
-                </p>
-                <Link to="/shop" className="kala-cat-link">
-                  <span>Explore Gymwear</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </article>
-
-            {/* 4. HOODIES */}
-            <article className="kala-cat-card">
-              <div className="kala-cat-img-box">
-                <img
-                  src={getProductImage('Streetwear -02.png')}
-                  alt="KALA Hoodies"
-                  className="kala-cat-img"
-                  loading="lazy"
-                />
-                <span className="kala-cat-badge">HEAVYWEIGHT</span>
-              </div>
-              <div className="kala-cat-info">
-                <h3 className="kala-cat-title">HOODIES</h3>
-                <p className="kala-cat-desc">
-                  Heavyweight 450 GSM French Terry boxy hoodies built for warmth, durability and shape retention.
-                </p>
-                <Link to="/shop" className="kala-cat-link">
-                  <span>Explore Hoodies</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </article>
-
-            {/* 5. JERSEYS */}
-            <article className="kala-cat-card">
-              <div className="kala-cat-img-box">
-                <img
-                  src="/business-branding/card-03-team-apparel.jpg"
-                  onError={(e) => {
-                    const target = e.currentTarget
-                    target.onerror = null
-                    target.src = getProductImage('gaming 01.png')
-                  }}
-                  alt="KALA Team Jerseys"
-                  className="kala-cat-img"
-                  loading="lazy"
-                />
-                <span className="kala-cat-badge">ATHLETIC</span>
-              </div>
-              <div className="kala-cat-info">
-                <h3 className="kala-cat-title">JERSEYS</h3>
-                <p className="kala-cat-desc">
-                  Team jerseys, esports kits, squad athletic kits and custom tournament uniforms.
-                </p>
-                <Link to="/shop" className="kala-cat-link">
-                  <span>Explore Jerseys</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </article>
-
-            {/* 6. CUSTOM APPAREL */}
-            <article className="kala-cat-card kala-cat-card-featured">
-              <div className="kala-cat-img-box">
-                <img
-                  src="/custom-apparel/kala-editorial-tee.jpg"
-                  onError={(e) => {
-                    const target = e.currentTarget
-                    target.onerror = null
-                    target.src = getProductImage('Streetwear 06.png')
-                  }}
-                  alt="KALA Custom Apparel"
-                  className="kala-cat-img"
-                  loading="lazy"
-                />
-                <span className="kala-cat-badge highlight-orange">CUSTOM</span>
-              </div>
-              <div className="kala-cat-info">
-                <h3 className="kala-cat-title">CUSTOM APPAREL</h3>
-                <p className="kala-cat-desc">
-                  Made around your idea. From custom back text to personalized graphics and bespoke batches.
-                </p>
-                <Link to="/custom-apparel" className="kala-cat-link">
-                  <span>Design Yours</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </article>
-
-            {/* 7. BRAND MERCHANDISE */}
-            <article className="kala-cat-card">
-              <div className="kala-cat-img-box">
-                <img
-                  src="/business-branding/card-04-brand-merchandise.jpg"
-                  onError={(e) => {
-                    const target = e.currentTarget
-                    target.onerror = null
-                    target.src = getProductImage('hero-3-wear-create-express.png')
-                  }}
-                  alt="KALA Brand Merchandise"
-                  className="kala-cat-img"
-                  loading="lazy"
-                />
-                <span className="kala-cat-badge">BUSINESS</span>
-              </div>
-              <div className="kala-cat-info">
-                <h3 className="kala-cat-title">BRAND MERCHANDISE</h3>
-                <p className="kala-cat-desc">
-                  Turn your brand into something people can wear. Carry bags, packaging, cards and staff wear.
-                </p>
-                <Link to="/business-branding" className="kala-cat-link">
-                  <span>Brand Merch</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </article>
-
-            {/* 8. EVENT APPAREL */}
-            <article className="kala-cat-card">
-              <div className="kala-cat-img-box">
-                <img
-                  src="/business-branding/card-02-event-merch.jpg"
-                  onError={(e) => {
-                    const target = e.currentTarget
-                    target.onerror = null
-                    target.src = getProductImage('Streetwear 03.png')
-                  }}
-                  alt="KALA Event Apparel"
-                  className="kala-cat-img"
-                  loading="lazy"
-                />
-                <span className="kala-cat-badge">COMMUNITY</span>
-              </div>
-              <div className="kala-cat-info">
-                <h3 className="kala-cat-title">EVENT APPAREL</h3>
-                <p className="kala-cat-desc">
-                  Built for teams, groups and communities. Fest tees, batch hoodies and crew uniforms.
-                </p>
-                <Link to="/business-branding" className="kala-cat-link">
-                  <span>Event Apparel</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          7. KALA FOR BUSINESS
-          ==================================================================== */}
-      <section className="kala-business-section" aria-labelledby="business-heading">
-        <div className="kala-container">
-          <div className="kala-business-card-wrap">
-            <div className="kala-business-content">
-              <span className="kala-business-eyebrow">ENTERPRISE &amp; BRANDING</span>
-              <h2 id="business-heading" className="kala-business-title">
-                YOUR BRAND. YOUR IDENTITY. YOUR APPAREL.
-              </h2>
-              <p className="kala-business-copy">
-                From employee merchandise to event apparel and branded products, KALA helps businesses turn their identity into something tangible.
-              </p>
-              <div className="kala-business-features">
-                <div className="kala-biz-feature-item">
-                  <span className="kala-biz-check" aria-hidden="true">✓</span>
-                  <span className="kala-biz-feature-text">Corporate bulk discounts with tiered pricing calculator</span>
-                </div>
-                <div className="kala-biz-feature-item">
-                  <span className="kala-biz-check" aria-hidden="true">✓</span>
-                  <span className="kala-biz-feature-text">Custom packaging, tags, stickers &amp; carry bags</span>
-                </div>
-                <div className="kala-biz-feature-item">
-                  <span className="kala-biz-check" aria-hidden="true">✓</span>
-                  <span className="kala-biz-feature-text">Dedicated B2B coordination &amp; pre-dispatch quality checks</span>
-                </div>
-              </div>
-              <div className="kala-business-cta-box">
-                <Link to="/business-branding" className="kala-btn kala-business-btn">
-                  <span>TALK TO KALA</span>
-                  <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </div>
-
-            <div className="kala-business-visual" aria-hidden="true">
-              <img
-                src="/business-branding/kala-corporate-tee.jpg"
-                onError={(e) => {
-                  const target = e.currentTarget
-                  target.onerror = null
-                  target.src = getProductImage('hero-1-more-than-a-tshirt.png')
-                }}
-                alt="KALA Corporate Apparel & Merch"
-                className="kala-business-img"
-              />
-              <div className="kala-business-tag">
-                <span>BUSINESS SOLUTION</span>
-                <strong>PAN-INDIA FULFILLMENT</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ====================================================================
-          8. MEET THE FOUNDERS SECTION
+          5. THE PEOPLE BEHIND KALA (Founders Section)
           ==================================================================== */}
       <section className="kala-founders-section" aria-labelledby="founders-heading">
-        <div className="kala-container">
-          <div className="kala-section-header">
-            <span className="kala-about-eyebrow">OUR LEADERSHIP</span>
-            <h2 id="founders-heading" className="kala-section-title">
-              MEET THE FOUNDERS
+        <div className="kala-about-container">
+          <div className="kala-about-section-header">
+            <span className="kala-about-kicker">LEADERSHIP</span>
+            <h2 id="founders-heading" className="kala-about-section-h2">
+              THE PEOPLE BEHIND KALA
             </h2>
-            <p className="kala-section-sub">
-              Built by people who believe clothing should carry identity, creativity and culture.
+            <p className="kala-about-section-sub">
+              The team building KALA's technology, product and operations.
             </p>
           </div>
 
           <div className="kala-founders-grid">
-            {/* Founder Card 1: Sudhanshu Kumar */}
+            {/* Founder 1: Niraj Dhore */}
             <article className="kala-founder-card">
-              <div className="kala-founder-photo-wrap">
+              <div className="founder-photo-wrapper">
+                <img
+                  src="/founders/niraj-dhore.jpg"
+                  onError={(e) => {
+                    const target = e.currentTarget
+                    target.onerror = null
+                    target.src = '/founders/niraj-dhore.png'
+                  }}
+                  alt="Niraj Dhore — Founder of KALA"
+                  className="founder-photo"
+                  loading="lazy"
+                />
+                <span className="founder-role-badge founder">FOUNDER</span>
+              </div>
+              <div className="founder-info">
+                <h3 className="founder-name">Niraj Dhore</h3>
+                <p className="founder-title">Founder</p>
+                <p className="founder-dept">Technology, Product &amp; Growth</p>
+                <div className="founder-divider" aria-hidden="true" />
+                <p className="founder-bio">
+                  Niraj leads technology, product architecture and digital growth at KALA. He designs and builds the digital platform, product customization workflows, and customer experience, combining engineering with brand growth to make custom apparel effortless.
+                </p>
+              </div>
+            </article>
+
+            {/* Founder 2: Sudhanshu */}
+            <article className="kala-founder-card">
+              <div className="founder-photo-wrapper">
                 <img
                   src="/founders/sudhanshu-kumar.png"
-                  alt="Sudhanshu Kumar — Founder of KALA"
-                  className="kala-founder-photo"
+                  alt="Sudhanshu — Co-Founder of KALA"
+                  className="founder-photo"
                   loading="lazy"
                 />
-                <span className="kala-founder-pill-tag">FOUNDER</span>
+                <span className="founder-role-badge cofounder">CO-FOUNDER</span>
               </div>
-              <div className="kala-founder-content">
-                <h3 className="kala-founder-name">Sudhanshu Kumar</h3>
-                <p className="kala-founder-role">Founder, KALA</p>
-                <div className="kala-founder-disciplines">
-                  <span>Vision</span>
-                  <span className="kala-founder-dot" aria-hidden="true">•</span>
-                  <span>Brand Strategy</span>
-                  <span className="kala-founder-dot" aria-hidden="true">•</span>
-                  <span>Creative Direction</span>
-                </div>
-                <div className="kala-founder-sep" aria-hidden="true" />
-                <p className="kala-founder-bio">
-                  Building KALA with a vision to create a modern apparel and creative brand focused on identity, quality and community.
-                </p>
-              </div>
-            </article>
-
-            {/* Founder Card 2: Niraj Dhore */}
-            <article className="kala-founder-card">
-              <div className="kala-founder-photo-wrap">
-                <img
-                  src="/founders/niraj-dhore.png"
-                  alt="Niraj Dhore — Co-Founder of KALA"
-                  className="kala-founder-photo"
-                  loading="lazy"
-                />
-                <span className="kala-founder-pill-tag highlight-orange">CO-FOUNDER</span>
-              </div>
-              <div className="kala-founder-content">
-                <h3 className="kala-founder-name">Niraj Dhore</h3>
-                <p className="kala-founder-role">Co-Founder, KALA</p>
-                <div className="kala-founder-disciplines">
-                  <span>Technology</span>
-                  <span className="kala-founder-dot" aria-hidden="true">•</span>
-                  <span>Business</span>
-                  <span className="kala-founder-dot" aria-hidden="true">•</span>
-                  <span>Brand Development</span>
-                </div>
-                <div className="kala-founder-sep" aria-hidden="true" />
-                <p className="kala-founder-bio">
-                  Niraj Dhore is the Co-Founder of KALA, working across technology, business and brand development. He is a B.Tech Information Technology student at Guru Ghasidas Vishwavidyalaya and contributes to building KALA's digital platform, technology, products and overall growth.
+              <div className="founder-info">
+                <h3 className="founder-name">Sudhanshu</h3>
+                <p className="founder-title">Co-Founder</p>
+                <p className="founder-dept">Business, Operations &amp; Growth</p>
+                <div className="founder-divider" aria-hidden="true" />
+                <p className="founder-bio">
+                  Sudhanshu drives business development, vendor operations and fulfillment at KALA. He oversees production quality, supply chain partnerships, and client relationships, ensuring every order meets KALA's craftsmanship standards.
                 </p>
               </div>
             </article>
@@ -695,50 +271,45 @@ export const About: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          9. CUSTOM APPAREL CTA — HAVE AN IDEA?
+          6. KALA'S VISION
           ==================================================================== */}
-      <section className="kala-custom-cta-section" aria-labelledby="custom-cta-heading">
-        <div className="kala-container">
-          <div className="kala-custom-cta-box">
-            <span className="kala-custom-cta-kicker">START CREATING</span>
-            <h2 id="custom-cta-heading" className="kala-custom-cta-h2">
-              HAVE AN IDEA?
+      <section className="kala-about-vision-section" aria-labelledby="vision-heading">
+        <div className="kala-about-container">
+          <div className="kala-vision-card">
+            <span className="vision-kicker">OUR VISION</span>
+            <blockquote id="vision-heading" className="vision-quote">
+              &ldquo;To make custom apparel more personal, accessible and effortless — whether you're creating one piece for yourself or apparel for an entire community.&rdquo;
+            </blockquote>
+            <div className="vision-brand-signature">
+              <span className="sig-name">KALA</span>
+              <span className="sig-sub">EST. 2026</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ====================================================================
+          7. FINAL CTA
+          ==================================================================== */}
+      <section className="kala-about-final-cta-section" aria-labelledby="about-cta-title">
+        <div className="kala-about-container">
+          <div className="kala-about-cta-card">
+            <span className="cta-kicker">START YOUR JOURNEY</span>
+            <h2 id="about-cta-title" className="cta-title">
+              HAVE AN IDEA WORTH WEARING?
             </h2>
-            <p className="kala-custom-cta-subhead">
-              LET'S TURN IT INTO APPAREL.
+            <p className="cta-subtitle">
+              Create something personal with KALA.
             </p>
-            <p className="kala-custom-cta-text">
-              Tell us what you're imagining and let's create something around it.
-            </p>
-            <div className="kala-custom-cta-buttons">
-              <Link to="/custom-apparel" className="kala-btn kala-custom-btn-orange">
-                <span>CREATE YOURS</span>
-                <span aria-hidden="true">→</span>
-              </Link>
-              <Link to="/shop" className="kala-btn kala-custom-btn-outline">
-                <span>EXPLORE KALA</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ====================================================================
-          10. FINAL BRAND STATEMENT (Minimal, Premium, Whitespace)
-          ==================================================================== */}
-      <section className="kala-final-statement-section" aria-label="Brand Signature">
-        <div className="kala-container">
-          <div className="kala-final-statement-box">
-            <div className="kala-final-lines" aria-label="People. Places. Stories. You Wear.">
-              <span className="kala-final-line">PEOPLE.</span>
-              <span className="kala-final-line">PLACES.</span>
-              <span className="kala-final-line">STORIES.</span>
-              <span className="kala-final-line kala-final-line-accent">YOU WEAR.</span>
-            </div>
-
-            <div className="kala-final-brand-block">
-              <span className="kala-final-brand-name">KALA</span>
-              <span className="kala-final-brand-underline" aria-hidden="true" />
+            <div className="cta-actions">
+              <Link to="/custom-apparel" className="kala-about-btn primary">
+                <span>Start Creating</span>
+                <span aria-hidden="true">&rarr;</span>
+              </Link>
+              <Link to="/shop" className="kala-about-btn secondary light">
+                <span>Explore KALA</span>
+              </Link>
             </div>
           </div>
         </div>

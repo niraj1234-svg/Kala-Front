@@ -19,18 +19,18 @@ export const PlacementSelector: React.FC<PlacementSelectorProps> = ({
 }) => {
   return (
     <div className="kala-custom-selector-group">
-      <div className="flex items-center justify-between mb-2">
-        <label className="kala-custom-step-label mb-0">
+      <div className="kala-placement-header-row">
+        <label className="kala-custom-step-label">
           <span className="kala-custom-step-badge">3</span>
           <span>Choose Placement</span>
         </label>
-        <span className="text-[11px] font-mono font-semibold text-[#D94700] uppercase">
+        <span className="kala-placement-active-badge">
           {currentPosition} Print
         </span>
       </div>
 
       <div
-        className="grid grid-cols-4 gap-1.5 sm:gap-2 p-1 bg-[#F3F4F6] rounded-xl border border-[#E5E7EB]"
+        className="kala-placement-choice-grid"
         role="tablist"
         aria-label="Apparel print placements"
       >
@@ -42,11 +42,7 @@ export const PlacementSelector: React.FC<PlacementSelectorProps> = ({
               type="button"
               role="tab"
               aria-selected={isActive}
-              className={`py-2 px-2 rounded-lg text-xs font-bold transition-all text-center tracking-wider ${
-                isActive
-                  ? 'bg-[#111111] text-white shadow-sm'
-                  : 'bg-transparent text-[#4B5563] hover:text-[#111111] hover:bg-white/60'
-              }`}
+              className={`kala-placement-tab-btn ${isActive ? 'active' : ''}`}
               onClick={() => onSelectPosition(opt.id)}
             >
               {opt.label}

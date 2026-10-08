@@ -91,7 +91,7 @@ export const ApparelMockup: React.FC<ApparelMockupProps> = ({
     >
       <svg
         viewBox="0 0 500 500"
-        className="w-full h-full block"
+        className="kala-mockup-svg w-full h-full block"
         preserveAspectRatio="xMidYMid meet"
         xmlns="http://www.w3.org/2000/svg"
       >

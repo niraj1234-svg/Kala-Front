@@ -504,7 +504,7 @@ export const AdminOrderDetail: React.FC = () => {
                                       style={{
                                         left: `${cust.frontPosition?.x ?? 50}%`,
                                         top: `${cust.frontPosition?.y ?? 52}%`,
-                                        transform: 'translate(-50%, -50%)',
+                                        transform: `translate(-50%, -50%) rotate(${cust.frontRotation ?? 0}deg)`,
                                       }}
                                     >
                                       <span
@@ -524,6 +524,9 @@ export const AdminOrderDetail: React.FC = () => {
                                     <>
                                       <div>Position: <strong className="text-white">X: {cust.frontPosition?.x ?? 50}% | Y: {cust.frontPosition?.y ?? 52}%</strong></div>
                                       <div>Text Size: <strong className="text-[#FF7A33]">{cust.frontFontSize || 32}px</strong></div>
+                                      {cust.frontRotation !== undefined && cust.frontRotation !== 0 && (
+                                        <div>Rotation: <strong className="text-[#FF7A33]">{cust.frontRotation}°</strong></div>
+                                      )}
                                     </>
                                   )}
                                 </div>
@@ -549,7 +552,7 @@ export const AdminOrderDetail: React.FC = () => {
                                       style={{
                                         left: `${cust.backPosition?.x ?? 50}%`,
                                         top: `${cust.backPosition?.y ?? 44}%`,
-                                        transform: 'translate(-50%, -50%)',
+                                        transform: `translate(-50%, -50%) rotate(${cust.backRotation ?? 0}deg)`,
                                       }}
                                     >
                                       <span
@@ -569,6 +572,9 @@ export const AdminOrderDetail: React.FC = () => {
                                     <>
                                       <div>Position: <strong className="text-white">X: {cust.backPosition?.x ?? 50}% | Y: {cust.backPosition?.y ?? 44}%</strong></div>
                                       <div>Text Size: <strong className="text-[#FF7A33]">{cust.backFontSize || 32}px</strong></div>
+                                      {cust.backRotation !== undefined && cust.backRotation !== 0 && (
+                                        <div>Rotation: <strong className="text-[#FF7A33]">{cust.backRotation}°</strong></div>
+                                      )}
                                     </>
                                   )}
                                 </div>

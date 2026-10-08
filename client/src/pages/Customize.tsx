@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import ApparelPreview from '../components/CustomApparel/ApparelPreview'
 import ApparelSelector, { APPAREL_OPTIONS } from '../components/CustomApparel/ApparelSelector'
@@ -156,48 +156,36 @@ export const Customize: React.FC = () => {
   }
 
   return (
-    <main className="kala-customize-page min-h-[85vh] bg-[#FAF9F6] py-6 sm:py-10 text-[#111111]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <main className="kala-customize-page">
+      <div className="kala-customize-container">
         {/* Navigation Breadcrumb & Page Title */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-[#E5E7EB]">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono uppercase text-[#6B7280] mb-1">
-              <Link to="/" className="hover:text-[#111111] transition-colors">
-                Home
-              </Link>
-              <span>/</span>
-              <Link to="/custom-apparel" className="hover:text-[#111111] transition-colors">
-                Custom Apparel
-              </Link>
-              <span>/</span>
-              <span className="text-[#D94700] font-bold">Studio Customizer</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#111111] font-mono">
+        <div className="kala-customize-header">
+          <div className="kala-customize-header-left">
+
+            <h1 className="kala-customize-title">
               DESIGN YOUR APPAREL
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-[#6B7280]">
-              Starting from <strong className="text-[#D94700] text-sm">₹{unitPrice}</strong>
-            </span>
+          <div className="kala-customize-header-right">
+            <div className="kala-customize-price-badge">
+              <span>Starting from</span>
+              <strong>₹{unitPrice}</strong>
+            </div>
           </div>
         </div>
 
         {/* Error Notification Banner */}
         {errorMessage && (
-          <div
-            className="mb-6 p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs font-semibold text-red-600 flex items-center justify-between gap-2 animate-fadeIn"
-            role="alert"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-red-500 font-bold">!</span>
+          <div className="kala-customize-error-banner" role="alert">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <strong>!</strong>
               <span>{errorMessage}</span>
             </div>
             <button
               type="button"
-              className="text-red-600 hover:text-red-800 font-bold"
               onClick={() => setErrorMessage(null)}
+              aria-label="Dismiss error"
             >
               ✕
             </button>
@@ -205,11 +193,11 @@ export const Customize: React.FC = () => {
         )}
 
         {/* Two-Column Responsive Workspace */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="kala-customize-workspace">
           {/* ====================================================================
-              LEFT COLUMN: Live Apparel Preview Stage (Desktop: 7 cols)
+              LEFT COLUMN: Live Apparel Preview Stage (Desktop: Sticky Stage)
               ==================================================================== */}
-          <div className="lg:col-span-7 flex flex-col gap-4">
+          <div className="kala-customize-stage-col">
             <ApparelPreview
               apparelType={apparelType}
               view={currentPosition}
@@ -220,20 +208,16 @@ export const Customize: React.FC = () => {
             />
 
             {/* Quick Placement Bar directly beneath Preview */}
-            <div className="bg-white p-3 rounded-xl border border-[#E5E7EB] shadow-sm flex flex-wrap items-center justify-between gap-2">
-              <div className="text-xs font-bold text-[#111111] uppercase tracking-wide">
+            <div className="kala-customize-angle-bar">
+              <div className="kala-customize-angle-label">
                 View Angle:
               </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="kala-customize-angle-buttons">
                 {(['front', 'back', 'left', 'right'] as ViewPosition[]).map((pos) => (
                   <button
                     key={pos}
                     type="button"
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all ${
-                      currentPosition === pos
-                        ? 'bg-[#111111] text-white shadow-sm'
-                        : 'bg-[#F3F4F6] text-[#4B5563] hover:text-[#111111] hover:bg-[#E5E7EB]'
-                    }`}
+                    className={`kala-customize-angle-btn ${currentPosition === pos ? 'active' : ''}`}
                     onClick={() => setCurrentPosition(pos)}
                   >
                     {pos}
@@ -244,9 +228,9 @@ export const Customize: React.FC = () => {
           </div>
 
           {/* ====================================================================
-              RIGHT COLUMN: Simple Customization Controls (Desktop: 5 cols)
+              RIGHT COLUMN: Simple Customization Controls
               ==================================================================== */}
-          <div className="lg:col-span-5 flex flex-col gap-5">
+          <div className="kala-customize-controls-col">
             {/* 1. Apparel Selector */}
             <ApparelSelector
               selectedApparel={apparelType}
@@ -293,20 +277,20 @@ export const Customize: React.FC = () => {
             )}
 
             {/* 6. Main Action Shelf (Continue Button) */}
-            <div className="p-4 bg-white rounded-2xl border border-[#E5E7EB] shadow-sm space-y-3">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-[#6B7280]">Item Price</span>
-                <span className="font-bold text-[#111111]">₹{unitPrice} / PC</span>
+            <div className="kala-customize-action-card">
+              <div className="kala-customize-action-price-row">
+                <span className="kala-customize-action-price-label">Item Price</span>
+                <span className="kala-customize-action-price-value">₹{unitPrice} / PC</span>
               </div>
 
               <button
                 type="button"
-                className="w-full py-3.5 px-6 rounded-xl bg-[#D94700] hover:bg-[#BF3E00] text-white font-bold text-sm tracking-wider uppercase transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50"
+                className="kala-customize-cta-btn"
                 onClick={handleContinueClick}
               >
                 <span>CONTINUE</span>
                 <svg
-                  className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                  style={{ width: '1rem', height: '1rem' }}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -315,7 +299,7 @@ export const Customize: React.FC = () => {
                 </svg>
               </button>
 
-              <div className="text-center text-[11px] text-[#6B7280]">
+              <div className="kala-customize-action-trust">
                 Clean plain mockups • Free standard packaging • Fast Indian shipping
               </div>
             </div>
@@ -328,79 +312,86 @@ export const Customize: React.FC = () => {
           ==================================================================== */}
       {showSummaryModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
+          className="kala-customize-modal-overlay"
           role="dialog"
           aria-modal="true"
           aria-labelledby="summary-title"
         >
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#E5E7EB] relative animate-scaleUp">
+          <div className="kala-customize-modal-card">
             {/* Close Button */}
             <button
               type="button"
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#4B5563] flex items-center justify-center font-bold transition-colors"
+              className="kala-customize-modal-close"
               onClick={() => setShowSummaryModal(false)}
               aria-label="Close summary modal"
             >
               ✕
             </button>
 
-            <h2 id="summary-title" className="text-lg font-bold text-[#111111] uppercase tracking-wide mb-1 font-mono">
+            <h2 id="summary-title" style={{ fontSize: '1.15rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.25rem', fontFamily: 'var(--kala-font-mono, monospace)', color: 'var(--kala-black, #111111)' }}>
               Design Summary
             </h2>
-            <p className="text-xs text-[#6B7280] mb-4">
+            <p style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '1rem' }}>
               Review your customized apparel specifications before proceeding to order.
             </p>
 
             {/* Design Spec Rows */}
-            <div className="bg-[#FAF9F6] border border-[#E5E7EB] rounded-xl p-4 space-y-2.5 mb-4 text-xs">
-              <div className="flex justify-between items-center pb-2 border-b border-[#E5E7EB]">
-                <span className="text-[#6B7280]">Apparel Type:</span>
-                <strong className="text-[#111111] uppercase">{selectedApparelOption.name}</strong>
+            <div style={{ backgroundColor: '#FAF9F6', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '1rem', marginBottom: '1rem', fontSize: '0.78rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: '1px solid #E5E7EB' }}>
+                <span style={{ color: '#6B7280' }}>Apparel Type:</span>
+                <strong style={{ color: '#111111', textTransform: 'uppercase' }}>{selectedApparelOption.name}</strong>
               </div>
 
-              <div className="flex justify-between items-center pb-2 border-b border-[#E5E7EB]">
-                <span className="text-[#6B7280]">Color:</span>
-                <div className="flex items-center gap-1.5">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: '1px solid #E5E7EB' }}>
+                <span style={{ color: '#6B7280' }}>Color:</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <span
-                    className="w-3.5 h-3.5 rounded-full border border-[#CBD5E1]"
-                    style={{ backgroundColor: color }}
+                    style={{ width: '14px', height: '14px', borderRadius: '9999px', border: '1px solid #CBD5E1', backgroundColor: color, display: 'inline-block' }}
                   />
-                  <strong className="text-[#111111]">{colorName}</strong>
+                  <strong style={{ color: '#111111' }}>{colorName}</strong>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center pb-2 border-b border-[#E5E7EB]">
-                <span className="text-[#6B7280]">Print Position:</span>
-                <strong className="text-[#D94700] uppercase font-mono">{currentPosition} Print</strong>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: '1px solid #E5E7EB' }}>
+                <span style={{ color: '#6B7280' }}>Print Position:</span>
+                <strong style={{ color: '#D94700', textTransform: 'uppercase', fontFamily: 'var(--kala-font-mono, monospace)' }}>{currentPosition} Print</strong>
               </div>
 
               {artwork && (
-                <div className="flex justify-between items-center pb-2 border-b border-[#E5E7EB]">
-                  <span className="text-[#6B7280]">Artwork File:</span>
-                  <div className="flex items-center gap-2 max-w-[200px] truncate">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: '1px solid #E5E7EB' }}>
+                  <span style={{ color: '#6B7280' }}>Artwork File:</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', maxWidth: '200px' }}>
                     <img
                       src={artwork.dataUrl}
                       alt="Artwork thumbnail"
-                      className="w-5 h-5 rounded border border-[#CBD5E1] object-contain shrink-0"
+                      style={{ width: '22px', height: '22px', borderRadius: '4px', border: '1px solid #CBD5E1', objectFit: 'contain' }}
                     />
-                    <strong className="text-[#111111] truncate">{artwork.name}</strong>
+                    <strong style={{ color: '#111111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{artwork.name}</strong>
                   </div>
                 </div>
               )}
 
               {/* Size Selector in Summary */}
-              <div className="pt-1">
-                <span className="text-[#6B7280] block mb-1.5">Select Size:</span>
-                <div className="flex items-center gap-1.5">
+              <div style={{ paddingTop: '0.25rem' }}>
+                <span style={{ color: '#6B7280', display: 'block', marginBottom: '0.4rem' }}>Select Size:</span>
+                <div style={{ display: 'flex', gap: '0.35rem' }}>
                   {SIZES.map((sz) => (
                     <button
                       key={sz}
                       type="button"
-                      className={`flex-1 py-1.5 rounded-lg text-xs font-bold font-mono transition-all ${
-                        selectedSize === sz
-                          ? 'bg-[#111111] text-white'
-                          : 'bg-white border border-[#D1D5DB] text-[#4B5563] hover:bg-[#F3F4F6]'
-                      }`}
+                      style={{
+                        flex: 1,
+                        padding: '0.4rem 0',
+                        borderRadius: '8px',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        fontFamily: 'var(--kala-font-mono, monospace)',
+                        cursor: 'pointer',
+                        border: selectedSize === sz ? '1px solid #111111' : '1px solid #D1D5DB',
+                        background: selectedSize === sz ? '#111111' : '#FFFFFF',
+                        color: selectedSize === sz ? '#FFFFFF' : '#4B5563',
+                        transition: 'all 0.15s ease',
+                      }}
                       onClick={() => setSelectedSize(sz)}
                     >
                       {sz}
@@ -410,20 +401,20 @@ export const Customize: React.FC = () => {
               </div>
 
               {/* Quantity Selector in Summary */}
-              <div className="flex justify-between items-center pt-2">
-                <span className="text-[#6B7280]">Quantity:</span>
-                <div className="flex items-center gap-2">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.5rem' }}>
+                <span style={{ color: '#6B7280' }}>Quantity:</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <button
                     type="button"
-                    className="w-6 h-6 rounded border border-[#D1D5DB] bg-white text-xs font-bold hover:bg-[#F3F4F6]"
+                    style={{ width: '28px', height: '28px', borderRadius: '6px', border: '1px solid #D1D5DB', background: '#FFFFFF', cursor: 'pointer', fontWeight: 'bold' }}
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   >
                     −
                   </button>
-                  <span className="font-mono font-bold text-xs px-2">{quantity}</span>
+                  <span style={{ fontFamily: 'var(--kala-font-mono, monospace)', fontWeight: 800, padding: '0 0.5rem' }}>{quantity}</span>
                   <button
                     type="button"
-                    className="w-6 h-6 rounded border border-[#D1D5DB] bg-white text-xs font-bold hover:bg-[#F3F4F6]"
+                    style={{ width: '28px', height: '28px', borderRadius: '6px', border: '1px solid #D1D5DB', background: '#FFFFFF', cursor: 'pointer', fontWeight: 'bold' }}
                     onClick={() => setQuantity((q) => q + 1)}
                   >
                     +
@@ -433,16 +424,29 @@ export const Customize: React.FC = () => {
             </div>
 
             {/* Total Price */}
-            <div className="flex items-center justify-between mb-5 px-1 font-mono">
-              <span className="text-xs text-[#6B7280]">Total Estimation</span>
-              <span className="text-lg font-extrabold text-[#D94700]">₹{subtotal.toLocaleString('en-IN')}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', fontFamily: 'var(--kala-font-mono, monospace)' }}>
+              <span style={{ fontSize: '0.75rem', color: '#6B7280' }}>Total Estimation</span>
+              <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#D94700' }}>₹{subtotal.toLocaleString('en-IN')}</span>
             </div>
 
             {/* Modal Actions */}
-            <div className="flex flex-col sm:flex-row gap-2.5">
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
               <button
                 type="button"
-                className="flex-1 py-3 px-4 rounded-xl border border-[#D1D5DB] bg-white hover:bg-[#F9FAFB] text-[#111111] text-xs font-bold uppercase transition-colors"
+                style={{
+                  flex: 1,
+                  minWidth: '120px',
+                  padding: '0.8rem 1rem',
+                  borderRadius: '10px',
+                  border: '1px solid #D1D5DB',
+                  background: '#FFFFFF',
+                  color: '#111111',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s ease',
+                }}
                 onClick={() => handleConfirmAndProceed('cart')}
                 disabled={isGeneratingPreview}
               >
@@ -451,13 +455,32 @@ export const Customize: React.FC = () => {
 
               <button
                 type="button"
-                className="flex-1 py-3 px-4 rounded-xl bg-[#D94700] hover:bg-[#BF3E00] text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-md flex items-center justify-center gap-2 disabled:opacity-50"
+                style={{
+                  flex: 1,
+                  minWidth: '140px',
+                  padding: '0.8rem 1rem',
+                  borderRadius: '10px',
+                  border: 'none',
+                  background: '#D94700',
+                  color: '#FFFFFF',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                  cursor: isGeneratingPreview ? 'not-allowed' : 'pointer',
+                  boxShadow: '0 2px 8px rgba(217, 71, 0, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  opacity: isGeneratingPreview ? 0.6 : 1,
+                }}
                 onClick={() => handleConfirmAndProceed('checkout')}
                 disabled={isGeneratingPreview}
               >
                 {isGeneratingPreview ? (
                   <>
-                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span style={{ display: 'inline-block', width: '14px', height: '14px', border: '2px solid #FFFFFF', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
                     <span>Preparing Design...</span>
                   </>
                 ) : (

@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { generateWhatsAppInquiryUrl } from '../../services/businessInquiryApi'
-import { type ContactMethodType } from '../../data/businessSlots'
 import { type ApparelId, type SizeQuantities, MIN_CUSTOM_APPAREL_QTY } from './types'
-import MeetingSchedulerModal from '../business/MeetingSchedulerModal'
 import QuoteRequestModal from './QuoteRequestModal'
 
 interface DiscussionOptionsProps {
@@ -37,7 +35,6 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
   apparelPreviewImage,
 }) => {
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
-  const [activeMeetingMethod, setActiveMeetingMethod] = useState<ContactMethodType | null>(null)
   const [isBreakdownOpen, setIsBreakdownOpen] = useState(false)
 
   const isUnderMoq = quantity < MIN_CUSTOM_APPAREL_QTY
@@ -179,65 +176,20 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
       </div>
 
       {/* ====================================================================
-          22. 4 DIRECT CONSULTATION & DISCUSSION OPTIONS
+          22. SUBTLE SECONDARY ASSISTANCE OPTION
           ==================================================================== */}
-      <div className="kala-bulk-contact-section">
-        <div className="kala-bulk-contact-grid">
-          {/* Option 1: WhatsApp */}
-          <button
-            type="button"
-            className="kala-bulk-contact-card whatsapp"
-            onClick={handleWhatsAppClick}
-            aria-label="Chat on WhatsApp"
-          >
-            <span className="kala-bulk-contact-icon" aria-hidden="true">💬</span>
-            <div className="kala-bulk-contact-info">
-              <span className="kala-bulk-contact-label">Chat on WhatsApp</span>
-              <span className="kala-bulk-contact-note">Instant chat &amp; fast reply</span>
-            </div>
-          </button>
-
-          {/* Option 2: Direct Call */}
-          <a
-            href="tel:+919406030116"
-            className="kala-bulk-contact-card call"
-            aria-label="Direct call to +91 94060 30116"
-          >
-            <span className="kala-bulk-contact-icon" aria-hidden="true">📞</span>
-            <div className="kala-bulk-contact-info">
-              <span className="kala-bulk-contact-label">Direct Call</span>
-              <span className="kala-bulk-contact-note">+91 94060 30116</span>
-            </div>
-          </a>
-
-          {/* Option 3: Google Meet */}
-          <button
-            type="button"
-            className="kala-bulk-contact-card meet"
-            onClick={() => setActiveMeetingMethod('Google Meet')}
-            aria-label="Book a Google Meet"
-          >
-            <span className="kala-bulk-contact-icon" aria-hidden="true">📹</span>
-            <div className="kala-bulk-contact-info">
-              <span className="kala-bulk-contact-label">Book a Google Meet</span>
-              <span className="kala-bulk-contact-note">1-on-1 video consultation</span>
-            </div>
-          </button>
-
-          {/* Option 4: Meet Us in Bilaspur (Offline) */}
-          <button
-            type="button"
-            className="kala-bulk-contact-card inperson"
-            onClick={() => setActiveMeetingMethod('In-Person Meeting')}
-            aria-label="Meet Us at Bilaspur Offline"
-          >
-            <span className="kala-bulk-contact-icon" aria-hidden="true">📍</span>
-            <div className="kala-bulk-contact-info">
-              <span className="kala-bulk-contact-label">Meet Us at Bilaspur</span>
-              <span className="kala-bulk-contact-note">Offline meeting at our office</span>
-            </div>
-          </button>
-        </div>
+      <div className="kala-bulk-subtle-help-row">
+        <span className="kala-bulk-subtle-help-text">
+          Need assistance with bulk sizing, fabric samples, or custom artwork?
+        </span>
+        <button
+          type="button"
+          className="kala-bulk-subtle-help-link"
+          onClick={handleWhatsAppClick}
+        >
+          <span>Chat with KALA Team on WhatsApp</span>
+          <span aria-hidden="true">→</span>
+        </button>
       </div>
 
       {/* Quote Request Modal */}
@@ -258,22 +210,6 @@ export const DiscussionOptions: React.FC<DiscussionOptionsProps> = ({
         uploadedApparelFileName={uploadedApparelFileName}
         apparelPreviewImage={apparelPreviewImage}
       />
-
-      {/* Meeting / Call / Consultation Scheduler Modal */}
-      {activeMeetingMethod && (
-        <MeetingSchedulerModal
-          isOpen={true}
-          method={activeMeetingMethod}
-          apparelCategoryName={apparelName}
-          colorName={colorName}
-          customizationName="Custom Bulk Print"
-          approxQuantity={String(quantity)}
-          sizeBreakdown={sizeBreakdownText}
-          estimatedTotal={estimatedTotal}
-          initialRequirement={requirement || ''}
-          onClose={() => setActiveMeetingMethod(null)}
-        />
-      )}
     </div>
   )
 }

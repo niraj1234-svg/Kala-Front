@@ -1,6 +1,7 @@
 export type ApparelId = 'tshirt' | 'hoodie' | 'jersey' | 'polo'
 export type ApparelColor = 'black' | 'white'
 export type ApparelSide = 'front' | 'back'
+export type OrderMode = 'bulk' | 'personal'
 
 export const MIN_CUSTOM_APPAREL_QTY = 25
 
@@ -11,6 +12,7 @@ export interface PoloProductOption {
   name: string
   startingPrice: number
   startingPriceLabel: string
+  personalPrice?: number
   description: string
   specifications: string[]
   gsm: string
@@ -38,6 +40,7 @@ export interface TshirtProductOption {
   name: string
   startingPrice: number
   startingPriceLabel: string
+  personalPrice?: number
   description: string
   specifications: string[]
   gsm: string

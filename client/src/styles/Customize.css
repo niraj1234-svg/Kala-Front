@@ -1,30 +1,419 @@
 /* ==========================================================================
    KALA CUSTOM APPAREL DESIGN STUDIO & PREVIEW STYLES
+   Minimal, Premium, Modern Streetwear Customizer Design System
    ========================================================================== */
 
+/* --------------------------------------------------------------------------
+   1. MAIN PAGE CONTAINER & WRAPPER
+   -------------------------------------------------------------------------- */
 .kala-customize-page {
-  font-family: var(--kala-font-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-family: var(--kala-font-primary, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  min-height: 85vh;
+  background-color: var(--kala-bg-warm, #FAF9F6);
+  padding: 1.5rem 0 3.5rem;
+  color: var(--kala-black, #111111);
+}
+
+.kala-customize-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .kala-customize-container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .kala-customize-container {
+    padding: 0 2rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. HEADER & BREADCRUMBS
+   -------------------------------------------------------------------------- */
+.kala-customize-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--kala-border, #E5E7EB);
+}
+
+.kala-customize-header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-customize-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-family: var(--kala-font-mono, ui-monospace, Menlo, Monaco, Consolas, monospace);
+  text-transform: uppercase;
+  color: #6B7280;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.05em;
+}
+
+.kala-customize-breadcrumb a {
+  color: #6B7280;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.kala-customize-breadcrumb a:hover {
+  color: var(--kala-black, #111111);
+}
+
+.kala-customize-breadcrumb-current {
+  color: var(--kala-orange, #D94700);
+  font-weight: 700;
+}
+
+.kala-customize-title {
+  font-size: clamp(1.4rem, 2.8vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--kala-black, #111111);
+  text-transform: uppercase;
+  font-family: var(--kala-font-mono, ui-monospace, Menlo, Monaco, Consolas, monospace);
+  line-height: 1.2;
+}
+
+.kala-customize-price-badge {
+  font-size: 0.8rem;
+  color: #6B7280;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #FFFFFF;
+  padding: 0.45rem 0.95rem;
+  border-radius: 9999px;
+  border: 1px solid var(--kala-border, #E5E7EB);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.kala-customize-price-badge strong {
+  color: var(--kala-orange, #D94700);
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-family: var(--kala-font-mono, monospace);
+}
+
+/* Error Banner */
+.kala-customize-error-banner {
+  margin-bottom: 1.5rem;
+  padding: 0.85rem 1.15rem;
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #DC2626;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.kala-customize-error-banner button {
+  background: none;
+  border: none;
+  color: #DC2626;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0 0.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. TWO-COLUMN WORKSPACE
+   -------------------------------------------------------------------------- */
+.kala-customize-workspace {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 992px) {
+  .kala-customize-workspace {
+    grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+    gap: clamp(2rem, 3.5vw, 3rem);
+  }
+
+  .kala-customize-stage-col {
+    position: sticky;
+    top: 90px;
+    align-self: start;
+  }
+}
+
+.kala-customize-controls-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   4. LIVE APPAREL PREVIEW STAGE
+   -------------------------------------------------------------------------- */
+.kala-apparel-preview-container {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  background-color: #F8F9FA;
+  border-radius: 16px;
+  border: 1px solid var(--kala-border, #E5E7EB);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02), 0 8px 24px -6px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 1.25rem;
+  user-select: none;
+}
+
+.kala-preview-badge-row {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.kala-preview-view-pill {
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-family: var(--kala-font-mono, monospace);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--kala-black, #111111);
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(4px);
+}
+
+.kala-preview-live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.68rem;
+  font-family: var(--kala-font-mono, monospace);
+  color: var(--kala-orange, #D94700);
+  background: #FFF5F0;
+  border: 1px solid #FFE0D1;
+}
+
+.kala-preview-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: var(--kala-orange, #D94700);
+  animation: pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.kala-preview-stage-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 440px;
+  max-height: 440px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-mockup-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.kala-mockup-svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  display: block;
+  object-fit: contain;
+}
+
+.kala-mockup-artwork-overlay {
+  position: absolute;
+  inset: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Draggable Artwork inside Stage */
+.kala-preview-artwork-box {
+  position: absolute;
+  cursor: move;
+  touch-action: none;
+  pointer-events: auto;
+  transition: opacity 0.15s ease;
+}
+
+.kala-preview-artwork-box.dragging {
+  opacity: 0.95;
+}
+
+.kala-preview-artwork-frame {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border: 1px dashed transparent;
+  transition: border-color 0.15s ease;
+}
+
+.kala-preview-artwork-box:hover .kala-preview-artwork-frame {
+  border-color: rgba(217, 71, 0, 0.65);
+}
+
+.kala-preview-artwork-box.dragging .kala-preview-artwork-frame {
+  border-color: var(--kala-orange, #D94700);
+  box-shadow: 0 0 0 2px rgba(217, 71, 0, 0.35);
+}
+
+.kala-preview-artwork-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
+}
+
+.kala-preview-hint {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.68rem;
+  color: #9CA3AF;
+  font-family: var(--kala-font-mono, monospace);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   5. QUICK VIEW ANGLE BAR
+   -------------------------------------------------------------------------- */
+.kala-customize-angle-bar {
+  background: #FFFFFF;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--kala-border, #E5E7EB);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.kala-customize-angle-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--kala-font-mono, monospace);
+}
+
+.kala-customize-angle-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.kala-customize-angle-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-family: var(--kala-font-mono, monospace);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #F3F4F6;
+  color: #4B5563;
+}
+
+.kala-customize-angle-btn:hover {
+  background: #E5E7EB;
+  color: var(--kala-black, #111111);
+}
+
+.kala-customize-angle-btn.active {
+  background: var(--kala-black, #111111);
+  color: #FFFFFF;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   6. STEP LABELS & SELECTOR GROUPS
+   -------------------------------------------------------------------------- */
+.kala-custom-selector-group {
+  margin-bottom: 0.25rem;
 }
 
 .kala-custom-step-label {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  color: #111111;
+  color: var(--kala-black, #111111);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.65rem;
 }
 
 .kala-custom-step-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  background-color: #D94700;
+  width: 1.35rem;
+  height: 1.35rem;
+  background-color: var(--kala-orange, #D94700);
   color: #FFFFFF;
   border-radius: 9999px;
   font-size: 0.7rem;
@@ -32,11 +421,859 @@
   line-height: 1;
 }
 
-.kala-custom-selector-group {
+/* --------------------------------------------------------------------------
+   7. STEP 1: APPAREL SELECTOR
+   -------------------------------------------------------------------------- */
+.kala-apparel-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+}
+
+.kala-custom-apparel-btn {
+  padding: 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--kala-border, #E5E7EB);
+  background: #FFFFFF;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.kala-custom-apparel-btn:hover {
+  border-color: #CBD5E1;
+  background: #F9FAFB;
+}
+
+.kala-custom-apparel-btn.active,
+.kala-custom-apparel-btn[aria-checked="true"] {
+  border-color: var(--kala-orange, #D94700) !important;
+  background-color: #FFF8F5 !important;
+  box-shadow: 0 0 0 1px var(--kala-orange, #D94700);
+}
+
+.kala-apparel-btn-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 0.25rem;
 }
 
-/* Animations */
+.kala-apparel-btn-title {
+  font-size: clamp(0.75rem, 1.2vw, 0.88rem);
+  font-weight: 800;
+  color: var(--kala-black, #111111);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kala-apparel-radio {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  border: 1px solid #CBD5E1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+}
+
+.kala-apparel-radio.checked {
+  border-color: var(--kala-orange, #D94700);
+  background-color: var(--kala-orange, #D94700);
+}
+
+.kala-apparel-radio-inner {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: #FFFFFF;
+}
+
+.kala-apparel-btn-price {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--kala-orange, #D94700);
+  font-family: var(--kala-font-mono, monospace);
+  margin-bottom: 0.2rem;
+}
+
+.kala-apparel-btn-subtitle {
+  font-size: 0.68rem;
+  color: #6B7280;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.kala-apparel-overview-box {
+  margin-top: 0.75rem;
+  padding: 0.85rem 1rem;
+  background-color: #F9FAFB;
+  border-radius: 12px;
+  border: 1px solid var(--kala-border, #E5E7EB);
+}
+
+.kala-apparel-overview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.kala-apparel-overview-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--kala-black, #111111);
+  letter-spacing: -0.01em;
+}
+
+.kala-apparel-overview-price {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--kala-orange, #D94700);
+  font-family: var(--kala-font-mono, monospace);
+}
+
+.kala-apparel-overview-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.kala-apparel-overview-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #374151;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.kala-apparel-overview-bullet {
+  color: var(--kala-orange, #D94700);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+   8. STEP 2: COLOR SELECTOR
+   -------------------------------------------------------------------------- */
+.kala-color-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.kala-color-active-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+  background: #F3F4F6;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-family: var(--kala-font-mono, monospace);
+}
+
+.kala-color-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
+.kala-color-choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid var(--kala-border, #E5E7EB);
+  background: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4B5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.kala-color-choice-btn:hover {
+  background: #F9FAFB;
+  border-color: #CBD5E1;
+  color: var(--kala-black, #111111);
+}
+
+.kala-color-choice-btn.active {
+  border-color: var(--kala-orange, #D94700) !important;
+  background-color: #FFF8F5 !important;
+  color: var(--kala-black, #111111);
+  box-shadow: 0 0 0 1px var(--kala-orange, #D94700);
+}
+
+.kala-color-swatch-circle {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  border: 1px solid #D1D5DB;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.kala-color-swatches-panel {
+  padding: 0.85rem;
+  background: #F9FAFB;
+  border-radius: 12px;
+  border: 1px solid var(--kala-border, #E5E7EB);
+  animation: fadeIn 0.2s ease;
+}
+
+.kala-color-swatches-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.kala-color-swatches-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.kala-color-swatch-item {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  border: 1px solid #CBD5E1;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.kala-color-swatch-item:hover {
+  transform: scale(1.1);
+}
+
+.kala-color-swatch-item.active {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 2px var(--kala-orange, #D94700), 0 0 0 4px #FFFFFF;
+}
+
+.kala-color-custom-btn {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  border: 1px dashed #9CA3AF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #6B7280;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.kala-color-custom-btn:hover {
+  border-color: var(--kala-orange, #D94700);
+  color: var(--kala-orange, #D94700);
+}
+
+.kala-color-custom-input {
+  opacity: 0;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   9. STEP 3: PLACEMENT SELECTOR
+   -------------------------------------------------------------------------- */
+.kala-placement-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.kala-placement-active-badge {
+  font-size: 0.72rem;
+  font-family: var(--kala-font-mono, monospace);
+  font-weight: 700;
+  color: var(--kala-orange, #D94700);
+  text-transform: uppercase;
+}
+
+.kala-placement-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.35rem;
+  padding: 0.25rem;
+  background: #F3F4F6;
+  border-radius: 12px;
+  border: 1px solid var(--kala-border, #E5E7EB);
+}
+
+.kala-placement-tab-btn {
+  padding: 0.5rem 0.25rem;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  font-family: var(--kala-font-mono, monospace);
+  border: none;
+  background: transparent;
+  color: #4B5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.kala-placement-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--kala-black, #111111);
+}
+
+.kala-placement-tab-btn.active {
+  background: var(--kala-black, #111111) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   10. STEP 4: DESIGN UPLOADER & DROPZONE
+   -------------------------------------------------------------------------- */
+.kala-uploader-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.kala-uploader-ready-badge {
+  font-size: 0.72rem;
+  font-family: var(--kala-font-mono, monospace);
+  font-weight: 700;
+  color: #059669;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+}
+
+.kala-dropzone {
+  border: 2px dashed #D1D5DB;
+  border-radius: 14px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  background-color: #FAFAFA;
+  transition: all 0.2s ease;
+}
+
+.kala-dropzone:hover {
+  border-color: var(--kala-orange, #D94700);
+  background-color: #FFFDFB;
+}
+
+.kala-dropzone.dragging {
+  border-color: var(--kala-orange, #D94700);
+  background-color: #FFF8F5;
+}
+
+.kala-dropzone-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0 auto 0.5rem;
+  border-radius: 9999px;
+  background-color: #FFEFEB;
+  color: var(--kala-orange, #D94700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-dropzone-text {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+}
+
+.kala-dropzone-highlight {
+  color: var(--kala-orange, #D94700);
+  text-decoration: underline;
+}
+
+.kala-dropzone-hint {
+  font-size: 0.68rem;
+  color: #6B7280;
+  margin-top: 0.25rem;
+}
+
+/* Uploaded artwork card */
+.kala-artwork-card {
+  padding: 0.85rem 1rem;
+  background: #FFFFFF;
+  border-radius: 12px;
+  border: 1px solid var(--kala-border, #E5E7EB);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.kala-artwork-thumb {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 8px;
+  background: #FAF9F6;
+  border: 1px solid #E5E7EB;
+  padding: 0.25rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.kala-artwork-thumb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.kala-artwork-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.kala-artwork-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kala-artwork-dimensions {
+  font-size: 0.68rem;
+  color: #6B7280;
+  font-family: var(--kala-font-mono, monospace);
+  margin-top: 0.2rem;
+}
+
+.kala-artwork-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.kala-artwork-replace-btn {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.kala-artwork-replace-btn:hover {
+  background: #E5E7EB;
+}
+
+.kala-artwork-remove-btn {
+  padding: 0.35rem 0.55rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #DC2626;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.kala-artwork-remove-btn:hover {
+  background: #FEE2E2;
+}
+
+/* --------------------------------------------------------------------------
+   11. STEP 5: DESIGN CONTROLS
+   -------------------------------------------------------------------------- */
+.kala-design-controls-card {
+  padding: 1rem 1.15rem;
+  background: #FFFFFF;
+  border-radius: 14px;
+  border: 1px solid var(--kala-border, #E5E7EB);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.kala-design-controls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.kala-design-controls-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--kala-black, #111111);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.kala-design-controls-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--kala-orange, #D94700);
+}
+
+.kala-design-reset-btn {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #6B7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.kala-design-reset-btn:hover {
+  color: var(--kala-orange, #D94700);
+}
+
+.kala-control-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.kala-control-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kala-control-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.kala-control-val {
+  font-size: 0.7rem;
+  font-family: var(--kala-font-mono, monospace);
+  color: #6B7280;
+}
+
+.kala-control-inputs-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.kala-control-step-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  border: 1px solid #D1D5DB;
+  background: #F9FAFB;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kala-control-step-btn:hover {
+  background: #FFFFFF;
+  border-color: #9CA3AF;
+}
+
+.kala-control-rotate-btn {
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #D1D5DB;
+  background: #F9FAFB;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.kala-control-rotate-btn:hover {
+  background: #FFFFFF;
+  border-color: #9CA3AF;
+}
+
+.kala-control-range-input {
+  flex: 1;
+  accent-color: var(--kala-orange, #D94700);
+  cursor: pointer;
+}
+
+/* Nudge Pad */
+.kala-control-nudge-section {
+  padding-top: 0.5rem;
+  border-top: 1px solid #F3F4F6;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.kala-control-hint {
+  font-size: 0.65rem;
+  color: #9CA3AF;
+}
+
+.kala-nudge-dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+  max-width: 130px;
+  margin: 0.25rem auto 0;
+}
+
+.kala-nudge-btn {
+  padding: 0.4rem;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+  background: #F9FAFB;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.kala-nudge-btn:hover {
+  background: #FFFFFF;
+  border-color: var(--kala-orange, #D94700);
+}
+
+.kala-nudge-center {
+  border-color: var(--kala-orange, #D94700);
+  background: #FFF8F5;
+  color: var(--kala-orange, #D94700);
+  font-size: 0.65rem;
+}
+
+/* Controls bottom actions */
+.kala-control-actions-row {
+  padding-top: 0.5rem;
+  border-top: 1px solid #F3F4F6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.kala-control-replace-btn {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #D1D5DB;
+  background: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--kala-black, #111111);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.kala-control-replace-btn:hover {
+  background: #F9FAFB;
+}
+
+.kala-control-delete-btn {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #FECACA;
+  background: #FEF2F2;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #DC2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.kala-control-delete-btn:hover {
+  background: #FEE2E2;
+}
+
+/* --------------------------------------------------------------------------
+   12. STEP 6: PRICING SHELF & ACTION CARD
+   -------------------------------------------------------------------------- */
+.kala-customize-action-card {
+  padding: 1.25rem;
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid var(--kala-border, #E5E7EB);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.kala-customize-action-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--kala-font-mono, monospace);
+  font-size: 0.78rem;
+}
+
+.kala-customize-action-price-label {
+  color: #6B7280;
+}
+
+.kala-customize-action-price-value {
+  font-weight: 800;
+  color: var(--kala-black, #111111);
+  font-size: 0.95rem;
+}
+
+.kala-customize-cta-btn {
+  width: 100%;
+  padding: 0.95rem 1.5rem;
+  border-radius: 12px;
+  background-color: var(--kala-orange, #D94700);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: var(--kala-font-mono, monospace);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px rgba(217, 71, 0, 0.28);
+  transition: all 0.2s ease;
+}
+
+.kala-customize-cta-btn:hover {
+  background-color: var(--kala-orange-hover, #BF3E00);
+  box-shadow: 0 6px 18px rgba(217, 71, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+.kala-customize-cta-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.kala-customize-cta-btn:hover svg {
+  transform: translateX(4px);
+}
+
+.kala-customize-action-trust {
+  text-align: center;
+  font-size: 0.7rem;
+  color: #6B7280;
+  line-height: 1.4;
+}
+
+/* --------------------------------------------------------------------------
+   13. SUMMARY CONFIRMATION MODAL
+   -------------------------------------------------------------------------- */
+.kala-customize-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+
+.kala-customize-modal-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 100%;
+  padding: 1.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--kala-border, #E5E7EB);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: scaleUp 0.22s ease;
+}
+
+.kala-customize-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: #F3F4F6;
+  border: none;
+  color: #4B5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.kala-customize-modal-close:hover {
+  background: #E5E7EB;
+  color: var(--kala-black, #111111);
+}
+
+/* --------------------------------------------------------------------------
+   14. ANIMATIONS & RESPONSIVE POLISH
+   -------------------------------------------------------------------------- */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -67,13 +1304,17 @@
   animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Responsive Touch Adjustments */
 @media (max-width: 640px) {
   .kala-apparel-preview-container {
     padding: 0.75rem;
+    max-width: 100%;
   }
 
   .kala-custom-selector-group {
     margin-bottom: 0.5rem;
+  }
+
+  .kala-customize-header {
+    margin-bottom: 1rem;
   }
 }

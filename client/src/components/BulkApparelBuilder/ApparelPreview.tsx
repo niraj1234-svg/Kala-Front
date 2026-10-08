@@ -19,6 +19,7 @@ interface ApparelPreviewProps {
   selectedSide: ApparelSide
   customizationState: ApparelCustomizationState
   uploadedApparel?: UploadedApparelImage | null
+  customPriceLabel?: string
   onSelectApparel: (id: ApparelId) => void
   onSelectColor: (color: ApparelColor) => void
   onSelectSide: (side: ApparelSide) => void
@@ -35,6 +36,7 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
   selectedSide,
   customizationState,
   uploadedApparel = null,
+  customPriceLabel,
   onSelectApparel,
   onSelectColor,
   onSelectSide,
@@ -318,7 +320,9 @@ export const ApparelPreview: React.FC<ApparelPreviewProps> = ({
           <span className="kala-bulk-badge-dark">
             {isUploadedApparelActive ? `YOUR APPAREL (${activeName.toUpperCase()})` : activeName}
           </span>
-          <span className="kala-bulk-badge-price">From ₹{activePrice}/pc</span>
+          <span className="kala-bulk-badge-price">
+            {customPriceLabel || `From ₹${activePrice}/pc`}
+          </span>
         </div>
 
         {/* Left / Right Navigation Arrows */}

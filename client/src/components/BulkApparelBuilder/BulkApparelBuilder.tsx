@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useCart } from '../../context/CartContext'
+import { generateWhatsAppInquiryUrl } from '../../services/businessInquiryApi'
+import { APPAREL_PRICING_CATALOG } from '../../data/customApparelPricing'
 import {
   type ApparelId,
   type ApparelColor,
@@ -10,6 +13,7 @@ import {
   type SizeKey,
   type SizeQuantities,
   type UploadedApparelImage,
+  type OrderMode,
 } from './types'
 import { APPAREL_CONFIGS, POLO_PRODUCTS, TSHIRT_PRODUCTS, DEFAULT_EMBLEM_URL } from './mockupAssets'
 import ApparelPreview from './ApparelPreview'
@@ -22,8 +26,20 @@ import AccountShortcut from './AccountShortcut'
 import DiscussionOptions from './DiscussionOptions'
 import './BulkApparelBuilder.css'
 
-export const BulkApparelBuilder: React.FC = () => {
-  // 1. Core Selection State
+interface BulkApparelBuilderProps {
+  initialMode?: OrderMode
+}
+
+export const BulkApparelBuilder: React.FC<BulkApparelBuilderProps> = ({ initialMode = 'bulk' }) => {
+  const navigate = useNavigate()
+  const { addToCart } = useCart()
+
+  // 1. Order Mode (Bulk vs Personal)
+  const [orderMode, setOrderMode] = useState<OrderMode>(initialMode)
+  const [personalSize, setPersonalSize] = useState<SizeKey>('L')
+  const [personalQuantity, setPersonalQuantity] = useState<number>(1)
+
+  // 2. Core Selection State
   const [selectedApparel, setSelectedApparel] = useState<ApparelId>('tshirt')
   const [selectedPoloModel, setSelectedPoloModel] = useState<PoloModelId>('regular-jmp')
   const [selectedTshirtModel, setSelectedTshirtModel] = useState<TshirtModelId>('promotion-campaign')
@@ -159,6 +175,68 @@ export const BulkApparelBuilder: React.FC = () => {
       : currentConfig.startingPrice
 
   const estimatedTotal = estimatedUnitPrice * totalQuantity
+
+  const personalCatalogItem = APPAREL_PRICING_CATALOG.find((item) => item.id === selectedApparel)
+  const personalUnitPrice =
+    selectedApparel === 'polo'
+      ? (currentPoloConfig.personalPrice || 499)
+      : selectedApparel === 'tshirt'
+      ? (currentTshirtConfig.personalPrice || 399)
+      : (personalCatalogItem?.personalPrice || 399)
+  const personalTotal = personalUnitPrice * personalQuantity
+
+  const activeApparelPreviewImg =
+    uploadedApparel?.dataUrl ||
+    (selectedApparel === 'polo' && currentPoloConfig
+      ? currentPoloConfig.mockups[selectedColor]?.[selectedSide] || currentPoloConfig.mockups.black?.front
+      : selectedApparel === 'tshirt' && currentTshirtConfig
+      ? currentTshirtConfig.mockups[selectedColor]?.[selectedSide] || currentTshirtConfig.mockups.black?.front
+      : currentConfig.mockups[selectedColor]?.[selectedSide] || currentConfig.mockups.black?.front)
+
+  const handlePersonalAddToCart = (goToCheckout = false) => {
+    const productId = `custom-${selectedApparel}`
+    addToCart(
+      {
+        id: productId,
+        name: `Custom ${activeApparelName}`,
+        image: activeApparelPreviewImg || '/custom-apparel/kala-custom-hero-floating.png',
+        price: personalUnitPrice,
+        color: selectedColor === 'black' ? 'Black' : 'White',
+      },
+      personalSize,
+      personalQuantity,
+      {
+        apparelType: activeApparelName,
+        color: selectedColor === 'black' ? 'Black' : 'White',
+        position: selectedSide,
+        artworkUrl: currentSideData.artworkUrl,
+        requirementDetails: requirement,
+        previewUrl: activeApparelPreviewImg,
+        ...(currentSideData.artworkName ? { frontArtwork: { fileName: currentSideData.artworkName } } : {}),
+      }
+    )
+
+    if (goToCheckout) {
+      navigate('/checkout')
+    } else {
+      setNotification({
+        type: 'success',
+        message: `Added ${personalQuantity}x Custom ${activeApparelName} (${personalSize}) to your bag!`,
+      })
+      setTimeout(() => setNotification(null), 4000)
+    }
+  }
+
+  const handlePersonalWhatsAppOrder = () => {
+    const url = generateWhatsAppInquiryUrl({
+      apparelCategory: activeApparelName,
+      color: selectedColor === 'black' ? 'Black' : 'White',
+      customization: `Personal Custom Apparel (${personalSize}, Qty: ${personalQuantity})`,
+      approxQuantity: `${personalQuantity} pcs`,
+      requirement: `Hi KALA team, I would like to order a personal custom ${activeApparelName}.\nSize: ${personalSize}\nColor: ${selectedColor === 'black' ? 'Black' : 'White'}\nQuantity: ${personalQuantity}\nDesign: ${currentSideData.artworkName}\nPrice: ₹${personalTotal.toLocaleString('en-IN')}${requirement ? `\nNotes: ${requirement}` : ''}`,
+    })
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
 
   const handleSelectTshirtModel = (modelId: TshirtModelId) => {
     setSelectedTshirtModel(modelId)
@@ -298,48 +376,8 @@ export const BulkApparelBuilder: React.FC = () => {
   }
 
   return (
-    <section className="kala-bulk-section" id="bulk-apparel-builder" aria-label="Create Custom Apparel for Bulk Orders">
+    <section className="kala-bulk-section" id="bulk-apparel-builder" aria-label="Interactive Custom Apparel Builder">
       <div className="kala-bulk-container">
-        {/* ====================================================================
-            PAGE HEADER (Compact, with Back to Shop and Trust Badges)
-            ==================================================================== */}
-        <header className="kala-dedicated-page-header">
-          <div className="kala-dedicated-top-nav">
-            <Link to="/shop" className="kala-back-to-shop-btn">
-              <span aria-hidden="true">←</span>
-              <span>BACK TO SHOP</span>
-            </Link>
-          </div>
-
-          <div className="kala-dedicated-title-wrap">
-            <h1 className="kala-dedicated-main-title">
-              CREATE CUSTOM APPAREL
-            </h1>
-            <p className="kala-dedicated-subtitle">
-              Custom apparel for companies, colleges, events, gyms and sports teams.
-            </p>
-          </div>
-
-          <div className="kala-dedicated-trust-row" aria-label="KALA Custom Apparel Highlights">
-            <span className="kala-dedicated-trust-item highlight-moq">
-              <span className="dot">●</span>
-              <span>Minimum Order: 25 Pcs</span>
-            </span>
-            <span className="kala-dedicated-trust-item">
-              <span className="dot">●</span>
-              <span>Premium Quality</span>
-            </span>
-            <span className="kala-dedicated-trust-item">
-              <span className="dot">●</span>
-              <span>Bulk Orders</span>
-            </span>
-            <span className="kala-dedicated-trust-item">
-              <span className="dot">●</span>
-              <span>Trusted by Teams</span>
-            </span>
-          </div>
-        </header>
-
         {/* Global Notification Feedback */}
         {notification && (
           <div className={`kala-bulk-toast ${notification.type}`} role="status">
@@ -369,6 +407,11 @@ export const BulkApparelBuilder: React.FC = () => {
               selectedSide={selectedSide}
               customizationState={customizationState}
               uploadedApparel={uploadedApparel}
+              customPriceLabel={
+                orderMode === 'personal'
+                  ? `₹${personalUnitPrice}/pc`
+                  : `From ₹${estimatedUnitPrice}/pc`
+              }
               onSelectApparel={setSelectedApparel}
               onSelectColor={setSelectedColor}
               onSelectSide={setSelectedSide}
@@ -397,8 +440,36 @@ export const BulkApparelBuilder: React.FC = () => {
 
           {/* RIGHT COLUMN: Configuration Controls */}
           <div className="kala-bulk-col-right">
-            {/* Top-Right Account Shortcut */}
+            {/* Top Row: Order Mode Switcher (Bulk vs Personal) + Account Shortcut */}
             <div className="kala-bulk-top-row">
+              <div className="kala-builder-mode-switcher" role="tablist" aria-label="Select Order Mode">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={orderMode === 'bulk'}
+                  className={`kala-builder-mode-btn ${orderMode === 'bulk' ? 'active' : ''}`}
+                  onClick={() => setOrderMode('bulk')}
+                >
+                  <span className="mode-btn-badge bulk">BULK</span>
+                  <div className="mode-btn-content">
+                    <strong className="mode-btn-title">Bulk Order (25+ Pcs)</strong>
+                    <span className="mode-btn-desc">Team rates, tiered discounts &amp; quote</span>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={orderMode === 'personal'}
+                  className={`kala-builder-mode-btn ${orderMode === 'personal' ? 'active' : ''}`}
+                  onClick={() => setOrderMode('personal')}
+                >
+                  <span className="mode-btn-badge personal">PERSONAL</span>
+                  <div className="mode-btn-content">
+                    <strong className="mode-btn-title">Personal Piece (1+ Pcs)</strong>
+                    <span className="mode-btn-desc">No MOQ &amp; ₹0 design setup fee</span>
+                  </div>
+                </button>
+              </div>
               <AccountShortcut />
             </div>
 
@@ -411,6 +482,7 @@ export const BulkApparelBuilder: React.FC = () => {
               onSelectApparel={setSelectedApparel}
               onSelectPoloModel={handleSelectPoloModel}
               onSelectTshirtModel={handleSelectTshirtModel}
+              orderMode={orderMode}
             />
 
             {/* Step 2: Select Color */}
@@ -420,43 +492,166 @@ export const BulkApparelBuilder: React.FC = () => {
               onSelectColor={setSelectedColor}
             />
 
-            {/* Step 5: Approximate Quantity by Size */}
-            <QuantitySelector
-              sizeQuantities={sizeQuantities}
-              onUpdateSizeQuantity={handleUpdateSizeQuantity}
-              onBulkPresetApply={handleBulkPresetApply}
-              totalQuantity={totalQuantity}
-              unitPrice={estimatedUnitPrice}
-              estimatedTotal={estimatedTotal}
-            />
+            {/* Conditional Flow based on Order Mode */}
+            {orderMode === 'bulk' ? (
+              <>
+                {/* Step 3: Approximate Quantity by Size */}
+                <QuantitySelector
+                  sizeQuantities={sizeQuantities}
+                  onUpdateSizeQuantity={handleUpdateSizeQuantity}
+                  onBulkPresetApply={handleBulkPresetApply}
+                  totalQuantity={totalQuantity}
+                  unitPrice={estimatedUnitPrice}
+                  estimatedTotal={estimatedTotal}
+                />
 
-            {/* Discussion Options & Estimated Investment Display */}
-            <DiscussionOptions
-              apparelId={selectedApparel}
-              apparelName={activeApparelName}
-              colorName={selectedColor === 'black' ? 'Black' : 'White'}
-              quantity={totalQuantity}
-              sizeQuantities={sizeQuantities}
-              sizeBreakdownText={sizeBreakdownText}
-              unitPrice={estimatedUnitPrice}
-              estimatedTotal={estimatedTotal}
-              requirement={
-                uploadedApparel
-                  ? `${requirement ? `${requirement}\n` : ''}[Customer Uploaded Apparel: ${uploadedApparel.fileName}]`
-                  : requirement
-              }
-              currentArtworkName={currentSideData.artworkName}
-              currentArtworkUrl={currentSideData.artworkUrl}
-              uploadedApparelFileName={uploadedApparel?.fileName}
-              apparelPreviewImage={
-                uploadedApparel?.dataUrl ||
-                (selectedApparel === 'polo' && currentPoloConfig
-                  ? currentPoloConfig.mockups[selectedColor]?.[selectedSide] || currentPoloConfig.mockups.black?.front
-                  : selectedApparel === 'tshirt' && currentTshirtConfig
-                  ? currentTshirtConfig.mockups[selectedColor]?.[selectedSide] || currentTshirtConfig.mockups.black?.front
-                  : currentConfig.mockups[selectedColor]?.[selectedSide] || currentConfig.mockups.black?.front)
-              }
-            />
+                {/* Discussion Options & Estimated Investment Display */}
+                <DiscussionOptions
+                  apparelId={selectedApparel}
+                  apparelName={activeApparelName}
+                  colorName={selectedColor === 'black' ? 'Black' : 'White'}
+                  quantity={totalQuantity}
+                  sizeQuantities={sizeQuantities}
+                  sizeBreakdownText={sizeBreakdownText}
+                  unitPrice={estimatedUnitPrice}
+                  estimatedTotal={estimatedTotal}
+                  requirement={
+                    uploadedApparel
+                      ? `${requirement ? `${requirement}\n` : ''}[Customer Uploaded Apparel: ${uploadedApparel.fileName}]`
+                      : requirement
+                  }
+                  currentArtworkName={currentSideData.artworkName}
+                  currentArtworkUrl={currentSideData.artworkUrl}
+                  uploadedApparelFileName={uploadedApparel?.fileName}
+                  apparelPreviewImage={activeApparelPreviewImg}
+                />
+              </>
+            ) : (
+              <div className="kala-personal-flow-wrap">
+                {/* Step 3: Select Size & Quantity */}
+                <div className="kala-bulk-step-block">
+                  <div className="kala-bulk-step-heading">
+                    <span className="kala-bulk-step-num">3</span>
+                    <h3 className="kala-bulk-step-title">SELECT SIZE &amp; QUANTITY</h3>
+                  </div>
+
+                  <div className="kala-personal-config-card">
+                    {/* Size Selection */}
+                    <div className="kala-personal-size-section">
+                      <div className="kala-personal-field-label-row">
+                        <span className="field-label">Garment Size:</span>
+                        <span className="field-current-size">Selected: <strong>{personalSize}</strong></span>
+                      </div>
+                      <div className="kala-personal-size-pills" role="radiogroup" aria-label="Select apparel size">
+                        {(['S', 'M', 'L', 'XL', 'XXL'] as SizeKey[]).map((sz) => (
+                          <button
+                            key={sz}
+                            type="button"
+                            role="radio"
+                            aria-checked={personalSize === sz}
+                            className={`kala-personal-size-btn ${personalSize === sz ? 'active' : ''}`}
+                            onClick={() => setPersonalSize(sz)}
+                          >
+                            {sz}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Quantity Counter */}
+                    <div className="kala-personal-qty-section">
+                      <span className="field-label">Quantity:</span>
+                      <div className="kala-personal-stepper">
+                        <button
+                          type="button"
+                          className="kala-stepper-btn minus"
+                          onClick={() => setPersonalQuantity((q) => Math.max(1, q - 1))}
+                          disabled={personalQuantity <= 1}
+                          aria-label="Decrease quantity"
+                        >
+                          −
+                        </button>
+                        <span className="kala-stepper-value">{personalQuantity}</span>
+                        <button
+                          type="button"
+                          className="kala-stepper-btn plus"
+                          onClick={() => setPersonalQuantity((q) => q + 1)}
+                          aria-label="Increase quantity"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Personal Price Estimate Box */}
+                    <div className="kala-personal-price-card">
+                      <div className="kala-personal-price-row">
+                        <div className="kala-personal-price-left">
+                          <span className="kala-personal-price-tag">PERSONAL ORDER ESTIMATE</span>
+                          <div className="kala-personal-total-amount">
+                            ₹{personalTotal.toLocaleString('en-IN')}
+                            <span className="kala-personal-unit-sub">
+                              ({personalQuantity} × ₹{personalUnitPrice})
+                            </span>
+                          </div>
+                        </div>
+                        <div className="kala-personal-price-badges">
+                          <span className="kala-personal-badge-free">✓ ₹0 Design Fee</span>
+                          <span className="kala-personal-badge-moq">1+ Pieces (No Minimum)</span>
+                        </div>
+                      </div>
+                      <p className="kala-personal-fee-note">
+                        Customer provides artwork. Premium DTF print &amp; combed cotton garment included.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Step 4: Personal Order Actions */}
+                <div className="kala-bulk-step-block">
+                  <div className="kala-bulk-step-heading">
+                    <span className="kala-bulk-step-num">4</span>
+                    <h3 className="kala-bulk-step-title">CHECKOUT &amp; ORDER</h3>
+                  </div>
+
+                  <div className="kala-personal-actions-card">
+                    <div className="kala-personal-btn-grid">
+                      <button
+                        type="button"
+                        className="kala-personal-btn cart"
+                        onClick={() => handlePersonalAddToCart(false)}
+                      >
+                        <span className="btn-icon">🛒</span>
+                        <span>ADD TO CART</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="kala-personal-btn checkout"
+                        onClick={() => handlePersonalAddToCart(true)}
+                      >
+                        <span>BUY NOW</span>
+                        <span className="btn-arrow">→</span>
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="kala-personal-btn whatsapp"
+                      onClick={handlePersonalWhatsAppOrder}
+                    >
+                      <span>Order Directly via WhatsApp</span>
+                      <span className="btn-arrow">→</span>
+                    </button>
+
+                    <div className="kala-personal-trust-footnotes">
+                      <span>✓ 100% Combed Ringspun Cotton</span>
+                      <span>✓ High-Definition Washproof Print</span>
+                      <span>✓ All-India Tracked Dispatch</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

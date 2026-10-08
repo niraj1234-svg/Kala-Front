@@ -289,15 +289,17 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
               </svg>
               <span>SEARCH KALA</span>
             </div>
-            <span className="kala-search-quick-hint">Press ESC to exit</span>
             <button
               type="button"
-              className="kala-search-mobile-close-btn"
+              className="kala-search-close-modal-btn"
               onClick={onClose}
               aria-label="Close search"
-              title="Close search"
+              title="Close search (Esc)"
             >
-              ×
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           </div>
 
@@ -334,16 +336,6 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
                   ✕
                 </button>
               )}
-              <button
-                type="button"
-                className="kala-search-esc-btn"
-                onClick={onClose}
-                aria-label="Close search overlay"
-                title="Press ESC to close"
-              >
-                <span>ESC</span>
-                <span aria-hidden="true">✕</span>
-              </button>
             </div>
           </form>
         </div>

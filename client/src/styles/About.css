@@ -1,1484 +1,698 @@
 /* ==========================================================================
-   KALA ABOUT PAGE STYLES — EDITORIAL BRAND STORYTELLING
-   Minimalist Luxury, Authentic Indian Streetwear & Custom Apparel Aesthetic
+   KALA ABOUT PAGE STYLES — REDESIGNED & BRAND-FOCUSED
+   Minimalist Editorial, Authentic Indian Streetwear & Custom Apparel Identity
    ========================================================================== */
 
 .kala-about-page {
   width: 100%;
-  max-width: 100vw;
+  background-color: #FAF9F6;
+  color: #111111;
   overflow-x: hidden;
-  background-color: var(--kala-bg-warm);
-  color: var(--kala-black);
+  box-sizing: border-box;
+}
+
+.kala-about-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+  box-sizing: border-box;
 }
 
 /* --------------------------------------------------------------------------
-   0. SHARED UTILITIES & REUSABLE HEADINGS
-   -------------------------------------------------------------------------- */
-.kala-about-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  color: var(--kala-orange);
-  font-weight: 700;
-  font-size: var(--kala-fs-label);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  margin-bottom: 0.85rem;
-}
-
-.kala-about-eyebrow::before {
-  content: '';
-  display: inline-block;
-  width: 18px;
-  height: 2px;
-  background-color: var(--kala-orange);
-}
-
-.kala-section-header {
-  text-align: center;
-  max-width: 720px;
-  margin: 0 auto clamp(2.5rem, 5vw, 4rem);
-}
-
-.kala-section-title {
-  font-size: var(--kala-fs-h1);
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  color: var(--kala-black);
-  margin-bottom: 0.75rem;
-  line-height: 1.1;
-}
-
-.kala-section-sub {
-  font-size: clamp(0.95rem, 1.1vw, 1.125rem);
-  color: var(--kala-text-secondary);
-  line-height: 1.6;
-}
-
-.kala-accent-word {
-  color: var(--kala-orange);
-}
-
-/* --------------------------------------------------------------------------
-   1. HERO SECTION (Split Editorial Composition)
+   1. HERO SECTION
    -------------------------------------------------------------------------- */
 .kala-about-hero {
   position: relative;
-  padding-top: clamp(3.5rem, 7vw, 6.5rem);
-  padding-bottom: clamp(4rem, 8vw, 7rem);
-  background:
-    radial-gradient(circle at 90% 10%, rgba(217, 71, 0, 0.06) 0%, transparent 60%),
-    linear-gradient(180deg, var(--kala-white) 0%, var(--kala-bg-warm) 100%);
-  border-bottom: 1px solid var(--kala-border);
+  background-color: #FAF9F6;
+  padding: clamp(2.5rem, 4.5vw, 4rem) 0 clamp(2.5rem, 4vw, 4rem) 0;
+  border-bottom: 1px solid #ECEAE4;
 }
 
-.kala-about-hero-grid {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+.kala-about-hero-content {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.kala-about-badge {
+  display: inline-flex;
   align-items: center;
-  gap: clamp(2.5rem, 6vw, 5.5rem);
+  gap: 0.35rem;
+  padding: 0.22rem 0.65rem;
+  background-color: rgba(217, 71, 0, 0.08);
+  border: 1px solid rgba(217, 71, 0, 0.25);
+  border-radius: 9999px;
+  margin-bottom: 0.75rem;
 }
 
-/* Hero Left: Text & CTAs */
-.kala-about-hero-left {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  animation: aboutHeroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+.about-badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #D94700;
+  box-shadow: 0 0 6px rgba(217, 71, 0, 0.6);
+  flex-shrink: 0;
+}
+
+.about-badge-text {
+  font-family: var(--kala-font-primary, inherit);
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #D94700;
+  white-space: nowrap;
 }
 
 .kala-about-hero-title {
-  font-size: clamp(2.75rem, 6vw + 0.5rem, 5.25rem);
+  font-family: var(--kala-font-primary, inherit);
+  font-size: clamp(2.2rem, 5.5vw, 4.25rem);
   font-weight: 900;
-  line-height: 1.02;
-  letter-spacing: -0.04em;
-  color: var(--kala-black);
-  margin-bottom: 1.5rem;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: #111111;
   text-transform: uppercase;
+  margin: 0 0 clamp(0.75rem, 1.5vw, 1.25rem) 0;
+  text-wrap: balance;
 }
 
-.kala-about-hero-desc {
-  font-size: clamp(1.05rem, 1.3vw + 0.3rem, 1.25rem);
-  line-height: 1.65;
-  color: var(--kala-text-secondary);
-  max-width: 580px;
-  margin-bottom: 2.25rem;
+.kala-about-hero-subtitle {
+  font-family: var(--kala-font-primary, inherit);
+  font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+  line-height: 1.55;
+  color: #5F6368;
+  margin: 0 auto clamp(1.5rem, 2.5vw, 2.25rem) auto;
+  max-width: 620px;
+  text-wrap: balance;
 }
 
 .kala-about-hero-actions {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
-}
-
-.kala-about-btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  background-color: var(--kala-black);
-  color: var(--kala-white);
-  border: 1px solid var(--kala-black);
-  padding: 1rem 1.85rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  transition: all var(--kala-transition-normal);
-}
-
-.kala-about-btn-primary:hover {
-  background-color: var(--kala-orange);
-  border-color: var(--kala-orange);
-  color: var(--kala-white);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(217, 71, 0, 0.25);
-}
-
-.kala-about-btn-arrow {
-  transition: transform 0.2s ease;
-}
-
-.kala-about-btn-primary:hover .kala-about-btn-arrow {
-  transform: translateX(4px);
-}
-
-.kala-about-btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  background-color: transparent;
-  color: var(--kala-black);
-  border: 1px solid var(--kala-black);
-  padding: 1rem 1.85rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  transition: all var(--kala-transition-normal);
-}
-
-.kala-about-btn-secondary:hover {
-  background-color: var(--kala-black);
-  color: var(--kala-white);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-}
-
-/* Hero Right: Editorial Visual */
-.kala-about-hero-right {
-  display: flex;
   justify-content: center;
-  position: relative;
-  animation: aboutHeroSlideLeft 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  flex-wrap: wrap;
+  gap: 0.85rem;
 }
 
-.kala-about-editorial-visual {
-  position: relative;
-  width: 100%;
-  max-width: 480px;
-}
-
-.kala-about-visual-backdrop {
-  position: absolute;
-  inset: -12px;
-  background: linear-gradient(135deg, rgba(217, 71, 0, 0.15) 0%, rgba(17, 17, 17, 0.05) 100%);
-  border: 1px solid var(--kala-border);
-  border-radius: 4px;
-  transform: rotate(2deg);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.kala-about-image-card {
-  position: relative;
-  z-index: 2;
-  overflow: hidden;
-  border-radius: 2px;
-  border: 1px solid var(--kala-border);
-  background-color: var(--kala-white);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
-}
-
-.kala-about-hero-img {
-  width: 100%;
-  height: 520px;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.kala-about-editorial-visual:hover .kala-about-hero-img {
-  transform: scale(1.03);
-}
-
-.kala-about-image-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 60%, rgba(17, 17, 17, 0.45) 100%);
-  pointer-events: none;
-}
-
-/* Floating Badges */
-.kala-floating-pill {
-  position: absolute;
-  z-index: 3;
+.kala-about-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  background-color: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(229, 226, 221, 0.85);
-  padding: 0.55rem 1rem;
-  border-radius: 9999px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  min-height: 48px;
+  padding: 0.8rem 1.65rem;
+  border-radius: 10px;
+  font-family: var(--kala-font-primary, inherit);
+  font-size: 0.88rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--kala-black);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
 }
 
-.kala-floating-est {
-  top: 1.5rem;
-  right: -1rem;
-  animation: aboutPillPop 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+.kala-about-btn.primary {
+  background-color: #D94700;
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 4px 14px rgba(217, 71, 0, 0.25);
 }
 
-.kala-floating-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: var(--kala-orange);
-  box-shadow: 0 0 8px rgba(217, 71, 0, 0.6);
+.kala-about-btn.primary:hover {
+  background-color: #B53A00;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(217, 71, 0, 0.32);
 }
 
-.kala-floating-motto {
-  bottom: 2rem;
-  left: -1rem;
-  animation: aboutPillPop 0.8s 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+.kala-about-btn.secondary {
+  background-color: #FFFFFF;
+  color: #111111;
+  border: 1.5px solid #E5E2DD;
 }
 
-.kala-floating-badge-tag {
-  background-color: var(--kala-black);
-  color: var(--kala-white);
-  padding: 0.2rem 0.45rem;
-  border-radius: 3px;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+.kala-about-btn.secondary:hover {
+  background-color: #F4F4F5;
+  border-color: #111111;
+  transform: translateY(-2px);
+}
+
+.kala-about-btn.secondary.light {
+  background-color: #FFFFFF;
+  color: #111111;
+  border-color: #FFFFFF;
+}
+
+.kala-about-btn.secondary.light:hover {
+  background-color: #E4E4E7;
+}
+
+.btn-arrow {
+  font-size: 1rem;
+  line-height: 1;
 }
 
 /* --------------------------------------------------------------------------
-   2. BRAND STATEMENT SECTION
+   2. BRAND STORY SECTION
    -------------------------------------------------------------------------- */
-.kala-brand-statement-section {
-  padding: clamp(4.5rem, 8vw, 8rem) 0;
-  background-color: var(--kala-white);
-  border-bottom: 1px solid var(--kala-border);
-  position: relative;
-  overflow: hidden;
+.kala-about-story-section {
+  padding: clamp(2.5rem, 5vw, 4.5rem) 0;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #ECEAE4;
 }
 
-.kala-statement-wrapper {
-  max-width: 960px;
+.kala-story-card {
+  max-width: 860px;
   margin: 0 auto;
   text-align: center;
 }
 
-.kala-statement-kicker {
+.kala-about-kicker {
   display: inline-block;
-  color: var(--kala-orange);
-  font-weight: 800;
-  font-size: var(--kala-fs-label);
-  letter-spacing: 0.22em;
+  font-family: var(--kala-font-primary, inherit);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  margin-bottom: 1.25rem;
+  color: #D94700;
+  margin-bottom: 0.45rem;
 }
 
-.kala-statement-h2 {
-  font-size: clamp(2rem, 4vw, 3.25rem);
+.kala-story-heading {
+  font-family: var(--kala-font-primary, inherit);
+  font-size: clamp(1.6rem, 3.2vw, 2.5rem);
   font-weight: 900;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  color: var(--kala-black);
-  line-height: 1.1;
-  margin-bottom: 1.25rem;
-}
-
-.kala-statement-lead {
-  font-size: clamp(1.4rem, 2.8vw, 2.35rem);
-  font-weight: 800;
-  line-height: 1.25;
+  line-height: 1.15;
   letter-spacing: -0.025em;
-  color: var(--kala-black);
+  color: #111111;
   text-transform: uppercase;
-  margin-bottom: 1.75rem;
+  margin: 0 0 clamp(1.25rem, 2.5vw, 2rem) 0;
+  text-wrap: balance;
 }
 
-.kala-statement-body-copy {
-  font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+.kala-story-paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  font-size: clamp(0.95rem, 1.25vw, 1.1rem);
   line-height: 1.7;
-  color: var(--kala-text-secondary);
-  max-width: 780px;
-  margin: 0 auto;
+  color: #3F3F46;
+  text-align: left;
 }
 
-.kala-statement-divider {
-  width: 60px;
-  height: 3px;
-  background-color: var(--kala-orange);
-  margin: 2.5rem auto 0;
+.kala-story-paragraphs p:first-child {
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  font-weight: 750;
+  color: #111111;
+  line-height: 1.45;
+  text-align: center;
 }
 
 /* --------------------------------------------------------------------------
-   3. "WHY KALA?" SECTION
+   3. WHAT KALA DOES
    -------------------------------------------------------------------------- */
-.kala-why-section {
-  padding: clamp(4.5rem, 8vw, 7.5rem) 0;
-  background-color: var(--kala-bg-warm);
-  border-bottom: 1px solid var(--kala-border);
+.kala-about-what-we-do-section {
+  padding: clamp(2.5rem, 5vw, 4.5rem) 0;
+  background-color: #FAF9F6;
+  border-bottom: 1px solid #ECEAE4;
+}
+
+.kala-about-section-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto clamp(2rem, 3.5vw, 2.75rem) auto;
+}
+
+.kala-about-section-h2 {
+  font-family: var(--kala-font-primary, inherit);
+  font-size: clamp(1.5rem, 3vw, 2.35rem);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: #111111;
+  text-transform: uppercase;
+  margin: 0 0 0.45rem 0;
+}
+
+.kala-about-section-sub {
+  font-size: clamp(0.82rem, 1.1vw, 0.95rem);
+  line-height: 1.45;
+  color: #5F6368;
+  margin: 0;
+}
+
+.kala-what-we-do-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.kala-capability-card {
+  background-color: #FFFFFF;
+  border: 1.5px solid #E5E2DD;
+  border-radius: 16px;
+  padding: 1.5rem 1.25rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kala-capability-card:hover {
+  transform: translateY(-4px);
+  border-color: #D94700;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.card-top-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: #FFF5F0;
+  border: 1px solid #FFEDD5;
+  color: #D94700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-family: var(--kala-font-primary, inherit);
+  font-size: 0.95rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  color: #111111;
+  margin: 0 0 0.45rem 0;
+}
+
+.card-desc {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #5F6368;
+  margin: 0 0 1.25rem 0;
+  flex: 1 1 auto;
+}
+
+.card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 750;
+  color: #D94700;
+  text-decoration: none;
+  margin-top: auto;
+  transition: gap 0.15s ease;
+}
+
+.card-link:hover {
+  gap: 0.55rem;
+}
+
+/* --------------------------------------------------------------------------
+   4. WHY KALA (Philosophy)
+   -------------------------------------------------------------------------- */
+.kala-about-why-section {
+  padding: clamp(2.5rem, 5vw, 4.5rem) 0;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #ECEAE4;
 }
 
 .kala-why-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: clamp(1.25rem, 2.5vw, 2rem);
+  gap: clamp(1rem, 2vw, 1.5rem);
 }
 
-.kala-why-card {
-  position: relative;
-  background-color: var(--kala-white);
-  border: 1px solid var(--kala-border);
-  padding: clamp(1.75rem, 2.5vw, 2.25rem);
+.kala-why-item {
+  background-color: #FAF9F6;
+  border: 1px solid #ECEAE4;
+  border-radius: 14px;
+  padding: 1.35rem 1.15rem;
   display: flex;
   flex-direction: column;
-  transition: all var(--kala-transition-normal);
-  border-radius: 2px;
 }
 
-.kala-why-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background-color: transparent;
-  transition: background-color var(--kala-transition-fast);
-}
-
-.kala-why-card:hover {
-  transform: translateY(-6px);
-  border-color: #d1cdc7;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06);
-}
-
-.kala-why-card:hover::before {
-  background-color: var(--kala-orange);
-}
-
-.kala-why-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-}
-
-.kala-why-num {
-  font-size: 2rem;
+.why-num {
+  font-family: var(--kala-font-primary, monospace);
+  font-size: 0.82rem;
   font-weight: 900;
-  letter-spacing: -0.03em;
-  color: var(--kala-black);
-  line-height: 1;
-}
-
-.kala-why-pill {
-  font-size: 0.6875rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--kala-orange);
-  background-color: rgba(217, 71, 0, 0.08);
-  padding: 0.25rem 0.55rem;
-  border-radius: 2px;
-}
-
-.kala-why-card-title {
-  font-size: 1.25rem;
-  font-weight: 900;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--kala-black);
-  margin-bottom: 0.65rem;
-}
-
-.kala-why-card-tagline {
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: var(--kala-black);
-  line-height: 1.45;
-  margin-bottom: 1rem;
-}
-
-.kala-why-card-desc {
-  font-size: 0.875rem;
-  line-height: 1.65;
-  color: var(--kala-text-secondary);
-}
-
-.kala-why-specs-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0;
-  margin: 0;
-}
-
-.kala-why-specs-list li {
-  font-size: 0.875rem;
-  color: var(--kala-text-secondary);
-  line-height: 1.4;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-
-.kala-why-bullet {
-  color: var(--kala-orange);
-  font-size: 0.75rem;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-/* --------------------------------------------------------------------------
-   4. THE KALA JOURNEY (Timeline Section)
-   -------------------------------------------------------------------------- */
-.kala-journey-section {
-  padding: clamp(4.5rem, 8vw, 7.5rem) 0;
-  background-color: var(--kala-white);
-  border-bottom: 1px solid var(--kala-border);
-}
-
-.kala-timeline {
-  position: relative;
-  max-width: 900px;
-  margin: 0 auto;
-  padding-left: 2.5rem;
-}
-
-.kala-timeline-track {
-  position: absolute;
-  top: 1.5rem;
-  bottom: 2rem;
-  left: 17px;
-  width: 2px;
-  background: linear-gradient(180deg, var(--kala-orange) 0%, rgba(217, 71, 0, 0.4) 75%, var(--kala-border) 100%);
-}
-
-.kala-timeline-item {
-  position: relative;
-  margin-bottom: clamp(2rem, 4vw, 3rem);
-}
-
-.kala-timeline-item:last-child {
-  margin-bottom: 0;
-}
-
-.kala-timeline-marker {
-  position: absolute;
-  left: -2.5rem;
-  top: 0.35rem;
+  color: #D94700;
+  background-color: #FFF5F0;
+  border: 1px solid #FFEDD5;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.kala-timeline-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background-color: var(--kala-white);
-  border: 3px solid var(--kala-orange);
-  box-shadow: 0 0 0 4px rgba(217, 71, 0, 0.15);
-  z-index: 2;
-}
-
-.kala-timeline-badge {
-  display: none;
-}
-
-.kala-timeline-card {
-  background-color: var(--kala-bg-warm);
-  border: 1px solid var(--kala-border);
-  padding: clamp(1.5rem, 2.5vw, 2rem);
-  border-radius: 3px;
-  transition: all var(--kala-transition-normal);
-}
-
-.kala-timeline-card:hover {
-  transform: translateX(4px);
-  border-color: #d1cdc7;
-  background-color: #f7f5f0;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
-}
-
-.kala-timeline-card-future {
-  border-left: 3px solid var(--kala-orange);
-  background: linear-gradient(90deg, rgba(217, 71, 0, 0.03) 0%, var(--kala-bg-warm) 100%);
-}
-
-.kala-timeline-date {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--kala-orange);
-  margin-bottom: 0.4rem;
-}
-
-.kala-timeline-title {
-  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
-  font-weight: 800;
-  letter-spacing: -0.015em;
-  text-transform: uppercase;
-  color: var(--kala-black);
-  margin-bottom: 0.65rem;
-}
-
-.kala-timeline-text {
-  font-size: 0.9375rem;
-  line-height: 1.65;
-  color: var(--kala-text-secondary);
-}
-
-/* --------------------------------------------------------------------------
-   5. "BUILT FOR PEOPLE WITH STORIES" (Immersive Dark Editorial Canvas)
-   -------------------------------------------------------------------------- */
-.kala-stories-immersive-section {
-  position: relative;
-  padding: clamp(6rem, 10vw, 9.5rem) 0;
-  background-color: #0d0d0d;
-  color: var(--kala-white);
-  overflow: hidden;
-}
-
-.kala-stories-bg-wrap {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-
-.kala-stories-bg-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.28;
-  filter: contrast(110%) grayscale(20%);
-}
-
-.kala-stories-dark-scrim {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(13, 13, 13, 0.4) 0%, rgba(13, 13, 13, 0.9) 100%);
-}
-
-.kala-stories-content-container {
-  position: relative;
-  z-index: 2;
-}
-
-.kala-stories-text-center {
-  text-align: center;
-  max-width: 820px;
-  margin: 0 auto clamp(3.5rem, 6vw, 5rem);
-}
-
-.kala-stories-pill-label {
-  display: inline-block;
-  padding: 0.35rem 0.9rem;
-  background-color: rgba(217, 71, 0, 0.2);
-  border: 1px solid rgba(217, 71, 0, 0.45);
-  color: #ff6b21;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  margin-bottom: 1.5rem;
-}
-
-.kala-stories-main-title {
-  font-size: clamp(2.4rem, 5.5vw, 4.5rem);
-  font-weight: 900;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
-  color: var(--kala-white);
   margin-bottom: 0.85rem;
 }
 
-.kala-stories-second-line {
-  font-size: clamp(1.4rem, 3vw, 2.25rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  color: #ff6b21;
-  margin-bottom: 1.5rem;
-}
-
-.kala-stories-body {
-  font-size: clamp(1rem, 1.25vw, 1.15rem);
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.72);
-  max-width: 620px;
-  margin: 0 auto;
-}
-
-/* Editorial Floating Annotations / Tape Tags */
-.kala-annotations-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 1rem;
-  max-width: 1060px;
-  margin: 0 auto;
-}
-
-.kala-annotation-tag {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 1.15rem 0.85rem;
-  text-align: center;
-  border-radius: 2px;
-  transition: all var(--kala-transition-normal);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-}
-
-.kala-annotation-tag:hover {
-  transform: translateY(-4px);
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.35);
-}
-
-.kala-annotation-tag.highlight-orange {
-  border-color: var(--kala-orange);
-  background: rgba(217, 71, 0, 0.18);
-}
-
-.kala-annotation-hash {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--kala-orange);
-  letter-spacing: 0.08em;
-}
-
-.kala-annotation-label {
-  font-size: 0.8125rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--kala-white);
-  line-height: 1.3;
-}
-
-/* --------------------------------------------------------------------------
-   6. WHAT WE CREATE (Product / Category Cards Grid)
-   -------------------------------------------------------------------------- */
-.kala-create-categories-section {
-  padding: clamp(4.5rem, 8vw, 7.5rem) 0;
-  background-color: var(--kala-bg-warm);
-  border-bottom: 1px solid var(--kala-border);
-}
-
-.kala-categories-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(1.25rem, 2vw, 2rem);
-}
-
-.kala-cat-card {
-  background-color: var(--kala-white);
-  border: 1px solid var(--kala-border);
-  border-radius: 2px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: all var(--kala-transition-normal);
-}
-
-.kala-cat-card:hover {
-  transform: translateY(-6px);
-  border-color: #d1cdc7;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
-}
-
-.kala-cat-card-featured {
-  border-color: rgba(217, 71, 0, 0.45);
-}
-
-.kala-cat-img-box {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3.4;
-  overflow: hidden;
-  background-color: #f2efe9;
-}
-
-.kala-cat-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.kala-cat-card:hover .kala-cat-img {
-  transform: scale(1.06);
-}
-
-.kala-cat-badge {
-  position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  background-color: rgba(17, 17, 17, 0.85);
-  color: var(--kala-white);
-  padding: 0.25rem 0.55rem;
-  border-radius: 2px;
-  font-size: 0.6875rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.kala-cat-badge.highlight-orange {
-  background-color: var(--kala-orange);
-  color: var(--kala-white);
-}
-
-.kala-cat-info {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.kala-cat-title {
-  font-size: 1.15rem;
-  font-weight: 900;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-  color: var(--kala-black);
-  margin-bottom: 0.5rem;
-}
-
-.kala-cat-desc {
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: var(--kala-text-secondary);
-  margin-bottom: 1.25rem;
-  flex: 1;
-}
-
-.kala-cat-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--kala-black);
-  transition: color var(--kala-transition-fast);
-  margin-top: auto;
-}
-
-.kala-cat-link:hover {
-  color: var(--kala-orange);
-}
-
-/* --------------------------------------------------------------------------
-   7. KALA FOR BUSINESS (Dedicated Section)
-   -------------------------------------------------------------------------- */
-.kala-business-section {
-  padding: clamp(4.5rem, 8vw, 7.5rem) 0;
-  background-color: var(--kala-white);
-  border-bottom: 1px solid var(--kala-border);
-}
-
-.kala-business-card-wrap {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  align-items: center;
-  gap: clamp(2.5rem, 6vw, 5rem);
-  background: linear-gradient(135deg, #161616 0%, #1f1f1f 100%);
-  color: var(--kala-white);
-  padding: clamp(2.5rem, 6vw, 4.5rem);
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.14);
-}
-
-.kala-business-eyebrow {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #ff6b21;
-  margin-bottom: 1rem;
-}
-
-.kala-business-title {
-  font-size: clamp(1.85rem, 3.8vw, 3rem);
-  font-weight: 900;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  color: var(--kala-white);
-  margin-bottom: 1.25rem;
-}
-
-.kala-business-copy {
-  font-size: clamp(1rem, 1.2vw, 1.125rem);
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 2rem;
-  max-width: 580px;
-}
-
-.kala-business-features {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  margin-bottom: 2.5rem;
-}
-
-.kala-business-features .kala-biz-feature-item,
-.kala-biz-feature-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
+.why-title {
+  font-family: var(--kala-font-primary, inherit);
   font-size: 0.95rem;
-  color: #FFFFFF !important;
+  font-weight: 850;
+  color: #111111;
+  margin: 0 0 0.35rem 0;
 }
 
-.kala-business-features .kala-biz-feature-item span,
-.kala-biz-feature-item span:not(.kala-biz-check),
-.kala-biz-feature-text {
-  color: #FFFFFF !important;
-  font-weight: 500;
+.why-desc {
+  font-size: 0.8rem;
   line-height: 1.45;
-}
-
-.kala-biz-check {
-  color: #ff6b21 !important;
-  font-weight: 900;
-  font-size: 1.05rem;
-  flex-shrink: 0;
-  line-height: 1.3;
-}
-
-.kala-business-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  background-color: var(--kala-orange);
-  color: var(--kala-white);
-  border: 1px solid var(--kala-orange);
-  padding: 1.05rem 2.25rem;
-  font-size: 0.875rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  border-radius: 2px;
-  transition: all var(--kala-transition-normal);
-}
-
-.kala-business-btn:hover {
-  background-color: var(--kala-orange-hover);
-  border-color: var(--kala-orange-hover);
-  color: var(--kala-white);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(217, 71, 0, 0.4);
-}
-
-.kala-business-visual {
-  position: relative;
-  width: 100%;
-  border-radius: 3px;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-}
-
-.kala-business-img {
-  width: 100%;
-  height: 420px;
-  object-fit: cover;
-  display: block;
-}
-
-.kala-business-tag {
-  position: absolute;
-  bottom: 1.25rem;
-  left: 1.25rem;
-  background: rgba(17, 17, 17, 0.9);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 0.65rem 1.15rem;
-  border-radius: 2px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.kala-business-tag span {
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  color: #ff6b21;
-}
-
-.kala-business-tag strong {
-  font-size: 0.8125rem;
-  letter-spacing: 0.08em;
-  color: var(--kala-white);
+  color: #5F6368;
+  margin: 0;
 }
 
 /* --------------------------------------------------------------------------
-   8. MEET THE FOUNDERS SECTION
+   5. THE PEOPLE BEHIND KALA (Founders Section)
    -------------------------------------------------------------------------- */
 .kala-founders-section {
-  padding: clamp(4.5rem, 8vw, 7.5rem) 0;
-  background-color: var(--kala-bg-warm);
-  border-bottom: 1px solid var(--kala-border);
+  padding: clamp(2.5rem, 5vw, 4.5rem) 0;
+  background-color: #FAF9F6;
+  border-bottom: 1px solid #ECEAE4;
 }
 
 .kala-founders-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: clamp(2rem, 4vw, 3.25rem);
-  max-width: 1040px;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  max-width: 980px;
   margin: 0 auto;
-  align-items: stretch;
 }
 
 .kala-founder-card {
-  background-color: var(--kala-white);
-  border: 1px solid var(--kala-border);
-  border-radius: 4px;
-  padding: clamp(2.5rem, 4vw, 3.5rem) clamp(1.75rem, 3.5vw, 2.75rem);
+  background-color: #FFFFFF;
+  border: 1.5px solid #E5E2DD;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  transition: transform var(--kala-transition-normal), box-shadow var(--kala-transition-normal), border-color var(--kala-transition-normal);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-  position: relative;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
 .kala-founder-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.07);
-  border-color: rgba(217, 71, 0, 0.35);
+  border-color: #111111;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
 }
 
-.kala-founder-photo-wrap {
+.founder-photo-wrapper {
   position: relative;
-  width: clamp(140px, 16vw, 175px);
-  height: clamp(140px, 16vw, 175px);
-  margin-bottom: 1.75rem;
-  flex-shrink: 0;
+  width: 100%;
+  height: 290px;
+  background-color: #F4F4F5;
+  overflow: hidden;
 }
 
-.kala-founder-photo {
+.founder-photo {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   object-fit: cover;
-  display: block;
-  border: 3px solid var(--kala-white);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  background-color: #1a1d22;
+  object-position: center top;
+  transition: transform 0.3s ease;
 }
 
-.kala-founder-pill-tag {
+.kala-founder-card:hover .founder-photo {
+  transform: scale(1.02);
+}
+
+.founder-role-badge {
   position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--kala-black);
-  color: var(--kala-white);
+  top: 14px;
+  left: 14px;
+  font-family: var(--kala-font-primary, inherit);
   font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
+  font-weight: 850;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  padding: 0.3rem 0.85rem;
-  border-radius: 20px;
-  white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  backdrop-filter: blur(8px);
 }
 
-.kala-founder-pill-tag.highlight-orange {
-  background: var(--kala-orange);
-  color: var(--kala-white);
-  border-color: var(--kala-orange);
+.founder-role-badge.founder {
+  background-color: #D94700;
+  color: #FFFFFF;
 }
 
-.kala-founder-content {
+.founder-role-badge.cofounder {
+  background-color: #111111;
+  color: #FFFFFF;
+}
+
+.founder-info {
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  flex-grow: 1;
-  width: 100%;
+  flex: 1 1 auto;
 }
 
-.kala-founder-name {
-  font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+.founder-name {
+  font-family: var(--kala-font-primary, inherit);
+  font-size: 1.35rem;
   font-weight: 900;
-  letter-spacing: -0.025em;
-  color: var(--kala-black);
-  margin-bottom: 0.35rem;
-  line-height: 1.15;
+  color: #111111;
+  margin: 0 0 0.15rem 0;
 }
 
-.kala-founder-role {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--kala-orange);
-  letter-spacing: 0.08em;
+.founder-title {
+  font-size: 0.82rem;
+  font-weight: 750;
+  color: #D94700;
   text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.25rem 0;
+}
+
+.founder-dept {
+  font-size: 0.78rem;
+  color: #71717A;
+  font-weight: 600;
+  margin: 0 0 0.85rem 0;
+}
+
+.founder-divider {
+  width: 36px;
+  height: 2px;
+  background-color: #E5E2DD;
   margin-bottom: 0.85rem;
 }
 
-.kala-founder-disciplines {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem 0.5rem;
-  font-size: 0.775rem;
-  font-weight: 600;
-  color: var(--kala-text-secondary);
-  background: rgba(0, 0, 0, 0.025);
-  border: 1px solid var(--kala-border);
-  border-radius: 30px;
-  padding: 0.35rem 1rem;
-  margin-bottom: 1.35rem;
-  line-height: 1.4;
-}
-
-.kala-founder-dot {
-  color: var(--kala-orange);
-  font-size: 0.65rem;
-}
-
-.kala-founder-sep {
-  width: 40px;
-  height: 2px;
-  background-color: var(--kala-orange);
-  margin-bottom: 1.35rem;
-  opacity: 0.65;
-}
-
-.kala-founder-bio {
-  font-size: clamp(0.925rem, 1.1vw, 1rem);
-  color: var(--kala-text-secondary);
-  line-height: 1.68;
+.founder-bio {
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: #3F3F46;
   margin: 0;
-  text-align: center;
+  flex: 1 1 auto;
 }
 
 /* --------------------------------------------------------------------------
-   9. CUSTOM APPAREL CTA — HAVE AN IDEA?
+   6. KALA'S VISION
    -------------------------------------------------------------------------- */
-.kala-custom-cta-section {
-  padding: clamp(4.5rem, 8vw, 7.5rem) 0;
-  background-color: var(--kala-bg-warm);
-  border-bottom: 1px solid var(--kala-border);
+.kala-about-vision-section {
+  padding: clamp(3rem, 6vw, 5rem) 0;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #ECEAE4;
 }
 
-.kala-custom-cta-box {
-  background-color: var(--kala-white);
-  border: 1px solid var(--kala-border);
-  padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 4rem);
+.kala-vision-card {
+  max-width: 820px;
+  margin: 0 auto;
   text-align: center;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  background-color: #FAF9F6;
+  border: 1.5px dashed #D4D4D8;
+  border-radius: 20px;
+}
+
+.vision-kicker {
+  font-family: var(--kala-font-primary, inherit);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #D94700;
+  margin-bottom: 0.85rem;
+  display: inline-block;
+}
+
+.vision-quote {
+  font-family: var(--kala-font-primary, inherit);
+  font-size: clamp(1.15rem, 2.2vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1.4;
+  color: #111111;
+  margin: 0 0 1.5rem 0;
+  font-style: italic;
+  text-wrap: balance;
+}
+
+.vision-brand-signature {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.sig-name {
+  font-family: var(--kala-font-primary, inherit);
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  color: #111111;
+}
+
+.sig-sub {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #71717A;
+}
+
+/* --------------------------------------------------------------------------
+   7. FINAL CTA
+   -------------------------------------------------------------------------- */
+.kala-about-final-cta-section {
+  padding: clamp(2.5rem, 5vw, 4.5rem) 0;
+  background-color: #FAF9F6;
+}
+
+.kala-about-cta-card {
+  text-align: center;
+  background-color: #111111;
+  color: #FFFFFF;
+  border-radius: 20px;
+  padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 3vw, 2.5rem);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   max-width: 900px;
   margin: 0 auto;
-  border-radius: 3px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04);
 }
 
-.kala-custom-cta-kicker {
+.cta-kicker {
   display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
+  font-family: var(--kala-font-primary, inherit);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--kala-orange);
-  margin-bottom: 1rem;
+  color: #FFA566;
+  margin-bottom: 0.65rem;
 }
 
-.kala-custom-cta-h2 {
-  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+.cta-title {
+  font-family: var(--kala-font-primary, inherit);
+  font-size: clamp(1.5rem, 3.2vw, 2.45rem);
   font-weight: 900;
-  letter-spacing: -0.035em;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
   text-transform: uppercase;
-  color: var(--kala-black);
-  line-height: 1.08;
-  margin-bottom: 0.5rem;
+  margin: 0 0 0.65rem 0;
+  text-wrap: balance;
 }
 
-.kala-custom-cta-subhead {
-  font-size: clamp(1.35rem, 2.5vw, 2rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  color: var(--kala-orange);
-  margin-bottom: 1.25rem;
-}
-
-.kala-custom-cta-text {
-  font-size: clamp(1rem, 1.2vw, 1.15rem);
-  color: var(--kala-text-secondary);
+.cta-subtitle {
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  line-height: 1.5;
+  color: #D4D4D8;
   max-width: 580px;
-  margin: 0 auto 2.5rem;
-  line-height: 1.6;
+  margin: 0 auto clamp(1.5rem, 2.5vw, 2.25rem) auto;
+  text-wrap: balance;
 }
 
-.kala-custom-cta-buttons {
+.cta-actions {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.85rem;
 }
 
-.kala-custom-btn-orange {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.65rem;
-  background-color: var(--kala-orange);
-  color: var(--kala-white);
-  border: 1px solid var(--kala-orange);
-  padding: 1rem 2.25rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  transition: all var(--kala-transition-normal);
-}
-
-.kala-custom-btn-orange:hover {
-  background-color: var(--kala-orange-hover);
-  border-color: var(--kala-orange-hover);
-  color: var(--kala-white);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(217, 71, 0, 0.3);
-}
-
-.kala-custom-btn-outline {
-  display: inline-flex;
-  align-items: center;
-  background-color: transparent;
-  color: var(--kala-black);
-  border: 1px solid var(--kala-black);
-  padding: 1rem 2.25rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  transition: all var(--kala-transition-normal);
-}
-
-.kala-custom-btn-outline:hover {
-  background-color: var(--kala-black);
-  color: var(--kala-white);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* --------------------------------------------------------------------------
-   10. FINAL BRAND STATEMENT (Minimal, Generous Whitespace)
-   -------------------------------------------------------------------------- */
-.kala-final-statement-section {
-  padding: clamp(6.5rem, 12vw, 11rem) 0;
-  background-color: var(--kala-white);
-  text-align: center;
-}
-
-.kala-final-statement-box {
-  max-width: 800px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.kala-final-lines {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  margin-bottom: clamp(3rem, 5vw, 4.5rem);
-}
-
-.kala-final-line {
-  font-size: clamp(2.5rem, 6.5vw, 5.5rem);
-  font-weight: 900;
-  line-height: 1.02;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
-  color: var(--kala-black);
-}
-
-.kala-final-line-accent {
-  color: var(--kala-orange);
-}
-
-.kala-final-brand-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.kala-final-brand-name {
-  font-size: clamp(1.6rem, 3.2vw, 2.5rem);
-  font-weight: 900;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--kala-black);
-}
-
-.kala-final-brand-underline {
-  width: 48px;
-  height: 3px;
-  background-color: var(--kala-orange);
-}
-
-/* --------------------------------------------------------------------------
-   10. KEYFRAME ANIMATIONS
-   -------------------------------------------------------------------------- */
-@keyframes aboutHeroFadeUp {
-  0% {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes aboutHeroSlideLeft {
-  0% {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes aboutPillPop {
-  0% {
-    opacity: 0;
-    transform: translateY(12px) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* --------------------------------------------------------------------------
-   11. RESPONSIVE BREAKPOINTS (Mobile & Tablet Optimization)
-   -------------------------------------------------------------------------- */
-/* Large Tablet / Small Desktop */
-@media (max-width: 1100px) {
-  .kala-why-grid {
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS (Tablet & Mobile-First)
+   ========================================================================== */
+@media (max-width: 960px) {
+  .kala-what-we-do-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .kala-categories-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .kala-annotations-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Medium Tablet & Mobile Hero Layout */
-@media (max-width: 900px) {
-  .kala-about-hero-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 2.5rem;
-  }
-
-  /* Mobile First: IMAGE First, then Story & CTAs */
-  .kala-about-hero-right {
-    order: 1;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  .kala-about-hero-left {
-    order: 2;
-    align-items: center;
-    text-align: center;
-  }
-
-  .kala-about-hero-actions {
-    justify-content: center;
-  }
-
-  .kala-about-editorial-visual {
-    max-width: 420px;
-    width: 100%;
-  }
-
-  .kala-business-card-wrap {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    padding: 2.5rem 1.75rem;
-  }
-
-  .kala-business-content {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .kala-biz-feature-item {
-    text-align: left;
-  }
-}
-
-/* Mobile Devices */
-@media (max-width: 640px) {
-  .kala-about-hero {
-    padding-top: 2rem;
-    padding-bottom: 3rem;
-  }
-
-  .kala-about-hero-title {
-    font-size: clamp(2.1rem, 8vw, 2.75rem);
-    line-height: 1.05;
-  }
-
-  .kala-about-hero-desc {
-    font-size: 0.95rem;
-    line-height: 1.55;
-    margin-bottom: 1.75rem;
-  }
-
-  .kala-about-hero-actions {
-    width: 100%;
-    flex-direction: column;
-    gap: 0.85rem;
-  }
-
-  .kala-about-btn-primary,
-  .kala-about-btn-secondary {
-    width: 100%;
-    justify-content: center;
-    min-height: 48px;
-  }
-
-  .kala-about-hero-img {
-    height: 320px;
-  }
-
-  .kala-floating-est {
-    top: 0.75rem;
-    right: 0.5rem;
-  }
-
-  .kala-floating-motto {
-    bottom: 0.75rem;
-    left: 0.5rem;
   }
 
   .kala-why-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .kala-timeline {
-    padding-left: 2rem;
-  }
-
-  .kala-timeline-track {
-    left: 14px;
-  }
-
-  .kala-timeline-marker {
-    left: -2rem;
-  }
-
-  .kala-annotations-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .kala-categories-grid {
-    grid-template-columns: 1fr;
   }
 
   .kala-founders-grid {
     grid-template-columns: 1fr;
-    gap: 2rem;
-    max-width: 480px;
+    max-width: 500px;
   }
 
-  .kala-founder-card {
-    padding: clamp(2rem, 5vw, 2.75rem) clamp(1.25rem, 4vw, 1.75rem);
+  .founder-photo-wrapper {
+    height: 260px;
+  }
+}
+
+@media (max-width: 640px) {
+  .kala-what-we-do-grid {
+    grid-template-columns: 1fr;
   }
 
-  .kala-founder-disciplines {
-    font-size: 0.72rem;
-    padding: 0.3rem 0.75rem;
-    gap: 0.35rem 0.4rem;
+  .kala-why-grid {
+    grid-template-columns: 1fr;
   }
 
-  .kala-custom-cta-buttons {
+  .kala-about-hero-actions,
+  .cta-actions {
     flex-direction: column;
     width: 100%;
   }
 
-  .kala-custom-btn-orange,
-  .kala-custom-btn-outline {
+  .kala-about-btn {
     width: 100%;
-    justify-content: center;
+  }
+
+  .founder-photo-wrapper {
+    height: 240px;
   }
 }
 
-/* Reduced Motion Preference */
-@media (prefers-reduced-motion: reduce) {
-  .kala-about-hero-left,
-  .kala-about-hero-right,
-  .kala-floating-pill,
-  .kala-about-hero-img,
-  .kala-cat-img,
-  .kala-why-card,
-  .kala-timeline-card,
-  .kala-cat-card,
+/* Narrow mobile devices: 320px to 390px */
+@media (max-width: 390px) {
+  .kala-about-hero-title {
+    font-size: 1.85rem;
+  }
+
+  .kala-about-hero-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .kala-story-heading {
+    font-size: 1.35rem;
+  }
+
+  .founder-name {
+    font-size: 1.2rem;
+  }
+
+  .founder-bio {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .kala-about-container {
+    padding: 0 0.5rem;
+  }
+
+  .kala-capability-card,
+  .kala-why-item,
   .kala-founder-card {
-    animation: none !important;
-    transition: none !important;
-    transform: none !important;
+    border-radius: 12px;
+  }
+
+  .kala-about-hero-title {
+    font-size: 1.65rem;
   }
 }

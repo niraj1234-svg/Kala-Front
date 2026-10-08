@@ -7,6 +7,13 @@ import {
 } from './types'
 import { APPAREL_LIST, POLO_PRODUCTS, TSHIRT_PRODUCTS } from './mockupAssets'
 
+const PERSONAL_PRICES: Record<ApparelId, number> = {
+  tshirt: 399,
+  polo: 499,
+  jersey: 549,
+  hoodie: 899,
+}
+
 interface ApparelSelectorProps {
   selectedApparel: ApparelId
   selectedPoloModel: PoloModelId
@@ -15,6 +22,7 @@ interface ApparelSelectorProps {
   onSelectApparel: (id: ApparelId) => void
   onSelectPoloModel: (id: PoloModelId) => void
   onSelectTshirtModel: (id: TshirtModelId) => void
+  orderMode?: 'bulk' | 'personal'
 }
 
 export const ApparelSelector: React.FC<ApparelSelectorProps> = ({
@@ -25,6 +33,7 @@ export const ApparelSelector: React.FC<ApparelSelectorProps> = ({
   onSelectApparel,
   onSelectPoloModel,
   onSelectTshirtModel,
+  orderMode = 'bulk',
 }) => {
   return (
     <div className="kala-bulk-step-block">
@@ -57,7 +66,10 @@ export const ApparelSelector: React.FC<ApparelSelectorProps> = ({
               <div className="kala-bulk-card-info">
                 <span className="kala-bulk-card-name">{item.name}</span>
                 <span className="kala-bulk-card-price">
-                  From <strong className="kala-bulk-price-highlight">₹{item.startingPrice}</strong>
+                  {orderMode === 'personal' ? 'Only ' : 'From '}
+                  <strong className="kala-bulk-price-highlight">
+                    ₹{orderMode === 'personal' ? (PERSONAL_PRICES[item.id] || item.startingPrice) : item.startingPrice}
+                  </strong>
                 </span>
               </div>
 
@@ -122,9 +134,15 @@ export const ApparelSelector: React.FC<ApparelSelectorProps> = ({
                     </div>
 
                     <div className="kala-bulk-tshirt-price-row">
-                      <span className="kala-bulk-tshirt-from-text">Starting From:</span>
-                      <strong className="kala-bulk-tshirt-price-val">₹{tshirt.startingPrice}</strong>
-                      <span className="kala-bulk-tshirt-incl-label">(Incl. Print)</span>
+                      <span className="kala-bulk-tshirt-from-text">
+                        {orderMode === 'personal' ? 'Price:' : 'Starting From:'}
+                      </span>
+                      <strong className="kala-bulk-tshirt-price-val">
+                        ₹{orderMode === 'personal' ? (tshirt.personalPrice || tshirt.startingPrice) : tshirt.startingPrice}
+                      </strong>
+                      <span className="kala-bulk-tshirt-incl-label">
+                        {orderMode === 'personal' ? '(1 Pc • Incl. Print)' : '(Incl. Print)'}
+                      </span>
                     </div>
 
                     <p className="kala-bulk-tshirt-desc">{tshirt.description}</p>
@@ -208,9 +226,15 @@ export const ApparelSelector: React.FC<ApparelSelectorProps> = ({
                     </div>
 
                     <div className="kala-bulk-polo-price-row">
-                      <span className="kala-bulk-polo-from-text">Starting From:</span>
-                      <strong className="kala-bulk-polo-price-val">₹{polo.startingPrice}</strong>
-                      <span className="kala-bulk-polo-incl-label">(Incl. Print)</span>
+                      <span className="kala-bulk-polo-from-text">
+                        {orderMode === 'personal' ? 'Price:' : 'Starting From:'}
+                      </span>
+                      <strong className="kala-bulk-polo-price-val">
+                        ₹{orderMode === 'personal' ? (polo.personalPrice || polo.startingPrice) : polo.startingPrice}
+                      </strong>
+                      <span className="kala-bulk-polo-incl-label">
+                        {orderMode === 'personal' ? '(1 Pc • Incl. Print)' : '(Incl. Print)'}
+                      </span>
                     </div>
 
                     <p className="kala-bulk-polo-desc">{polo.description}</p>

@@ -694,14 +694,378 @@
 
 .kala-bulk-top-row {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: -0.5rem;
-  padding-right: 2rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  padding-right: 0;
+  flex-wrap: wrap;
+}
+
+/* Mode Switcher (Bulk vs Personal) */
+.kala-builder-mode-switcher {
+  display: flex;
+  align-items: center;
+  background-color: #f3f4f6;
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+  flex: 1;
+  max-width: 520px;
+}
+
+.kala-builder-mode-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: left;
+}
+
+.kala-builder-mode-btn.active {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.kala-builder-mode-btn .mode-btn-badge {
+  font-size: 0.625rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.45rem;
+  border-radius: 6px;
+  background-color: #ffedd5;
+  color: #c2410c;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.kala-builder-mode-btn .mode-btn-badge.personal {
+  background-color: #e0e7ff;
+  color: #3730a3;
+}
+
+.kala-builder-mode-btn .mode-btn-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.kala-builder-mode-btn .mode-btn-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #111111;
+  line-height: 1.2;
+}
+
+.kala-builder-mode-btn .mode-btn-desc {
+  font-size: 0.65rem;
+  color: #6b7280;
+  line-height: 1.2;
+}
+
+.kala-builder-mode-btn.active .mode-btn-title {
+  color: #d94700;
+}
+
+/* Personal Custom Apparel Flow */
+.kala-personal-flow-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.kala-personal-config-card {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.kala-personal-field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.kala-personal-field-label-row .field-label,
+.kala-personal-qty-section .field-label {
+  font-size: 0.75rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4b5563;
+}
+
+.kala-personal-field-label-row .field-current-size {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.kala-personal-field-label-row .field-current-size strong {
+  color: #d94700;
+}
+
+.kala-personal-size-pills {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.kala-personal-size-btn {
+  padding: 0.65rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #1f2937;
+  font-size: 0.85rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.kala-personal-size-btn:hover {
+  border-color: #d94700;
+  color: #d94700;
+}
+
+.kala-personal-size-btn.active {
+  background-color: #111111;
+  color: #ffffff;
+  border-color: #111111;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.kala-personal-qty-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.kala-personal-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 3px 6px;
+}
+
+.kala-stepper-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: none;
+  background-color: #f3f4f6;
+  color: #111111;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.kala-stepper-btn:hover:not(:disabled) {
+  background-color: #e5e7eb;
+}
+
+.kala-stepper-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.kala-stepper-value {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #111111;
+}
+
+.kala-personal-price-card {
+  background-color: #ffffff;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.kala-personal-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.kala-personal-price-tag {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #c2410c;
+  text-transform: uppercase;
+}
+
+.kala-personal-total-amount {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #111111;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.kala-personal-unit-sub {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.kala-personal-price-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.kala-personal-badge-free {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  background-color: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #047857;
+  font-size: 0.68rem;
+  font-weight: 800;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.kala-personal-badge-moq {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.kala-personal-fee-note {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #71717a;
+  line-height: 1.35;
+}
+
+.kala-personal-actions-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.kala-personal-btn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.kala-personal-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: none;
+}
+
+.kala-personal-btn.cart {
+  background-color: #ffffff;
+  border: 1.5px solid #111111;
+  color: #111111;
+}
+
+.kala-personal-btn.cart:hover {
+  background-color: #111111;
+  color: #ffffff;
+}
+
+.kala-personal-btn.checkout {
+  background-color: #d94700;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(217, 71, 0, 0.25);
+}
+
+.kala-personal-btn.checkout:hover {
+  background-color: #b83800;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(217, 71, 0, 0.35);
+}
+
+.kala-personal-btn.whatsapp {
+  background-color: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #15803d;
+  font-size: 0.78rem;
+}
+
+.kala-personal-btn.whatsapp:hover {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+.kala-personal-trust-footnotes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  font-size: 0.7rem;
+  font-weight: 650;
+  color: #6b7280;
+  padding-top: 0.25rem;
 }
 
 @media (max-width: 992px) {
   .kala-bulk-top-row {
-    padding-right: 0.75rem;
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .kala-builder-mode-switcher {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .kala-personal-size-pills {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .kala-personal-btn-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -2513,27 +2877,18 @@
   margin-bottom: 0.75rem;
 }
 
-.kala-back-to-shop-btn {
+.kala-builder-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #4b5563;
-  text-decoration: none;
-  padding: 0.35rem 0.75rem;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #D94700;
+  background-color: #FFF5F0;
+  border: 1px solid #FFEDD5;
+  padding: 0.25rem 0.75rem;
   border-radius: 9999px;
-  transition: all 0.15s ease;
-}
-
-.kala-back-to-shop-btn:hover {
-  color: #ea580c;
-  border-color: #ea580c;
-  background-color: #fff7ed;
-  transform: translateX(-2px);
+  text-transform: uppercase;
 }
 
 .kala-dedicated-title-wrap {
@@ -2793,10 +3148,46 @@
 }
 
 /* ==========================================================================
-   4 DIRECT CONSULTATION & DISCUSSION OPTIONS
+   SUBTLE SECONDARY ASSISTANCE OPTION (Replaces 4 bulky contact cards)
    ========================================================================== */
-.kala-bulk-contact-section {
-  margin-top: 0.75rem;
+.kala-bulk-subtle-help-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  background-color: #FAF9F6;
+  border: 1px dashed #E5E2DD;
+  border-radius: 10px;
+  margin-top: 0.85rem;
+}
+
+.kala-bulk-subtle-help-text {
+  font-size: 0.78rem;
+  color: #5F6368;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.kala-bulk-subtle-help-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #D94700;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+.kala-bulk-subtle-help-link:hover {
+  color: #B53A00;
 }
 
 /* ==========================================================================

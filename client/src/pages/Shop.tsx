@@ -122,7 +122,7 @@ export const Shop: React.FC = () => {
                 <span className="kala-shop-title-accent">CATALOG</span>
               </h1>
               <p className="kala-shop-subtitle">
-                Explore handcrafted Indian streetwear, tactical esports tournament wear, and high-performance gym essentials.
+                Streetwear, gaming and gymwear — made to match your vibe.
               </p>
               <div className="kala-shop-accent-bar" aria-hidden="true" />
             </div>

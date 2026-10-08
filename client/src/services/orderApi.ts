@@ -17,9 +17,11 @@ export interface CustomDesignDetails {
   backPosition?: { x: number; y: number }
   frontFontSize?: number
   backFontSize?: number
+  frontRotation?: number
+  backRotation?: number
   customText?: {
-    front?: { text: string; x: number; y: number; fontSize: number }
-    back?: { text: string; x: number; y: number; fontSize: number }
+    front?: { text: string; x: number; y: number; fontSize: number; rotation?: number }
+    back?: { text: string; x: number; y: number; fontSize: number; rotation?: number }
   }
   price?: number
   apparelType?: string

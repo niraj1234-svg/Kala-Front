@@ -7,6 +7,7 @@ export interface CustomTextSide {
     x: number
     y: number
   }
+  rotation?: number
 }
 
 export interface CustomPrintState {
@@ -16,9 +17,8 @@ export interface CustomPrintState {
 }
 
 export const MIN_TEXT_SIZE = 16
-export const MAX_TEXT_SIZE = 72
+export const MAX_TEXT_SIZE = 54
 export const DEFAULT_TEXT_SIZE = 32
-export const TEXT_SIZE_STEP = 2
 
 export interface CustomPrintTextProps {
   enabled: boolean
@@ -29,10 +29,10 @@ export interface CustomPrintTextProps {
   backText: string
   onChangeFrontText: (val: string) => void
   onChangeBackText: (val: string) => void
-  frontFontSize: number
-  backFontSize: number
-  onChangeFrontFontSize: (val: number) => void
-  onChangeBackFontSize: (val: number) => void
+  frontFontSize?: number
+  backFontSize?: number
+  onChangeFrontFontSize?: (val: number) => void
+  onChangeBackFontSize?: (val: number) => void
   onResetFrontPosition?: () => void
   onResetBackPosition?: () => void
   basePrice: number
@@ -47,10 +47,6 @@ export const CustomPrintText: React.FC<CustomPrintTextProps> = ({
   backText,
   onChangeFrontText,
   onChangeBackText,
-  frontFontSize,
-  backFontSize,
-  onChangeFrontFontSize,
-  onChangeBackFontSize,
   onResetFrontPosition,
   onResetBackPosition,
   basePrice,
@@ -62,7 +58,6 @@ export const CustomPrintText: React.FC<CustomPrintTextProps> = ({
   const hasFrontText = frontText.trim().length > 0
   const hasBackText = backText.trim().length > 0
   const hasCustomText = hasFrontText || hasBackText
-  const currentFontSize = isBackView ? backFontSize : frontFontSize
   const displayTotal = basePrice + (hasCustomText ? price : 0)
 
   return (
@@ -76,7 +71,7 @@ export const CustomPrintText: React.FC<CustomPrintTextProps> = ({
           <span className="kala-custom-back-badge">+₹{price}</span>
         </div>
         <p className="kala-custom-back-desc">
-          Add your own text and position it exactly where you want.
+          Add your custom text directly onto the T-shirt preview.
         </p>
       </div>
 
@@ -116,7 +111,7 @@ export const CustomPrintText: React.FC<CustomPrintTextProps> = ({
                 type="button"
                 className="kala-reset-pos-btn"
                 onClick={onResetFrontPosition}
-                title="Reset Front text position to center"
+                title="Reset Front text position to default"
               >
                 Reset Position
               </button>
@@ -128,13 +123,13 @@ export const CustomPrintText: React.FC<CustomPrintTextProps> = ({
             maxLength={30}
             value={frontText}
             onChange={(e) => onChangeFrontText(e.target.value)}
-            placeholder="Enter custom front text..."
+            placeholder="Type your front text..."
             className="kala-custom-back-input"
             aria-label="Enter custom front text"
           />
           <div className="kala-custom-back-meta">
             <span className="kala-custom-back-helper">
-              Live preview updates while typing • Drag text on shirt to reposition
+              Direct manipulation: tap on shirt to drag, resize ↘ or rotate ↻
             </span>
             <span className={`kala-custom-back-count ${frontText.length >= 30 ? 'limit' : ''}`}>
               {frontText.length}/30
@@ -152,7 +147,7 @@ export const CustomPrintText: React.FC<CustomPrintTextProps> = ({
                 type="button"
                 className="kala-reset-pos-btn"
                 onClick={onResetBackPosition}
-                title="Reset Back text position to center"
+                title="Reset Back text position to default"
               >
                 Reset Position
               </button>
@@ -164,13 +159,13 @@ export const CustomPrintText: React.FC<CustomPrintTextProps> = ({
             maxLength={30}
             value={backText}
             onChange={(e) => onChangeBackText(e.target.value)}
-            placeholder="Enter custom back text..."
+            placeholder="Type your back text..."
             className="kala-custom-back-input"
             aria-label="Enter custom back text"
           />
           <div className="kala-custom-back-meta">
             <span className="kala-custom-back-helper">
-              Live preview updates while typing • Drag text on shirt to reposition
+              Direct manipulation: tap on shirt to drag, resize ↘ or rotate ↻
             </span>
             <span className={`kala-custom-back-count ${backText.length >= 30 ? 'limit' : ''}`}>
               {backText.length}/30
@@ -179,57 +174,21 @@ export const CustomPrintText: React.FC<CustomPrintTextProps> = ({
         </div>
       )}
 
-      {/* Text Size Control with Slider & Buttons */}
-      <div className="kala-text-size-control-group">
-        <div className="kala-text-size-header">
-          <span className="kala-input-label">TEXT SIZE</span>
-          <span className="kala-text-size-value">Text Size: {currentFontSize}px</span>
+      {/* Editor Tip Badge when text is active */}
+      {hasCustomText && (
+        <div className="kala-custom-editor-hint">
+          <span className="kala-hint-diamond">◆</span>
+          <span>
+            {isBackView
+              ? hasBackText
+                ? 'Back text active — Click text on preview to adjust position, size & rotation'
+                : 'Enter back text above to preview and edit on the shirt'
+              : hasFrontText
+                ? 'Front text active — Click text on preview to adjust position, size & rotation'
+                : 'Enter front text above to preview and edit on the shirt'}
+          </span>
         </div>
-        <div className="kala-text-size-slider-row">
-          <button
-            type="button"
-            className="kala-size-step-btn"
-            onClick={() => {
-              const newSize = Math.max(MIN_TEXT_SIZE, currentFontSize - TEXT_SIZE_STEP)
-              if (isBackView) onChangeBackFontSize(newSize)
-              else onChangeFrontFontSize(newSize)
-            }}
-            aria-label="Decrease text size"
-            title="Decrease text size"
-          >
-            <span className="kala-size-step-symbol">−</span>
-            <span className="kala-size-step-a small">A</span>
-          </button>
-          <input
-            type="range"
-            min={MIN_TEXT_SIZE}
-            max={MAX_TEXT_SIZE}
-            step={TEXT_SIZE_STEP}
-            value={currentFontSize}
-            onChange={(e) => {
-              const val = Number(e.target.value)
-              if (isBackView) onChangeBackFontSize(val)
-              else onChangeFrontFontSize(val)
-            }}
-            className="kala-text-size-slider"
-            aria-label={`Adjust text size for ${isBackView ? 'back' : 'front'}`}
-          />
-          <button
-            type="button"
-            className="kala-size-step-btn"
-            onClick={() => {
-              const newSize = Math.min(MAX_TEXT_SIZE, currentFontSize + TEXT_SIZE_STEP)
-              if (isBackView) onChangeBackFontSize(newSize)
-              else onChangeFrontFontSize(newSize)
-            }}
-            aria-label="Increase text size"
-            title="Increase text size"
-          >
-            <span className="kala-size-step-a large">A</span>
-            <span className="kala-size-step-symbol">+</span>
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Price Breakdown */}
       {hasCustomText && (
@@ -240,7 +199,7 @@ export const CustomPrintText: React.FC<CustomPrintTextProps> = ({
           </div>
           <div className="kala-price-breakdown-row">
             <span>
-              Custom text ({[hasFrontText && 'Front', hasBackText && 'Back'].filter(Boolean).join(' + ')})
+              Custom print ({[hasFrontText && 'Front', hasBackText && 'Back'].filter(Boolean).join(' + ')})
             </span>
             <span className="kala-price-breakdown-add">+₹{price}</span>
           </div>

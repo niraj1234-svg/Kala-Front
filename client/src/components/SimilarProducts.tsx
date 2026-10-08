@@ -203,34 +203,6 @@ export const SimilarProducts: React.FC<SimilarProductsProps> = ({ currentProduct
             Customers viewing this item also explored these signature pieces
           </p>
         </div>
-
-        {/* Desktop Navigation Arrows */}
-        <div className="kala-similar-nav-arrows" aria-label="Carousel navigation">
-          <button
-            type="button"
-            className="kala-similar-arrow-btn prev"
-            onClick={() => handleScroll('left')}
-            disabled={!canScrollLeft}
-            aria-label="Scroll left to see previous products"
-            title="Previous products"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            className="kala-similar-arrow-btn next"
-            onClick={() => handleScroll('right')}
-            disabled={!canScrollRight}
-            aria-label="Scroll right to see more products"
-            title="Next products"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
-        </div>
       </div>
 
       {/* Carousel Track Container with Centered Edge Navigation Overlays */}

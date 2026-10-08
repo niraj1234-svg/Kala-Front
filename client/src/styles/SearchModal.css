@@ -104,14 +104,31 @@
   }
 }
 
-.kala-search-quick-hint {
-  font-family: var(--kala-font-primary);
-  font-size: 0.75rem;
-  color: #8C8883;
+.kala-search-close-modal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.04);
+  color: #555555;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
+  margin-left: auto;
 }
 
-.kala-search-mobile-close-btn {
-  display: none;
+.kala-search-close-modal-btn:hover {
+  background: #111111;
+  color: #ffffff;
+  border-color: #111111;
+  transform: scale(1.08);
+}
+
+.kala-search-close-modal-btn:active {
+  transform: scale(0.92);
 }
 
 /* Search Input Box (60-68px height) */
@@ -199,31 +216,6 @@
   color: #111111;
 }
 
-/* ESC Key Pill Button */
-.kala-search-esc-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: #FFFFFF;
-  border: 1px solid #D1D5DB;
-  border-radius: 8px;
-  padding: 4px 8px;
-  font-family: var(--kala-font-mono);
-  font-size: 0.725rem;
-  font-weight: 700;
-  color: #6B7280;
-  cursor: pointer;
-  line-height: 1;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: all 0.18s ease;
-}
-
-.kala-search-esc-btn:hover {
-  background: #F3F4F6;
-  border-color: #9CA3AF;
-  color: #111111;
-  transform: translateY(-1px);
-}
 
 /* 4. Popular Categories Row */
 .kala-search-categories-bar {
@@ -737,35 +729,10 @@
     margin-bottom: 0.5rem;
   }
 
-  .kala-search-quick-hint {
-    display: none !important;
-  }
-
-  .kala-search-mobile-close-btn {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
-    background: transparent;
-    border: none;
-    font-size: 1.65rem;
-    line-height: 1;
-    font-weight: 300;
-    color: #111111;
-    cursor: pointer;
-    border-radius: 8px;
-    padding: 0;
-    margin-right: -6px;
+  .kala-search-close-modal-btn {
+    width: 36px;
+    height: 36px;
     touch-action: manipulation;
-    transition: color 0.2s ease, background-color 0.2s ease;
-  }
-
-  .kala-search-mobile-close-btn:hover {
-    color: #F25C05;
-    background-color: #F3F4F6;
   }
 
   .kala-search-input-box {
@@ -788,10 +755,6 @@
     font-size: 0.95rem;
     width: 100%;
     min-width: 0;
-  }
-
-  .kala-search-esc-btn {
-    display: none !important;
   }
 
   .kala-search-categories-bar {

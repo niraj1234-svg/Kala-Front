@@ -35,30 +35,26 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({
 
   return (
     <div className="kala-custom-selector-group">
-      <div className="flex items-center justify-between mb-2">
-        <label className="kala-custom-step-label mb-0">
+      <div className="kala-color-header-row">
+        <label className="kala-custom-step-label">
           <span className="kala-custom-step-badge">2</span>
           <span>Select Color</span>
         </label>
-        <span className="text-xs font-semibold text-[#111111] bg-[#F3F4F6] px-2 py-0.5 rounded-full font-mono">
+        <span className="kala-color-active-badge">
           {colorName}
         </span>
       </div>
 
       {/* Main 3 High-Level Choices: White, Black, Other */}
-      <div className="grid grid-cols-3 gap-2.5 mb-3" role="radiogroup" aria-label="Color choices">
+      <div className="kala-color-choice-grid" role="radiogroup" aria-label="Color choices">
         <button
           type="button"
           role="radio"
           aria-checked={isPresetWhite}
-          className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
-            isPresetWhite
-              ? 'border-[#D94700] bg-[#FFF8F5] ring-1 ring-[#D94700] text-[#111111]'
-              : 'border-[#E5E7EB] bg-white hover:bg-[#F9FAFB] text-[#4B5563]'
-          }`}
+          className={`kala-color-choice-btn ${isPresetWhite ? 'active' : ''}`}
           onClick={() => onSelectColor('#FFFFFF', 'White')}
         >
-          <span className="w-5 h-5 rounded-full bg-white border border-[#D1D5DB] shadow-inner shrink-0" />
+          <span className="kala-color-swatch-circle" style={{ backgroundColor: '#FFFFFF' }} />
           <span>White</span>
         </button>
 
@@ -66,14 +62,10 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({
           type="button"
           role="radio"
           aria-checked={isPresetBlack}
-          className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
-            isPresetBlack
-              ? 'border-[#D94700] bg-[#FFF8F5] ring-1 ring-[#D94700] text-[#111111]'
-              : 'border-[#E5E7EB] bg-white hover:bg-[#F9FAFB] text-[#4B5563]'
-          }`}
+          className={`kala-color-choice-btn ${isPresetBlack ? 'active' : ''}`}
           onClick={() => onSelectColor('#18181B', 'Black')}
         >
-          <span className="w-5 h-5 rounded-full bg-[#18181B] border border-[#111111] shadow-inner shrink-0" />
+          <span className="kala-color-swatch-circle" style={{ backgroundColor: '#18181B' }} />
           <span>Black</span>
         </button>
 
@@ -81,11 +73,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({
           type="button"
           role="radio"
           aria-checked={isOther}
-          className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
-            isOther
-              ? 'border-[#D94700] bg-[#FFF8F5] ring-1 ring-[#D94700] text-[#111111]'
-              : 'border-[#E5E7EB] bg-white hover:bg-[#F9FAFB] text-[#4B5563]'
-          }`}
+          className={`kala-color-choice-btn ${isOther ? 'active' : ''}`}
           onClick={() => {
             if (!isOther) {
               onSelectColor(POPULAR_COLORS[2].hex, POPULAR_COLORS[2].name)
@@ -93,7 +81,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({
           }}
         >
           <span
-            className="w-5 h-5 rounded-full border border-[#D1D5DB] shadow-inner shrink-0"
+            className="kala-color-swatch-circle"
             style={{
               background: isOther
                 ? selectedColor
@@ -106,11 +94,11 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({
 
       {/* Expanded Swatches when "Other" is active */}
       {isOther && (
-        <div className="p-3 bg-[#F9FAFB] rounded-xl border border-[#E5E7EB] space-y-2 animate-fadeIn">
-          <div className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">
+        <div className="kala-color-swatches-panel">
+          <div className="kala-color-swatches-title">
             Popular Streetwear Shades
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="kala-color-swatches-list">
             {POPULAR_COLORS.slice(2).map((col) => {
               const isColSelected = selectedColor.toUpperCase() === col.hex.toUpperCase()
               return (
@@ -119,11 +107,7 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({
                   type="button"
                   title={col.name}
                   aria-label={col.name}
-                  className={`w-7 h-7 rounded-full border transition-transform relative ${
-                    isColSelected
-                      ? 'scale-110 ring-2 ring-[#D94700] ring-offset-2'
-                      : 'border-[#CBD5E1] hover:scale-105'
-                  }`}
+                  className={`kala-color-swatch-item ${isColSelected ? 'active' : ''}`}
                   style={{ backgroundColor: col.hex }}
                   onClick={() => onSelectColor(col.hex, col.name)}
                 />
@@ -132,15 +116,15 @@ export const ColorSelector: React.FC<ColorSelectorProps> = ({
 
             {/* Custom Hex Picker Input */}
             <label
-              className="w-7 h-7 rounded-full border border-dashed border-[#9CA3AF] flex items-center justify-center cursor-pointer hover:border-[#D94700] transition-colors relative"
+              className="kala-color-custom-btn"
               title="Custom Color Picker"
             >
-              <span className="text-[10px] text-[#6B7280] font-bold">+</span>
+              <span>+</span>
               <input
                 type="color"
                 value={selectedColor}
                 onChange={(e) => onSelectColor(e.target.value, 'Custom')}
-                className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
+                className="kala-color-custom-input"
                 aria-label="Custom color picker"
               />
             </label>

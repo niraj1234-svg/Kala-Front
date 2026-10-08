@@ -124,13 +124,13 @@ export const DesignUploader: React.FC<DesignUploaderProps> = ({
 
   return (
     <div className="kala-custom-selector-group">
-      <div className="flex items-center justify-between mb-2">
-        <label className="kala-custom-step-label mb-0">
+      <div className="kala-uploader-header-row">
+        <label className="kala-custom-step-label">
           <span className="kala-custom-step-badge">4</span>
           <span>Upload Your Design</span>
         </label>
         {artwork && (
-          <span className="text-[11px] font-mono font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+          <span className="kala-uploader-ready-badge">
             Design Ready
           </span>
         )}
@@ -141,41 +141,41 @@ export const DesignUploader: React.FC<DesignUploaderProps> = ({
         type="file"
         accept=".png,.jpg,.jpeg,.webp,.svg,image/png,image/jpeg,image/webp,image/svg+xml"
         className="hidden"
+        style={{ display: 'none' }}
         onChange={handleFileSelect}
       />
 
       {artwork ? (
         /* Uploaded Artwork Summary Card */
-        <div className="p-3.5 bg-white rounded-xl border border-[#E5E7EB] shadow-sm flex items-center gap-3 animate-fadeIn">
-          <div className="w-14 h-14 rounded-lg bg-[#FAF9F6] border border-[#E5E7EB] p-1 shrink-0 flex items-center justify-center overflow-hidden">
+        <div className="kala-artwork-card">
+          <div className="kala-artwork-thumb">
             <img
               src={artwork.dataUrl}
               alt="Uploaded artwork preview"
-              className="max-w-full max-h-full object-contain"
             />
           </div>
 
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-bold text-[#111111] truncate" title={artwork.name}>
+          <div className="kala-artwork-info">
+            <div className="kala-artwork-name" title={artwork.name}>
               {artwork.name}
             </div>
-            <div className="text-[11px] text-[#6B7280] font-mono mt-0.5">
+            <div className="kala-artwork-dimensions">
               {artwork.sizeFormatted}
               {artwork.dimensions && ` • ${artwork.dimensions.width}×${artwork.dimensions.height}px`}
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="kala-artwork-actions">
             <button
               type="button"
-              className="px-2.5 py-1.5 text-[11px] font-bold text-[#111111] bg-[#F3F4F6] hover:bg-[#E5E7EB] rounded-lg transition-colors"
+              className="kala-artwork-replace-btn"
               onClick={() => fileInputRef.current?.click()}
             >
               Replace
             </button>
             <button
               type="button"
-              className="px-2 py-1.5 text-[11px] font-bold text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              className="kala-artwork-remove-btn"
               onClick={() => {
                 onArtworkChange(null)
                 setErrorMessage(null)
@@ -190,11 +190,7 @@ export const DesignUploader: React.FC<DesignUploaderProps> = ({
       ) : (
         /* Drag & Drop Area / Clickable Upload Zone */
         <div
-          className={`kala-dropzone border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-all ${
-            isDragging
-              ? 'border-[#D94700] bg-[#FFF8F5]'
-              : 'border-[#D1D5DB] bg-[#FAFAFA] hover:border-[#D94700] hover:bg-[#FFFDFB]'
-          }`}
+          className={`kala-dropzone ${isDragging ? 'dragging' : ''}`}
           onClick={() => fileInputRef.current?.click()}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -209,19 +205,19 @@ export const DesignUploader: React.FC<DesignUploaderProps> = ({
           }}
           aria-label="Click or drop design here to upload"
         >
-          <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[#FFEFEB] text-[#D94700] flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="kala-dropzone-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
           </div>
 
-          <div className="text-xs font-bold text-[#111111]">
-            <span className="hidden sm:inline">Drag &amp; drop artwork here, or </span>
-            <span className="text-[#D94700] underline sm:no-underline">browse file</span>
+          <div className="kala-dropzone-text">
+            <span>Drag &amp; drop artwork here, or </span>
+            <span className="kala-dropzone-highlight">browse file</span>
           </div>
-          <div className="text-[11px] text-[#6B7280] mt-1">
+          <div className="kala-dropzone-hint">
             PNG, JPG, WEBP, or SVG • Max 10MB
           </div>
         </div>

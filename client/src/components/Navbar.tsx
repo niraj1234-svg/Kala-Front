@@ -224,24 +224,7 @@ export const Navbar: React.FC = () => {
             </Link>
           </div>
 
-          {/* Desktop "CREATE YOURS" Button */}
-          <Link
-            to="/custom-apparel"
-            className="kala-create-btn"
-            onClick={closeMobileMenu}
-          >
-            <span>CREATE YOURS</span>
-            <span className="kala-sparkle-icon" aria-hidden="true">
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M12 0L14.7 9.3L24 12L14.7 14.7L12 24L9.3 14.7L0 12L9.3 9.3L12 0Z" />
-              </svg>
-            </span>
-          </Link>
+
 
           {/* Mobile Hamburger Toggle Button */}
           <button
@@ -325,11 +308,11 @@ export const Navbar: React.FC = () => {
 
         <div className="kala-mobile-actions">
           <Link
-            to="/custom-apparel"
+            to="/customize"
             className="kala-create-btn kala-mobile-create-btn"
             onClick={closeMobileMenu}
           >
-            <span>CREATE YOURS</span>
+            <span>CUSTOM STUDIO</span>
             <span className="kala-sparkle-icon" aria-hidden="true">
               <svg
                 width="12"
@@ -342,76 +325,31 @@ export const Navbar: React.FC = () => {
             </span>
           </Link>
 
-          <div className="kala-mobile-icons-row">
-            <button
-              type="button"
-              className="kala-icon-btn"
-              aria-label="Search collection"
-              title="Search"
-              onClick={() => {
-                closeMobileMenu()
-                setIsSearchOpen(true)
-              }}
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <circle cx="11" cy="11" r="7" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-            </button>
-            <Link
-              to="/wishlist"
-              className={`kala-icon-btn ${isWishlistBumping ? 'wishlist-pop' : ''}`}
-              aria-label={`Wishlist${wishlistCount > 0 ? `, ${wishlistCount} items` : ''}`}
-              title="Wishlist"
-              onClick={closeMobileMenu}
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
-              >
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
-              {wishlistCount > 0 && (
-                <span className={`kala-cart-badge kala-wishlist-badge ${isWishlistBumping ? 'badge-bounce' : ''}`} aria-hidden="true">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
+          <div className="kala-mobile-utility-links">
             <Link
               to="/account"
-              className="kala-icon-btn"
-              aria-label="Account"
-              title="Account"
+              className="kala-mobile-util-item"
               onClick={closeMobileMenu}
             >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
-              >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
+              <span>My Account &amp; Orders</span>
             </Link>
+
+            <a
+              href="https://wa.me/919999999999"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="kala-mobile-util-item whatsapp"
+              onClick={closeMobileMenu}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+              </svg>
+              <span>Need Help? Chat on WhatsApp</span>
+            </a>
           </div>
         </div>
       </div>

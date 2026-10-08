@@ -16,6 +16,8 @@ export interface ServerCartItem {
     backPosition?: { x: number; y: number }
     frontFontSize?: number
     backFontSize?: number
+    frontRotation?: number
+    backRotation?: number
     price?: number
     apparelType?: string
     color?: string
