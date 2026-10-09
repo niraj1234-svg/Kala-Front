@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { KALA_EVENTS, type ProductEvent, type BundleEvent, type UpcomingEvent } from '../data/events'
+import { useCart } from '../context/CartContext'
+import { flyToCart } from '../utils/cartAnimation'
 import '../styles/NewEventsSection.css'
 
 export const NewEventsSection: React.FC = () => {
@@ -9,8 +11,60 @@ export const NewEventsSection: React.FC = () => {
 
   // Track front/back image toggle per product event
   const [productViews, setProductViews] = useState<Record<string, string>>({})
+  const [quickAddedId, setQuickAddedId] = useState<string | null>(null)
 
+  const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({ 'kala-bihari-story': 'M' })
+
+  const { addToCart } = useCart()
+  const navigate = useNavigate()
   const totalSlides = KALA_EVENTS.length
+
+  // Quick purchase handler (directly directs to checkout with selected size)
+  const handleBuyNow = (e: React.MouseEvent, prod: ProductEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const chosenSize = selectedSizes[prod.id] || 'M'
+    addToCart(
+      {
+        id: prod.productId,
+        name: `${prod.title} (${chosenSize})`,
+        image: prod.frontImage,
+        price: prod.price,
+      },
+      chosenSize,
+      1
+    )
+    navigate('/checkout')
+  }
+
+  // Quick add to cart handler (triggers animation & feedback without leaving)
+  const handleQuickAdd = (e: React.MouseEvent, prod: ProductEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const chosenSize = selectedSizes[prod.id] || 'M'
+    addToCart(
+      {
+        id: prod.productId,
+        name: `${prod.title} (${chosenSize})`,
+        image: prod.frontImage,
+        price: prod.price,
+      },
+      chosenSize,
+      1
+    )
+    setQuickAddedId(prod.id)
+    setTimeout(() => {
+      setQuickAddedId(null)
+    }, 2200)
+
+    const cardEl = (e.currentTarget as HTMLElement).closest('.kala-event-card-single')
+    const imgEl = cardEl?.querySelector<HTMLImageElement>('.kala-stage-main-img')
+    flyToCart({
+      sourceElement: imgEl || null,
+      imageSrc: prod.frontImage,
+      productName: prod.title,
+    })
+  }
 
   // Swipe & Drag tracking refs
   const touchStartX = useRef<number | null>(null)
@@ -138,6 +192,46 @@ export const NewEventsSection: React.FC = () => {
         </header>
 
         {/* ================================================================
+            QUICK DROP SELECTOR TABS (Direct 1-Click Access Above The Fold)
+            ================================================================ */}
+        <div className="kala-new-events-tabs" role="tablist" aria-label="Drop categories">
+          {KALA_EVENTS.map((event, idx) => {
+            let icon = '🔥'
+            let label = 'Featured Drop'
+            let tag = '₹400'
+            if (event.type === 'bundle') {
+              icon = '⚡'
+              label = 'T-Shirt Stack'
+              tag = 'From ₹499'
+            } else if (event.id === 'kala-culture-drops') {
+              icon = '🇮🇳'
+              label = 'Culture Drops'
+              tag = 'Pan-India'
+            } else if (event.id === 'kala-campus-ideathon') {
+              icon = '🏆'
+              label = 'Ideathon'
+              tag = 'Campus Battle'
+            }
+
+            return (
+              <button
+                key={event.id}
+                type="button"
+                role="tab"
+                aria-selected={currentIndex === idx}
+                className={`kala-events-tab-pill ${currentIndex === idx ? 'active' : ''}`}
+                onClick={() => goToSlide(idx)}
+                aria-label={`Jump to ${label} slide`}
+              >
+                <span className="kala-tab-icon" aria-hidden="true">{icon}</span>
+                <span className="kala-tab-label">{label}</span>
+                <span className="kala-tab-tag">{tag}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* ================================================================
             CAROUSEL ROW: [ PREV ARROW ]  [ EVENT CARD VIEWPORT ]  [ NEXT ARROW ]
             Side arrows are vertically centered on the left and right.
             ================================================================ */}
@@ -205,9 +299,30 @@ export const NewEventsSection: React.FC = () => {
                                 <span className="kala-badge-dot" aria-hidden="true" />
                                 {prod.badge}
                               </span>
-                              <span className="kala-stage-price-pill">
-                                {prod.currency}{prod.price}
-                              </span>
+                              <div className="kala-stage-topbar-actions">
+                                <span className="kala-stage-price-pill">
+                                  {prod.currency}{prod.price}
+                                </span>
+                                <button
+                                  type="button"
+                                  className={`kala-stage-quick-add-btn ${quickAddedId === prod.id ? 'is-added' : ''}`}
+                                  onClick={(e) => handleQuickAdd(e, prod)}
+                                  title={quickAddedId === prod.id ? 'Added to Cart!' : 'Quick Add to Cart'}
+                                  aria-label={`Quick add ${prod.title} to cart`}
+                                >
+                                  {quickAddedId === prod.id ? (
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                      <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                  ) : (
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                                      <line x1="3" y1="6" x2="21" y2="6"/>
+                                      <path d="M16 10a4 4 0 0 1-8 0"/>
+                                    </svg>
+                                  )}
+                                </button>
+                              </div>
                             </div>
 
                             <div className="kala-stage-image-wrap">
@@ -259,37 +374,51 @@ export const NewEventsSection: React.FC = () => {
                                 <span className="kala-price-amount">
                                   {prod.currency}{prod.price}
                                 </span>
+                                <span className="kala-price-original">₹799</span>
+                                <span className="kala-price-save-pill">50% OFF • SAVE ₹399</span>
                                 <span className="kala-stock-tag">{prod.status}</span>
+                              </div>
+                            </div>
+
+                            {/* Real-Time Live Urgency & Scarcity Tracker */}
+                            <div className="kala-urgency-counter-strip" aria-label="Drop popularity">
+                              <span className="kala-urgency-icon" aria-hidden="true">🔥</span>
+                              <span className="kala-urgency-text">
+                                <strong>19 shoppers</strong> viewing now • <strong>Only 6 left</strong> in Size {selectedSizes[prod.id] || 'M'}
+                              </span>
+                              <div className="kala-urgency-bar-track">
+                                <div className="kala-urgency-bar-fill" style={{ width: '84%' }} />
+                              </div>
+                            </div>
+
+                            {/* Interactive Size Selector Strip */}
+                            <div className="kala-event-size-selector" aria-label="Choose your size">
+                              <span className="kala-size-selector-label">SIZE:</span>
+                              <div className="kala-size-chips-row">
+                                {['S', 'M', 'L', 'XL', 'XXL'].map((sz) => (
+                                  <button
+                                    key={sz}
+                                    type="button"
+                                    className={`kala-size-chip ${(selectedSizes[prod.id] || 'M') === sz ? 'active' : ''}`}
+                                    onClick={(e) => {
+                                      e.preventDefault()
+                                      e.stopPropagation()
+                                      setSelectedSizes((prev) => ({ ...prev, [prod.id]: sz }))
+                                    }}
+                                    aria-label={`Select size ${sz}`}
+                                  >
+                                    {sz}
+                                  </button>
+                                ))}
                               </div>
                             </div>
 
                             <p className="kala-event-desc">{prod.description}</p>
 
-                            <div className="kala-feature-badges-row" aria-label="Key Features">
-                              {prod.features.map((feature, fIdx) => (
-                                <span key={fIdx} className="kala-feature-badge-item">
-                                  <svg
-                                    width="12"
-                                    height="12"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.8"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    aria-hidden="true"
-                                  >
-                                    <polyline points="20 6 9 17 4 12" />
-                                  </svg>
-                                  <span>{feature}</span>
-                                </span>
-                              ))}
-                            </div>
-
-                            <div className="kala-event-cta-wrap">
+                            <div className="kala-event-cta-wrap kala-dual-cta">
                               <Link
                                 to={prod.link}
-                                className="kala-btn kala-btn-primary kala-event-action-btn"
+                                className="kala-btn kala-event-action-btn kala-btn-view"
                                 aria-label={`View ${prod.title} product details`}
                               >
                                 <span>{prod.ctaText}</span>
@@ -309,6 +438,35 @@ export const NewEventsSection: React.FC = () => {
                                   <polyline points="12 5 19 12 12 19" />
                                 </svg>
                               </Link>
+                              <button
+                                type="button"
+                                onClick={(e) => handleBuyNow(e, prod)}
+                                className="kala-btn kala-event-action-btn kala-btn-buy"
+                                aria-label={`Buy ${prod.title} now in size ${selectedSizes[prod.id] || 'M'} for ${prod.currency}${prod.price}`}
+                              >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                </svg>
+                                <span>BUY NOW ({selectedSizes[prod.id] || 'M'}) • {prod.currency}{prod.price}</span>
+                              </button>
+                            </div>
+
+                            {/* Trust Assurance Micro-Badges Row */}
+                            <div className="kala-event-trust-assurance">
+                              <span className="kala-assurance-item">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                <span>100% Secure</span>
+                              </span>
+                              <span className="kala-assurance-dot" aria-hidden="true">•</span>
+                              <span className="kala-assurance-item">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <span>Dispatches in 24h</span>
+                              </span>
+                              <span className="kala-assurance-dot" aria-hidden="true">•</span>
+                              <span className="kala-assurance-item">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>7-Day Exchange</span>
+                              </span>
                             </div>
                           </div>
                         </article>
@@ -514,7 +672,7 @@ export const NewEventsSection: React.FC = () => {
                             </div>
                           </div>
 
-                          <div className="kala-event-cta-wrap">
+                          <div className="kala-event-cta-wrap kala-dual-cta">
                             <button
                               type="button"
                               disabled
@@ -525,6 +683,28 @@ export const NewEventsSection: React.FC = () => {
                               <span className="kala-btn-lock-icon" aria-hidden="true">🔒</span>
                               <span>{upcoming.status}</span>
                             </button>
+                            <Link
+                              to="/shop"
+                              className="kala-btn kala-event-action-btn kala-btn-explore"
+                              aria-label="Explore all available products in KALA shop"
+                            >
+                              <span>EXPLORE SHOP</span>
+                              <svg
+                                className="kala-arrow-icon"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                aria-hidden="true"
+                              >
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                                <polyline points="12 5 19 12 12 19" />
+                              </svg>
+                            </Link>
                           </div>
                         </div>
                       </article>

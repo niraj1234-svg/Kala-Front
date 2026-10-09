@@ -225,8 +225,47 @@ export const Cart: React.FC = () => {
           })}
         </div>
 
-        {/* Order Summary */}
+        {/* Order Summary with Psychology Conversion Triggers */}
         <aside className="kala-cart-summary">
+          {/* 1. Free Shipping Progress Goal Bar */}
+          {(() => {
+            const FREE_SHIPPING_THRESHOLD = 699
+            const amountNeeded = Math.max(0, FREE_SHIPPING_THRESHOLD - cartSubtotal)
+            const progressPercent = Math.min(100, Math.round((cartSubtotal / FREE_SHIPPING_THRESHOLD) * 100))
+            const isUnlocked = amountNeeded === 0
+
+            return (
+              <div className="kala-cart-shipping-goal" role="status">
+                <div className="kala-shipping-goal-header">
+                  {isUnlocked ? (
+                    <span className="kala-shipping-goal-text unlocked">
+                      🎉 <strong>You unlocked FREE EXPRESS DELIVERY!</strong>
+                    </span>
+                  ) : (
+                    <span className="kala-shipping-goal-text">
+                      🚚 Add <strong>₹{amountNeeded.toLocaleString('en-IN')}</strong> more for <strong>FREE DELIVERY</strong>
+                    </span>
+                  )}
+                  <span className="kala-shipping-goal-pct">{progressPercent}%</span>
+                </div>
+                <div className="kala-shipping-goal-track">
+                  <div
+                    className={`kala-shipping-goal-fill ${isUnlocked ? 'complete' : ''}`}
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+              </div>
+            )
+          })()}
+
+          {/* 2. Cart Reservation Urgency Clock */}
+          <div className="kala-cart-urgency-note">
+            <span className="kala-cart-urgency-dot" aria-hidden="true" />
+            <span className="kala-cart-urgency-text">
+              High-demand items reserved in your cart for <strong>14:59</strong>
+            </span>
+          </div>
+
           <h2 className="kala-summary-title">ORDER SUMMARY</h2>
 
           <div className="kala-summary-row">
@@ -236,14 +275,14 @@ export const Cart: React.FC = () => {
 
           <div className="kala-summary-row">
             <span>Shipping</span>
-            <span style={{ color: '#16a34a', fontWeight: 600 }}>
-              FREE
+            <span style={{ color: cartSubtotal >= 699 ? '#16a34a' : 'inherit', fontWeight: 600 }}>
+              {cartSubtotal >= 699 ? 'FREE' : '₹50'}
             </span>
           </div>
 
           <div className="kala-summary-row total">
             <span>Total</span>
-            <span>₹{cartSubtotal.toLocaleString('en-IN')}</span>
+            <span>₹{(cartSubtotal >= 699 ? cartSubtotal : cartSubtotal + 50).toLocaleString('en-IN')}</span>
           </div>
 
           <button
@@ -253,6 +292,25 @@ export const Cart: React.FC = () => {
           >
             PROCEED TO CHECKOUT
           </button>
+
+          {/* 3. Bank-Grade Trust & Payment Assurance */}
+          <div className="kala-cart-trust-badges">
+            <div className="kala-cart-trust-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>256-Bit Encrypted Checkout</span>
+            </div>
+            <div className="kala-cart-trust-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>Dispatches in 24 Hours</span>
+            </div>
+            <div className="kala-cart-trust-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>7-Day Easy Exchange Policy</span>
+            </div>
+            <div className="kala-cart-payment-methods">
+              <span>UPI • Cards • NetBanking • COD</span>
+            </div>
+          </div>
 
           <Link to="/shop" className="kala-continue-link">
             ← Continue Shopping

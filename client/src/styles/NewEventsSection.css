@@ -8,7 +8,7 @@
   position: relative;
   width: 100%;
   background-color: #FAF9F6;
-  padding: clamp(1.75rem, 3.2vw, 2.75rem) 0 clamp(2rem, 3.6vw, 3.25rem) 0;
+  padding: clamp(0.75rem, 1.4vw, 1.15rem) 0 clamp(0.75rem, 1.4vw, 1.25rem) 0;
   border-bottom: 1px solid #ECEAE4;
   overflow: hidden;
   outline: none;
@@ -24,23 +24,23 @@
 }
 
 /* --------------------------------------------------------------------------
-   1. SECTION HEADER
+   1. SECTION HEADER (COMPACT & HIGH IMPACT)
    -------------------------------------------------------------------------- */
 .kala-new-events-header {
   text-align: center;
-  max-width: 640px;
-  margin: 0 auto clamp(1.25rem, 2vw, 1.85rem) auto;
+  max-width: 680px;
+  margin: 0 auto 0.45rem auto;
 }
 
 .kala-new-events-eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.22rem 0.65rem;
+  padding: 0.18rem 0.58rem;
   background-color: rgba(217, 71, 0, 0.08);
-  border: 1px solid rgba(217, 71, 0, 0.25);
+  border: 1px solid rgba(217, 71, 0, 0.22);
   border-radius: 9999px;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.22rem;
 }
 
 .kala-eyebrow-accent-dot {
@@ -54,7 +54,7 @@
 
 .kala-eyebrow-text {
   font-family: var(--kala-font-primary);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -64,23 +64,88 @@
 
 .kala-new-events-title {
   font-family: var(--kala-font-primary);
-  font-size: clamp(1.6rem, 2.8vw, 2.25rem);
+  font-size: clamp(1.3rem, 2.2vw, 1.75rem);
   font-weight: 900;
   line-height: 1.15;
   letter-spacing: -0.03em;
   color: #111111;
   text-transform: uppercase;
-  margin: 0 0 0.38rem 0;
+  margin: 0 0 0.18rem 0;
   text-wrap: balance;
 }
 
 .kala-new-events-subtitle {
   font-family: var(--kala-font-primary);
-  font-size: clamp(0.85rem, 1.1vw, 0.95rem);
-  line-height: 1.45;
+  font-size: clamp(0.78rem, 0.95vw, 0.86rem);
+  line-height: 1.35;
   color: #5F6368;
   margin: 0;
   text-wrap: balance;
+}
+
+/* Quick Drop Selector Tabs (Above The Fold Direct Navigation) */
+.kala-new-events-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin: 0.45rem auto 0.75rem auto;
+}
+
+.kala-events-tab-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.72rem;
+  background-color: #FFFFFF;
+  border: 1px solid #E5E2DD;
+  border-radius: 9999px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #555555;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  user-select: none;
+}
+
+.kala-events-tab-pill:hover {
+  border-color: #D94700;
+  color: #D94700;
+  transform: translateY(-1px);
+}
+
+.kala-events-tab-pill.active {
+  background-color: #111111;
+  border-color: #111111;
+  color: #FFFFFF;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.16);
+}
+
+.kala-tab-icon {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.kala-tab-label {
+  letter-spacing: 0.02em;
+}
+
+.kala-tab-tag {
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 0.08rem 0.38rem;
+  border-radius: 9999px;
+  background: rgba(217, 71, 0, 0.1);
+  color: #D94700;
+}
+
+.kala-events-tab-pill.active .kala-tab-tag {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFA573;
 }
 
 /* --------------------------------------------------------------------------
@@ -192,10 +257,10 @@
   width: 100%;
   background-color: #FFFFFF;
   display: grid;
-  grid-template-columns: minmax(360px, 44%) 1fr;
+  grid-template-columns: minmax(320px, 42%) 1fr;
   align-items: stretch;
-  min-height: 420px;
-  max-height: 490px;
+  min-height: 330px;
+  max-height: 380px;
   box-sizing: border-box;
 }
 
@@ -209,21 +274,51 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 1.5rem;
+  padding: 0.75rem 1rem;
   overflow: hidden;
   border-right: 1.5px solid #EAE7E1;
 }
 
 .kala-stage-topbar {
   position: absolute;
-  top: 1rem;
-  left: 1.15rem;
-  right: 1.15rem;
+  top: 0.75rem;
+  left: 0.85rem;
+  right: 0.85rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 3;
-  pointer-events: none;
+}
+
+.kala-stage-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.kala-stage-quick-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #111111;
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.kala-stage-quick-add-btn:hover {
+  background: #D94700;
+  transform: scale(1.1);
+  box-shadow: 0 3px 10px rgba(217, 71, 0, 0.3);
+}
+
+.kala-stage-quick-add-btn.is-added {
+  background: #16A34A;
 }
 
 .kala-stage-badge {
@@ -272,7 +367,7 @@
 .kala-stage-price-pill {
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid #D6D2CB;
-  padding: 0.25rem 0.65rem;
+  padding: 0.22rem 0.6rem;
   border-radius: 6px;
   font-family: var(--kala-font-primary);
   font-size: 0.78rem;
@@ -297,7 +392,7 @@
 .kala-stage-image-wrap {
   position: relative;
   width: 100%;
-  height: 290px;
+  height: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -305,12 +400,12 @@
 
 .kala-stage-main-img {
   max-width: 100%;
-  max-height: 275px;
+  max-height: 205px;
   width: auto;
   height: auto;
   object-fit: contain;
   transition: transform 0.3s ease;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.1));
 }
 
 .kala-event-card-single:hover .kala-stage-main-img {
@@ -320,13 +415,13 @@
 /* Front / Back Toggle Chip */
 .kala-card-view-toggle {
   position: absolute;
-  bottom: 0.85rem;
+  bottom: 0.65rem;
   display: inline-flex;
   background-color: #FFFFFF;
   border: 1.5px solid #D6D2CB;
   border-radius: 9999px;
   padding: 2px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   z-index: 4;
 }
 
@@ -355,20 +450,20 @@
 
 .kala-bundle-stack-visual {
   position: relative;
-  width: 250px;
-  height: 250px;
+  width: 200px;
+  height: 195px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 1rem;
+  margin-top: 0.35rem;
 }
 
 .kala-stack-tee {
   position: absolute;
-  width: 155px;
-  height: 155px;
+  width: 130px;
+  height: 130px;
   object-fit: contain;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.12));
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.12));
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -379,22 +474,22 @@
 
 .kala-stack-tee.tee-left {
   z-index: 2;
-  transform: translateX(-48px) translateY(8px) rotate(-14deg) scale(0.92);
+  transform: translateX(-40px) translateY(6px) rotate(-14deg) scale(0.92);
   opacity: 0.95;
 }
 
 .kala-stack-tee.tee-right {
   z-index: 2;
-  transform: translateX(48px) translateY(8px) rotate(14deg) scale(0.92);
+  transform: translateX(40px) translateY(6px) rotate(14deg) scale(0.92);
   opacity: 0.95;
 }
 
 .kala-event-card-single:hover .kala-stack-tee.tee-left {
-  transform: translateX(-56px) translateY(8px) rotate(-18deg) scale(0.94);
+  transform: translateX(-48px) translateY(6px) rotate(-18deg) scale(0.94);
 }
 
 .kala-event-card-single:hover .kala-stack-tee.tee-right {
-  transform: translateX(56px) translateY(8px) rotate(18deg) scale(0.94);
+  transform: translateX(48px) translateY(6px) rotate(18deg) scale(0.94);
 }
 
 /* Slide 3: Upcoming Locked Slide Visual */
@@ -436,12 +531,12 @@
 .kala-upcoming-visual-frame {
   position: relative;
   z-index: 3;
-  width: 220px;
-  height: 220px;
+  width: 175px;
+  height: 175px;
   max-width: 100%;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), 0 0 24px rgba(217, 71, 0, 0.16);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55), 0 0 20px rgba(217, 71, 0, 0.16);
   border: 1.5px solid rgba(255, 255, 255, 0.15);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
   display: flex;
@@ -452,7 +547,7 @@
 
 .kala-event-card-single:hover .kala-upcoming-visual-frame {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.68), 0 0 32px rgba(217, 71, 0, 0.28);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.68), 0 0 28px rgba(217, 71, 0, 0.28);
   border-color: rgba(255, 255, 255, 0.25);
 }
 
@@ -474,11 +569,11 @@
 .kala-upcoming-focal-caption {
   position: relative;
   z-index: 3;
-  margin-top: 0.85rem;
+  margin-top: 0.5rem;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.26rem 0.8rem;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 9999px;
@@ -533,18 +628,18 @@
 }
 
 /* --------------------------------------------------------------------------
-   5. EVENT BODY (RIGHT COLUMN)
+   5. EVENT BODY (RIGHT COLUMN - COMPACT & HIGH ATTENTION)
    -------------------------------------------------------------------------- */
 .kala-event-body {
-  padding: clamp(1.5rem, 2.5vw, 2.25rem);
+  padding: clamp(0.95rem, 1.8vw, 1.45rem);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   box-sizing: border-box;
 }
 
 .kala-body-heading-group {
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.35rem;
 }
 
 .kala-title-row {
@@ -557,9 +652,9 @@
 
 .kala-event-main-title {
   font-family: var(--kala-font-primary);
-  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+  font-size: clamp(1.15rem, 1.45vw, 1.35rem);
   font-weight: 900;
-  line-height: 1.18;
+  line-height: 1.15;
   letter-spacing: -0.02em;
   color: #111111;
   text-transform: uppercase;
@@ -568,65 +663,243 @@
 
 .kala-event-sub-label {
   font-family: var(--kala-font-primary);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #D94700;
-  margin: 0.2rem 0 0 0;
+  margin: 0.15rem 0 0 0;
 }
 
 .kala-event-price-line {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  margin-top: 0.45rem;
+  gap: 0.55rem;
+  margin-top: 0.25rem;
+  flex-wrap: wrap;
 }
 
 .kala-price-amount {
   font-family: var(--kala-font-primary);
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   font-weight: 900;
   color: #111111;
 }
 
-.kala-stock-tag {
-  font-size: 0.68rem;
+.kala-price-original {
+  font-family: var(--kala-font-primary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #8C8C8C;
+  text-decoration: line-through;
+}
+
+.kala-price-save-pill {
+  font-family: var(--kala-font-primary);
+  font-size: 0.65rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
-  padding: 0.2rem 0.5rem;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem;
+  background-color: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.kala-stock-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 0.12rem 0.45rem;
   background-color: #ECFDF5;
   color: #047857;
   border: 1px solid #A7F3D0;
   border-radius: 4px;
 }
 
+/* Real-Time Urgency & Scarcity Tracker Strip */
+.kala-urgency-counter-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.35rem 0 0.45rem 0;
+  padding: 0.3rem 0.65rem;
+  background: #FFF7ED;
+  border: 1px solid #FFEDD5;
+  border-radius: 6px;
+}
+
+.kala-urgency-icon {
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+.kala-urgency-text {
+  font-family: var(--kala-font-primary);
+  font-size: 0.72rem;
+  color: #9A3412;
+  font-weight: 500;
+}
+
+.kala-urgency-text strong {
+  color: #C2410C;
+  font-weight: 800;
+}
+
+.kala-urgency-bar-track {
+  width: 100%;
+  height: 4px;
+  background-color: #FED7AA;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 0.15rem;
+}
+
+.kala-urgency-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #EA580C, #DC2626);
+  border-radius: 9999px;
+  animation: pulseBar 2s infinite ease-in-out;
+}
+
+@keyframes pulseBar {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; filter: brightness(1.15); }
+}
+
+/* Interactive Size Selector Row */
+.kala-event-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.35rem 0 0.45rem 0;
+}
+
+.kala-size-selector-label {
+  font-family: var(--kala-font-primary);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #555555;
+  text-transform: uppercase;
+}
+
+.kala-size-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.kala-size-chip {
+  padding: 0.18rem 0.52rem;
+  font-family: var(--kala-font-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 5px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kala-size-chip:hover {
+  border-color: #111111;
+  color: #111111;
+}
+
+.kala-size-chip.active {
+  background: #111111;
+  border-color: #111111;
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+/* Trust Assurance Badges */
+.kala-event-trust-assurance {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.kala-assurance-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--kala-font-primary);
+  font-size: 0.67rem;
+  font-weight: 600;
+  color: #6B7280;
+}
+
+.kala-assurance-item svg {
+  color: #10B981;
+}
+
+.kala-assurance-dot {
+  font-size: 0.6rem;
+  color: #D1D5DB;
+}
+
+/* Shimmer on Hot Buy CTAs */
+.kala-btn-buy,
+.kala-bundle-cta {
+  position: relative;
+  overflow: hidden;
+}
+
+.kala-btn-buy::after,
+.kala-bundle-cta::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: skewX(-20deg);
+  animation: btnShimmer 3.5s infinite;
+}
+
+@keyframes btnShimmer {
+  0% { left: -100%; }
+  25%, 100% { left: 160%; }
+}
+
 .kala-event-desc {
   font-family: var(--kala-font-primary);
-  font-size: clamp(0.85rem, 1.05vw, 0.925rem);
-  line-height: 1.5;
+  font-size: clamp(0.78rem, 0.95vw, 0.85rem);
+  line-height: 1.38;
   color: #4B5563;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.45rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Feature Badges */
 .kala-feature-badges-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-bottom: 1.25rem;
+  gap: 0.32rem;
+  margin-bottom: 0.55rem;
 }
 
 .kala-feature-badge-item {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.75rem;
+  gap: 0.28rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: #374151;
   background: #F3F4F6;
-  padding: 0.25rem 0.65rem;
-  border-radius: 6px;
+  padding: 0.2rem 0.55rem;
+  border-radius: 5px;
   border: 1px solid #E5E7EB;
 }
 
@@ -639,18 +912,18 @@
 .kala-bundle-tiers-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: 0.32rem;
+  margin-bottom: 0.55rem;
 }
 
 .kala-bundle-tier-link {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.65rem 1rem;
+  padding: 0.38rem 0.75rem;
   background: #F9FAFB;
   border: 1.5px solid #E5E7EB;
-  border-radius: 8px;
+  border-radius: 7px;
   text-decoration: none;
   color: #111111;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -671,44 +944,44 @@
 .kala-tier-left {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
 }
 
 .kala-tier-qty {
   font-family: var(--kala-font-primary);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   color: #111111;
 }
 
 .kala-tier-best-tag {
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   font-weight: 800;
   letter-spacing: 0.06em;
   color: #FFFFFF;
   background: #D94700;
-  padding: 0.15rem 0.45rem;
+  padding: 0.12rem 0.4rem;
   border-radius: 4px;
 }
 
 .kala-tier-dots {
   flex: 1;
   border-bottom: 1px dashed #D1D5DB;
-  margin: 0 0.85rem;
+  margin: 0 0.65rem;
   opacity: 0.7;
 }
 
 .kala-tier-price {
   font-family: var(--kala-font-primary);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 900;
   color: #D94700;
 }
 
 .kala-tier-arrow {
   color: #9CA3AF;
-  margin-left: 0.5rem;
+  margin-left: 0.4rem;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
@@ -717,35 +990,69 @@
   transform: translateX(3px);
 }
 
-/* CTA Wrap & Buttons */
+/* CTA Wrap & Buttons (DIRECTLY VISIBLE & ATTENTION-GRABBING) */
 .kala-event-cta-wrap {
   margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.kala-event-cta-wrap.single-cta .kala-event-action-btn {
+  width: 100%;
+  flex: 1 1 100%;
 }
 
 .kala-event-action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  width: 100%;
-  padding: 0.85rem 1.5rem;
-  font-size: 0.85rem;
+  gap: 0.5rem;
+  padding: 0.68rem 1.2rem;
+  min-height: 42px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background-color: #111111;
-  color: #FFFFFF;
   border-radius: 8px;
   text-decoration: none;
-  transition: all 0.22s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   border: none;
   cursor: pointer;
+  box-sizing: border-box;
+  user-select: none;
 }
 
-.kala-event-action-btn:hover {
-  background-color: #D94700;
+/* Image 2 Style: Black button (VIEW PRODUCT & EXPLORE SHOP) */
+.kala-btn-view,
+.kala-btn-explore {
+  flex: 1 1 0%;
+  background-color: #111111;
+  color: #FFFFFF;
+}
+
+.kala-btn-view:hover,
+.kala-btn-explore:hover {
+  background-color: #262626;
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(217, 71, 0, 0.28);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Image 3 Style: Orange button (SHOP THE OFFER & BUY NOW) */
+.kala-bundle-cta,
+.kala-btn-buy {
+  flex: 1 1 0%;
+  background-color: #D94700;
+  color: #FFFFFF;
+}
+
+.kala-bundle-cta:hover,
+.kala-btn-buy:hover {
+  background-color: #BF3E00;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(217, 71, 0, 0.35);
 }
 
 .kala-arrow-icon {
@@ -754,15 +1061,6 @@
 
 .kala-event-action-btn:hover .kala-arrow-icon {
   transform: translateX(4px);
-}
-
-.kala-bundle-cta {
-  background-color: #D94700;
-}
-
-.kala-bundle-cta:hover {
-  background-color: #B83B00;
-  box-shadow: 0 6px 18px rgba(184, 59, 0, 0.35);
 }
 
 /* Upcoming Slide Body Styles */
@@ -780,9 +1078,9 @@
   color: #D94700;
   background-color: #FFF2EB;
   border: 1px solid #FFD3BF;
-  padding: 0.22rem 0.6rem;
+  padding: 0.18rem 0.55rem;
   border-radius: 6px;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
 }
 
 .kala-upcoming-title {
@@ -791,23 +1089,23 @@
 
 .kala-upcoming-desc {
   color: #4B5563;
-  margin-bottom: 1.15rem;
+  margin-bottom: 0.55rem;
 }
 
 .kala-release-date-box {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 1rem;
+  gap: 0.65rem;
+  padding: 0.45rem 0.85rem;
   background: #F9FAFB;
   border: 1.5px solid #E5E7EB;
-  border-radius: 8px;
-  margin-bottom: 1.25rem;
+  border-radius: 7px;
+  margin-bottom: 0.65rem;
   font-family: var(--kala-font-primary);
 }
 
 .kala-release-date-label {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.06em;
   color: #6B7280;
@@ -818,23 +1116,20 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: #111111;
-}
-
-.kala-release-month {
-  font-size: 0.75rem;
-  color: #6B7280;
 }
 
 .kala-locked-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  width: 100%;
-  padding: 0.85rem 1.5rem;
-  font-size: 0.825rem;
+  gap: 0.45rem;
+  flex: 1 1 0%;
+  padding: 0.68rem 1rem;
+  min-height: 42px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -844,6 +1139,7 @@
   border-radius: 8px;
   cursor: not-allowed;
   user-select: none;
+  box-sizing: border-box;
 }
 
 /* --------------------------------------------------------------------------
@@ -854,7 +1150,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 1.15rem;
+  margin-top: 0.65rem;
 }
 
 .kala-indicator-dot {
@@ -885,39 +1181,14 @@
    -------------------------------------------------------------------------- */
 @media (max-width: 1024px) {
   .kala-event-card-single {
-    grid-template-columns: minmax(320px, 42%) 1fr;
-    min-height: 400px;
-  }
-
-  .kala-bundle-stack-visual {
-    width: 220px;
-    height: 220px;
-  }
-
-  .kala-stack-tee {
-    width: 140px;
-    height: 140px;
-  }
-}
-
-@media (max-width: 900px) {
-  .kala-new-events-carousel-outer {
-    gap: 0.75rem;
-  }
-
-  .kala-carousel-side-arrow {
-    width: 42px;
-    height: 42px;
-  }
-
-  .kala-event-card-single {
-    grid-template-columns: minmax(290px, 40%) 1fr;
-    min-height: 390px;
+    grid-template-columns: minmax(300px, 42%) 1fr;
+    min-height: 330px;
+    max-height: 380px;
   }
 
   .kala-bundle-stack-visual {
     width: 200px;
-    height: 200px;
+    height: 195px;
   }
 
   .kala-stack-tee {
@@ -926,31 +1197,68 @@
   }
 }
 
+@media (max-width: 900px) {
+  .kala-new-events-carousel-outer {
+    gap: 0.65rem;
+  }
+
+  .kala-carousel-side-arrow {
+    width: 40px;
+    height: 40px;
+  }
+
+  .kala-event-card-single {
+    grid-template-columns: minmax(280px, 40%) 1fr;
+    min-height: 320px;
+    max-height: 375px;
+  }
+
+  .kala-bundle-stack-visual {
+    width: 180px;
+    height: 180px;
+  }
+
+  .kala-stack-tee {
+    width: 115px;
+    height: 115px;
+  }
+}
+
 @media (max-width: 768px) {
   .kala-new-events-header {
-    margin: 0 auto 1.35rem auto;
-    padding: 0 0.75rem;
+    margin: 0 auto 0.45rem auto;
+    padding: 0 0.5rem;
+  }
+
+  .kala-new-events-tabs {
+    gap: 0.35rem;
+    margin: 0.35rem auto 0.65rem auto;
+  }
+
+  .kala-events-tab-pill {
+    padding: 0.24rem 0.6rem;
+    font-size: 0.68rem;
   }
 
   .kala-new-events-eyebrow {
-    padding: 0.2rem 0.58rem;
-    gap: 0.35rem;
-    margin-bottom: 0.45rem;
+    padding: 0.16rem 0.52rem;
+    gap: 0.3rem;
+    margin-bottom: 0.25rem;
   }
 
   .kala-eyebrow-text {
-    font-size: 0.66rem;
-    letter-spacing: 0.11em;
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
   }
 
   .kala-new-events-title {
-    font-size: clamp(1.45rem, 4.2vw, 1.95rem);
-    margin-bottom: 0.35rem;
+    font-size: clamp(1.25rem, 4vw, 1.65rem);
+    margin-bottom: 0.25rem;
     text-wrap: balance;
   }
 
   .kala-new-events-subtitle {
-    font-size: clamp(0.82rem, 1.8vw, 0.9rem);
+    font-size: clamp(0.76rem, 1.8vw, 0.84rem);
     max-width: 360px;
     margin: 0 auto;
     text-wrap: balance;
@@ -969,12 +1277,12 @@
   /* On mobile, side arrows sit at the image area only (vertically centered on image stage) */
   .kala-carousel-side-arrow {
     position: absolute;
-    top: 105px;
+    top: 90px;
     transform: translateY(-50%);
-    width: 42px;
-    height: 42px;
-    min-width: 42px;
-    min-height: 42px;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(8px);
@@ -1013,73 +1321,73 @@
   .kala-event-media-stage {
     border-right: none;
     border-bottom: 1.5px solid #EAE7E1;
-    padding: 0.85rem 0.85rem;
-    min-height: 200px;
-    height: 200px;
+    padding: 0.75rem;
+    min-height: 175px;
+    height: 175px;
     position: relative;
     box-sizing: border-box;
   }
 
   .kala-stage-image-wrap {
-    height: 180px;
+    height: 155px;
   }
 
   .kala-stage-main-img {
-    max-height: 165px;
+    max-height: 140px;
   }
 
   .kala-bundle-stack-visual {
-    width: 175px;
-    height: 160px;
-    margin-top: 0.25rem;
+    width: 155px;
+    height: 145px;
+    margin-top: 0.2rem;
   }
 
   .kala-stack-tee {
-    width: 110px;
-    height: 110px;
+    width: 95px;
+    height: 95px;
   }
 
   .kala-stack-tee.tee-left {
-    transform: translateX(-30px) translateY(4px) rotate(-12deg) scale(0.9);
+    transform: translateX(-26px) translateY(4px) rotate(-12deg) scale(0.9);
   }
 
   .kala-stack-tee.tee-right {
-    transform: translateX(30px) translateY(4px) rotate(12deg) scale(0.9);
+    transform: translateX(26px) translateY(4px) rotate(12deg) scale(0.9);
   }
 
   .kala-upcoming-visual-frame {
-    width: 155px;
-    height: 155px;
-    border-radius: 14px;
+    width: 135px;
+    height: 135px;
+    border-radius: 12px;
   }
 
   .kala-upcoming-focal-caption {
-    margin-top: 0.65rem;
-    padding: 0.22rem 0.65rem;
+    margin-top: 0.45rem;
+    padding: 0.18rem 0.55rem;
   }
 
   .kala-focal-text {
-    font-size: 0.62rem;
+    font-size: 0.6rem;
   }
 
   .kala-event-body {
-    padding: 1.15rem 1.15rem 1.25rem 1.15rem;
+    padding: 0.85rem 0.95rem 1rem 0.95rem;
   }
 
   .kala-body-heading-group {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
     width: 100%;
   }
 
   .kala-title-row {
     width: 100%;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.25rem;
   }
 
   .kala-event-main-title {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 850;
-    line-height: 1.3;
+    line-height: 1.25;
     white-space: normal;
     word-break: normal;
     overflow-wrap: anywhere;
@@ -1089,21 +1397,21 @@
     display: flex;
     align-items: center;
     gap: 0.65rem;
-    margin-top: 0.35rem;
-    margin-bottom: 0.5rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.35rem;
     width: 100%;
   }
 
   .kala-price-amount {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 850;
     color: #111111;
   }
 
   .kala-stock-tag {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 700;
-    padding: 3px 8px;
+    padding: 2px 7px;
     border-radius: 4px;
     background-color: #f0fdf4;
     color: #16a34a;
@@ -1111,170 +1419,163 @@
   }
 
   .kala-upcoming-concept-pill {
-    font-size: 0.65rem;
-    margin-bottom: 0.35rem;
+    font-size: 0.62rem;
+    margin-bottom: 0.25rem;
   }
 
   .kala-event-desc {
     display: block;
-    -webkit-line-clamp: unset;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    margin-bottom: 0.85rem;
+    -webkit-line-clamp: 2;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    margin-bottom: 0.55rem;
     word-break: normal;
     overflow-wrap: anywhere;
   }
 
   .kala-release-date-box {
-    padding: 0.55rem 0.85rem;
-    margin-bottom: 0.95rem;
+    padding: 0.45rem 0.75rem;
+    margin-bottom: 0.65rem;
   }
 
   .kala-feature-badges-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.45rem;
-    margin-bottom: 1rem;
+    gap: 0.32rem;
+    margin-bottom: 0.65rem;
     width: 100%;
   }
 
   .kala-feature-badge-item {
-    font-size: 0.72rem;
-    padding: 4px 8px;
+    font-size: 0.68rem;
+    padding: 3px 7px;
     border-radius: 4px;
     white-space: nowrap;
   }
 
+  .kala-event-cta-wrap {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
   .kala-event-action-btn,
   .kala-locked-btn {
-    min-height: 48px;
-    padding: 0.75rem 1.15rem;
-    font-size: 0.85rem;
+    min-height: 42px;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.78rem;
     font-weight: 750;
     border-radius: 8px;
-    width: 100%;
     box-sizing: border-box;
   }
 }
 
 @media (max-width: 480px) {
   .kala-new-events-section {
-    padding: 1.15rem 0 1.45rem 0;
+    padding: 0.65rem 0 0.95rem 0;
   }
 
   .kala-new-events-header {
-    margin: 0 auto 1.05rem auto;
+    margin: 0 auto 0.35rem auto;
     padding: 0 0.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
+  .kala-new-events-tabs {
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 0 0.35rem 0.25rem 0.35rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+
+  .kala-new-events-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .kala-events-tab-pill {
+    flex-shrink: 0;
+  }
+
   .kala-new-events-eyebrow {
-    padding: 0.18rem 0.52rem;
-    gap: 0.32rem;
-    margin-bottom: 0.45rem;
-    background-color: rgba(217, 71, 0, 0.07);
-    border: 1px solid rgba(217, 71, 0, 0.22);
+    padding: 0.15rem 0.48rem;
+    gap: 0.3rem;
+    margin-bottom: 0.25rem;
   }
 
   .kala-eyebrow-accent-dot {
-    width: 4.5px;
-    height: 4.5px;
+    width: 4px;
+    height: 4px;
   }
 
   .kala-eyebrow-text {
-    font-size: 0.62rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    line-height: 1.1;
-    white-space: nowrap;
+    font-size: 0.6rem;
   }
 
   .kala-new-events-title {
-    font-size: clamp(1.3rem, 5.8vw, 1.62rem);
-    font-weight: 900;
-    line-height: 1.16;
-    letter-spacing: -0.025em;
-    margin: 0 0 0.35rem 0;
-    text-wrap: balance;
-    word-break: normal;
+    font-size: clamp(1.2rem, 5.5vw, 1.45rem);
+    margin: 0 0 0.25rem 0;
   }
 
   .kala-new-events-subtitle {
-    font-size: clamp(0.76rem, 2.6vw, 0.82rem);
-    line-height: 1.4;
-    color: #666666;
-    letter-spacing: 0.005em;
-    text-wrap: balance;
+    font-size: 0.74rem;
     max-width: 280px;
-    margin: 0 auto;
   }
 
-  .kala-new-events-container {
-    padding: 0 0.35rem;
+  .kala-event-cta-wrap {
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .kala-event-action-btn,
+  .kala-locked-btn {
+    width: 100%;
+    min-height: 40px;
+    font-size: 0.78rem;
+    padding: 0.6rem 0.8rem;
   }
 
   .kala-carousel-side-arrow {
-    top: 95px;
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
-  }
-
-  .kala-carousel-side-arrow.prev {
-    left: 6px;
-  }
-
-  .kala-carousel-side-arrow.next {
-    right: 6px;
+    top: 85px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
   }
 
   .kala-carousel-side-arrow svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .kala-upcoming-visual-frame {
-    width: 135px;
-    height: 135px;
-    border-radius: 12px;
-  }
-
-  .kala-event-body {
-    padding: 1rem 0.85rem 1.1rem 0.85rem;
-  }
-
-  .kala-event-main-title {
-    font-size: 1.05rem;
-  }
-
-  .kala-event-desc {
-    font-size: 0.8rem;
-    line-height: 1.45;
+    width: 15px;
+    height: 15px;
   }
 
   .kala-stage-image-wrap {
-    height: 155px;
+    height: 145px;
   }
 
   .kala-stage-main-img {
-    max-height: 145px;
+    max-height: 135px;
   }
 
   .kala-bundle-stack-visual {
-    width: 160px;
-    height: 150px;
+    width: 145px;
+    height: 140px;
   }
 
   .kala-stack-tee {
-    width: 95px;
-    height: 95px;
+    width: 85px;
+    height: 85px;
+  }
+
+  .kala-upcoming-visual-frame {
+    width: 125px;
+    height: 125px;
   }
 
   .kala-bundle-tier-link {
-    padding: 0.4rem 0.65rem;
+    padding: 0.35rem 0.65rem;
   }
 
   .kala-tier-qty {

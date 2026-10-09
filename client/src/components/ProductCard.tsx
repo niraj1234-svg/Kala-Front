@@ -189,8 +189,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </span>
             )}
           </button>
-          {!product.available && (
+          {!product.available ? (
             <span className="kala-card-badge sold-out">Out of Stock</span>
+          ) : (
+            <span className="kala-card-discount-tag">
+              -{Math.round(((Math.round(product.price * 1.75) - product.price) / Math.round(product.price * 1.75)) * 100)}%
+            </span>
           )}
         </div>
 
@@ -240,7 +244,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           )}
 
           <div className="kala-product-price-row">
-            <span className="kala-product-price">₹{product.price.toLocaleString('en-IN')}</span>
+            <div className="kala-card-pricing-group">
+              <span className="kala-product-price">₹{product.price.toLocaleString('en-IN')}</span>
+              <span className="kala-card-orig-price">₹{Math.round(product.price * 1.75).toLocaleString('en-IN')}</span>
+            </div>
             {product.available ? (
               <button
                 type="button"

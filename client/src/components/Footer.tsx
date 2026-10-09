@@ -9,7 +9,6 @@ export const Footer: React.FC = () => {
     shop: false,
     custom: false,
     business: false,
-    services: false,
     support: false,
     social: false,
   })
@@ -31,7 +30,7 @@ export const Footer: React.FC = () => {
             <span className="kala-footer-logo-text">KALA</span>
           </Link>
           <p className="kala-footer-tagline">
-            Minimal luxury apparel, authentic Indian streetwear, and custom digital tech services crafted for creators, teams, and brands.
+            Minimal luxury apparel, authentic Indian streetwear, and custom merchandise crafted for creators, teams, and brands.
           </p>
         </div>
 
@@ -60,35 +59,6 @@ export const Footer: React.FC = () => {
             </li>
             <li>
               <Link to="/shop" className="kala-footer-link">Oversized Hoodies</Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* 2. SERVICES SECTION (Web Dev, App Dev, WhatsApp Bot) */}
-        <div className={`kala-footer-nav-col ${openSections.services ? 'is-open' : ''}`}>
-          <button
-            type="button"
-            className="kala-footer-heading-btn"
-            onClick={() => toggleSection('services')}
-            aria-expanded={openSections.services}
-          >
-            <span className="kala-footer-heading">SERVICES</span>
-            <span className="kala-footer-toggle-icon" aria-hidden="true">
-              {openSections.services ? '−' : '+'}
-            </span>
-          </button>
-          <ul className="kala-footer-links">
-            <li>
-              <Link to="/services#web-dev" className="kala-footer-link">Web Development</Link>
-            </li>
-            <li>
-              <Link to="/services#app-dev" className="kala-footer-link">App Development</Link>
-            </li>
-            <li>
-              <Link to="/services#whatsapp-bot" className="kala-footer-link">WhatsApp Auto Reply Bot</Link>
-            </li>
-            <li>
-              <Link to="/services" className="kala-footer-link">Request Tech Quote</Link>
             </li>
           </ul>
         </div>

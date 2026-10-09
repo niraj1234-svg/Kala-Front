@@ -297,22 +297,52 @@
   margin-bottom: 0.4rem;
 }
 
-/* Price */
+/* Price Wrap with Anchoring & Discount Framing */
+.kala-details-price-wrap {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 0.45rem;
+}
+
 .kala-details-price {
-  font-size: 1.45rem;
-  font-weight: 700;
-  color: var(--kala-black);
-  margin-bottom: 0.4rem;
+  font-size: 1.55rem;
+  font-weight: 850;
+  color: #111111;
+  letter-spacing: -0.02em;
+}
+
+.kala-details-orig-price {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-decoration: line-through;
+}
+
+.kala-details-discount-pill {
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.55rem;
+  background-color: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+  border-radius: 9999px;
+  text-transform: uppercase;
 }
 
 /* Stock Status */
+.kala-details-stock-row {
+  margin-bottom: 0.35rem;
+}
+
 .kala-details-stock-status {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  margin-bottom: 0.6rem;
 }
 
 .kala-details-stock-status.in-stock {
@@ -326,6 +356,96 @@
 .kala-stock-dot {
   font-size: 0.65rem;
   line-height: 1;
+}
+
+/* Real-Time Live Urgency & Scarcity Tracker */
+.kala-details-scarcity-box {
+  margin: 0.55rem 0 1rem 0;
+  padding: 0.65rem 0.85rem;
+  background: #FFF7ED;
+  border: 1.5px solid #FFEDD5;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.kala-scarcity-top-line,
+.kala-scarcity-stock-line {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.76rem;
+  color: #9A3412;
+}
+
+.kala-scarcity-pulse-beacon {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #EA580C;
+  box-shadow: 0 0 8px rgba(234, 88, 12, 0.8);
+  animation: scarcityPulse 1.5s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+@keyframes scarcityPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.5; }
+}
+
+.kala-scarcity-flame {
+  font-size: 0.85rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.kala-scarcity-progress-track {
+  width: 100%;
+  height: 5px;
+  background-color: #FED7AA;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 0.15rem;
+}
+
+.kala-scarcity-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #EA580C, #DC2626);
+  border-radius: 9999px;
+  animation: barPulse 2.2s infinite ease-in-out;
+}
+
+@keyframes barPulse {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; filter: brightness(1.15); }
+}
+
+/* Trust Assurance Bar */
+.kala-details-trust-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 0.55rem 0 0.85rem 0;
+  padding: 0.55rem 0.85rem;
+  background-color: #F8F9FA;
+  border: 1px solid #E9ECEF;
+  border-radius: 8px;
+}
+
+.kala-trust-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.kala-trust-pill svg {
+  color: #16A34A;
+  flex-shrink: 0;
 }
 
 /* Short 1-Line Description with Inline Read More */
@@ -1002,6 +1122,26 @@
   box-sizing: border-box;
   text-align: center;
   user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.kala-btn-buy-now::after,
+.kala-main-action-btn.kala-btn-buy-now::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  animation: detailsShimmer 3.5s infinite;
+}
+
+@keyframes detailsShimmer {
+  0% { left: -100%; }
+  25%, 100% { left: 180%; }
 }
 
 .kala-btn-buy-now:hover:not(:disabled),

@@ -12,7 +12,7 @@
 
 .kala-footer-container {
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1.8fr 1fr 1fr 1fr 1fr;
   gap: clamp(1.5rem, 2.5vw, 2.5rem);
   padding-bottom: clamp(2rem, 3.5vw, 3rem);
 }

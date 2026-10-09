@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext'
 import SearchModal from './SearchModal'
+import AnnouncementBar from './AnnouncementBar'
 import logoImg from '../assets/logo.png'
 import '../styles/Navbar.css'
 
@@ -15,7 +16,6 @@ const NAV_ROUTES: NavRoute[] = [
   { label: 'SHOP', to: '/shop' },
   { label: 'CUSTOM APPAREL', to: '/custom-apparel' },
   { label: 'BUSINESS BRANDING', to: '/business-branding' },
-  { label: 'SERVICES', to: '/services' },
   { label: 'ABOUT', to: '/about' },
 ]
 
@@ -78,6 +78,9 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="kala-header" role="banner">
+      {/* 0. LUXURY CONVERSION ANNOUNCEMENT RIBBON */}
+      <AnnouncementBar />
+
       <div className="kala-navbar">
         {/* 1. BRAND LOGO (LEFT) */}
         <Link

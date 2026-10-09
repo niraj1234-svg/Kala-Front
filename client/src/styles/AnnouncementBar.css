@@ -1,0 +1,135 @@
+/* ==========================================================================
+   KALA ANNOUNCEMENT BAR — LUXURY CONVERSION RIBBON
+   ========================================================================== */
+
+.kala-announcement-bar {
+  width: 100%;
+  background-color: #0E0E10;
+  color: #FFFFFF;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: var(--kala-font-primary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1001;
+  overflow: hidden;
+  user-select: none;
+}
+
+.kala-announcement-container {
+  width: 100%;
+  max-width: var(--kala-max-width);
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kala-announcement-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  white-space: nowrap;
+}
+
+.kala-announcement-content.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.kala-announcement-content.fade-out {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.kala-announcement-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.45rem;
+  background-color: rgba(217, 71, 0, 0.22);
+  border: 1px solid rgba(217, 71, 0, 0.45);
+  color: #FFA573;
+  border-radius: 9999px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kala-announcement-pulse-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #D94700;
+  box-shadow: 0 0 6px rgba(217, 71, 0, 0.8);
+  animation: announcementPulse 1.6s infinite ease-in-out;
+}
+
+@keyframes announcementPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+}
+
+.kala-announcement-text {
+  color: #E5E7EB;
+  letter-spacing: 0.015em;
+  display: inline-flex;
+  align-items: center;
+}
+
+.kala-announcement-highlight {
+  color: #FFA573;
+  margin-left: 0.25rem;
+  font-weight: 800;
+}
+
+.kala-announcement-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.16rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.kala-announcement-cta:hover {
+  background-color: #D94700;
+  border-color: #D94700;
+  color: #FFFFFF;
+  transform: translateX(2px);
+}
+
+@media (max-width: 640px) {
+  .kala-announcement-bar {
+    height: 30px;
+    font-size: 0.66rem;
+  }
+
+  .kala-announcement-content {
+    gap: 0.4rem;
+  }
+
+  .kala-announcement-badge {
+    padding: 0.1rem 0.35rem;
+    font-size: 0.55rem;
+  }
+
+  .kala-announcement-cta {
+    padding: 0.12rem 0.45rem;
+    font-size: 0.58rem;
+  }
+}

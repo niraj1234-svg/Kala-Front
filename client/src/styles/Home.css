@@ -169,6 +169,32 @@
   transform: scale(1.04);
 }
 
+/* Floating High-End Conversion Pill on Split Cards */
+.kala-split-badge-pill {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  padding: 0.25rem 0.65rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 9999px;
+  font-family: var(--kala-font-primary);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #111111;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.kala-split-badge-pill.dark {
+  background: rgba(17, 17, 17, 0.88);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #FFA573;
+}
+
 /* --------------------------------------------------------------------------
    3. FEATURED PRODUCTS (Clean 5-Column Grid)
    -------------------------------------------------------------------------- */
@@ -295,6 +321,22 @@
   padding: 0.85rem;
 }
 
+.kala-clean-discount-tag {
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  background-color: #DC2626;
+  color: #FFFFFF;
+  font-family: var(--kala-font-primary);
+  font-size: 0.62rem;
+  font-weight: 850;
+  letter-spacing: 0.05em;
+  padding: 0.16rem 0.45rem;
+  border-radius: 4px;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.28);
+}
+
 .kala-clean-product-img {
   max-width: 90%;
   max-height: 90%;
@@ -355,7 +397,7 @@
   font-size: 0.88rem;
   font-weight: 600;
   color: #111111;
-  margin: 0 0 0.25rem 0;
+  margin: 0 0 0.2rem 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -364,10 +406,37 @@
   min-height: 2.5em;
 }
 
+.kala-clean-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.15rem;
+}
+
 .kala-clean-product-price {
   font-size: 0.98rem;
   font-weight: 800;
   color: #111111;
+}
+
+.kala-clean-orig-price {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-decoration: line-through;
+}
+
+.kala-clean-save-pill {
+  display: inline-block;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #D94700;
+  background-color: #FFF2EB;
+  border: 1px solid #FFD3BF;
+  padding: 0.06rem 0.32rem;
+  border-radius: 4px;
+  width: fit-content;
 }
 
 .kala-clean-cart-btn {
@@ -1128,207 +1197,4 @@
   }
 }
 
-/* --------------------------------------------------------------------------
-   HOMEPAGE DIGITAL SERVICES SECTION
-   -------------------------------------------------------------------------- */
-.kala-home-services-section {
-  padding: clamp(3rem, 5.5vw, 5rem) 0;
-  background: linear-gradient(180deg, #FFFFFF 0%, #FBF9F5 100%);
-  border-top: 1px solid var(--kala-border);
-}
-
-.kala-home-services-container {
-  max-width: var(--kala-max-width);
-  margin: 0 auto;
-  padding: 0 clamp(1rem, 3.5vw, 3.5rem);
-}
-
-.kala-home-services-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.kala-home-services-eyebrow {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--kala-orange);
-  text-transform: uppercase;
-  margin-bottom: 0.35rem;
-  display: block;
-}
-
-.kala-home-services-title {
-  font-size: clamp(1.6rem, 2.5vw, 2.25rem);
-  font-weight: 900;
-  letter-spacing: var(--kala-ls-tight);
-  text-transform: uppercase;
-  color: var(--kala-black);
-}
-
-.kala-home-services-view-all {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--kala-black);
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: color var(--kala-transition-fast);
-}
-
-.kala-home-services-view-all:hover {
-  color: var(--kala-orange);
-}
-
-.kala-home-services-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-}
-
-@media (max-width: 960px) {
-  .kala-home-services-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.kala-home-service-card {
-  background: #FFFFFF;
-  border: 1px solid var(--kala-border);
-  border-radius: 8px;
-  padding: 1.75rem;
-  display: flex;
-  flex-direction: column;
-  text-decoration: none;
-  color: var(--kala-black);
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
-}
-
-.kala-home-service-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(217, 71, 0, 0.5);
-  box-shadow: 0 14px 30px rgba(217, 71, 0, 0.08);
-}
-
-.kala-home-service-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.25rem;
-}
-
-.kala-home-service-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  background: rgba(217, 71, 0, 0.08);
-  color: var(--kala-orange);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.kala-home-service-tag {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: #111111;
-  color: #FFFFFF;
-  padding: 3px 8px;
-  border-radius: 3px;
-}
-
-.kala-home-service-name {
-  font-size: 1.25rem;
-  font-weight: 800;
-  margin-bottom: 0.5rem;
-  color: var(--kala-black);
-}
-
-.kala-home-service-desc {
-  font-size: 0.88rem;
-  color: var(--kala-text-secondary);
-  line-height: 1.55;
-  margin-bottom: 1.25rem;
-  flex-grow: 1;
-}
-
-.kala-home-service-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 1rem;
-  border-top: 1px solid var(--kala-border);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--kala-orange);
-}
-
-@media (max-width: 768px) {
-  .kala-home-services-section {
-    padding: 2.25rem 0;
-  }
-
-  .kala-home-services-header {
-    margin-bottom: 1.25rem;
-    gap: 0.5rem;
-  }
-
-  .kala-home-services-title {
-    font-size: clamp(1.3rem, 5.5vw, 1.75rem);
-  }
-
-  .kala-home-services-view-all {
-    font-size: 0.78rem;
-  }
-
-  .kala-home-services-grid {
-    gap: 0.85rem;
-  }
-
-  .kala-home-service-card {
-    padding: 1.15rem 1rem;
-    border-radius: 8px;
-  }
-
-  .kala-home-service-top {
-    margin-bottom: 0.75rem;
-  }
-
-  .kala-home-service-icon {
-    width: 36px;
-    height: 36px;
-  }
-
-  .kala-home-service-name {
-    font-size: 1.05rem;
-    margin-bottom: 0.35rem;
-  }
-
-  .kala-home-service-desc {
-    font-size: 0.82rem;
-    line-height: 1.45;
-    margin-bottom: 0.85rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .kala-home-service-footer {
-    padding-top: 0.65rem;
-    font-size: 0.75rem;
-  }
-}
 

@@ -12,7 +12,6 @@ import Shop from './pages/Shop'
 import CustomApparel from './pages/CustomApparel'
 import Customize from './pages/Customize'
 import BusinessBranding from './pages/BusinessBranding'
-import Services from './pages/Services'
 import About from './pages/About'
 import Cart from './pages/Cart'
 import Account from './pages/Account'
@@ -45,6 +44,7 @@ import AdminLayout from './components/admin/AdminLayout'
 import NotFound from './pages/NotFound'
 import ScrollToTop from './components/ScrollToTop'
 import CartToast from './components/CartToast'
+import LiveSocialProof from './components/LiveSocialProof'
 import BottomNav from './components/BottomNav'
 import './App.css'
 
@@ -67,6 +67,7 @@ function App() {
               {!isAdminPath && <Navbar />}
               {!isAdminPath && <AuthPromptModal />}
               {!isAdminPath && <CartToast />}
+              {!isAdminPath && <LiveSocialProof />}
               <div className={isAdminPath ? 'kala-admin-app-content' : 'kala-main-content'}>
                 <Routes>
                   {/* Customer Storefront Routes */}
@@ -79,7 +80,6 @@ function App() {
                   <Route path="/customize" element={<Customize />} />
                   <Route path="/business-branding" element={<BusinessBranding />} />
                   <Route path="/bulk-order" element={<BusinessBranding />} />
-                  <Route path="/services" element={<Services />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/checkout" element={<Checkout />} />

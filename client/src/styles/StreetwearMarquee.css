@@ -1,0 +1,109 @@
+/* ==========================================================================
+   KALA STREETWEAR MARQUEE — LUXURY RUNNING TEXT RIBBON
+   ========================================================================== */
+
+.kala-streetwear-marquee {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+  padding: 0.65rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+}
+
+.kala-streetwear-marquee.dark {
+  background-color: #111111;
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.kala-streetwear-marquee.light {
+  background-color: #FAF9F6;
+  color: #111111;
+  border-color: #ECEAE4;
+}
+
+/* Gradient edge masking for luxury fade */
+.kala-streetwear-marquee::before,
+.kala-streetwear-marquee::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.kala-streetwear-marquee.dark::before {
+  left: 0;
+  background: linear-gradient(to right, #111111 0%, transparent 100%);
+}
+
+.kala-streetwear-marquee.dark::after {
+  right: 0;
+  background: linear-gradient(to left, #111111 0%, transparent 100%);
+}
+
+.kala-streetwear-marquee.light::before {
+  left: 0;
+  background: linear-gradient(to right, #FAF9F6 0%, transparent 100%);
+}
+
+.kala-streetwear-marquee.light::after {
+  right: 0;
+  background: linear-gradient(to left, #FAF9F6 0%, transparent 100%);
+}
+
+.kala-marquee-track {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: marqueeScroll 28s linear infinite;
+  will-change: transform;
+}
+
+.kala-streetwear-marquee:hover .kala-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.kala-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0 1.25rem;
+  font-family: var(--kala-font-primary);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.kala-marquee-spark {
+  color: #D94700;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .kala-streetwear-marquee {
+    padding: 0.5rem 0;
+  }
+
+  .kala-marquee-item {
+    font-size: 0.7rem;
+    gap: 0.85rem;
+    padding: 0 0.85rem;
+  }
+}

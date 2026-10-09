@@ -1,0 +1,198 @@
+/* ==========================================================================
+   KALA LIVE SOCIAL PROOF TOAST — HIGH-CONVERSION FOMO TRIGGER
+   ========================================================================== */
+
+.kala-social-proof-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 990;
+  max-width: 340px;
+  width: calc(100% - 48px);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid #E5E2DD;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 0.75rem 0.85rem;
+  box-sizing: border-box;
+  font-family: var(--kala-font-primary);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+.kala-social-proof-toast.hidden {
+  opacity: 0;
+  transform: translateY(24px) scale(0.95);
+  pointer-events: none;
+}
+
+.kala-social-proof-toast.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.kala-social-proof-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: #111111;
+}
+
+.kala-social-proof-avatar {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background-color: #F5F3EF;
+  border: 1px solid #EAE7E1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.kala-social-proof-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.kala-social-proof-online-badge {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.kala-social-proof-online-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #16A34A;
+  animation: onlineBlink 1.8s infinite ease-in-out;
+}
+
+@keyframes onlineBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.kala-social-proof-details {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.kala-social-proof-header {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  line-height: 1.2;
+  margin-bottom: 0.15rem;
+}
+
+.kala-social-proof-buyer {
+  font-weight: 800;
+  color: #111111;
+}
+
+.kala-social-proof-city {
+  color: #6B7280;
+  font-size: 0.68rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kala-social-proof-verified {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background-color: #16A34A;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.kala-social-proof-product {
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: #374151;
+  margin: 0 0 0.25rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kala-social-proof-product strong {
+  color: #111111;
+  font-weight: 700;
+}
+
+.kala-social-proof-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.kala-social-proof-tag {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #D94700;
+  background-color: #FFF2EB;
+  border: 1px solid #FFD3BF;
+  padding: 0.08rem 0.35rem;
+  border-radius: 4px;
+}
+
+.kala-social-proof-time {
+  font-size: 0.62rem;
+  color: #9CA3AF;
+  font-weight: 600;
+}
+
+.kala-social-proof-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.kala-social-proof-close:hover {
+  background-color: #F3F4F6;
+  color: #111111;
+}
+
+/* Mobile positioning: above bottom navigation */
+@media (max-width: 640px) {
+  .kala-social-proof-toast {
+    bottom: 74px; /* leaves room for mobile bottom-nav */
+    left: 12px;
+    max-width: calc(100% - 24px);
+    width: calc(100% - 24px);
+    padding: 0.65rem 0.75rem;
+  }
+}
