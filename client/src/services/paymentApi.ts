@@ -87,7 +87,13 @@ export async function createRazorpayOrder(
     const data = await response.json()
 
     if (!response.ok || !data.order_id) {
-      const errorMessage = data?.message || 'Failed to initiate payment. Please try again.'
+      let errorMessage = data?.message || 'Failed to initiate payment. Please try again.'
+      if (data?.diagnosticHint) {
+        errorMessage = `${errorMessage} — ${data.diagnosticHint}`
+      } else if (data?.key_id_masked) {
+        errorMessage = `${errorMessage} (Active server key: ${data.key_id_masked})`
+      }
+      console.error('[Razorpay Order Initialization Error]:', data)
       throw new Error(errorMessage)
     }
 
@@ -144,3 +150,35 @@ export async function verifyRazorpayPayment(
     throw new Error(err.message || 'Payment verification failed.')
   }
 }
+
+export interface RazorpayConfigCheckResult {
+  success: boolean
+  configured: boolean
+  authenticated: boolean
+  mode?: 'live' | 'test' | 'unknown'
+  key_id_masked?: string
+  message: string
+  error?: string
+}
+
+/**
+ * Diagnostic health check to verify backend Razorpay configuration and live connection.
+ * GET /api/check-config
+ */
+export async function checkRazorpayConfig(): Promise<RazorpayConfigCheckResult> {
+  const token = getAuthToken()
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  }
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
+  const response = await fetch(`${API_BASE_URL}/check-config`, {
+    method: 'GET',
+    headers,
+  })
+
+  return response.json()
+}
+

@@ -1,9 +1,35 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAdmin } from '../../context/AdminContext'
+import { checkRazorpayConfig, type RazorpayConfigCheckResult } from '../../services/paymentApi'
 import '../../styles/Admin.css'
 
 export const AdminSettings: React.FC = () => {
   const { adminUser, adminLogout } = useAdmin()
+  const [rzpStatus, setRzpStatus] = useState<RazorpayConfigCheckResult | null>(null)
+  const [isTestingRzp, setIsTestingRzp] = useState(false)
+
+  const runRazorpayCheck = async () => {
+    setIsTestingRzp(true)
+    try {
+      const res = await checkRazorpayConfig()
+      setRzpStatus(res)
+    } catch (err: any) {
+      setRzpStatus({
+        success: false,
+        configured: false,
+        authenticated: false,
+        message: 'Could not contact server check-config endpoint.',
+        error: err.message || 'Network request failed',
+      })
+    } finally {
+      setIsTestingRzp(false)
+    }
+  }
+
+  // Auto-run connection check on initial view
+  useEffect(() => {
+    runRazorpayCheck()
+  }, [])
 
   return (
     <div className="admin-page-container">
@@ -253,6 +279,164 @@ export const AdminSettings: React.FC = () => {
               Sign Out of Administration
             </button>
           </div>
+        </section>
+
+        {/* Razorpay Payment Gateway Diagnostics Card */}
+        <section
+          style={{
+            backgroundColor: 'var(--admin-card-bg, #1a1a1a)',
+            border: '1px solid var(--admin-border, #2a2a2a)',
+            borderRadius: '12px',
+            padding: '2rem',
+          }}
+          aria-labelledby="payment-gateway-heading"
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
+                <h2
+                  id="payment-gateway-heading"
+                  style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 700,
+                    color: '#ffffff',
+                    margin: 0,
+                  }}
+                >
+                  Payment Gateway Live Diagnostics
+                </h2>
+                {rzpStatus && (
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      backgroundColor: rzpStatus.authenticated ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                      color: rzpStatus.authenticated ? '#10b981' : '#ef4444',
+                      border: `1px solid ${rzpStatus.authenticated ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                      borderRadius: '4px',
+                      padding: '2px 8px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      letterSpacing: '0.05em',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {rzpStatus.authenticated ? `ONLINE (${rzpStatus.mode?.toUpperCase() || 'ACTIVE'})` : 'AUTHENTICATION FAILED'}
+                  </span>
+                )}
+              </div>
+              <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>
+                Test your backend server's direct connection to Razorpay API without making test payments.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="admin-btn admin-btn-primary"
+              onClick={runRazorpayCheck}
+              disabled={isTestingRzp}
+              style={{ padding: '0.6rem 1.25rem', fontSize: '0.85rem' }}
+            >
+              {isTestingRzp ? 'Testing Connection...' : 'Verify Razorpay Keys'}
+            </button>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: '1.25rem',
+              padding: '1.25rem',
+              backgroundColor: 'rgba(255, 255, 255, 0.02)',
+              borderRadius: '8px',
+              border: '1px solid var(--admin-border, #2a2a2a)',
+              marginBottom: '1.5rem',
+            }}
+          >
+            <div>
+              <span style={{ display: 'block', fontSize: '0.78rem', color: '#888', marginBottom: '0.25rem' }}>
+                Active Server Key ID
+              </span>
+              <span style={{ fontSize: '0.95rem', fontWeight: 600, color: '#f0f0f0', fontFamily: 'monospace' }}>
+                {rzpStatus?.key_id_masked || (isTestingRzp ? 'Querying...' : 'Click Verify')}
+              </span>
+            </div>
+
+            <div>
+              <span style={{ display: 'block', fontSize: '0.78rem', color: '#888', marginBottom: '0.25rem' }}>
+                Gateway Mode
+              </span>
+              <span style={{ fontSize: '0.95rem', fontWeight: 600, color: rzpStatus?.mode === 'live' ? '#10b981' : '#f59e0b', textTransform: 'uppercase' }}>
+                {rzpStatus?.mode || '—'}
+              </span>
+            </div>
+
+            <div>
+              <span style={{ display: 'block', fontSize: '0.78rem', color: '#888', marginBottom: '0.25rem' }}>
+                Authentication State
+              </span>
+              <span
+                style={{
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  color: rzpStatus?.authenticated ? '#10b981' : rzpStatus ? '#ef4444' : '#888',
+                }}
+              >
+                {rzpStatus?.authenticated ? 'Authenticated & Ready' : rzpStatus ? 'Rejected by Razorpay' : 'Unchecked'}
+              </span>
+            </div>
+          </div>
+
+          {rzpStatus && (
+            <div
+              style={{
+                padding: '1rem 1.25rem',
+                borderRadius: '8px',
+                backgroundColor: rzpStatus.authenticated ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)',
+                border: `1px solid ${rzpStatus.authenticated ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
+                fontSize: '0.88rem',
+                lineHeight: 1.5,
+                color: rzpStatus.authenticated ? '#34d399' : '#fca5a5',
+              }}
+            >
+              <strong>{rzpStatus.authenticated ? 'Success: ' : 'Notice: '}</strong>
+              {rzpStatus.message}
+              {rzpStatus.error && (
+                <div style={{ marginTop: '0.5rem', fontFamily: 'monospace', fontSize: '0.8rem', color: '#f87171' }}>
+                  Details: {rzpStatus.error}
+                </div>
+              )}
+            </div>
+          )}
+
+          {rzpStatus && !rzpStatus.authenticated && (
+            <div
+              style={{
+                marginTop: '1.25rem',
+                padding: '1.25rem',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(217, 71, 0, 0.08)',
+                border: '1px solid rgba(217, 71, 0, 0.25)',
+                fontSize: '0.85rem',
+                lineHeight: 1.6,
+                color: '#e5e7eb',
+              }}
+            >
+              <h4 style={{ margin: '0 0 0.5rem 0', color: '#ff6b2b', fontSize: '0.92rem', fontWeight: 700 }}>
+                How to Fix in Your Live Cloud Hosting (Render / Railway / Vercel):
+              </h4>
+              <ol style={{ margin: '0', paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <li>Log in to your backend host dashboard (e.g. <strong>dashboard.render.com</strong> or <strong>railway.app</strong>).</li>
+                <li>Go to your backend service &rarr; <strong>Environment</strong> or <strong>Variables</strong> tab.</li>
+                <li>
+                  Verify <code>RAZORPAY_KEY_ID</code> and <code>RAZORPAY_KEY_SECRET</code> match the pair generated together in Razorpay Dashboard.
+                </li>
+                <li>
+                  Ensure there are <strong>NO quotes</strong> (do not put <code>"</code> or <code>'</code> around the keys) and no leading/trailing spaces.
+                </li>
+                <li>Trigger a <strong>Manual Deploy &rarr; Clear build cache & deploy</strong> to ensure the new environment variables take effect.</li>
+              </ol>
+            </div>
+          )}
         </section>
       </div>
     </div>

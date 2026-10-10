@@ -15,12 +15,19 @@ if (process.env.NODE_ENV !== 'production') {
  */
 export function sanitizeCredential(val?: string | null): string {
   if (!val) return ''
-  let cleaned = String(val).trim().replace(/[\r\n\t]/g, '')
+  let cleaned = String(val)
+    .trim()
+    .replace(/[\r\n\t]/g, '')
+    .replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '') // remove zero-width & non-breaking spaces
   if (cleaned.startsWith('"') && cleaned.endsWith('"') && cleaned.length >= 2) {
     cleaned = cleaned.slice(1, -1).trim()
   }
   if (cleaned.startsWith("'") && cleaned.endsWith("'") && cleaned.length >= 2) {
     cleaned = cleaned.slice(1, -1).trim()
+  }
+  // Remove backslash escaped quotes if pasted as \"...\"
+  if (cleaned.startsWith('\\"') && cleaned.endsWith('\\"') && cleaned.length >= 4) {
+    cleaned = cleaned.slice(2, -2).trim()
   }
   return cleaned
 }

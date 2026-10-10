@@ -212,7 +212,7 @@ export const createRazorpayOrder = async (req: Request, res: Response): Promise<
       } else if (isTest) {
         diagnosticHint = 'The server is using Test keys (rzp_test_...). For live payments, configure Live keys (rzp_live_) and matching live secret.'
       } else {
-        diagnosticHint = 'Please verify that RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET match in your hosting dashboard and do not contain extra quotes or outdated secrets.'
+        diagnosticHint = `Server attempted key ${maskedKey}. Please verify that RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET match in your cloud hosting dashboard (Render / Railway / Vercel) and redeploy the service.`
       }
 
       res.status(401).json({

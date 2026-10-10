@@ -30,10 +30,10 @@ Configure these variables in your frontend hosting dashboard (e.g., Vercel, Netl
 | Variable Name | Description | Example / Safe Value |
 | :--- | :--- | :--- |
 | `VITE_API_BASE_URL` | Public HTTPS base URL of the deployed KALA backend API. The client automatically routes requests through this endpoint. | `https://api.yourdomain.com` |
-| `VITE_RAZORPAY_KEY_ID` | Public Razorpay Key ID for client checkout popup modal (e.g. `rzp_live_...`). | `rzp_live_TggEPvbaudUojF` |
+| `VITE_RAZORPAY_KEY_ID` | Public Razorpay Key ID for client checkout popup modal (e.g. `rzp_live_...`). Must match backend `RAZORPAY_KEY_ID`. | `rzp_live_TmIJ5KuJtMt8xD` |
 
 > [!NOTE]
-> All `VITE_*` environment variables are bundled into the public client application. Never place private keys, database credentials, or secret keys in frontend environment variables.
+> All `VITE_*` environment variables are bundled into the public client application at build time. Never place private keys, database credentials, or secret keys in frontend environment variables.
 
 ---
 
@@ -48,14 +48,19 @@ Configure these variables in your backend hosting environment (e.g., Render, Rai
 | `CLIENT_URL` | **Required** | Allowed production origin(s) for CORS. Supports single domain or comma-separated list. | `https://yourdomain.com,https://admin.yourdomain.com` |
 | `JWT_SECRET` | **Required** | High-entropy random secret key (min 64 chars recommended) used for HMAC signing of JWT tokens. | `replace_with_a_long_cryptographically_secure_random_string` |
 | `JWT_EXPIRES_IN` | Optional | Expiration window for user and admin session tokens (default: `7d`). | `7d` |
-| `RAZORPAY_KEY_ID` | **Required** | Razorpay Key ID from dashboard.razorpay.com (do NOT wrap in quotes). | `rzp_live_TggEPvbaudUojF` |
-| `RAZORPAY_KEY_SECRET` | **Required** | Razorpay Key Secret paired with the Key ID (do NOT wrap in quotes). | `your_live_razorpay_key_secret_here` |
+| `RAZORPAY_KEY_ID` | **Required** | Razorpay Key ID from dashboard.razorpay.com (do NOT wrap in quotes). | `rzp_live_TmIJ5KuJtMt8xD` |
+| `RAZORPAY_KEY_SECRET` | **Required** | Razorpay Key Secret generated together with Key ID (do NOT wrap in quotes). | `OvgXhwZXWJpuW4OrMPjwKfug` |
 | `RAZORPAY_WEBHOOK_SECRET` | Optional | Secret configured in Razorpay Webhook dashboard for signature validation. | `your_webhook_secret` |
 
 > [!IMPORTANT]
-> **Zero Quote Rule**: In hosting dashboards (Render, Railway, etc.), enter values directly without quotes (`"..."` or `'...'`).
+> **Zero Quote & Pairing Rule**:
+> 1. In hosting dashboards (Render, Railway, etc.), enter values directly without quotes (`"..."` or `'...'`) and without spaces.
+> 2. `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` **MUST be generated together** in Razorpay Dashboard. If you regenerate a key in Razorpay, the previous secret will immediately fail with `Razorpay authentication failed`.
 > 
-> **Verification**: Test your live backend connection anytime by opening `https://<your-backend-domain>/api/check-config` in your browser. It returns `{ "authenticated": true, "mode": "live" }` when working properly.
+> **Live Diagnostic Verification**:
+> Test your live backend connection anytime by opening `https://<your-backend-domain>/api/check-config` in your browser.
+> - If working: returns `{ "success": true, "authenticated": true, "mode": "live", "key_id_masked": "rzp_live...t8xD" }`
+> - If failing: returns `{ "authenticated": false, "key_id_masked": "rzp_live...XXXX", "message": "Razorpay authentication failed: ..." }` which instantly tells you which key is active on your server!
 
 ---
 
