@@ -1,12 +1,8 @@
 import Razorpay from 'razorpay'
-import dotenv from 'dotenv'
-import path from 'path'
+import { loadEnv } from './env'
 
-// In development, allow local .env to override stale terminal session variables
-if (process.env.NODE_ENV !== 'production') {
-  dotenv.config({ path: path.resolve(process.cwd(), '.env'), override: true })
-  dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: true })
-}
+// Ensure environment variables are loaded once
+loadEnv()
 
 /**
  * Sanitizes environment variable values for payment gateways:

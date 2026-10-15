@@ -9,6 +9,7 @@
     "start": "node dist/server.js",
     "seed": "tsx src/config/seed.ts",
     "seed:admin": "tsx src/config/seedAdmin.ts",
+    "test": "tsx tests/designathon.test.ts",
     "dev:nodemon": "nodemon --exec tsx src/server.ts"
   },
   "keywords": [

@@ -81,7 +81,10 @@ export const Footer: React.FC = () => {
               <Link to="/business-branding" className="kala-footer-link">B2B Branding</Link>
             </li>
             <li>
-              <Link to="/business-branding" className="kala-footer-link">Request Quote</Link>
+              <Link to="/campus-corporate-solutions" className="kala-footer-link">Campus &amp; Corporate</Link>
+            </li>
+            <li>
+              <Link to="/campus-corporate-solutions#quote-form" className="kala-footer-link">Request Quote</Link>
             </li>
             <li>
               <Link to="/business-branding" className="kala-footer-link">Bulk Corporate Orders</Link>
@@ -105,6 +108,9 @@ export const Footer: React.FC = () => {
           <ul className="kala-footer-links">
             <li>
               <Link to="/about" className="kala-footer-link">About KALA</Link>
+            </li>
+            <li>
+              <Link to="/designathon" className="kala-footer-link">Designathon in GGV</Link>
             </li>
             <li>
               <a href="/#contact" className="kala-footer-link">Contact Us</a>

@@ -76,4 +76,25 @@ export const inquiryLimiter = rateLimit({
   },
 })
 
+/**
+ * Designathon Registration Rate Limiter
+ * Applied to:
+ * - POST /api/designathon/register
+ * - POST /api/designathon/create-order
+ * - POST /api/designathon/verify-payment
+ *
+ * Allows 50 requests per 15 minutes window per IP.
+ */
+export const designathonLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 50,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many registration attempts. Please slow down and try again shortly.',
+  },
+})
+
+
 

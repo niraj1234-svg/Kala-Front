@@ -13,6 +13,14 @@ interface AnnouncementItem {
 
 const ANNOUNCEMENTS: AnnouncementItem[] = [
   {
+    id: 'kala-designathon',
+    badge: 'EVENT OPEN',
+    text: 'Designathon in GGV by KALA • Show Your कला',
+    highlight: '₹49 REGISTRATION',
+    ctaText: 'REGISTER NOW',
+    link: '/designathon',
+  },
+  {
     id: 'bihari-drop',
     badge: 'HOT DROP',
     text: 'KALA Bihari Story Premium 220 GSM Streetwear',

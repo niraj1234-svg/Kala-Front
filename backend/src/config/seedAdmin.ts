@@ -1,14 +1,11 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
-import dotenv from 'dotenv'
-import path from 'path'
 import { connectDB } from './db'
 import { User } from '../models/User'
+import { loadEnv } from './env'
 
-// Load environment variables from backend root or src
-dotenv.config({ path: path.resolve(process.cwd(), '.env'), override: true })
-dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: true })
-dotenv.config({ path: path.resolve(__dirname, '../.env'), override: true })
+// Ensure environment variables are loaded once
+loadEnv()
 
 /**
  * Generates a unique server-side user ID

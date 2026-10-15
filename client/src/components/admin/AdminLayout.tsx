@@ -26,6 +26,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { label: 'Coupons', to: '/admin/coupons', available: true, end: false },
     { label: 'Reviews', to: '/admin/reviews', available: true, end: false },
     { label: 'Analytics', to: '/admin/analytics', available: true, end: false },
+    { label: 'Designathon', to: '/admin/designathon', available: true, end: false },
     { label: 'Settings', to: '/admin/settings', available: true, end: false },
   ]
 

@@ -1,7 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
-import { validateEnv, getAllowedOrigins } from './config/env'
+import { loadEnv, validateEnv, getAllowedOrigins } from './config/env'
+
+// Initialize environment variables once before anything else runs
+loadEnv()
 import { connectDB } from './config/db'
 import { seedProducts } from './config/seed'
 import { seedAdmin } from './config/seedAdmin'
@@ -24,6 +27,8 @@ import adminReviewRouter from './routes/adminReviewRoutes'
 import paymentRouter from './routes/paymentRoutes'
 import cartRouter from './routes/cartRoutes'
 import visitorRouter from './routes/visitorRoutes'
+import designathonRouter from './routes/designathonRoutes'
+import adminDesignathonRouter from './routes/adminDesignathonRoutes'
 
 // Validate required environment configuration at startup
 validateEnv()
@@ -69,7 +74,15 @@ app.use(
 )
 
 // Request body size limits to accommodate custom apparel artwork designs and protect against denial-of-service
-app.use(express.json({ limit: '25mb' }))
+// Captures rawBody buffer for authoritative cryptographic signature verification (Razorpay webhooks)
+app.use(
+  express.json({
+    limit: '25mb',
+    verify: (req: any, _res, buf) => {
+      req.rawBody = buf
+    },
+  })
+)
 app.use(express.urlencoded({ extended: true, limit: '25mb' }))
 
 // Health Check Endpoint (Excluded from rate limiting)
@@ -93,6 +106,7 @@ app.use('/api/cart', cartRouter)
 app.use('/api/visitors', visitorRouter)
 app.use('/api', paymentRouter)
 app.use('/api/payment', paymentRouter)
+app.use('/api/designathon', designathonRouter)
 
 // Admin Management Routes (Protected by requireAuth + requireAdmin)
 app.use('/api/admin/dashboard', adminDashboardRouter)
@@ -104,6 +118,8 @@ app.use('/api/admin/reviews', adminReviewRouter)
 app.use('/api/admin/analytics', adminAnalyticsRouter)
 app.use('/api/admin/custom-requests', adminCustomRequestRouter)
 app.use('/api/admin/business-requests', adminBusinessRequestRouter)
+app.use('/api/admin/designathon', adminDesignathonRouter)
+
 
 // 404 Handler for Unmatched API Routes
 app.use((_req: Request, res: Response) => {

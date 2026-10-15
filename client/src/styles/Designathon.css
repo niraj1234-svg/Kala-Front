@@ -1,0 +1,955 @@
+/* ==========================================================================
+   KALA DESIGNATHON PAGE STYLES
+   Visual Identity: Minimal luxury, sleek dark canvas, bold orange accents,
+   glassmorphism, accessible contrast, responsive typography.
+   ========================================================================== */
+
+.kala-designathon-page {
+  background-color: #0A0A0C;
+  color: #FFFFFF;
+  min-height: 100vh;
+  font-family: var(--kala-font-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  overflow-x: hidden;
+}
+
+.dsn-container {
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   1. HERO SECTION
+   -------------------------------------------------------------------------- */
+.dsn-hero {
+  position: relative;
+  padding: clamp(3rem, 6vw, 5.5rem) 0 clamp(2.5rem, 5vw, 4rem) 0;
+  background: radial-gradient(circle at 50% 20%, rgba(217, 71, 0, 0.14) 0%, rgba(10, 10, 12, 0) 70%);
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dsn-hero-badge-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.dsn-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #4ADE80;
+  text-transform: uppercase;
+}
+
+.dsn-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #4ADE80;
+  box-shadow: 0 0 8px #4ADE80;
+  animation: dsnPulse 2s infinite;
+}
+
+@keyframes dsnPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.dsn-tag-pill {
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #E5E5E5;
+  text-transform: uppercase;
+}
+
+.dsn-tag-pill.highlight {
+  background: rgba(217, 71, 0, 0.18);
+  border-color: rgba(217, 71, 0, 0.45);
+  color: #FFA573;
+}
+
+.dsn-title {
+  font-size: clamp(2rem, 4.8vw, 3.8rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  margin: 0 0 0.5rem 0;
+}
+
+.dsn-by-kala {
+  color: #D94700;
+  display: inline-block;
+}
+
+.dsn-slogan {
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #FFA573;
+  margin: 0 0 1.25rem 0;
+}
+
+.dsn-lead {
+  max-width: 680px;
+  margin: 0 auto 2.25rem auto;
+  font-size: clamp(0.95rem, 1.1vw, 1.08rem);
+  line-height: 1.6;
+  color: #AAAAAA;
+  text-wrap: balance;
+}
+
+/* Stats schedule grid */
+.dsn-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2.25rem;
+}
+
+.dsn-stat-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(10px);
+}
+
+.dsn-stat-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(217, 71, 0, 0.35);
+  transform: translateY(-2px);
+}
+
+.dsn-stat-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.dsn-stat-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #888888;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+.dsn-stat-val {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  line-height: 1.2;
+}
+
+.dsn-stat-sub {
+  font-size: 0.75rem;
+  color: #D94700;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.dsn-hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.75rem;
+}
+
+.dsn-hero-cta {
+  background: #D94700;
+  color: #FFFFFF;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.85rem 1.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.22s ease;
+  box-shadow: 0 4px 18px rgba(217, 71, 0, 0.4);
+}
+
+.dsn-hero-cta:hover {
+  background: #FF5500;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(217, 71, 0, 0.55);
+}
+
+.dsn-whatsapp-btn {
+  background: rgba(255, 255, 255, 0.06);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.85rem 1.45rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  transition: all 0.22s ease;
+}
+
+.dsn-whatsapp-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #25D366;
+  color: #25D366;
+}
+
+.dsn-window-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(217, 71, 0, 0.1);
+  border: 1px solid rgba(217, 71, 0, 0.25);
+  border-radius: 9999px;
+  padding: 0.4rem 1.1rem;
+  font-size: 0.78rem;
+  color: #FFB088;
+}
+
+/* --------------------------------------------------------------------------
+   2. PRIZES SECTION
+   -------------------------------------------------------------------------- */
+.dsn-prizes-section {
+  padding: clamp(3rem, 6vw, 5rem) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dsn-section-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 2.5rem auto;
+}
+
+.dsn-section-eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #D94700;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+.dsn-section-title {
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  margin: 0 0 0.5rem 0;
+}
+
+.dsn-section-subtitle {
+  font-size: 0.92rem;
+  color: #888888;
+  margin: 0;
+}
+
+.dsn-prizes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.dsn-prize-card {
+  background: #121215;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 2rem 1.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+}
+
+.dsn-prize-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(217, 71, 0, 0.45);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.dsn-prize-card.first {
+  background: linear-gradient(180deg, #181514 0%, #121215 100%);
+  border-color: rgba(217, 71, 0, 0.4);
+}
+
+.dsn-prize-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.7rem;
+  border-radius: 6px;
+  background: rgba(217, 71, 0, 0.15);
+  color: #D94700;
+  margin-bottom: 1rem;
+}
+
+.dsn-prize-card.first .dsn-prize-badge {
+  background: #D94700;
+  color: #FFFFFF;
+}
+
+.dsn-prize-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  margin: 0 0 0.6rem 0;
+}
+
+.dsn-prize-desc {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #CCCCCC;
+  margin: 0 0 1.25rem 0;
+  flex-grow: 1;
+}
+
+.dsn-prize-features {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  color: #999999;
+}
+
+/* --------------------------------------------------------------------------
+   3. RULES & GUIDELINES
+   -------------------------------------------------------------------------- */
+.dsn-rules-section {
+  padding: clamp(3rem, 6vw, 4.5rem) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dsn-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.dsn-rule-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1.45rem;
+}
+
+.dsn-rule-icon {
+  font-size: 1.4rem;
+  margin-bottom: 0.65rem;
+}
+
+.dsn-rule-item h4 {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0 0 0.45rem 0;
+}
+
+.dsn-rule-item p {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: #8C8C8C;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. REGISTRATION FORM & CONFIRMATION PASS
+   -------------------------------------------------------------------------- */
+.dsn-form-section {
+  padding: clamp(3rem, 6vw, 5rem) 0;
+  background: radial-gradient(circle at 50% 10%, rgba(217, 71, 0, 0.08) 0%, rgba(10, 10, 12, 0) 60%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dsn-form-card {
+  max-width: 760px;
+  margin: 0 auto;
+  background: #121215;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3.5vw, 2.75rem);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+
+.dsn-form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 1.25rem;
+}
+
+.dsn-form-title {
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  margin: 0 0 0.35rem 0;
+}
+
+.dsn-form-subtitle {
+  font-size: 0.85rem;
+  color: #888888;
+  margin: 0;
+}
+
+.dsn-error-banner {
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  border-radius: 8px;
+  padding: 0.85rem 1.15rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.85rem;
+  color: #FCA5A5;
+  line-height: 1.45;
+}
+
+.dsn-alert-icon {
+  font-size: 1.1rem;
+}
+
+.dsn-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.dsn-input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.dsn-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #E5E5E5;
+  margin-bottom: 0.38rem;
+  text-transform: uppercase;
+}
+
+.dsn-input {
+  background: #0A0A0C;
+  border: 1.5px solid #28282D;
+  border-radius: 8px;
+  padding: 0.75rem 0.95rem;
+  font-size: 0.92rem;
+  color: #FFFFFF;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.dsn-input:focus {
+  border-color: #D94700;
+  box-shadow: 0 0 0 3px rgba(217, 71, 0, 0.2);
+}
+
+.dsn-input.error {
+  border-color: #EF4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.dsn-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 16px;
+  padding-right: 2.2rem;
+}
+
+.dsn-hint {
+  font-size: 0.7rem;
+  color: #777777;
+  margin-top: 0.3rem;
+  line-height: 1.35;
+}
+
+.dsn-field-error {
+  font-size: 0.72rem;
+  color: #F87171;
+  font-weight: 600;
+  margin-top: 0.3rem;
+}
+
+/* Participation box */
+.dsn-participation-pill-box {
+  margin-top: 1.25rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+}
+
+.dsn-pill-label {
+  font-weight: 800;
+  color: #777777;
+  letter-spacing: 0.08em;
+}
+
+.dsn-pill-value {
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.dsn-pill-note {
+  color: #888888;
+}
+
+/* Disclosure box */
+.dsn-disclosure-box {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: rgba(217, 71, 0, 0.08);
+  border-left: 3px solid #D94700;
+  border-radius: 6px;
+}
+
+.dsn-fee-tag {
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #FFA573;
+}
+
+.dsn-disclosure-text {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #CCCCCC;
+  margin: 0.4rem 0 0 0;
+}
+
+/* Checkboxes */
+.dsn-checkboxes {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.dsn-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #DDDDDD;
+  cursor: pointer;
+}
+
+.dsn-checkbox-label input[type='checkbox'] {
+  width: 17px;
+  height: 17px;
+  margin-top: 2px;
+  accent-color: #D94700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Privacy notice */
+.dsn-privacy-notice {
+  margin-top: 1.25rem;
+  padding: 0.75rem 1rem;
+  background: #0A0A0C;
+  border: 1px solid #1E1E22;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: #888888;
+}
+
+.dsn-lock-symbol {
+  font-size: 0.9rem;
+}
+
+/* Submit wrap */
+.dsn-submit-wrap {
+  margin-top: 1.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dsn-submit-btn {
+  width: 100%;
+  background: #D94700;
+  color: #FFFFFF;
+  border: none;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-shadow: 0 4px 18px rgba(217, 71, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dsn-submit-btn:hover:not(:disabled) {
+  background: #FF5500;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(217, 71, 0, 0.5);
+}
+
+.dsn-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.dsn-submitting-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.dsn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: dsnSpin 0.7s linear infinite;
+}
+
+@keyframes dsnSpin {
+  to { transform: rotate(360deg); }
+}
+
+.dsn-security-strip {
+  font-size: 0.74rem;
+  color: #777777;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* --------------------------------------------------------------------------
+   4A. SUCCESS TICKET
+   -------------------------------------------------------------------------- */
+.dsn-success-ticket {
+  max-width: 680px;
+  margin: 0 auto;
+  background: #121215;
+  border: 2px solid #D94700;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(217, 71, 0, 0.2);
+}
+
+.dsn-ticket-header {
+  background: linear-gradient(135deg, #0A0A0C 0%, #1A1A1E 100%);
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1.5px dashed #D94700;
+}
+
+.dsn-ticket-logo {
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #FFFFFF;
+}
+
+.dsn-ticket-logo .dsn-accent {
+  color: #D94700;
+}
+
+.dsn-ticket-badge {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #4ADE80;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.dsn-ticket-body {
+  padding: 2rem 1.75rem;
+}
+
+.dsn-ticket-headline {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.dsn-check-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #22C55E;
+  color: #FFFFFF;
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+}
+
+.dsn-ticket-headline h3 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  margin: 0 0 0.35rem 0;
+}
+
+.dsn-ticket-headline p {
+  font-size: 0.88rem;
+  color: #AAAAAA;
+  margin: 0;
+}
+
+.dsn-ticket-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  background: #0A0A0C;
+  border: 1px solid #1E1E22;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.75rem;
+}
+
+.dsn-ticket-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.dsn-cell-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #777777;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.dsn-cell-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.dsn-cell-value.green {
+  color: #4ADE80;
+}
+
+.dsn-highlight-id {
+  font-family: monospace;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #D94700;
+  letter-spacing: 0.06em;
+}
+
+.dsn-ticket-footer-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.dsn-print-btn {
+  background: #FFFFFF;
+  color: #111111;
+  border: none;
+  font-weight: 800;
+  padding: 0.75rem 1.45rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dsn-print-btn:hover {
+  background: #E5E5E5;
+}
+
+.dsn-shop-btn {
+  background: #D94700;
+  color: #FFFFFF;
+  text-decoration: none;
+  font-weight: 800;
+  padding: 0.75rem 1.45rem;
+  border-radius: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   5. CONTACT & SOCIALS
+   -------------------------------------------------------------------------- */
+.dsn-contact-section {
+  padding: clamp(3rem, 5vw, 4.5rem) 0;
+}
+
+.dsn-contact-card {
+  background: #121215;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 2.25rem 2rem;
+  text-align: center;
+}
+
+.dsn-contact-title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  margin: 0 0 0.35rem 0;
+  letter-spacing: 0.04em;
+}
+
+.dsn-contact-desc {
+  font-size: 0.88rem;
+  color: #888888;
+  margin: 0 0 1.75rem 0;
+}
+
+.dsn-contact-items-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dsn-contact-cell {
+  background: #0A0A0C;
+  border: 1px solid #1E1E22;
+  border-radius: 10px;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  transition: all 0.22s ease;
+}
+
+.dsn-contact-cell:hover {
+  border-color: #D94700;
+  transform: translateY(-2px);
+}
+
+.dsn-cell-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.dsn-cell-type {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #777777;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.dsn-cell-link {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.dsn-social-disclaimer {
+  font-size: 0.72rem;
+  color: #666666;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE DESIGN (TABLET & MOBILE)
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .dsn-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dsn-prizes-grid,
+  .dsn-rules-grid,
+  .dsn-contact-items-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .dsn-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dsn-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dsn-ticket-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dsn-hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .dsn-hero-cta,
+  .dsn-whatsapp-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

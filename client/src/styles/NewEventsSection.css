@@ -1626,3 +1626,165 @@
   }
 }
 
+/* --------------------------------------------------------------------------
+   8. LIVE EVENT CARD STYLES (Designathon & Real-Time Open Events)
+   -------------------------------------------------------------------------- */
+.kala-card-live {
+  background: #FFFFFF;
+}
+
+.kala-stage-live {
+  background: #0E0E10;
+}
+
+.kala-live-stage-overlay {
+  background: radial-gradient(circle at center, rgba(217, 71, 0, 0.28) 0%, rgba(14, 14, 16, 0.88) 100%);
+}
+
+.kala-stage-badge.live-badge {
+  background: rgba(220, 38, 38, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  color: #FEE2E2;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(8px);
+}
+
+.kala-badge-pulse-live {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #EF4444;
+  box-shadow: 0 0 8px #EF4444, 0 0 14px rgba(239, 68, 68, 0.7);
+  flex-shrink: 0;
+  animation: liveBadgePulse 1.4s ease-in-out infinite;
+}
+
+@keyframes liveBadgePulse {
+  0% { transform: scale(0.9); opacity: 0.85; }
+  50% { transform: scale(1.35); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.85; }
+}
+
+.kala-stage-sub-badge.live-sub-badge {
+  background: rgba(217, 71, 0, 0.25);
+  border: 1px solid rgba(217, 71, 0, 0.55);
+  color: #FFA573;
+  font-weight: 800;
+}
+
+.kala-focal-accent-dot.live-dot {
+  background-color: #10B981;
+  box-shadow: 0 0 8px #10B981;
+}
+
+.kala-live-concept-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #991B1B;
+}
+
+.kala-live-pill-dot {
+  color: #DC2626;
+  font-size: 0.7rem;
+}
+
+.kala-live-pill-pulse {
+  color: #DC2626;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.kala-live-slogan-text {
+  font-family: var(--kala-font-primary);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #D94700;
+  margin-top: 0.2rem;
+}
+
+.kala-live-details-grid {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.48rem 0.85rem;
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  margin-bottom: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.kala-live-detail-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 90px;
+}
+
+.kala-live-detail-lbl {
+  font-family: var(--kala-font-primary);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #6B7280;
+  text-transform: uppercase;
+}
+
+.kala-live-detail-val {
+  font-family: var(--kala-font-primary);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #111111;
+}
+
+.kala-live-fee-val {
+  color: #D94700;
+}
+
+.kala-live-urgency-strip {
+  background: #FFF7ED;
+  border-color: #FFEDD5;
+  margin-bottom: 0.6rem;
+}
+
+.kala-live-urgency-strip .kala-urgency-text {
+  color: #9A3412;
+}
+
+.kala-live-urgency-strip .kala-urgency-text strong {
+  color: #C2410C;
+}
+
+.kala-btn-register-live {
+  background: linear-gradient(135deg, #D94700 0%, #FF5E14 100%);
+  color: #FFFFFF !important;
+  font-weight: 800;
+  border: none;
+  box-shadow: 0 4px 14px rgba(217, 71, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.kala-btn-register-live::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  animation: btnShimmer 3s infinite;
+}
+
+.kala-btn-register-live:hover {
+  background: linear-gradient(135deg, #BF3E00 0%, #E04E0B 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(217, 71, 0, 0.45);
+}
+

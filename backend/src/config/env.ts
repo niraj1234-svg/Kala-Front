@@ -1,9 +1,44 @@
 import dotenv from 'dotenv'
 import path from 'path'
+import fs from 'fs'
 
-// Load .env with override: true so local .env values take precedence over stale session environment variables
-dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: true })
-dotenv.config({ path: path.resolve(process.cwd(), '.env'), override: true })
+let envLoaded = false
+
+/**
+ * Centrally loads environment variables from backend/.env for Node.js.
+ * Correctly locates backend/.env whether executed from:
+ * 1. Project root ("F:\Final kala")
+ * 2. Backend directory ("F:\Final kala\backend")
+ * 3. Relative to __dirname (works in src/config and dist/config)
+ * Avoids loading .env multiple times unnecessarily.
+ */
+export function loadEnv(): void {
+  if (envLoaded) return
+
+  const candidatePaths = [
+    // 1. Running from project root
+    path.resolve(process.cwd(), 'backend', '.env'),
+    // 2. Running from backend directory
+    path.resolve(process.cwd(), '.env'),
+    // 3. Relative to this file (both src/config and dist/config are 2 levels deep)
+    path.resolve(__dirname, '../../.env'),
+  ]
+
+  for (const candidate of candidatePaths) {
+    if (fs.existsSync(candidate)) {
+      dotenv.config({ path: candidate, override: true })
+      envLoaded = true
+      return
+    }
+  }
+
+  // Fallback for cloud/container environments where variables are injected directly
+  dotenv.config()
+  envLoaded = true
+}
+
+// Automatically execute once on initial module import
+loadEnv()
 
 export interface EnvValidationResult {
   isValid: boolean

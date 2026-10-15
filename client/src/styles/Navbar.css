@@ -486,6 +486,17 @@
 /* --------------------------------------------------------------------------
    6. RESPONSIVE BREAKPOINTS
    -------------------------------------------------------------------------- */
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .kala-nav-links {
+    gap: clamp(0.65rem, 1.2vw, 1.25rem);
+  }
+  .kala-nav-link {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    padding: 0.5rem 0.15rem;
+  }
+}
+
 @media (max-width: 1024px) {
   .kala-navbar {
     display: flex;

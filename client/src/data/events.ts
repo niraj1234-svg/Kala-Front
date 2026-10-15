@@ -56,7 +56,28 @@ export interface UpcomingEvent {
   badgeModifier?: string
 }
 
-export type KalaEvent = ProductEvent | BundleEvent | UpcomingEvent
+export interface LiveEvent {
+  id: string
+  type: 'live'
+  categoryBadge: string
+  title: string
+  slogan?: string
+  description: string
+  date: string
+  time?: string
+  fee?: number
+  status: string
+  topLeftBadge: string
+  topRightBadge: string
+  topRightIcon: string
+  focalTag: string
+  image: string
+  badgeModifier?: string
+  link: string
+  ctaText: string
+}
+
+export type KalaEvent = ProductEvent | BundleEvent | UpcomingEvent | LiveEvent
 
 export const KALA_EVENTS: KalaEvent[] = [
   // 1. Slide 1 — FEATURED DROP: KALA Bihari Story Premium T-Shirt
@@ -135,23 +156,27 @@ export const KALA_EVENTS: KalaEvent[] = [
     badgeModifier: 'culture-badge',
   },
 
-  // 4. Slide 4 — UPCOMING EVENT: KALA CAMPUS IDEATHON
+  // 4. Slide 4 — LIVE EVENT: DESIGNATHON IN GGV BY KALA
   {
-    id: 'kala-campus-ideathon',
-    type: 'upcoming',
-    locked: true,
-    categoryBadge: 'CAMPUS DESIGN BATTLE',
-    title: 'KALA CAMPUS IDEATHON',
+    id: 'kala-designathon-ggv',
+    type: 'live',
+    categoryBadge: 'OFFICIAL EVENT • GGV',
+    title: 'DESIGNATHON IN GGV BY KALA',
+    slogan: 'SHOW YOUR कला',
     description:
-      'Got bold streetwear ideas? Pitch your original design concepts, battle with creators across campus, and turn your vision into real KALA drip. Free registration, winning designs get printed, and top creators take home exclusive custom apparel.',
-    date: 'COMING SOON',
-    status: '🔒 LOCKED • RELEASING SOON',
-    topLeftBadge: 'UPCOMING EVENT',
-    topRightBadge: 'CAMPUS BATTLE',
-    topRightIcon: '💡',
-    focalTag: 'COLLEGE CREATORS BATTLE',
+      'Show Your कला! Unleash your design vision, battle with student creators across colleges, and win custom-printed T-shirts and exclusive KALA streetwear gear. Registration open now at ₹49.',
+    date: '24 OCTOBER 2026',
+    time: '11:00 AM–2:00 PM',
+    fee: 49,
+    status: 'LIVE EVENT • REGISTRATIONS OPEN',
+    topLeftBadge: 'LIVE EVENT',
+    topRightBadge: '₹49 ENTRY',
+    topRightIcon: '🎨',
+    focalTag: 'SHOW YOUR कला',
     image: '/events/campus-ideathon.jpg',
     badgeModifier: 'ideathon-badge',
+    link: '/designathon',
+    ctaText: 'REGISTER NOW (₹49)',
   },
 
   // 5. Slide 5 — UPCOMING EVENT: CREATOR × DESIGNER × KALA
@@ -175,3 +200,4 @@ export const KALA_EVENTS: KalaEvent[] = [
 ]
 
 export const UPCOMING_EVENTS = KALA_EVENTS.filter((e): e is UpcomingEvent => e.type === 'upcoming')
+export const LIVE_EVENTS = KALA_EVENTS.filter((e): e is LiveEvent => e.type === 'live')

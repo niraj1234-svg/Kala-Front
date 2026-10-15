@@ -1,11 +1,8 @@
 import mongoose from 'mongoose'
-import dotenv from 'dotenv'
-import path from 'path'
+import { loadEnv } from './env'
 
-// Attempt to load .env from backend root or src directory with override enabled
-dotenv.config({ path: path.resolve(process.cwd(), '.env'), override: true })
-dotenv.config({ path: path.resolve(__dirname, '../../.env'), override: true })
-dotenv.config({ path: path.resolve(__dirname, '../.env'), override: true })
+// Ensure environment variables are loaded once
+loadEnv()
 
 export const connectDB = async () => {
   const mongoUri = process.env.MONGODB_URI?.trim()

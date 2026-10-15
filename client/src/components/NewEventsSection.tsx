@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { KALA_EVENTS, type ProductEvent, type BundleEvent, type UpcomingEvent } from '../data/events'
+import { KALA_EVENTS, type ProductEvent, type BundleEvent, type UpcomingEvent, type LiveEvent } from '../data/events'
 import { useCart } from '../context/CartContext'
 import { flyToCart } from '../utils/cartAnimation'
 import '../styles/NewEventsSection.css'
@@ -207,6 +207,14 @@ export const NewEventsSection: React.FC = () => {
               icon = '🇮🇳'
               label = 'Culture Drops'
               tag = 'Pan-India'
+            } else if (event.type === 'live' || event.id === 'kala-designathon-ggv') {
+              icon = '🎨'
+              label = 'Designathon'
+              tag = 'LIVE • ₹49'
+            } else if (event.id === 'creator-designer-kala') {
+              icon = '🤝'
+              label = 'Collab Drops'
+              tag = 'Creator Royalty'
             } else if (event.id === 'kala-campus-ideathon') {
               icon = '🏆'
               label = 'Ideathon'
@@ -598,7 +606,142 @@ export const NewEventsSection: React.FC = () => {
                   }
 
                   /* ------------------------------------------------------------
-                     CASE 3: UPCOMING EVENT (e.g. Creator Royalty, Designer Royalty, Collab)
+                     CASE 3: LIVE EVENT (e.g. KALA Designathon in GGV)
+                     ------------------------------------------------------------ */
+                  if (event.type === 'live') {
+                    const live = event as LiveEvent
+
+                    return (
+                      <div
+                        key={live.id}
+                        className="kala-carousel-slide"
+                        role="group"
+                        aria-roledescription="slide"
+                        aria-label={`Slide ${idx + 1} of ${totalSlides}: ${live.title}`}
+                      >
+                        <article className="kala-event-card-single kala-card-live">
+                          {/* Visual Media Stage (LEFT: dark visual/event area) */}
+                          <div className="kala-event-media-stage kala-stage-upcoming kala-stage-live">
+                            <img
+                              src={live.image}
+                              alt=""
+                              className="kala-upcoming-bg-art"
+                              aria-hidden="true"
+                              draggable={false}
+                            />
+
+                            <div className="kala-upcoming-stage-overlay kala-live-stage-overlay" />
+
+                            <div className="kala-stage-topbar">
+                              <span className="kala-stage-badge live-badge">
+                                <span className="kala-badge-pulse-live" aria-hidden="true" />
+                                <span>{live.topLeftBadge}</span>
+                              </span>
+                              <span className={`kala-stage-sub-badge live-sub-badge ${live.badgeModifier || ''}`}>
+                                <span className="kala-badge-symbol" aria-hidden="true">{live.topRightIcon}</span>
+                                <span>{live.topRightBadge}</span>
+                              </span>
+                            </div>
+
+                            <div className="kala-upcoming-visual-frame kala-live-visual-frame" aria-hidden="true">
+                              <img
+                                src={live.image}
+                                alt={live.title}
+                                className="kala-upcoming-showcase-img"
+                                draggable={false}
+                              />
+                              <div className="kala-upcoming-frame-border" />
+                            </div>
+
+                            <div className="kala-upcoming-focal-caption">
+                              <span className="kala-focal-accent-dot live-dot" aria-hidden="true" />
+                              <span className="kala-focal-text">{live.focalTag}</span>
+                            </div>
+                          </div>
+
+                          {/* Content Body (RIGHT: event information panel) */}
+                          <div className="kala-event-body kala-live-body">
+                            <div className="kala-body-heading-group">
+                              <div className="kala-upcoming-concept-pill kala-live-concept-pill">
+                                <span>{live.categoryBadge}</span>
+                                <span className="kala-live-pill-dot" aria-hidden="true">•</span>
+                                <span className="kala-live-pill-pulse">LIVE NOW</span>
+                              </div>
+                              <h3 className="kala-event-main-title kala-live-title">
+                                {live.title}
+                              </h3>
+                              {live.slogan && (
+                                <div className="kala-live-slogan-text">{live.slogan}</div>
+                              )}
+                            </div>
+
+                            <p className="kala-event-desc kala-live-desc">
+                              {live.description}
+                            </p>
+
+                            <div className="kala-live-details-grid" aria-label="Event Details">
+                              <div className="kala-live-detail-item">
+                                <span className="kala-live-detail-lbl">EVENT DATE</span>
+                                <span className="kala-live-detail-val">{live.date}</span>
+                              </div>
+                              {live.time && (
+                                <div className="kala-live-detail-item">
+                                  <span className="kala-live-detail-lbl">TIME</span>
+                                  <span className="kala-live-detail-val">{live.time}</span>
+                                </div>
+                              )}
+                              <div className="kala-live-detail-item">
+                                <span className="kala-live-detail-lbl">FEE</span>
+                                <span className="kala-live-detail-val kala-live-fee-val">₹{live.fee ?? 49} / Individual</span>
+                              </div>
+                            </div>
+
+                            <div className="kala-urgency-counter-strip kala-live-urgency-strip" aria-label="Registration status">
+                              <span className="kala-urgency-icon" aria-hidden="true">⚡</span>
+                              <span className="kala-urgency-text">
+                                <strong>Live Registration Open</strong> • Individual Entry Only • Instant Razorpay Confirmation
+                              </span>
+                            </div>
+
+                            <div className="kala-event-cta-wrap kala-dual-cta">
+                              <Link
+                                to={live.link}
+                                className="kala-btn kala-event-action-btn kala-btn-register-live"
+                                aria-label={`Register now for ${live.title}`}
+                              >
+                                <span>{live.ctaText}</span>
+                                <svg
+                                  className="kala-arrow-icon"
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  aria-hidden="true"
+                                >
+                                  <line x1="5" y1="12" x2="19" y2="12" />
+                                  <polyline points="12 5 19 12 12 19" />
+                                </svg>
+                              </Link>
+                              <Link
+                                to={live.link}
+                                className="kala-btn kala-event-action-btn kala-btn-explore"
+                                aria-label="View Designathon details and guidelines"
+                              >
+                                <span>VIEW FORM &amp; DETAILS</span>
+                              </Link>
+                            </div>
+                          </div>
+                        </article>
+                      </div>
+                    )
+                  }
+
+                  /* ------------------------------------------------------------
+                     CASE 4: UPCOMING EVENT (e.g. Creator Royalty, Collab)
                      ------------------------------------------------------------ */
                   const upcoming = event as UpcomingEvent
 
