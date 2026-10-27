@@ -1,0 +1,11 @@
+/* ==========================================================================
+   KALA APPAREL SHOWROOM — PAGE SHELL
+   ========================================================================== */
+
+.kala-showroom-page-wrapper {
+  width: 100%;
+  min-height: calc(100vh - 76px);
+  background-color: var(--kala-bg-warm, #FAF9F6);
+  display: flex;
+  flex-direction: column;
+}

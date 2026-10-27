@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchProducts } from '../services/productApi'
-import type { Product } from '../data/products'
+import { PRODUCTS, type Product } from '../data/products'
 import { useWishlist } from '../context/WishlistContext'
 import { useCart } from '../context/CartContext'
 import NewEventsSection from '../components/NewEventsSection'
-import StreetwearMarquee from '../components/StreetwearMarquee'
-import ProductRatingBadge from '../components/ProductRatingBadge'
 import { flyToCart } from '../utils/cartAnimation'
 import '../styles/Home.css'
+
+// Proposed catalog product order (verified existing products)
+const PROPOSED_FEATURED_IDS = [
+  'kala-bihari-story-premium-t-shirt',
+  'streetwear-oversized-acid-tee',
+  'streetwear-heavyweight-hoodie-onyx',
+  'streetwear-tactical-cargo-pant',
+]
 
 export const Home: React.FC = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
@@ -19,7 +25,7 @@ export const Home: React.FC = () => {
   const { isInWishlist, toggleWishlist } = useWishlist()
   const { addToCart } = useCart()
 
-  // Fetch products from MongoDB API with fallback
+  // Fetch products from centralized catalog with fallback
   useEffect(() => {
     let isMounted = true
     setIsLoadingProducts(true)
@@ -27,19 +33,35 @@ export const Home: React.FC = () => {
 
     fetchProducts()
       .then((data) => {
-        if (isMounted) {
-          if (data && data.length > 0) {
-            // Display curated products across categories matching reference design
-            setFeaturedProducts(data.slice(0, 6))
+        if (!isMounted) return
+
+        if (data && data.length > 0) {
+          // Align with proposed catalog items
+          const matched = PROPOSED_FEATURED_IDS.map((id) =>
+            data.find((p) => p.id === id)
+          ).filter(Boolean) as Product[]
+
+          if (matched.length >= 4) {
+            setFeaturedProducts(matched.slice(0, 4))
           } else {
-            setFeaturedProducts([])
+            const remaining = data.filter((p) => !PROPOSED_FEATURED_IDS.includes(p.id))
+            setFeaturedProducts([...matched, ...remaining].slice(0, 4))
           }
+        } else {
+          // Fallback to local catalog data
+          const localMatched = PROPOSED_FEATURED_IDS.map((id) =>
+            PRODUCTS.find((p) => p.id === id)
+          ).filter(Boolean) as Product[]
+          setFeaturedProducts(localMatched.length ? localMatched : PRODUCTS.slice(0, 4))
         }
       })
       .catch((err) => {
         if (isMounted) {
-          console.warn('[Home] Error fetching products:', err)
-          setProductError('Unable to load featured products.')
+          console.warn('[Home] Error fetching products from server, using local catalog:', err)
+          const localMatched = PROPOSED_FEATURED_IDS.map((id) =>
+            PRODUCTS.find((p) => p.id === id)
+          ).filter(Boolean) as Product[]
+          setFeaturedProducts(localMatched.length ? localMatched : PRODUCTS.slice(0, 4))
         }
       })
       .finally(() => {
@@ -71,7 +93,7 @@ export const Home: React.FC = () => {
       setAddedProductId((current) => (current === product.id ? null : current))
     }, 1800)
 
-    // Trigger premium flying-product animation to Navbar cart icon
+    // Trigger subtle flying animation to Navbar cart
     const card = (e.currentTarget as HTMLElement).closest('.kala-clean-product-card')
     const img = card?.querySelector<HTMLImageElement>('.kala-clean-product-img')
     flyToCart({
@@ -90,94 +112,172 @@ export const Home: React.FC = () => {
   return (
     <main className="kala-home" id="main-content">
       {/* ====================================================================
-          1. NEW EVENTS & FEATURED OFFERS SECTION
-          ==================================================================== */}
-      <NewEventsSection />
-
       {/* ====================================================================
-          2. TWO VISUAL CARDS: CUSTOM APPAREL & BUSINESS BRANDING
+          1. MAIN HERO (Tri-Core Identity: Custom Apparel, Campus & Branding)
           ==================================================================== */}
-      <section className="kala-split-cards-section" aria-label="Explore KALA Services">
-        <div className="kala-split-cards-grid">
-          {/* Card 1: Custom Apparel */}
-          <Link
-            to="/custom-apparel"
-            className="kala-split-card kala-split-card-light"
-            aria-label="Custom Apparel — Design custom apparel your way"
-          >
-            <div className="kala-split-card-visual">
-              <span className="kala-split-badge-pill">FROM ₹399 • 1 PC MINIMUM</span>
-              <img
-                src="/home/custom-apparel.jpg"
-                alt="Custom KALA Apparel model"
-                className="kala-split-card-img"
-                loading="lazy"
-              />
-            </div>
-            <div className="kala-split-card-content">
-              <h2 className="kala-split-card-title">
-                CUSTOM<br />
-                APPAREL
-              </h2>
-              <p className="kala-split-card-desc">
-                Design custom apparel your way.
-              </p>
-              <div className="kala-split-card-action">
-                <span className="kala-split-card-btn">
-                  <span>EXPLORE</span>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12 5 19 12 12 19" />
-                  </svg>
-                </span>
+      <section className="kala-hero-section" aria-labelledby="hero-heading">
+        <div className="kala-hero-container">
+          <div className="kala-hero-grid">
+            {/* Left Column: Copy & Actions */}
+            <div className="kala-hero-left">
+              <div className="kala-hero-eyebrow">
+                <span className="kala-eyebrow-accent-dot" aria-hidden="true" />
+                <span className="kala-hero-eyebrow-text">CUSTOM APPAREL · CAMPUS · BRANDING</span>
               </div>
-            </div>
-          </Link>
 
-          {/* Card 2: Business Branding */}
-          <Link
-            to="/business-branding"
-            className="kala-split-card kala-split-card-dark"
-            aria-label="Business Branding — Custom branding made for your business"
-          >
-            <div className="kala-split-card-visual">
-              <span className="kala-split-badge-pill dark">BULK MERCH • PAN-INDIA</span>
-              <img
-                src="/home/business-branding.jpg"
-                alt="Business Branding packaging and apparel merchandise"
-                className="kala-split-card-img"
-                loading="lazy"
-              />
-            </div>
-            <div className="kala-split-card-content">
-              <h2 className="kala-split-card-title">
-                BUSINESS<br />
-                BRANDING
-              </h2>
-              <p className="kala-split-card-desc">
-                Custom branding made for your business.
+              <h1 id="hero-heading" className="kala-hero-headline">
+                YOUR IDEAS.
+                <br />
+                OUR MERCHANDISE.
+                <br />
+                YOUR IDENTITY.
+              </h1>
+
+              <p className="kala-hero-subtext">
+                Custom apparel, campus merchandise and branded products for individuals, teams, institutions and businesses.
               </p>
-              <div className="kala-split-card-action">
-                <span className="kala-split-card-btn">
-                  <span>EXPLORE</span>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12 5 19 12 12 19" />
-                  </svg>
-                </span>
+
+              <div className="kala-hero-cta-group">
+                <a href="#services" className="kala-hero-btn kala-hero-btn-primary">
+                  <span>EXPLORE SERVICES →</span>
+                </a>
+
+                <Link to="/shop" className="kala-hero-btn kala-hero-btn-secondary">
+                  <span>SHOP COLLECTION →</span>
+                </Link>
               </div>
             </div>
-          </Link>
+
+            {/* Right Column: High-Quality Corporate & Campus Merchandise Visual */}
+            <div className="kala-hero-right">
+              <div className="kala-hero-media-frame">
+                <img
+                  src="/business-branding/card-01-corporate-merch.jpg"
+                  alt="KALA Custom Apparel, Campus Merchandise & Branding Solutions"
+                  className="kala-hero-visual-img"
+                  loading="eager"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ====================================================================
-          3. CONTINUOUS RUNNING STREETWEAR MARQUEE (HIGH IMPACT LUXURY DIVIDER)
+          2. THREE EQUAL CORE SERVICE CARDS (Custom Apparel, Campus & Corporate, Business Branding)
           ==================================================================== */}
-      <StreetwearMarquee theme="dark" />
+      <section className="kala-services-section" id="services" aria-label="KALA Core Services">
+        <div className="kala-services-container">
+          <div className="kala-services-grid">
+            {/* CARD A — CUSTOM APPAREL */}
+            <Link
+              to="/custom-apparel"
+              className="kala-service-card"
+              aria-label="Custom Apparel — Custom T-shirts, hoodies, jerseys and personalized apparel."
+            >
+              <div className="kala-service-card-visual">
+                <img
+                  src="/home/custom-apparel.jpg"
+                  alt="KALA Custom Apparel T-shirts, hoodies, and personalized streetwear"
+                  className="kala-service-card-img"
+                  loading="lazy"
+                />
+              </div>
+              <div className="kala-service-card-content">
+                <div className="kala-service-card-text">
+                  <h2 className="kala-service-card-title">CUSTOM APPAREL</h2>
+                  <p className="kala-service-card-desc">
+                    Custom T-shirts, hoodies, jerseys and personalized apparel.
+                  </p>
+                </div>
+                <div className="kala-service-card-action">
+                  <span className="kala-service-card-btn">
+                    <span>CREATE YOURS</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+            {/* CARD B — CAMPUS & CORPORATE */}
+            <Link
+              to="/campus-corporate-solutions"
+              className="kala-service-card"
+              aria-label="Campus & Corporate — Welcome kits, uniforms, event merchandise and bulk orders."
+            >
+              <div className="kala-service-card-visual">
+                <img
+                  src="/business-branding/card-05-college-university.jpg"
+                  alt="KALA Campus & Corporate welcome kits, uniforms, and bulk orders"
+                  className="kala-service-card-img"
+                  loading="lazy"
+                />
+              </div>
+              <div className="kala-service-card-content">
+                <div className="kala-service-card-text">
+                  <h2 className="kala-service-card-title">CAMPUS &amp; CORPORATE</h2>
+                  <p className="kala-service-card-desc">
+                    Welcome kits, uniforms, event merchandise and bulk orders.
+                  </p>
+                </div>
+                <div className="kala-service-card-action">
+                  <span className="kala-service-card-btn">
+                    <span>REQUEST A QUOTE</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </Link>
+
+            {/* CARD C — BUSINESS BRANDING */}
+            <Link
+              to="/business-branding"
+              className="kala-service-card"
+              aria-label="Business Branding — Branded packaging, labels, carry bags and business merchandise."
+            >
+              <div className="kala-service-card-visual">
+                <img
+                  src="/home/business-branding.jpg"
+                  alt="KALA Business Branding packaging, labels, carry bags, and merchandise"
+                  className="kala-service-card-img"
+                  loading="lazy"
+                />
+              </div>
+              <div className="kala-service-card-content">
+                <div className="kala-service-card-text">
+                  <h2 className="kala-service-card-title">BUSINESS BRANDING</h2>
+                  <p className="kala-service-card-desc">
+                    Branded packaging, labels, carry bags and business merchandise.
+                  </p>
+                </div>
+                <div className="kala-service-card-action">
+                  <span className="kala-service-card-btn">
+                    <span>BUILD YOUR BRAND</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* ====================================================================
-          4. FEATURED PRODUCTS (Clean Visual Row with High-Conversion Framing)
+          3. FRESH DROPS & EVENTS (Compact Horizontal Campaign Card immediately after Service Cards)
+          ==================================================================== */}
+      <NewEventsSection />
+
+      {/* ====================================================================
+          4. FEATURED PRODUCTS (Clean 4-Column Grid, Honest Pricing)
           ==================================================================== */}
       <section className="kala-featured-section" aria-labelledby="featured-heading">
         <div className="kala-featured-container">
@@ -211,22 +311,20 @@ export const Home: React.FC = () => {
               {featuredProducts.map((product) => {
                 const wishlisted = isInWishlist(product.id)
                 const isRecentlyAdded = addedProductId === product.id
-                const originalPrice = Math.round(product.price * 1.75)
-                const savingsAmount = originalPrice - product.price
-                const discountPercent = Math.round((savingsAmount / originalPrice) * 100)
 
                 return (
                   <article key={product.id} className="kala-clean-product-card">
                     <Link to={`/product/${product.id}`} className="kala-clean-product-link" aria-label={`View ${product.name}`}>
                       <div className="kala-clean-product-media">
-                        <span className="kala-clean-discount-tag">-{discountPercent}%</span>
+                        {product.badge && (
+                          <span className="kala-clean-subtle-badge">{product.badge}</span>
+                        )}
                         <img
                           src={product.image}
                           alt={product.name}
                           className="kala-clean-product-img"
                           loading="lazy"
                         />
-                        <ProductRatingBadge productId={product.id} productName={product.name} />
                         <button
                           type="button"
                           className={`kala-clean-wishlist-btn ${wishlisted ? 'active' : ''}`}
@@ -251,10 +349,10 @@ export const Home: React.FC = () => {
                         <div className="kala-clean-product-text">
                           <h3 className="kala-clean-product-name">{product.name}</h3>
                           <div className="kala-clean-price-row">
-                            <span className="kala-clean-product-price">₹{product.price.toLocaleString('en-IN')}</span>
-                            <span className="kala-clean-orig-price">₹{originalPrice.toLocaleString('en-IN')}</span>
+                            <span className="kala-clean-product-price">
+                              ₹{product.price.toLocaleString('en-IN')}
+                            </span>
                           </div>
-                          <span className="kala-clean-save-pill">SAVE ₹{savingsAmount.toLocaleString('en-IN')}</span>
                         </div>
 
                         <button
@@ -286,139 +384,60 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-
       {/* ====================================================================
-          5. SERVICE / TRUST SECTION (Modern 3D Trust Card Banner)
+          5. TRUST BENEFITS (Clean 3-Column Desktop Grid)
           ==================================================================== */}
-      <section className="kala-trust-bar-section" aria-label="Trust & Guarantees">
-        <div className="kala-trust-bar-container">
-          <div className="kala-trust-card-banner">
-            {/* Background Ambient Fluid Wave Curves */}
-            <svg className="kala-trust-card-bg-waves" preserveAspectRatio="none" viewBox="0 0 1200 160" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <defs>
-                <linearGradient id="kala-trust-wave-l1" x1="0%" y1="100%" x2="35%" y2="0%">
-                  <stop offset="0%" stopColor="#FF7A30" stopOpacity="0.25" />
-                  <stop offset="60%" stopColor="#FFA67A" stopOpacity="0.10" />
-                  <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-                </linearGradient>
-                <linearGradient id="kala-trust-wave-l2" x1="0%" y1="100%" x2="25%" y2="10%">
-                  <stop offset="0%" stopColor="#FFA070" stopOpacity="0.18" />
-                  <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-                </linearGradient>
-                <linearGradient id="kala-trust-wave-r1" x1="100%" y1="100%" x2="65%" y2="0%">
-                  <stop offset="0%" stopColor="#FF7A30" stopOpacity="0.25" />
-                  <stop offset="60%" stopColor="#FFA67A" stopOpacity="0.10" />
-                  <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-                </linearGradient>
-                <linearGradient id="kala-trust-wave-r2" x1="100%" y1="100%" x2="75%" y2="10%">
-                  <stop offset="0%" stopColor="#FFA070" stopOpacity="0.18" />
-                  <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <path d="M-20 180 C60 150 140 100 60 40 C20 10 -20 20 -40 180 Z" fill="url(#kala-trust-wave-l1)" />
-              <path d="M-10 180 C80 170 170 140 110 70 C70 20 0 40 -30 180 Z" fill="url(#kala-trust-wave-l2)" />
-              <path d="M1220 180 C1140 150 1060 100 1140 40 C1180 10 1220 20 1240 180 Z" fill="url(#kala-trust-wave-r1)" />
-              <path d="M1210 180 C1120 170 1030 140 1090 70 C1130 20 1200 40 1230 180 Z" fill="url(#kala-trust-wave-r2)" />
-            </svg>
-
-            {/* Left Decorative Dot Grid */}
-            <div className="kala-trust-dots kala-trust-dots-left" aria-hidden="true">
-              <span /><span /><span /><span /><span />
-              <span /><span /><span /><span /><span />
-              <span /><span /><span /><span /><span />
-            </div>
-
-            {/* Trust Items Grid */}
-            <div className="kala-trust-features-row">
-              {/* Feature 1: Pan-India Delivery */}
-              <div className="kala-trust-feature-item">
-                <div className="kala-trust-badge-wrap">
-                  <div className="kala-trust-badge-tile" aria-hidden="true">
-                    <svg className="kala-trust-tile-icon" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      {/* Speed motion lines */}
-                      <path d="M3 9H12M5 14H10M2 19H8" stroke="#FF5E1E" strokeWidth="2.5" strokeLinecap="round" />
-                      {/* Main cargo truck body */}
-                      <rect x="12" y="5" width="16" height="16" rx="2.5" fill="#FF5E1E" />
-                      {/* Truck driver cab */}
-                      <path d="M28 10H33.5C34.35 10 35.1 10.55 35.38 11.35L37.1 16.5C37.3 17.1 37.4 17.65 37.4 18.2V20C37.4 20.55 36.95 21 36.4 21H28V10Z" fill="#FF5E1E" />
-                      {/* Cab window */}
-                      <path d="M29.5 12H33L34.5 16.5H29.5V12Z" fill="#FFFFFF" fillOpacity="0.9" />
-                      {/* Wheels with rim details */}
-                      <circle cx="17.5" cy="22.5" r="3.5" fill="#FF5E1E" />
-                      <circle cx="17.5" cy="22.5" r="1.5" fill="#FFFFFF" />
-                      <circle cx="32.5" cy="22.5" r="3.5" fill="#FF5E1E" />
-                      <circle cx="32.5" cy="22.5" r="1.5" fill="#FFFFFF" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="kala-trust-info">
-                  <h3 className="kala-trust-title">PAN–INDIA DELIVERY</h3>
-                  <p className="kala-trust-desc">Fast &amp; reliable delivery to 26000+ pin codes across India.</p>
-                </div>
+      <section className="kala-trust-section" aria-label="KALA Assurances">
+        <div className="kala-trust-container">
+          <div className="kala-trust-grid">
+            {/* Benefit 1 */}
+            <div className="kala-trust-card">
+              <div className="kala-trust-icon-box" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="1" y="3" width="15" height="13" />
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 8" />
+                  <circle cx="5.5" cy="18.5" r="2.5" />
+                  <circle cx="18.5" cy="18.5" r="2.5" />
+                </svg>
               </div>
-
-              {/* Vertical Divider 1 */}
-              <div className="kala-trust-col-divider" aria-hidden="true" />
-
-              {/* Feature 2: Secure Payments */}
-              <div className="kala-trust-feature-item">
-                <div className="kala-trust-badge-wrap has-sparkle">
-                  {/* Subtle celebratory sunburst rays */}
-                  <span className="kala-trust-sparkle-rays" aria-hidden="true">
-                    <span className="kala-ray ray-left" />
-                    <span className="kala-ray ray-center" />
-                    <span className="kala-ray ray-right" />
-                  </span>
-                  <div className="kala-trust-badge-tile" aria-hidden="true">
-                    <svg className="kala-trust-tile-icon" viewBox="0 0 32 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M16 2L3.5 7.8V16.5C3.5 24.8 9.1 32.5 16 34.5C22.9 32.5 28.5 24.8 28.5 16.5V7.8L16 2Z" fill="#FF5E1E" />
-                      <path d="M11 17.5L14.5 21L21.5 13.5" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="kala-trust-info">
-                  <h3 className="kala-trust-title">SECURE PAYMENTS</h3>
-                  <p className="kala-trust-desc">100% secure transactions with trusted payment partners.</p>
-                </div>
-              </div>
-
-              {/* Vertical Divider 2 */}
-              <div className="kala-trust-col-divider" aria-hidden="true" />
-
-              {/* Feature 3: Premium Quality */}
-              <div className="kala-trust-feature-item">
-                <div className="kala-trust-badge-wrap has-sparkle">
-                  {/* Subtle celebratory sunburst rays */}
-                  <span className="kala-trust-sparkle-rays" aria-hidden="true">
-                    <span className="kala-ray ray-left" />
-                    <span className="kala-ray ray-center" />
-                    <span className="kala-ray ray-right" />
-                  </span>
-                  <div className="kala-trust-badge-tile" aria-hidden="true">
-                    <svg className="kala-trust-tile-icon" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M17 2.5L21.2 11.8L31.3 13.1L23.9 20L25.8 30L17 25.1L8.2 30L10.1 20L2.7 13.1L12.8 11.8L17 2.5Z" fill="#FF5E1E" stroke="#FF5E1E" strokeWidth="1.5" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="kala-trust-info">
-                  <h3 className="kala-trust-title">PREMIUM QUALITY</h3>
-                  <p className="kala-trust-desc">High-quality fabric, long-lasting prints and customer-approved.</p>
-                </div>
+              <div className="kala-trust-text">
+                <h3 className="kala-trust-heading">DELIVERY ACROSS INDIA</h3>
+                <p className="kala-trust-copy">Delivery across India.</p>
               </div>
             </div>
 
-            {/* Right Decorative Dot Grid */}
-            <div className="kala-trust-dots kala-trust-dots-right" aria-hidden="true">
-              <span /><span /><span /><span /><span />
-              <span /><span /><span /><span /><span />
-              <span /><span /><span /><span /><span />
+            {/* Benefit 2 */}
+            <div className="kala-trust-card">
+              <div className="kala-trust-icon-box" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </div>
+              <div className="kala-trust-text">
+                <h3 className="kala-trust-heading">SECURE ONLINE PAYMENTS</h3>
+                <p className="kala-trust-copy">Secure online payment options.</p>
+              </div>
+            </div>
+
+            {/* Benefit 3 */}
+            <div className="kala-trust-card">
+              <div className="kala-trust-icon-box" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              </div>
+              <div className="kala-trust-text">
+                <h3 className="kala-trust-heading">CUSTOM PRINTING</h3>
+                <p className="kala-trust-copy">Apparel and merchandise printing.</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ====================================================================
-          5. CONTACT KALA SECTION (Direct Clickable Channels)
+          6. CONTACT KALA (Clean Clickable Cards)
           ==================================================================== */}
       <section className="kala-contact-section" id="contact" aria-labelledby="contact-heading">
         <div className="kala-contact-container">
@@ -428,7 +447,7 @@ export const Home: React.FC = () => {
           </div>
 
           <div className="kala-contact-grid">
-            {/* Option 1: WhatsApp */}
+            {/* WhatsApp */}
             <a
               href="https://wa.me/919406030116?text=Hi%20KALA,%20I'd%20like%20to%20inquire%20about%20your%20products%20and%20services."
               target="_blank"
@@ -454,7 +473,7 @@ export const Home: React.FC = () => {
               </span>
             </a>
 
-            {/* Option 2: Phone */}
+            {/* Phone */}
             <a
               href="tel:9406030116"
               className="kala-contact-card"
@@ -478,7 +497,7 @@ export const Home: React.FC = () => {
               </span>
             </a>
 
-            {/* Option 3: Instagram */}
+            {/* Instagram */}
             <a
               href="https://www.instagram.com/kala_originals/"
               target="_blank"
@@ -506,7 +525,7 @@ export const Home: React.FC = () => {
               </span>
             </a>
 
-            {/* Option 4: Email */}
+            {/* Email */}
             <a
               href="mailto:KalaOriginals@gmail.com"
               className="kala-contact-card"
@@ -535,7 +554,7 @@ export const Home: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          8. FLOATING WHATSAPP BUTTON (Direct Support)
+          7. FLOATING WHATSAPP BUTTON (Direct Support)
           ==================================================================== */}
       <a
         href="https://wa.me/919406030116?text=Hi%20KALA,%20I'd%20like%20to%20know%20more%20about%20your%20custom%20apparel%20and%20products."
@@ -554,4 +573,3 @@ export const Home: React.FC = () => {
 }
 
 export default Home
-

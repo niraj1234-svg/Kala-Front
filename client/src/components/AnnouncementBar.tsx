@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { API_BASE_URL } from '../config/api'
 import '../styles/AnnouncementBar.css'
 
 interface AnnouncementItem {
@@ -11,66 +12,71 @@ interface AnnouncementItem {
   link: string
 }
 
-const ANNOUNCEMENTS: AnnouncementItem[] = [
-  {
-    id: 'kala-designathon',
-    badge: 'EVENT OPEN',
-    text: 'Designathon in GGV by KALA • Show Your कला',
-    highlight: '₹49 REGISTRATION',
-    ctaText: 'REGISTER NOW',
-    link: '/designathon',
-  },
-  {
-    id: 'bihari-drop',
-    badge: 'HOT DROP',
-    text: 'KALA Bihari Story Premium 220 GSM Streetwear',
-    highlight: '₹400 ONLY',
-    ctaText: 'BUY NOW',
-    link: '/product/kala-bihari-story-premium-t-shirt',
-  },
-  {
-    id: 'free-shipping',
-    badge: 'FREE DELIVERY',
-    text: 'Pan-India Express Delivery on all orders above ₹699',
-    highlight: 'LIMITED TIME',
-    ctaText: 'SHOP COLLECTION',
-    link: '/shop',
-  },
-  {
-    id: 'bundle-stack',
-    badge: 'VALUE DEAL',
-    text: 'Build Your T-Shirt Stack: 3 T-Shirts for ₹699',
-    highlight: 'SAVE ₹500',
-    ctaText: 'BUILD STACK',
-    link: '/bundle?offer=3',
-  },
-  {
-    id: 'custom-apparel',
-    badge: 'CUSTOM PRINT',
-    text: 'Design Your Own Streetwear & Oversized Apparel',
-    highlight: 'FROM 1 PIECE',
-    ctaText: 'CUSTOMIZE NOW',
-    link: '/custom-apparel',
-  },
-]
+// Authoritative default announcement communicating all three core services
+const DEFAULT_ANNOUNCEMENT: AnnouncementItem = {
+  id: 'kala-all-services',
+  badge: 'SERVICES',
+  text: 'CUSTOM APPAREL · CAMPUS MERCHANDISE · BRANDING SOLUTIONS',
+  ctaText: 'EXPLORE SERVICES →',
+  link: '/#services',
+}
 
 export const AnnouncementBar: React.FC = () => {
+  const [announcements, setAnnouncements] = useState<AnnouncementItem[]>([DEFAULT_ANNOUNCEMENT])
   const [currentIndex, setCurrentIndex] = useState<number>(0)
   const [isFading, setIsFading] = useState<boolean>(false)
 
+  // Dynamically verify genuine live event availability (e.g., active Designathon)
   useEffect(() => {
+    let isMounted = true
+
+    fetch(`${API_BASE_URL}/designathon/config`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!isMounted || !data?.success || !data?.config) return
+
+        // If registration window is genuinely open, include the verified event announcement
+        const windowState = data.config.window
+        const isLive = windowState?.isOpen === true
+
+        if (isLive) {
+          const eventItem: AnnouncementItem = {
+            id: 'designathon-live',
+            badge: 'LIVE EVENT',
+            text: `${data.config.eventName || 'Designathon in GGV by KALA'} • Show Your कला`,
+            highlight: `₹${data.config.feeRupees || 49} REGISTRATION`,
+            ctaText: 'REGISTER NOW →',
+            link: '/designathon',
+          }
+          setAnnouncements([DEFAULT_ANNOUNCEMENT, eventItem])
+        }
+      })
+      .catch((err) => {
+        // Silently fall back to default custom printing announcement without fake messaging
+        console.debug('[AnnouncementBar] Event status query bypassed, using default:', err)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  // Single-item static or subtle cycle when genuine active event exists
+  useEffect(() => {
+    if (announcements.length <= 1) return
+
     const timer = setInterval(() => {
       setIsFading(true)
       setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % ANNOUNCEMENTS.length)
+        setCurrentIndex((prev) => (prev + 1) % announcements.length)
         setIsFading(false)
       }, 300)
-    }, 4500)
+    }, 5000)
 
     return () => clearInterval(timer)
-  }, [])
+  }, [announcements.length])
 
-  const current = ANNOUNCEMENTS[currentIndex]
+  const current = announcements[currentIndex] || DEFAULT_ANNOUNCEMENT
 
   return (
     <div className="kala-announcement-bar" role="region" aria-label="Special Announcements">
@@ -90,20 +96,6 @@ export const AnnouncementBar: React.FC = () => {
 
           <Link to={current.link} className="kala-announcement-cta">
             <span>{current.ctaText}</span>
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
           </Link>
         </div>
       </div>
