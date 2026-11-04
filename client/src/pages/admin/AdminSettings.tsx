@@ -1,12 +1,88 @@
 import React, { useState, useEffect } from 'react'
 import { useAdmin } from '../../context/AdminContext'
 import { checkRazorpayConfig, type RazorpayConfigCheckResult } from '../../services/paymentApi'
+import {
+  fetchPlatformSettings,
+  updatePlatformCommission,
+  fetchAllPayouts,
+  updatePayoutStatusApi,
+} from '../../services/adminVendorApi'
 import '../../styles/Admin.css'
 
 export const AdminSettings: React.FC = () => {
   const { adminUser, adminLogout } = useAdmin()
   const [rzpStatus, setRzpStatus] = useState<RazorpayConfigCheckResult | null>(null)
   const [isTestingRzp, setIsTestingRzp] = useState(false)
+
+  // Platform Commission
+  const [commissionRate, setCommissionRate] = useState<number>(5)
+  const [isUpdatingCommission, setIsUpdatingCommission] = useState<boolean>(false)
+  const [commissionSuccess, setCommissionSuccess] = useState<string | null>(null)
+
+  // Vendor Payouts Moderation
+  const [allPayouts, setAllPayouts] = useState<any[]>([])
+  const [isLoadingPayouts, setIsLoadingPayouts] = useState<boolean>(false)
+  const [payoutFeedback, setPayoutFeedback] = useState<string | null>(null)
+
+  const loadPlatformSettings = async () => {
+    try {
+      const res = await fetchPlatformSettings()
+      if (res.settings?.commissionRate !== undefined) {
+        setCommissionRate(res.settings.commissionRate)
+      }
+    } catch (err) {
+      console.warn('Failed to load platform settings:', err)
+    }
+  }
+
+  const loadPayouts = async () => {
+    setIsLoadingPayouts(true)
+    try {
+      const res = await fetchAllPayouts()
+      setAllPayouts(res.payouts || [])
+    } catch (err) {
+      console.warn('Failed to load payouts:', err)
+    } finally {
+      setIsLoadingPayouts(false)
+    }
+  }
+
+  const handleSaveCommission = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsUpdatingCommission(true)
+    setCommissionSuccess(null)
+    try {
+      const res = await updatePlatformCommission(commissionRate)
+      setCommissionSuccess(res.message || 'Marketplace commission rate updated successfully.')
+    } catch (err: any) {
+      alert(err.message || 'Failed to update commission rate.')
+    } finally {
+      setIsUpdatingCommission(false)
+    }
+  }
+
+  const handleUpdatePayoutStatus = async (id: string, status: 'PAID' | 'REJECTED') => {
+    let referenceNumber: string | undefined
+    let notes: string | undefined
+
+    if (status === 'PAID') {
+      const promptRef = window.prompt('Enter Bank UTR / Transaction Reference Number:', `UTR-${Date.now().toString().slice(-6)}`)
+      if (!promptRef) return
+      referenceNumber = promptRef
+    } else {
+      const promptNotes = window.prompt('Enter reason for rejecting this payout request:')
+      if (!promptNotes) return
+      notes = promptNotes
+    }
+
+    try {
+      const res = await updatePayoutStatusApi(id, { status, referenceNumber, notes })
+      setPayoutFeedback(res.message || `Payout marked as ${status}.`)
+      loadPayouts()
+    } catch (err: any) {
+      alert(err.message || 'Failed to update payout status.')
+    }
+  }
 
   const runRazorpayCheck = async () => {
     setIsTestingRzp(true)
@@ -26,9 +102,11 @@ export const AdminSettings: React.FC = () => {
     }
   }
 
-  // Auto-run connection check on initial view
+  // Auto-run connection check & load platform settings on initial view
   useEffect(() => {
     runRazorpayCheck()
+    loadPlatformSettings()
+    loadPayouts()
   }, [])
 
   return (
@@ -435,6 +513,243 @@ export const AdminSettings: React.FC = () => {
                 </li>
                 <li>Trigger a <strong>Manual Deploy &rarr; Clear build cache & deploy</strong> to ensure the new environment variables take effect.</li>
               </ol>
+            </div>
+          )}
+        </section>
+
+        {/* 4. Platform Marketplace Commission Configuration Card */}
+        <section
+          style={{
+            backgroundColor: 'var(--admin-card-bg, #1a1a1a)',
+            border: '1px solid var(--admin-border, #2a2a2a)',
+            borderRadius: '12px',
+            padding: '2rem',
+          }}
+          aria-labelledby="commission-settings-heading"
+        >
+          <div style={{ marginBottom: '1.25rem' }}>
+            <h2
+              id="commission-settings-heading"
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                color: '#ffffff',
+                marginBottom: '0.25rem',
+              }}
+            >
+              Marketplace Commission & Fees
+            </h2>
+            <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>
+              Set the global percentage fee automatically deducted from vendor product orders upon checkout.
+            </p>
+          </div>
+
+          {commissionSuccess && (
+            <div
+              style={{
+                padding: '0.75rem 1rem',
+                backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                color: '#10b981',
+                borderRadius: '8px',
+                marginBottom: '1rem',
+                fontSize: '0.88rem',
+                fontWeight: 600,
+              }}
+            >
+              ✓ {commissionSuccess}
+            </div>
+          )}
+
+          <form onSubmit={handleSaveCommission} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+            <div style={{ flex: '1', minWidth: '220px' }}>
+              <label style={{ display: 'block', fontSize: '0.82rem', color: '#AAA', marginBottom: '0.4rem', fontWeight: 600 }}>
+                Platform Commission Rate (%)
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="number"
+                  min="0"
+                  max="50"
+                  step="0.5"
+                  className="admin-search-input"
+                  style={{ width: '100%', paddingRight: '2rem', fontSize: '1.1rem', fontWeight: 700 }}
+                  value={commissionRate}
+                  onChange={(e) => setCommissionRate(Number(e.target.value))}
+                  required
+                />
+                <span style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#888', fontWeight: 700 }}>
+                  %
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="admin-btn admin-btn-primary"
+              disabled={isUpdatingCommission}
+              style={{ height: '42px', padding: '0 1.5rem' }}
+            >
+              {isUpdatingCommission ? 'Saving...' : 'Update Commission Rate'}
+            </button>
+          </form>
+
+          <p style={{ fontSize: '0.78rem', color: '#777', marginTop: '0.75rem' }}>
+            Example: On a ₹1,000 product sale at {commissionRate}%, the platform fee is ₹{(1000 * commissionRate) / 100} and the vendor net earnings are ₹{1000 - (1000 * commissionRate) / 100}.
+          </p>
+        </section>
+
+        {/* 5. Vendor Settlement Payout Moderation Card */}
+        <section
+          style={{
+            backgroundColor: 'var(--admin-card-bg, #1a1a1a)',
+            border: '1px solid var(--admin-border, #2a2a2a)',
+            borderRadius: '12px',
+            padding: '2rem',
+          }}
+          aria-labelledby="payout-moderation-heading"
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div>
+              <h2
+                id="payout-moderation-heading"
+                style={{
+                  fontSize: '1.25rem',
+                  fontWeight: 700,
+                  color: '#ffffff',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                Vendor Payout Moderation
+              </h2>
+              <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>
+                Review and approve vendor earnings settlements across India
+              </p>
+            </div>
+            <button
+              type="button"
+              className="admin-btn admin-btn-secondary"
+              onClick={loadPayouts}
+              disabled={isLoadingPayouts}
+              style={{ fontSize: '0.82rem', padding: '0.4rem 0.85rem' }}
+            >
+              {isLoadingPayouts ? 'Refreshing...' : '↻ Refresh'}
+            </button>
+          </div>
+
+          {payoutFeedback && (
+            <div
+              style={{
+                padding: '0.75rem 1rem',
+                backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                color: '#10b981',
+                borderRadius: '8px',
+                marginBottom: '1rem',
+                fontSize: '0.88rem',
+              }}
+            >
+              {payoutFeedback}
+            </div>
+          )}
+
+          {allPayouts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#888' }}>
+              <p>No vendor payout requests submitted yet.</p>
+            </div>
+          ) : (
+            <div className="admin-table-wrapper" style={{ margin: 0 }}>
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Vendor / Shop</th>
+                    <th>Requested At</th>
+                    <th>Amount</th>
+                    <th>Bank / UPI Account</th>
+                    <th>Status</th>
+                    <th className="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allPayouts.map((pay) => (
+                    <tr key={pay.id || pay._id}>
+                      <td>
+                        <div style={{ fontWeight: 600, color: '#FFF' }}>
+                          {pay.vendorProfile?.businessName || pay.shop?.shopName || 'Vendor'}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#888' }}>
+                          ID: {pay.vendorId}
+                        </div>
+                      </td>
+                      <td style={{ fontSize: '0.82rem' }}>
+                        {new Date(pay.createdAt).toLocaleDateString('en-IN', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </td>
+                      <td style={{ fontWeight: 800, color: '#10b981', fontSize: '1rem' }}>
+                        ₹{pay.amount.toLocaleString('en-IN')}
+                      </td>
+                      <td style={{ fontSize: '0.8rem' }}>
+                        {pay.bankDetails?.accountHolderName && (
+                          <div style={{ color: '#EEE' }}>{pay.bankDetails.accountHolderName}</div>
+                        )}
+                        {pay.bankDetails?.accountNumber && (
+                          <div style={{ color: '#AAA', fontFamily: 'monospace' }}>
+                            A/C: {pay.bankDetails.accountNumber} ({pay.bankDetails.ifscCode})
+                          </div>
+                        )}
+                        {pay.bankDetails?.upiId && (
+                          <div style={{ color: '#D94700' }}>UPI: {pay.bankDetails.upiId}</div>
+                        )}
+                      </td>
+                      <td>
+                        <span
+                          className={`badge-status ${
+                            pay.status === 'PAID'
+                              ? 'badge-status-approved'
+                              : pay.status === 'PROCESSING' || pay.status === 'PENDING'
+                              ? 'badge-status-pending'
+                              : 'badge-status-rejected'
+                          }`}
+                        >
+                          {pay.status}
+                        </span>
+                        {pay.referenceNumber && (
+                          <div style={{ fontSize: '0.72rem', color: '#888', marginTop: '0.2rem' }}>
+                            Ref: {pay.referenceNumber}
+                          </div>
+                        )}
+                      </td>
+                      <td className="text-right">
+                        {pay.status === 'PENDING' || pay.status === 'PROCESSING' ? (
+                          <div style={{ display: 'inline-flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
+                            <button
+                              type="button"
+                              className="admin-btn admin-btn-primary"
+                              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
+                              onClick={() => handleUpdatePayoutStatus(pay.id || pay._id, 'PAID')}
+                            >
+                              ✓ Mark Paid
+                            </button>
+                            <button
+                              type="button"
+                              className="admin-btn admin-btn-danger"
+                              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
+                              onClick={() => handleUpdatePayoutStatus(pay.id || pay._id, 'REJECTED')}
+                            >
+                              ✕ Reject
+                            </button>
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: '0.8rem', color: '#777' }}>Settled</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </section>

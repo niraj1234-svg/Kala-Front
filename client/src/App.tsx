@@ -43,6 +43,14 @@ import AdminAnalytics from './pages/admin/AdminAnalytics'
 import AdminSettings from './pages/admin/AdminSettings'
 import AdminDesignathon from './pages/admin/AdminDesignathon'
 import Designathon from './pages/Designathon'
+import Marketplace from './pages/Marketplace'
+import PublicVendorShop from './pages/PublicVendorShop'
+import VendorRegister from './pages/VendorRegister'
+import VendorDashboard from './pages/VendorDashboard'
+import VendorShopCreate from './pages/VendorShopCreate'
+import VendorProducts from './pages/VendorProducts'
+import VendorProductForm from './pages/VendorProductForm'
+import AdminVendors from './pages/admin/AdminVendors'
 import AdminRoute from './components/admin/AdminRoute'
 import AdminLayout from './components/admin/AdminLayout'
 import NotFound from './pages/NotFound'
@@ -95,6 +103,17 @@ function App() {
                   <Route path="/account/orders/:orderId" element={<OrderDetails />} />
                   <Route path="/wishlist" element={<Wishlist />} />
                   <Route path="/designathon" element={<Designathon />} />
+
+                  {/* KALA Marketplace & Vendor Portal Routes */}
+                  <Route path="/marketplace" element={<Marketplace />} />
+                  <Route path="/shop/:slug" element={<PublicVendorShop />} />
+                  <Route path="/vendor/register" element={<VendorRegister />} />
+                  <Route path="/vendor/dashboard" element={<VendorDashboard />} />
+                  <Route path="/vendor/shop/create" element={<VendorShopCreate />} />
+                  <Route path="/vendor/shop/edit" element={<VendorShopCreate />} />
+                  <Route path="/vendor/products" element={<VendorProducts />} />
+                  <Route path="/vendor/products/add" element={<VendorProductForm />} />
+                  <Route path="/vendor/products/:id/edit" element={<VendorProductForm />} />
 
                   {/* Dedicated Admin Portal Routes */}
                   <Route path="/admin/login" element={<AdminLogin />} />
@@ -154,6 +173,16 @@ function App() {
                       <AdminRoute>
                         <AdminLayout>
                           <AdminProductEdit />
+                        </AdminLayout>
+                      </AdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/vendors"
+                    element={
+                      <AdminRoute>
+                        <AdminLayout>
+                          <AdminVendors />
                         </AdminLayout>
                       </AdminRoute>
                     }

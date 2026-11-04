@@ -1,22 +1,26 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { User } from '../models/User'
+import { VendorProfile, IVendorProfile } from '../models/VendorProfile'
 
 export interface AuthenticatedUser {
   userId: string
   email: string
+  role?: string
 }
 
 declare global {
   namespace Express {
     interface Request {
       user?: AuthenticatedUser
+      vendorProfile?: IVendorProfile
     }
   }
 }
 
 export interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser
+  vendorProfile?: IVendorProfile
 }
 
 export interface AuthResult {
@@ -202,6 +206,137 @@ export const requireAdmin = async (
   } catch (error: unknown) {
     console.error(
       '[authMiddleware] requireAdmin error:',
+      error instanceof Error ? error.message : 'Database query failure'
+    )
+    res.status(500).json({
+      success: false,
+      message: 'Authorization service error.',
+    })
+  }
+}
+
+/**
+ * Express middleware to verify that the authenticated user possesses the 'vendor' or 'admin' role.
+ * Must be preceded by requireAuth in the middleware chain.
+ */
+export const requireVendor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  if (!req.user || !req.user.userId) {
+    res.status(401).json({
+      success: false,
+      message: 'Authentication required.',
+    })
+    return
+  }
+
+  try {
+    const user = await User.findOne({ userId: req.user.userId })
+    if (!user) {
+      res.status(401).json({
+        success: false,
+        message: 'Authentication required.',
+      })
+      return
+    }
+
+    if (user.role !== 'vendor' && user.role !== 'admin') {
+      const vendorProfile = await VendorProfile.findOne({ userId: req.user.userId })
+      if (vendorProfile) {
+        user.role = 'vendor'
+        await user.save()
+        req.vendorProfile = vendorProfile
+        return next()
+      }
+
+      res.status(403).json({
+        success: false,
+        message: 'Vendor access required.',
+      })
+      return
+    }
+
+    const vendorProfile = await VendorProfile.findOne({ userId: req.user.userId })
+    if (vendorProfile) {
+      req.vendorProfile = vendorProfile
+    }
+
+    next()
+  } catch (error: unknown) {
+    console.error(
+      '[authMiddleware] requireVendor error:',
+      error instanceof Error ? error.message : 'Database query failure'
+    )
+    res.status(500).json({
+      success: false,
+      message: 'Authorization service error.',
+    })
+  }
+}
+
+/**
+ * Express middleware to verify that the vendor is in APPROVED status.
+ * Must be preceded by requireAuth and requireVendor.
+ */
+export const requireApprovedVendor = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  if (!req.user || !req.user.userId) {
+    res.status(401).json({
+      success: false,
+      message: 'Authentication required.',
+    })
+    return
+  }
+
+  try {
+    const user = await User.findOne({ userId: req.user.userId })
+    if (!user) {
+      res.status(401).json({
+        success: false,
+        message: 'Authentication required.',
+      })
+      return
+    }
+
+    if (user.role === 'admin') {
+      return next()
+    }
+
+    if (user.role !== 'vendor') {
+      res.status(403).json({
+        success: false,
+        message: 'Vendor access required.',
+      })
+      return
+    }
+
+    const vendorProfile = await VendorProfile.findOne({ userId: req.user.userId })
+    if (!vendorProfile) {
+      res.status(403).json({
+        success: false,
+        message: 'No vendor profile found for this account.',
+      })
+      return
+    }
+
+    if (vendorProfile.status !== 'APPROVED') {
+      res.status(403).json({
+        success: false,
+        message: `Your vendor application status is ${vendorProfile.status}. Only APPROVED vendors can perform this action.`,
+      })
+      return
+    }
+
+    req.vendorProfile = vendorProfile
+    next()
+  } catch (error: unknown) {
+    console.error(
+      '[authMiddleware] requireApprovedVendor error:',
       error instanceof Error ? error.message : 'Database query failure'
     )
     res.status(500).json({

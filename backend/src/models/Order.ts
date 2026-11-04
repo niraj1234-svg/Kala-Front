@@ -44,6 +44,8 @@ export interface ICustomDesignDetails {
 
 export interface IOrderItem {
   productId: string
+  vendorId?: string
+  shopId?: string
   name: string
   image: string
   size: string
@@ -147,6 +149,15 @@ const OrderItemSchema = new Schema<IOrderItem>(
     productId: {
       type: String,
       required: true,
+      trim: true,
+    },
+    vendorId: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+    shopId: {
+      type: String,
       trim: true,
     },
     name: {

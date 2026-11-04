@@ -16,6 +16,11 @@ export const Account: React.FC = () => {
   const tabParam = searchParams.get('tab')
   const redirectParam = searchParams.get('redirect')
   const messageParam = searchParams.get('message')
+  const portalParam = searchParams.get('portal')
+
+  const [portalType, setPortalType] = useState<'customer' | 'vendor'>(() => {
+    return portalParam === 'vendor' ? 'vendor' : 'customer'
+  })
 
   const [activeTab, setActiveTab] = useState<'login' | 'register'>(() => {
     return tabParam === 'register' ? 'register' : 'login'
@@ -136,6 +141,8 @@ export const Account: React.FC = () => {
         }
         if (redirectParam) {
           navigate(redirectParam, { replace: true })
+        } else if (portalType === 'vendor') {
+          navigate('/vendor/dashboard', { replace: true })
         }
       } else {
         setLoginError(mapErrorMessage(result.error, 'Invalid email or password.'))
@@ -237,6 +244,8 @@ export const Account: React.FC = () => {
         }
         if (redirectParam) {
           navigate(redirectParam, { replace: true })
+        } else if (portalType === 'vendor') {
+          navigate('/vendor/dashboard', { replace: true })
         }
       } else {
         setRegErrors({ banner: mapErrorMessage(result.error, 'Registration failed.') })
@@ -283,6 +292,38 @@ export const Account: React.FC = () => {
             </div>
           )}
 
+          {/* Dual Account Portal Toggle */}
+          <div className="kala-account-portal-toggle" style={{ marginBottom: '1.25rem' }}>
+            <button
+              type="button"
+              className={`kala-portal-btn ${portalType === 'customer' ? 'active' : ''}`}
+              onClick={() => {
+                setPortalType('customer')
+                setLoginError('')
+              }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              Customer Account
+            </button>
+            <button
+              type="button"
+              className={`kala-portal-btn ${portalType === 'vendor' ? 'active vendor' : ''}`}
+              onClick={() => {
+                setPortalType('vendor')
+                setLoginError('')
+              }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+              Vendor Partner
+            </button>
+          </div>
+
           {/* Animated Tabs */}
           <div className="kala-auth-tabs" role="tablist">
             <button
@@ -323,10 +364,23 @@ export const Account: React.FC = () => {
           {activeTab === 'login' ? (
             <div key="login-pane" className="kala-auth-form-pane">
               <h1 className="kala-auth-title">
-                <span className="kala-auth-title-dark">Welcome </span>
-                <span className="kala-auth-title-orange">Back</span>
+                {portalType === 'vendor' ? (
+                  <>
+                    <span className="kala-auth-title-dark">Seller </span>
+                    <span className="kala-auth-title-orange">Partner</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="kala-auth-title-dark">Welcome </span>
+                    <span className="kala-auth-title-orange">Back</span>
+                  </>
+                )}
               </h1>
-              <p className="kala-auth-desc">Sign in to view your orders and account details.</p>
+              <p className="kala-auth-desc">
+                {portalType === 'vendor'
+                  ? 'Sign in to access your vendor dashboard, product listings, and order fulfillment.'
+                  : 'Sign in to view your orders and account details.'}
+              </p>
 
               {loginError && (
                 <div className="kala-auth-banner-error" role="alert">
@@ -448,9 +502,48 @@ export const Account: React.FC = () => {
                   Create an account
                 </button>
               </div>
+
+              <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #2A2A2A', textAlign: 'center' }}>
+                <span style={{ fontSize: '0.82rem', color: '#888' }}>
+                  {portalType === 'vendor' ? 'Need to onboard a new brand?' : 'Are you a manufacturer, brand or printer?'}
+                </span>{' '}
+                <Link
+                  to="/vendor/register"
+                  style={{ color: 'var(--kala-orange)', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none' }}
+                >
+                  Register as Vendor &rarr;
+                </Link>
+              </div>
             </div>
           ) : (
             <div key="register-pane" className="kala-auth-form-pane">
+              {portalType === 'vendor' && (
+                <div
+                  style={{
+                    background: 'rgba(217, 71, 0, 0.08)',
+                    border: '1px solid var(--kala-orange)',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    marginBottom: '1.5rem',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.35rem' }}>
+                    Registering as a Vendor Partner?
+                  </div>
+                  <p style={{ color: '#AAA', fontSize: '0.82rem', marginBottom: '0.75rem', lineHeight: 1.4 }}>
+                    Vendors require store names, business categories, and verification approval.
+                  </p>
+                  <Link
+                    to="/vendor/register"
+                    className="kala-btn kala-btn-primary"
+                    style={{ display: 'inline-block', padding: '0.55rem 1.25rem', fontSize: '0.82rem', textDecoration: 'none' }}
+                  >
+                    Go to Vendor Onboarding &rarr;
+                  </Link>
+                </div>
+              )}
+
               <h1 className="kala-auth-title">
                 <span className="kala-auth-title-dark">Create Your </span>
                 <span className="kala-auth-title-orange">Account</span>
@@ -771,6 +864,65 @@ export const Account: React.FC = () => {
           LOGOUT
         </button>
       </header>
+
+      {/* Vendor Workspace Quick Banner */}
+      {(currentUser.role === 'vendor' || (currentUser as any).isVendor) ? (
+        <div
+          style={{
+            background: 'linear-gradient(90deg, #181818 0%, #291406 100%)',
+            border: '1px solid var(--kala-orange)',
+            borderRadius: '10px',
+            padding: '1.25rem 1.5rem',
+            marginBottom: '2rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '1rem',
+          }}
+        >
+          <div>
+            <div style={{ color: 'var(--kala-orange)', fontWeight: 800, fontSize: '0.82rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+              ✦ Partner Workspace Active
+            </div>
+            <div style={{ color: '#FFFFFF', fontSize: '1.05rem', fontWeight: 700, marginTop: '0.2rem' }}>
+              Manage your verified shop, products, orders, and sales payouts.
+            </div>
+          </div>
+          <Link
+            to="/vendor/dashboard"
+            className="kala-btn kala-btn-primary"
+            style={{ padding: '0.65rem 1.4rem', textDecoration: 'none', whiteSpace: 'nowrap' }}
+          >
+            Launch Seller Dashboard &rarr;
+          </Link>
+        </div>
+      ) : (
+        <div
+          style={{
+            background: '#1A1A1A',
+            border: '1px solid #2A2A2A',
+            borderRadius: '8px',
+            padding: '1rem 1.25rem',
+            marginBottom: '2rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '0.75rem',
+          }}
+        >
+          <div style={{ color: '#AAA', fontSize: '0.9rem' }}>
+            Are you a custom apparel manufacturer, streetwear brand, or screen printer?
+          </div>
+          <Link
+            to="/vendor/register"
+            style={{ color: 'var(--kala-orange)', fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none' }}
+          >
+            Apply to Sell on KALA &rarr;
+          </Link>
+        </div>
+      )}
 
       {/* Customer Information Card */}
       <section className="kala-profile-card" aria-labelledby="profile-title">

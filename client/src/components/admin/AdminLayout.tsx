@@ -19,6 +19,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const navItems = [
     { label: 'Dashboard', to: '/admin', available: true, end: true },
     { label: 'Products', to: '/admin/products', available: true, end: false },
+    { label: 'Vendors', to: '/admin/vendors', available: true, end: false },
     { label: 'Orders', to: '/admin/orders', available: true, end: false },
     { label: 'Customers', to: '/admin/customers', available: true, end: false },
     { label: 'Custom Requests', to: '/admin/custom-requests', available: true, end: false },

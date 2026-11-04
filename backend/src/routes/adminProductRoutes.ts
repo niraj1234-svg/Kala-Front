@@ -6,12 +6,24 @@ import {
   createAdminProduct,
   updateAdminProduct,
   deleteAdminProduct,
+  getPendingAdminProducts,
+  approveAdminProduct,
+  rejectAdminProduct,
 } from '../controllers/adminProductController'
 
 export const adminProductRouter = Router()
 
 // All administrative product management endpoints require authentication & admin role
 adminProductRouter.use(requireAuth, requireAdmin)
+
+// GET /api/admin/products/pending — Products awaiting review (MUST be before /:id)
+adminProductRouter.get('/pending', getPendingAdminProducts)
+
+// PATCH /api/admin/products/:id/approve — Approve vendor product
+adminProductRouter.patch('/:id/approve', approveAdminProduct)
+
+// PATCH /api/admin/products/:id/reject — Reject vendor product
+adminProductRouter.patch('/:id/reject', rejectAdminProduct)
 
 // GET /api/admin/products — List products with search, filters, pagination
 adminProductRouter.get('/', getAdminProducts)

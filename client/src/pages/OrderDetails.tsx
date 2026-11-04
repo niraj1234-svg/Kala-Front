@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { fetchOrderById, type BackendOrder } from '../services/orderApi'
+import { fetchOrderById, cancelOrderApi, requestReturnApi, type BackendOrder } from '../services/orderApi'
 import { OrderTrackingTimeline } from '../components/orders/OrderTrackingTimeline'
 import '../styles/OrderDetails.css'
 
@@ -13,6 +13,16 @@ export const OrderDetails: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [actionSuccess, setActionSuccess] = useState<string | null>(null)
+
+  // Order Actions State (Cancel / Return)
+  const [showCancelModal, setShowCancelModal] = useState<boolean>(false)
+  const [cancelReason, setCancelReason] = useState<string>('Ordered by mistake')
+  const [isCancelling, setIsCancelling] = useState<boolean>(false)
+
+  const [showReturnModal, setShowReturnModal] = useState<boolean>(false)
+  const [returnReason, setReturnReason] = useState<string>('Size does not fit')
+  const [isSubmittingReturn, setIsSubmittingReturn] = useState<boolean>(false)
 
   const loadOrder = useCallback(async () => {
     if (!orderId) return
@@ -53,6 +63,42 @@ export const OrderDetails: React.FC = () => {
   const handleRefresh = () => {
     setIsRefreshing(true)
     loadOrder()
+  }
+
+  const handleCancelOrder = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!orderId) return
+    setIsCancelling(true)
+    setErrorMessage(null)
+    setActionSuccess(null)
+    try {
+      const res = await cancelOrderApi(orderId, cancelReason)
+      setActionSuccess(res.message || 'Order cancelled successfully. Product stock has been safely restored.')
+      setShowCancelModal(false)
+      loadOrder()
+    } catch (err: any) {
+      alert(err.message || 'Failed to cancel order.')
+    } finally {
+      setIsCancelling(false)
+    }
+  }
+
+  const handleRequestReturn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!orderId) return
+    setIsSubmittingReturn(true)
+    setErrorMessage(null)
+    setActionSuccess(null)
+    try {
+      const res = await requestReturnApi(orderId, returnReason)
+      setActionSuccess(res.message || 'Return request submitted. Our team will coordinate reverse pickup.')
+      setShowReturnModal(false)
+      loadOrder()
+    } catch (err: any) {
+      alert(err.message || 'Failed to submit return request.')
+    } finally {
+      setIsSubmittingReturn(false)
+    }
   }
 
   const formatINR = (amt: number): string => `₹${Math.round(amt).toLocaleString('en-IN')}`
@@ -198,8 +244,83 @@ export const OrderDetails: React.FC = () => {
             >
               Payment: {isPaid ? 'Paid' : order.payment?.status || 'Pending'}
             </span>
+
+            {/* Cancel Button if eligible */}
+            {['pending', 'confirmed'].includes(normalizedStatus) && (
+              <button
+                type="button"
+                className="kala-btn"
+                style={{
+                  background: 'transparent',
+                  border: '1px solid #DC2626',
+                  color: '#DC2626',
+                  padding: '0.4rem 0.85rem',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                }}
+                onClick={() => setShowCancelModal(true)}
+              >
+                Cancel Order
+              </button>
+            )}
+
+            {/* Request Return if delivered */}
+            {normalizedStatus === 'delivered' && !(order as any).returnRequest && (
+              <button
+                type="button"
+                className="kala-btn"
+                style={{
+                  background: 'transparent',
+                  border: '1px solid var(--kala-orange)',
+                  color: 'var(--kala-orange)',
+                  padding: '0.4rem 0.85rem',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                }}
+                onClick={() => setShowReturnModal(true)}
+              >
+                Request Return / Refund
+              </button>
+            )}
           </div>
         </header>
+
+        {actionSuccess && (
+          <div
+            style={{
+              background: '#D1FAE5',
+              border: '1px solid #059669',
+              color: '#065F46',
+              padding: '0.85rem 1.25rem',
+              borderRadius: '8px',
+              marginBottom: '1.5rem',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+            }}
+          >
+            ✓ {actionSuccess}
+          </div>
+        )}
+
+        {(order as any).returnRequest && (
+          <div
+            style={{
+              background: '#FEF3C7',
+              border: '1px solid #D97706',
+              color: '#92400E',
+              padding: '0.85rem 1.25rem',
+              borderRadius: '8px',
+              marginBottom: '1.5rem',
+              fontSize: '0.88rem',
+            }}
+          >
+            <strong>Return Request Status:</strong> {(order as any).returnRequest.status.toUpperCase()} &mdash; Reason: "{(order as any).returnRequest.reason}"
+          </div>
+        )}
 
         {/* Live Fulfillment & Shipping Tracker */}
         <OrderTrackingTimeline
@@ -406,6 +527,123 @@ export const OrderDetails: React.FC = () => {
           </aside>
         </div>
       </div>
+
+      {/* CANCEL ORDER CONFIRMATION MODAL */}
+      {showCancelModal && (
+        <div className="vendor-modal-backdrop" onClick={() => setShowCancelModal(false)}>
+          <div className="vendor-modal-window" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '460px' }}>
+            <div className="vendor-modal-header">
+              <h2>Cancel Order #{order.orderId}</h2>
+              <button
+                type="button"
+                className="vendor-modal-close-btn"
+                onClick={() => setShowCancelModal(false)}
+              >
+                &times;
+              </button>
+            </div>
+            <form onSubmit={handleCancelOrder}>
+              <div className="vendor-modal-body">
+                <p style={{ fontSize: '0.9rem', color: '#5F6368', marginBottom: '1rem', lineHeight: 1.5 }}>
+                  Are you sure you want to cancel this order? Once cancelled, items will be safely returned to stock and order fulfillment will be stopped.
+                </p>
+
+                <div className="vendor-form-group">
+                  <label className="vendor-form-label">Reason for Cancellation</label>
+                  <select
+                    className="vendor-form-select"
+                    value={cancelReason}
+                    onChange={(e) => setCancelReason(e.target.value)}
+                  >
+                    <option value="Ordered by mistake">Ordered by mistake</option>
+                    <option value="Changed my mind">Changed my mind</option>
+                    <option value="Found a better price">Found a better price</option>
+                    <option value="Need to change shipping address">Need to change shipping address</option>
+                    <option value="Delivery time is too long">Delivery time is too long</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="vendor-modal-footer">
+                <button
+                  type="button"
+                  className="btn-action-sm"
+                  onClick={() => setShowCancelModal(false)}
+                >
+                  Keep Order
+                </button>
+                <button
+                  type="submit"
+                  className="btn-action-sm btn-action-delete"
+                  style={{ padding: '0.6rem 1.25rem', background: '#DC2626', color: '#FFF' }}
+                  disabled={isCancelling}
+                >
+                  {isCancelling ? 'Cancelling...' : 'Confirm Cancellation'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* REQUEST RETURN MODAL */}
+      {showReturnModal && (
+        <div className="vendor-modal-backdrop" onClick={() => setShowReturnModal(false)}>
+          <div className="vendor-modal-window" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
+            <div className="vendor-modal-header">
+              <h2>Request Return / Refund</h2>
+              <button
+                type="button"
+                className="vendor-modal-close-btn"
+                onClick={() => setShowReturnModal(false)}
+              >
+                &times;
+              </button>
+            </div>
+            <form onSubmit={handleRequestReturn}>
+              <div className="vendor-modal-body">
+                <p style={{ fontSize: '0.9rem', color: '#5F6368', marginBottom: '1rem', lineHeight: 1.5 }}>
+                  Please share why you would like to return this order. KALA marketplace guarantees a hassle-free return for unworn items within 7 days.
+                </p>
+
+                <div className="vendor-form-group">
+                  <label className="vendor-form-label">Return Reason</label>
+                  <select
+                    className="vendor-form-select"
+                    value={returnReason}
+                    onChange={(e) => setReturnReason(e.target.value)}
+                  >
+                    <option value="Size does not fit">Size does not fit</option>
+                    <option value="Item received defective or damaged">Item received defective or damaged</option>
+                    <option value="Item does not match website description">Item does not match website description</option>
+                    <option value="Quality not as expected">Quality not as expected</option>
+                    <option value="Wrong item received">Wrong item received</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="vendor-modal-footer">
+                <button
+                  type="button"
+                  className="btn-action-sm"
+                  onClick={() => setShowReturnModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="marketplace-btn-primary"
+                  disabled={isSubmittingReturn}
+                >
+                  {isSubmittingReturn ? 'Submitting...' : 'Submit Return Request'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

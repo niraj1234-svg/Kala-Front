@@ -982,6 +982,40 @@ export const ProductDetails: React.FC = () => {
             RIGHT: Product Information, Size & Add to Cart
             ==================================================================== */}
         <div className="kala-details-info">
+          {/* Vendor / Brand Sold By Badge */}
+          {((product as any).shopName || (product as any).brand || (product as any).shopSlug) && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.82rem', color: '#6B7280', fontWeight: 500 }}>Sold & Shipped by:</span>
+              <Link
+                to={(product as any).shopSlug ? `/shop/${(product as any).shopSlug}` : `/marketplace`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  color: 'var(--kala-orange, #D94700)',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  textDecoration: 'none',
+                  background: 'rgba(217, 71, 0, 0.08)',
+                  padding: '0.2rem 0.6rem',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(217, 71, 0, 0.25)',
+                }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                </svg>
+                {(product as any).shopName || (product as any).brand || 'KALA Verified Partner'}
+                <span style={{ color: '#059669', fontSize: '0.78rem', fontWeight: 800 }} title="Verified Merchant">✓</span>
+              </Link>
+              {(product as any).estimatedDispatchDays && (
+                <span style={{ fontSize: '0.78rem', color: '#047857', background: '#D1FAE5', padding: '0.15rem 0.5rem', borderRadius: '4px', fontWeight: 600 }}>
+                  Dispatched in {(product as any).estimatedDispatchDays} days
+                </span>
+              )}
+            </div>
+          )}
+
           {/* Product Name */}
           <h1 className="kala-details-title">{product.name}</h1>
 

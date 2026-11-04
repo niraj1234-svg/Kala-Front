@@ -4,6 +4,7 @@ export type ReviewStatus = 'pending' | 'approved' | 'hidden'
 
 export interface IReview extends Document {
   productId: string
+  vendorId?: string
   userId: string
   customerName: string
   customerEmail?: string
@@ -19,6 +20,11 @@ const ReviewSchema = new Schema<IReview>(
     productId: {
       type: String,
       required: true,
+      trim: true,
+      index: true,
+    },
+    vendorId: {
+      type: String,
       trim: true,
       index: true,
     },

@@ -3,6 +3,10 @@ import jwt from 'jsonwebtoken'
 import { Order } from '../models/Order'
 import { Product } from '../models/Product'
 import { Coupon } from '../models/Coupon'
+import { SubOrder } from '../models/SubOrder'
+import { PlatformSettings } from '../models/PlatformSettings'
+import { Transaction } from '../models/Transaction'
+import { InventoryLog } from '../models/InventoryLog'
 import { AuthenticatedUser } from '../middleware/authMiddleware'
 import { sendOrderPlacedAlert } from '../services/notificationService'
 import mongoose from 'mongoose'
@@ -379,10 +383,18 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         })
         return
       }
-      if (dbProduct && dbProduct.available === false) {
+      if (dbProduct && (dbProduct.available === false || (dbProduct.approvalStatus && dbProduct.approvalStatus !== 'APPROVED'))) {
         res.status(400).json({
           success: false,
-          message: `Product '${dbProduct.name}' is currently unavailable.`,
+          message: `Product '${dbProduct.name}' is currently unavailable or pending approval.`,
+        })
+        return
+      }
+
+      if (dbProduct && typeof dbProduct.stock === 'number' && dbProduct.stock < item.quantity) {
+        res.status(400).json({
+          success: false,
+          message: `Insufficient stock for '${dbProduct.name}'. Only ${dbProduct.stock} unit(s) left in stock.`,
         })
         return
       }
@@ -486,6 +498,8 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
       return {
         productId: dbProduct ? dbProduct.id : (customFallback?.id || item.productId.trim()),
+        vendorId: dbProduct?.vendorId || 'kala-admin',
+        shopId: dbProduct?.shopId || '',
         name: productName,
         image: customizationData?.previewUrl || productImage,
         size: item.size.toUpperCase(),
@@ -654,8 +668,55 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       existing = await Order.findOne({ orderId })
     }
 
+    // 12. Atomically decrement inventory to prevent overselling
+    const stockDecremented: { productId: string; quantity: number }[] = []
+    for (const item of verifiedItems) {
+      const dbP = productMap.get(item.productId)
+      if (dbP && typeof dbP.stock === 'number') {
+        const updatedP = await Product.findOneAndUpdate(
+          { _id: dbP._id, stock: { $gte: item.quantity } },
+          {
+            $inc: { stock: -item.quantity },
+            $set: {
+              status: dbP.stock - item.quantity <= 0 ? 'OUT_OF_STOCK' : (dbP.status || 'ACTIVE'),
+            },
+          },
+          { new: true }
+        )
+
+        if (!updatedP) {
+          // Roll back previous decrements
+          for (const dec of stockDecremented) {
+            await Product.updateOne({ id: dec.productId }, { $inc: { stock: dec.quantity } })
+          }
+          if (couponIncrementedId) {
+            await Coupon.findByIdAndUpdate(couponIncrementedId, { $inc: { usageCount: -1 } }).catch(() => {})
+          }
+          res.status(400).json({
+            success: false,
+            message: `Item '${item.name}' went out of stock during checkout. Please adjust your cart quantity.`,
+          })
+          return
+        }
+
+        stockDecremented.push({ productId: item.productId, quantity: item.quantity })
+
+        // Record inventory audit log
+        await InventoryLog.create({
+          productId: item.productId,
+          vendorId: item.vendorId,
+          action: 'ORDER_REDUCTION',
+          change: -item.quantity,
+          stockBefore: dbP.stock,
+          stockAfter: updatedP.stock,
+          orderId,
+          reason: `Customer checkout for order ${orderId}`,
+        }).catch((e) => console.warn('[InventoryLog] Failed to create log:', e))
+      }
+    }
+
     try {
-      // 12. Save Order to MongoDB (attach authenticated userId and email strictly from verified JWT)
+      // 13. Save Order to MongoDB (attach authenticated userId and email strictly from verified JWT)
       const newOrder = await Order.create({
         orderId,
         userId: authenticatedUserId,
@@ -691,6 +752,59 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         ],
       })
 
+      // 14. Create Multi-Vendor SubOrders & Ledger Transactions
+      const platformSettings = await PlatformSettings.findOne({ key: 'default_settings' })
+      const commissionRate = platformSettings?.commissionRate ?? 5
+
+      // Group items by vendorId
+      const vendorItemGroups: Record<string, typeof verifiedItems> = {}
+      for (const it of verifiedItems) {
+        const vId = it.vendorId || 'kala-admin'
+        if (!vendorItemGroups[vId]) {
+          vendorItemGroups[vId] = []
+        }
+        vendorItemGroups[vId].push(it)
+      }
+
+      let subOrderIndex = 1
+      for (const [vId, vItems] of Object.entries(vendorItemGroups)) {
+        const vSubtotal = vItems.reduce((acc, it) => acc + it.price * it.quantity, 0)
+        const vCommission = Math.round((vSubtotal * commissionRate) / 100)
+        const vNetEarnings = vSubtotal - vCommission
+        const subOrderId = `${orderId}-V${subOrderIndex++}`
+
+        await SubOrder.create({
+          subOrderId,
+          orderId,
+          vendorId: vId,
+          shopId: vItems[0]?.shopId || '',
+          customer: newOrder.customer,
+          shippingAddress: newOrder.shippingAddress,
+          items: vItems,
+          subtotal: vSubtotal,
+          commissionRate,
+          commissionAmount: vCommission,
+          netEarnings: vNetEarnings,
+          status: 'pending',
+          payoutStatus: 'pending',
+          statusHistory: [{ status: 'pending', changedAt: new Date(), note: 'Suborder generated from checkout' }],
+        }).catch((err) => console.error('[OrderController] SubOrder creation error:', err))
+
+        // Record financial ledger entry
+        if (vId !== 'kala-admin') {
+          await Transaction.create({
+            transactionId: `TXN-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
+            vendorId: vId,
+            orderId,
+            subOrderId,
+            type: 'ORDER_SALE',
+            amount: vNetEarnings,
+            balanceAfter: vNetEarnings,
+            description: `Order sale for ${subOrderId} (Net after ${commissionRate}% commission)`,
+          }).catch((err) => console.error('[OrderController] Transaction creation error:', err))
+        }
+      }
+
       // Dispatch order alert email to admin dhoreniraj83@gmail.com
       sendOrderPlacedAlert(newOrder).catch((alertErr) => {
         console.error('[OrderController] Failed to send order placed alert to admin:', alertErr)
@@ -703,6 +817,10 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         message: 'Order created successfully',
       })
     } catch (orderSaveError) {
+      // Rollback stock decrements on failure
+      for (const dec of stockDecremented) {
+        await Product.updateOne({ id: dec.productId }, { $inc: { stock: dec.quantity } }).catch(() => {})
+      }
       // Rollback coupon usage increment if order persistence fails
       if (couponIncrementedId) {
         await Coupon.findByIdAndUpdate(couponIncrementedId, { $inc: { usageCount: -1 } }).catch(
@@ -828,5 +946,148 @@ export const getOrderById = async (req: Request, res: Response): Promise<void> =
       success: false,
       message: 'Server error while retrieving order',
     })
+  }
+}
+
+/**
+ * PUT /api/orders/:orderId/cancel
+ * Allows authenticated customer to cancel eligible orders (pending or confirmed).
+ * Restores inventory stock atomically and marks SubOrders cancelled.
+ */
+export const cancelMyOrder = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const auth = getAuthenticatedUser(req)
+    if (auth.error || !auth.user) {
+      res.status(401).json({ success: false, message: 'Authentication required' })
+      return
+    }
+
+    const { orderId } = req.params
+    const { reason } = req.body
+
+    const order = await Order.findOne({
+      orderId,
+      $or: [
+        { userId: auth.user.userId },
+        { 'customer.email': auth.user.email.toLowerCase() },
+      ],
+    })
+
+    if (!order) {
+      res.status(404).json({ success: false, message: 'Order not found' })
+      return
+    }
+
+    if (!['pending', 'confirmed'].includes(order.status)) {
+      res.status(400).json({
+        success: false,
+        message: `Order cannot be cancelled in its current state ('${order.status}'). Only pending or confirmed orders can be cancelled.`,
+      })
+      return
+    }
+
+    order.status = 'cancelled'
+    order.statusHistory = order.statusHistory || []
+    order.statusHistory.push({
+      status: 'cancelled',
+      changedAt: new Date(),
+      note: reason ? `Cancelled by customer: ${reason}` : 'Cancelled by customer',
+      changedBy: auth.user.email,
+    })
+    await order.save()
+
+    // Restore inventory stock atomically for each item
+    for (const item of order.items) {
+      const p = await Product.findOneAndUpdate(
+        { id: item.productId },
+        { $inc: { stock: item.quantity }, $set: { available: true } },
+        { new: true }
+      )
+      if (p) {
+        await InventoryLog.create({
+          productId: item.productId,
+          vendorId: item.vendorId,
+          action: 'CANCEL_RESTORATION',
+          change: item.quantity,
+          stockBefore: (p.stock || 0) - item.quantity,
+          stockAfter: p.stock || 0,
+          orderId: order.orderId,
+          reason: `Restoration from order cancellation: ${order.orderId}`,
+        }).catch(() => {})
+      }
+    }
+
+    // Update SubOrders
+    await SubOrder.updateMany(
+      { orderId: order.orderId },
+      {
+        $set: { status: 'cancelled' },
+        $push: {
+          statusHistory: {
+            status: 'cancelled',
+            changedAt: new Date(),
+            note: 'Order cancelled by customer',
+            changedBy: auth.user.email,
+          },
+        },
+      }
+    )
+
+    res.status(200).json({
+      success: true,
+      message: 'Order cancelled successfully and inventory restored.',
+      order,
+    })
+  } catch (error: any) {
+    console.error('[OrderController] cancelMyOrder error:', error)
+    res.status(500).json({ success: false, message: 'Server error while cancelling order' })
+  }
+}
+
+/**
+ * POST /api/orders/:orderId/return
+ * Submits a return/refund request for delivered orders.
+ */
+export const requestReturn = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const auth = getAuthenticatedUser(req)
+    if (auth.error || !auth.user) {
+      res.status(401).json({ success: false, message: 'Authentication required' })
+      return
+    }
+
+    const { orderId } = req.params
+    const { reason } = req.body
+
+    const order = await Order.findOne({
+      orderId,
+      $or: [
+        { userId: auth.user.userId },
+        { 'customer.email': auth.user.email.toLowerCase() },
+      ],
+    })
+
+    if (!order) {
+      res.status(404).json({ success: false, message: 'Order not found' })
+      return
+    }
+
+    order.statusHistory = order.statusHistory || []
+    order.statusHistory.push({
+      status: 'cancelled', // OrderStatus union
+      changedAt: new Date(),
+      note: `Return/Refund requested by customer: ${reason || 'Customer request'}`,
+      changedBy: auth.user.email,
+    })
+    await order.save()
+
+    res.status(200).json({
+      success: true,
+      message: 'Return request submitted successfully. Our team will review within 24-48 hours.',
+      order,
+    })
+  } catch (error: any) {
+    console.error('[OrderController] requestReturn error:', error)
+    res.status(500).json({ success: false, message: 'Server error while submitting return request' })
   }
 }

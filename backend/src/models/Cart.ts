@@ -45,6 +45,8 @@ export interface ICartCustomDesign {
 export interface ICartItem {
   _id?: mongoose.Types.ObjectId
   productId: string
+  vendorId?: string
+  shopId?: string
   name: string
   image: string
   price: number
@@ -65,6 +67,14 @@ const CartItemSchema = new Schema<ICartItem>(
     productId: {
       type: String,
       required: true,
+      trim: true,
+    },
+    vendorId: {
+      type: String,
+      trim: true,
+    },
+    shopId: {
+      type: String,
       trim: true,
     },
     name: {

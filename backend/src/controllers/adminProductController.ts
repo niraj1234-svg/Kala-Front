@@ -455,3 +455,93 @@ export const deleteAdminProduct = async (req: Request, res: Response): Promise<v
     })
   }
 }
+
+/**
+ * GET /api/admin/products/pending
+ * Retrieves all vendor products awaiting admin approval.
+ */
+export const getPendingAdminProducts = async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const products = await Product.find({ approvalStatus: 'PENDING' }).sort({ createdAt: -1 })
+    res.status(200).json({
+      success: true,
+      products,
+      count: products.length,
+    })
+  } catch (error: any) {
+    console.error('[AdminProductController] getPendingAdminProducts error:', error)
+    res.status(500).json({ success: false, message: 'Server error fetching pending products.' })
+  }
+}
+
+/**
+ * PATCH /api/admin/products/:id/approve
+ * Approves a vendor product and publishes it to the marketplace.
+ */
+export const approveAdminProduct = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const rawId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
+    const id = String(rawId || '').trim()
+
+    const query: any = mongoose.Types.ObjectId.isValid(id)
+      ? { $or: [{ id }, { _id: id }] }
+      : { id }
+    const product = await Product.findOne(query)
+
+    if (!product) {
+      res.status(404).json({ success: false, message: 'Product not found.' })
+      return
+    }
+
+    product.approvalStatus = 'APPROVED'
+    product.status = 'ACTIVE'
+    product.available = true
+    product.rejectionReason = ''
+    await product.save()
+
+    res.status(200).json({
+      success: true,
+      message: `Product '${product.name}' has been APPROVED and published to KALA Marketplace.`,
+      product,
+    })
+  } catch (error: any) {
+    console.error('[AdminProductController] approveAdminProduct error:', error)
+    res.status(500).json({ success: false, message: 'Server error approving product.' })
+  }
+}
+
+/**
+ * PATCH /api/admin/products/:id/reject
+ * Rejects a vendor product and records an explanatory rejection reason.
+ */
+export const rejectAdminProduct = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const rawId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
+    const id = String(rawId || '').trim()
+    const { reason } = req.body
+
+    const query: any = mongoose.Types.ObjectId.isValid(id)
+      ? { $or: [{ id }, { _id: id }] }
+      : { id }
+    const product = await Product.findOne(query)
+
+    if (!product) {
+      res.status(404).json({ success: false, message: 'Product not found.' })
+      return
+    }
+
+    product.approvalStatus = 'REJECTED'
+    product.available = false
+    product.rejectionReason = reason ? String(reason).trim() : 'Does not meet KALA marketplace guidelines.'
+    await product.save()
+
+    res.status(200).json({
+      success: true,
+      message: `Product '${product.name}' has been REJECTED.`,
+      product,
+    })
+  } catch (error: any) {
+    console.error('[AdminProductController] rejectAdminProduct error:', error)
+    res.status(500).json({ success: false, message: 'Server error rejecting product.' })
+  }
+}

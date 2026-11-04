@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { User } from '../models/User'
+import { User, UserRole } from '../models/User'
+import { VendorProfile } from '../models/VendorProfile'
 
 /**
  * Generates a unique server-side user ID
@@ -184,6 +185,8 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     }
 
     // 9. Create User document in MongoDB
+    const userRole: UserRole = req.body.role === 'vendor' ? 'vendor' : 'customer'
+
     const newUser = await User.create({
       userId,
       firstName: trimmedFirstName,
@@ -191,6 +194,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       email: normalizedEmail,
       phone: trimmedPhone,
       passwordHash,
+      role: userRole,
     })
 
     // 6. Sign JWT
@@ -209,6 +213,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       {
         userId: newUser.userId,
         email: newUser.email,
+        role: newUser.role || 'customer',
       },
       jwtSecret,
       { expiresIn: jwtExpiresIn as any }
@@ -221,10 +226,12 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       token,
       user: {
         id: newUser.userId,
+        userId: newUser.userId,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         email: newUser.email,
         phone: newUser.phone,
+        role: newUser.role || 'customer',
         createdAt: newUser.createdAt.toISOString(),
       },
     })
@@ -296,6 +303,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
+    // Ensure vendor role if VendorProfile exists
+    if (user.role !== 'vendor' && user.role !== 'admin') {
+      const vendorProfile = await VendorProfile.findOne({ userId: user.userId })
+      if (vendorProfile) {
+        user.role = 'vendor'
+        await user.save()
+      }
+    }
+
     // 4. Sign JWT
     const jwtSecret = process.env.JWT_SECRET
     if (!jwtSecret) {
@@ -312,6 +328,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       {
         userId: user.userId,
         email: user.email,
+        role: user.role || 'customer',
       },
       jwtSecret,
       { expiresIn: jwtExpiresIn as any }
@@ -324,10 +341,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       token,
       user: {
         id: user.userId,
+        userId: user.userId,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         phone: user.phone,
+        role: user.role || 'customer',
         createdAt: user.createdAt.toISOString(),
       },
     })

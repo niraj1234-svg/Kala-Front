@@ -366,3 +366,51 @@ export async function fetchOrderById(orderId: string): Promise<BackendOrder | nu
     throw err
   }
 }
+
+/**
+ * Cancels an eligible customer order and restores inventory stock
+ */
+export async function cancelOrderApi(orderId: string, reason?: string): Promise<{ success: boolean; message: string }> {
+  const token = getAuthToken()
+  if (!token) throw new Error('Authentication required.')
+
+  const response = await fetch(`${API_BASE_URL}/orders/${encodeURIComponent(orderId)}/cancel`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ reason }),
+  })
+
+  const data = await response.json()
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || 'Failed to cancel order.')
+  }
+
+  return data
+}
+
+/**
+ * Requests return / refund for a delivered customer order
+ */
+export async function requestReturnApi(orderId: string, reason?: string): Promise<{ success: boolean; message: string }> {
+  const token = getAuthToken()
+  if (!token) throw new Error('Authentication required.')
+
+  const response = await fetch(`${API_BASE_URL}/orders/${encodeURIComponent(orderId)}/return`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ reason }),
+  })
+
+  const data = await response.json()
+  if (!response.ok || !data.success) {
+    throw new Error(data.message || 'Failed to submit return request.')
+  }
+
+  return data
+}

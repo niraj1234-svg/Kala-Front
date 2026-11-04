@@ -3,10 +3,12 @@ const AUTH_TOKEN_KEY = 'kala_auth_token'
 
 export interface User {
   id: string
+  userId?: string
   firstName: string
   lastName: string
   email: string
   phone: string
+  role?: 'customer' | 'vendor' | 'admin' | string
   createdAt: string
 }
 
@@ -16,6 +18,7 @@ export interface RegisterRequest {
   email: string
   phone: string
   password: string
+  role?: 'customer' | 'vendor'
 }
 
 export interface LoginRequest {

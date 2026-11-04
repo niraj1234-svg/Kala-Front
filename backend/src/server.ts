@@ -29,6 +29,11 @@ import cartRouter from './routes/cartRoutes'
 import visitorRouter from './routes/visitorRoutes'
 import designathonRouter from './routes/designathonRoutes'
 import adminDesignathonRouter from './routes/adminDesignathonRoutes'
+import vendorRouter from './routes/vendorRoutes'
+import adminVendorRouter from './routes/adminVendorRoutes'
+import marketplaceRouter from './routes/marketplaceRoutes'
+import shopRouter from './routes/shopRoutes'
+import adminSettingsRouter from './routes/adminSettingsRoutes'
 
 // Validate required environment configuration at startup
 validateEnv()
@@ -107,11 +112,16 @@ app.use('/api/visitors', visitorRouter)
 app.use('/api', paymentRouter)
 app.use('/api/payment', paymentRouter)
 app.use('/api/designathon', designathonRouter)
+app.use('/api/vendors', vendorRouter)
+app.use('/api/vendor', vendorRouter)
+app.use('/api/marketplace', marketplaceRouter)
+app.use('/api/shops', shopRouter)
 
 // Admin Management Routes (Protected by requireAuth + requireAdmin)
 app.use('/api/admin/dashboard', adminDashboardRouter)
 app.use('/api/admin/orders', adminOrderRouter)
 app.use('/api/admin/products', adminProductRouter)
+app.use('/api/admin/vendors', adminVendorRouter)
 app.use('/api/admin/customers', adminCustomerRouter)
 app.use('/api/admin/coupons', adminCouponRouter)
 app.use('/api/admin/reviews', adminReviewRouter)
@@ -119,6 +129,7 @@ app.use('/api/admin/analytics', adminAnalyticsRouter)
 app.use('/api/admin/custom-requests', adminCustomRequestRouter)
 app.use('/api/admin/business-requests', adminBusinessRequestRouter)
 app.use('/api/admin/designathon', adminDesignathonRouter)
+app.use('/api/admin/settings', adminSettingsRouter)
 
 
 // 404 Handler for Unmatched API Routes
