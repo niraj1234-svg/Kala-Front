@@ -7,6 +7,7 @@ interface AnnouncementItem {
   id: string
   badge: string
   text: string
+  mobileText?: string
   highlight?: string
   ctaText: string
   link: string
@@ -17,7 +18,8 @@ const DEFAULT_ANNOUNCEMENT: AnnouncementItem = {
   id: 'kala-all-services',
   badge: 'SERVICES',
   text: 'CUSTOM APPAREL · CAMPUS MERCHANDISE · BRANDING SOLUTIONS',
-  ctaText: 'EXPLORE SERVICES →',
+  mobileText: 'Custom Apparel, Merch & Branding',
+  ctaText: 'Explore Services',
   link: '/#services',
 }
 
@@ -44,8 +46,9 @@ export const AnnouncementBar: React.FC = () => {
             id: 'designathon-live',
             badge: 'LIVE EVENT',
             text: `${data.config.eventName || 'Designathon in GGV by KALA'} • Show Your कला`,
+            mobileText: 'Designathon by KALA • Register Now',
             highlight: `₹${data.config.feeRupees || 49} REGISTRATION`,
-            ctaText: 'REGISTER NOW →',
+            ctaText: 'Register Now',
             link: '/designathon',
           }
           setAnnouncements([DEFAULT_ANNOUNCEMENT, eventItem])
@@ -81,23 +84,33 @@ export const AnnouncementBar: React.FC = () => {
   return (
     <div className="kala-announcement-bar" role="region" aria-label="Special Announcements">
       <div className="kala-announcement-container">
-        <div className={`kala-announcement-content ${isFading ? 'fade-out' : 'fade-in'}`}>
-          <span className="kala-announcement-badge">
-            <span className="kala-announcement-pulse-dot" aria-hidden="true" />
-            {current.badge}
-          </span>
+        <Link
+          to={current.link}
+          className={`kala-announcement-link ${isFading ? 'fade-out' : 'fade-in'}`}
+        >
+          {current.badge && (
+            <span className="kala-announcement-badge">
+              <span className="kala-announcement-pulse-dot" aria-hidden="true" />
+              <span>{current.badge}</span>
+            </span>
+          )}
 
-          <span className="kala-announcement-text">
+          <span className="kala-announcement-text desktop-text">
             {current.text}
             {current.highlight && (
               <strong className="kala-announcement-highlight"> • {current.highlight}</strong>
             )}
           </span>
 
-          <Link to={current.link} className="kala-announcement-cta">
-            <span>{current.ctaText}</span>
-          </Link>
-        </div>
+          <span className="kala-announcement-text mobile-text">
+            {current.mobileText || current.text}
+          </span>
+
+          <span className="kala-announcement-cta">
+            <span className="kala-announcement-cta-label">{current.ctaText}</span>
+            <span className="kala-announcement-cta-arrow" aria-hidden="true">&rarr;</span>
+          </span>
+        </Link>
       </div>
     </div>
   )

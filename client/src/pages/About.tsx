@@ -218,7 +218,29 @@ export const About: React.FC = () => {
           </div>
 
           <div className="kala-founders-grid">
-            {/* Founder 1: Niraj Dhore */}
+            {/* Founder: Sudhanshu */}
+            <article className="kala-founder-card">
+              <div className="founder-photo-wrapper">
+                <img
+                  src="/founders/sudhanshu-kumar.png"
+                  alt="Sudhanshu — Founder of KALA"
+                  className="founder-photo"
+                  loading="lazy"
+                />
+                <span className="founder-role-badge founder">FOUNDER</span>
+              </div>
+              <div className="founder-info">
+                <h3 className="founder-name">Sudhanshu</h3>
+                <p className="founder-title">Founder</p>
+                <p className="founder-dept">Business, Operations &amp; Growth</p>
+                <div className="founder-divider" aria-hidden="true" />
+                <p className="founder-bio">
+                  Sudhanshu drives business development, vendor operations and fulfillment at KALA. He oversees production quality, supply chain partnerships, and client relationships, ensuring every order meets KALA's craftsmanship standards.
+                </p>
+              </div>
+            </article>
+
+            {/* Co-Founder: Niraj Dhore */}
             <article className="kala-founder-card">
               <div className="founder-photo-wrapper">
                 <img
@@ -228,41 +250,19 @@ export const About: React.FC = () => {
                     target.onerror = null
                     target.src = '/founders/niraj-dhore.png'
                   }}
-                  alt="Niraj Dhore — Founder of KALA"
-                  className="founder-photo"
-                  loading="lazy"
-                />
-                <span className="founder-role-badge founder">FOUNDER</span>
-              </div>
-              <div className="founder-info">
-                <h3 className="founder-name">Niraj Dhore</h3>
-                <p className="founder-title">Founder</p>
-                <p className="founder-dept">Technology, Product &amp; Growth</p>
-                <div className="founder-divider" aria-hidden="true" />
-                <p className="founder-bio">
-                  Niraj leads technology, product architecture and digital growth at KALA. He designs and builds the digital platform, product customization workflows, and customer experience, combining engineering with brand growth to make custom apparel effortless.
-                </p>
-              </div>
-            </article>
-
-            {/* Founder 2: Sudhanshu */}
-            <article className="kala-founder-card">
-              <div className="founder-photo-wrapper">
-                <img
-                  src="/founders/sudhanshu-kumar.png"
-                  alt="Sudhanshu — Co-Founder of KALA"
+                  alt="Niraj Dhore — Co-Founder of KALA"
                   className="founder-photo"
                   loading="lazy"
                 />
                 <span className="founder-role-badge cofounder">CO-FOUNDER</span>
               </div>
               <div className="founder-info">
-                <h3 className="founder-name">Sudhanshu</h3>
+                <h3 className="founder-name">Niraj Dhore</h3>
                 <p className="founder-title">Co-Founder</p>
-                <p className="founder-dept">Business, Operations &amp; Growth</p>
+                <p className="founder-dept">Technology, Product &amp; Growth</p>
                 <div className="founder-divider" aria-hidden="true" />
                 <p className="founder-bio">
-                  Sudhanshu drives business development, vendor operations and fulfillment at KALA. He oversees production quality, supply chain partnerships, and client relationships, ensuring every order meets KALA's craftsmanship standards.
+                  Niraj leads technology, product architecture and digital growth at KALA. He designs and builds the digital platform, product customization workflows, and customer experience, combining engineering with brand growth to make custom apparel effortless.
                 </p>
               </div>
             </article>

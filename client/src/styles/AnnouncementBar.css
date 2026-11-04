@@ -1,16 +1,15 @@
 /* ==========================================================================
-   KALA ANNOUNCEMENT BAR — LUXURY CONVERSION RIBBON
+   KALA ANNOUNCEMENT BAR — MINIMAL LUXURY RIBBON
    ========================================================================== */
 
 .kala-announcement-bar {
   width: 100%;
-  background-color: #0E0E10;
+  background-color: #111111;
   color: #FFFFFF;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  font-family: var(--kala-font-primary);
-  font-size: 0.72rem;
-  font-weight: 600;
-  height: 34px;
+  font-family: var(--kala-font-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: 0.75rem;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,114 +21,177 @@
 
 .kala-announcement-container {
   width: 100%;
-  max-width: var(--kala-max-width);
+  max-width: var(--kala-max-width, 1400px);
   margin: 0 auto;
   padding: 0 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
 }
 
-.kala-announcement-content {
+.kala-announcement-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  justify-content: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.25s ease, transform 0.25s ease;
   white-space: nowrap;
+  max-width: 100%;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
 }
 
-.kala-announcement-content.fade-in {
+.kala-announcement-link:hover .kala-announcement-cta-arrow {
+  transform: translateX(3px);
+}
+
+.kala-announcement-link:hover .kala-announcement-cta {
+  background-color: var(--kala-orange, #D94700);
+  border-color: var(--kala-orange, #D94700);
+  color: #FFFFFF;
+}
+
+.kala-announcement-link.fade-in {
   opacity: 1;
   transform: translateY(0);
 }
 
-.kala-announcement-content.fade-out {
+.kala-announcement-link.fade-out {
   opacity: 0;
-  transform: translateY(-6px);
+  transform: translateY(-4px);
 }
 
+/* Badge */
 .kala-announcement-badge {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.15rem 0.45rem;
-  background-color: rgba(217, 71, 0, 0.22);
-  border: 1px solid rgba(217, 71, 0, 0.45);
-  color: #FFA573;
+  gap: 0.35rem;
+  padding: 0.15rem 0.5rem;
+  background-color: rgba(217, 71, 0, 0.16);
+  border: 1px solid rgba(217, 71, 0, 0.4);
+  color: #FF8A4D;
   border-radius: 9999px;
-  font-size: 0.6rem;
-  font-weight: 800;
+  font-size: 0.625rem;
+  font-weight: 750;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  line-height: 1.2;
 }
 
 .kala-announcement-pulse-dot {
+  flex-shrink: 0;
   width: 5px;
   height: 5px;
   border-radius: 50%;
   background-color: #D94700;
-  box-shadow: 0 0 6px rgba(217, 71, 0, 0.8);
-  animation: announcementPulse 1.6s infinite ease-in-out;
+  box-shadow: 0 0 6px rgba(217, 71, 0, 0.9);
+  animation: announcementPulse 1.8s infinite ease-in-out;
 }
 
 @keyframes announcementPulse {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.4); opacity: 0.5; }
+  50% { transform: scale(1.35); opacity: 0.4; }
 }
 
+/* Text */
 .kala-announcement-text {
   color: #E5E7EB;
+  font-weight: 500;
+  font-size: 0.75rem;
   letter-spacing: 0.015em;
-  display: inline-flex;
-  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .kala-announcement-highlight {
   color: #FFA573;
   margin-left: 0.25rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
+/* Responsive Text Toggling */
+.kala-announcement-text.desktop-text {
+  display: inline;
+}
+
+.kala-announcement-text.mobile-text {
+  display: none;
+}
+
+/* Action CTA Pill */
 .kala-announcement-cta {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.3rem;
   color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.12);
-  padding: 0.16rem 0.55rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 0.18rem 0.55rem;
   border-radius: 9999px;
-  font-size: 0.64rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-decoration: none;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   transition: all 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  line-height: 1.2;
 }
 
-.kala-announcement-cta:hover {
-  background-color: #D94700;
-  border-color: #D94700;
-  color: #FFFFFF;
-  transform: translateX(2px);
+.kala-announcement-cta-arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+/* Breakpoints */
+@media (max-width: 900px) {
+  .kala-announcement-text.desktop-text {
+    display: none;
+  }
+  .kala-announcement-text.mobile-text {
+    display: inline;
+  }
 }
 
 @media (max-width: 640px) {
   .kala-announcement-bar {
-    height: 30px;
-    font-size: 0.66rem;
+    height: 32px;
   }
 
-  .kala-announcement-content {
-    gap: 0.4rem;
+  .kala-announcement-container {
+    padding: 0 0.5rem;
+  }
+
+  .kala-announcement-link {
+    gap: 0.5rem;
   }
 
   .kala-announcement-badge {
-    padding: 0.1rem 0.35rem;
-    font-size: 0.55rem;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.58rem;
+  }
+
+  .kala-announcement-text {
+    font-size: 0.68rem;
   }
 
   .kala-announcement-cta {
     padding: 0.12rem 0.45rem;
-    font-size: 0.58rem;
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .kala-announcement-badge {
+    display: none; /* Hide badge on very narrow screens to prevent cramming */
+  }
+
+  .kala-announcement-text {
+    font-size: 0.65rem;
   }
 }
