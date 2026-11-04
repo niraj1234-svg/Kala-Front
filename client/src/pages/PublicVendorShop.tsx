@@ -50,8 +50,8 @@ export const PublicVendorShop: React.FC = () => {
       <div className="marketplace-empty-state" style={{ margin: '5rem auto' }}>
         <h2 className="marketplace-empty-title">Shop Not Available</h2>
         <p className="marketplace-empty-desc">{error || 'This storefront does not exist or has been deactivated.'}</p>
-        <Link to="/marketplace" className="marketplace-btn-primary">
-          Back to Marketplace
+        <Link to="/shop" className="marketplace-btn-primary">
+          Back to Shop
         </Link>
       </div>
     )
@@ -124,8 +124,8 @@ export const PublicVendorShop: React.FC = () => {
             </div>
           </div>
 
-          <Link to="/marketplace" className="marketplace-btn-secondary" style={{ color: '#111', borderColor: '#111' }}>
-            &larr; All Marketplace
+          <Link to="/shop" className="marketplace-btn-secondary" style={{ color: '#111', borderColor: '#111' }}>
+            &larr; All Products
           </Link>
         </div>
       </div>

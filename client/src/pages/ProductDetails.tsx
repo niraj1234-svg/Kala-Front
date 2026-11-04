@@ -987,7 +987,7 @@ export const ProductDetails: React.FC = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.65rem', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '0.82rem', color: '#6B7280', fontWeight: 500 }}>Sold & Shipped by:</span>
               <Link
-                to={(product as any).shopSlug ? `/shop/${(product as any).shopSlug}` : `/marketplace`}
+                to={(product as any).shopSlug ? `/shop/${(product as any).shopSlug}` : `/shop`}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',

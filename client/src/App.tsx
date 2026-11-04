@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { CartProvider } from './context/CartContext'
 import { WishlistProvider } from './context/WishlistContext'
 import { AuthProvider } from './context/AuthContext'
@@ -9,7 +9,7 @@ import Footer from './components/Footer'
 import AuthPromptModal from './components/AuthPromptModal'
 import Home from './pages/Home'
 import Shop from './pages/Shop'
-import Showroom from './pages/Showroom'
+// import Showroom from './pages/Showroom'
 import CustomApparel from './pages/CustomApparel'
 import Customize from './pages/Customize'
 import BusinessBranding from './pages/BusinessBranding'
@@ -43,7 +43,7 @@ import AdminAnalytics from './pages/admin/AdminAnalytics'
 import AdminSettings from './pages/admin/AdminSettings'
 import AdminDesignathon from './pages/admin/AdminDesignathon'
 import Designathon from './pages/Designathon'
-import Marketplace from './pages/Marketplace'
+// import Marketplace from './pages/Marketplace'
 import PublicVendorShop from './pages/PublicVendorShop'
 import VendorRegister from './pages/VendorRegister'
 import VendorDashboard from './pages/VendorDashboard'
@@ -83,7 +83,7 @@ function App() {
                   {/* Customer Storefront Routes */}
                   <Route path="/" element={<Home />} />
                   <Route path="/shop" element={<Shop />} />
-                  <Route path="/showroom" element={<Showroom />} />
+                  <Route path="/showroom" element={<Navigate to="/shop" replace />} />
                   <Route path="/bundle" element={<BundleBuilder />} />
                   <Route path="/product/:id" element={<ProductDetails />} />
                   <Route path="/products/:id" element={<ProductDetails />} />
@@ -105,7 +105,7 @@ function App() {
                   <Route path="/designathon" element={<Designathon />} />
 
                   {/* KALA Marketplace & Vendor Portal Routes */}
-                  <Route path="/marketplace" element={<Marketplace />} />
+                  <Route path="/marketplace" element={<Navigate to="/shop" replace />} />
                   <Route path="/shop/:slug" element={<PublicVendorShop />} />
                   <Route path="/vendor/register" element={<VendorRegister />} />
                   <Route path="/vendor/dashboard" element={<VendorDashboard />} />

@@ -110,8 +110,8 @@ export const VendorRegister: React.FC = () => {
             >
               Go to Vendor Dashboard
             </button>
-            <Link to="/marketplace" className="marketplace-btn-secondary" style={{ color: '#111', borderColor: '#111' }}>
-              Explore Marketplace
+            <Link to="/shop" className="marketplace-btn-secondary" style={{ color: '#111', borderColor: '#111' }}>
+              Explore Shop
             </Link>
           </div>
         </div>
