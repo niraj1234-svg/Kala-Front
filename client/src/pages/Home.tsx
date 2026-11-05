@@ -113,7 +113,7 @@ export const Home: React.FC = () => {
     <main className="kala-home" id="main-content">
       {/* ====================================================================
       {/* ====================================================================
-          1. MAIN HERO (Tri-Core Identity: Custom Apparel, Campus & Branding)
+          1. MAIN HERO (Dual Core Identity: Custom Apparel & Business Branding)
           ==================================================================== */}
       <section className="kala-hero-section" aria-labelledby="hero-heading">
         <div className="kala-hero-container">
@@ -122,7 +122,7 @@ export const Home: React.FC = () => {
             <div className="kala-hero-left">
               <div className="kala-hero-eyebrow">
                 <span className="kala-eyebrow-accent-dot" aria-hidden="true" />
-                <span className="kala-hero-eyebrow-text">CUSTOM APPAREL · CAMPUS · BRANDING</span>
+                <span className="kala-hero-eyebrow-text">CUSTOM APPAREL · BUSINESS BRANDING</span>
               </div>
 
               <h1 id="hero-heading" className="kala-hero-headline">
@@ -134,7 +134,7 @@ export const Home: React.FC = () => {
               </h1>
 
               <p className="kala-hero-subtext">
-                Custom apparel, campus merchandise and branded products for individuals, teams, institutions and businesses.
+                Custom apparel and premium branded products for individuals, teams, institutions and businesses.
               </p>
 
               <div className="kala-hero-cta-group">
@@ -148,12 +148,12 @@ export const Home: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column: High-Quality Corporate & Campus Merchandise Visual */}
+            {/* Right Column: High-Quality Branding Merchandise Visual */}
             <div className="kala-hero-right">
               <div className="kala-hero-media-frame">
                 <img
                   src="/business-branding/card-01-corporate-merch.jpg"
-                  alt="KALA Custom Apparel, Campus Merchandise & Branding Solutions"
+                  alt="KALA Custom Apparel & Business Branding Solutions"
                   className="kala-hero-visual-img"
                   loading="eager"
                 />
@@ -164,7 +164,7 @@ export const Home: React.FC = () => {
       </section>
 
       {/* ====================================================================
-          2. THREE EQUAL CORE SERVICE CARDS (Custom Apparel, Campus & Corporate, Business Branding)
+          2. TWO CORE SERVICE CARDS (Custom Apparel & Business Branding)
           ==================================================================== */}
       <section className="kala-services-section" id="services" aria-label="KALA Core Services">
         <div className="kala-services-container">
@@ -202,40 +202,7 @@ export const Home: React.FC = () => {
               </div>
             </Link>
 
-            {/* CARD B — CAMPUS & CORPORATE */}
-            <Link
-              to="/campus-corporate-solutions"
-              className="kala-service-card"
-              aria-label="Campus & Corporate — Welcome kits, uniforms, event merchandise and bulk orders."
-            >
-              <div className="kala-service-card-visual">
-                <img
-                  src="/business-branding/card-05-college-university.jpg"
-                  alt="KALA Campus & Corporate welcome kits, uniforms, and bulk orders"
-                  className="kala-service-card-img"
-                  loading="lazy"
-                />
-              </div>
-              <div className="kala-service-card-content">
-                <div className="kala-service-card-text">
-                  <h2 className="kala-service-card-title">CAMPUS &amp; CORPORATE</h2>
-                  <p className="kala-service-card-desc">
-                    Welcome kits, uniforms, event merchandise and bulk orders.
-                  </p>
-                </div>
-                <div className="kala-service-card-action">
-                  <span className="kala-service-card-btn">
-                    <span>REQUEST A QUOTE</span>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <polyline points="12 5 19 12 12 19" />
-                    </svg>
-                  </span>
-                </div>
-              </div>
-            </Link>
-
-            {/* CARD C — BUSINESS BRANDING */}
+            {/* CARD B — BUSINESS BRANDING */}
             <Link
               to="/business-branding"
               className="kala-service-card"

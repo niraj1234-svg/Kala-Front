@@ -15,7 +15,6 @@ export interface NavRoute {
 const NAV_ROUTES: NavRoute[] = [
   { label: 'SHOP', to: '/shop' },
   { label: 'CUSTOM APPAREL', to: '/custom-apparel' },
-  { label: 'CAMPUS & CORPORATE', to: '/campus-corporate-solutions' },
   { label: 'BUSINESS BRANDING', to: '/business-branding' },
   { label: 'ABOUT', to: '/about' },
 ]

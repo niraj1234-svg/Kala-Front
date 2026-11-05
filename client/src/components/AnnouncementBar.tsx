@@ -13,12 +13,12 @@ interface AnnouncementItem {
   link: string
 }
 
-// Authoritative default announcement communicating all three core services
+// Authoritative default announcement communicating core services
 const DEFAULT_ANNOUNCEMENT: AnnouncementItem = {
   id: 'kala-all-services',
   badge: 'SERVICES',
-  text: 'CUSTOM APPAREL · CAMPUS MERCHANDISE · BRANDING SOLUTIONS',
-  mobileText: 'Custom Apparel, Merch & Branding',
+  text: 'CUSTOM APPAREL · BUSINESS BRANDING SOLUTIONS',
+  mobileText: 'Custom Apparel & Business Branding',
   ctaText: 'Explore Services',
   link: '/#services',
 }

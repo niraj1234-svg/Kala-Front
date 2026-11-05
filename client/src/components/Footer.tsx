@@ -81,10 +81,7 @@ export const Footer: React.FC = () => {
               <Link to="/business-branding" className="kala-footer-link">B2B Branding</Link>
             </li>
             <li>
-              <Link to="/campus-corporate-solutions" className="kala-footer-link">Campus &amp; Corporate</Link>
-            </li>
-            <li>
-              <Link to="/campus-corporate-solutions#quote-form" className="kala-footer-link">Request Quote</Link>
+              <Link to="/business-branding" className="kala-footer-link">Request Quote</Link>
             </li>
             <li>
               <Link to="/business-branding" className="kala-footer-link">Bulk Corporate Orders</Link>

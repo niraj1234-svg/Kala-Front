@@ -13,7 +13,7 @@ import Shop from './pages/Shop'
 import CustomApparel from './pages/CustomApparel'
 import Customize from './pages/Customize'
 import BusinessBranding from './pages/BusinessBranding'
-import CampusCorporateSolutions from './pages/CampusCorporateSolutions'
+// import CampusCorporateSolutions from './pages/CampusCorporateSolutions'
 import About from './pages/About'
 import Cart from './pages/Cart'
 import Account from './pages/Account'
@@ -91,7 +91,7 @@ function App() {
                   <Route path="/customize" element={<Customize />} />
                   <Route path="/business-branding" element={<BusinessBranding />} />
                   <Route path="/bulk-order" element={<BusinessBranding />} />
-                  <Route path="/campus-corporate-solutions" element={<CampusCorporateSolutions />} />
+                  <Route path="/campus-corporate-solutions" element={<Navigate to="/business-branding" replace />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/checkout" element={<Checkout />} />
