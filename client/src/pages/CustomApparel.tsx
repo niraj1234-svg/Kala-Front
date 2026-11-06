@@ -41,69 +41,12 @@ export const CustomApparel: React.FC = () => {
               </div>
 
               <h1 id="custom-apparel-what-is-it" className="kala-part-main-title">
-                WHAT IS <span className="title-gradient-accent">CUSTOM APPAREL?</span>
+                Custom apparel, made your way.
               </h1>
 
               <p className="kala-part-main-desc">
-                Custom Apparel lets you print your identity on premium clothing. Whether you need a batch of 50 pieces for your college team, company, or event, or a single custom piece with your own original artwork — we craft each garment with high-definition printing, combed cotton fabrics, and zero design setup fees.
+                Create custom apparel for yourself, your team, or your event. Order a single piece for a personal design, or choose a bulk order for 25 or more pieces. Select your garment, customize the artwork, and review your estimated price before placing an order.
               </p>
-
-              {/* Enhanced 4-Feature Interactive Cards Grid */}
-              <div className="kala-features-interactive-grid" aria-label="Key custom apparel guarantees">
-                <div className="kala-feat-card">
-                  <div className="kala-feat-card-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="12" y1="1" x2="12" y2="23" />
-                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                    </svg>
-                  </div>
-                  <div className="kala-feat-card-body">
-                    <strong className="kala-feat-title">₹0 Design Fee</strong>
-                    <span className="kala-feat-desc">You bring artwork, we optimize it for print free</span>
-                  </div>
-                </div>
-
-                <div className="kala-feat-card">
-                  <div className="kala-feat-card-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                      <polyline points="2 17 12 22 22 17" />
-                      <polyline points="2 12 12 17 22 12" />
-                    </svg>
-                  </div>
-                  <div className="kala-feat-card-body">
-                    <strong className="kala-feat-title">Bulk &amp; Single</strong>
-                    <span className="kala-feat-desc">Flexible runs: 1 custom piece or 500+ wholesale</span>
-                  </div>
-                </div>
-
-                <div className="kala-feat-card">
-                  <div className="kala-feat-card-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                    </svg>
-                  </div>
-                  <div className="kala-feat-card-body">
-                    <strong className="kala-feat-title">High-Def Prints</strong>
-                    <span className="kala-feat-desc">Washproof DTF &amp; screen with 50+ wash durability</span>
-                  </div>
-                </div>
-
-                <div className="kala-feat-card">
-                  <div className="kala-feat-card-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="1" y="3" width="15" height="13" />
-                      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-                      <circle cx="5.5" cy="18.5" r="2.5" />
-                      <circle cx="18.5" cy="18.5" r="2.5" />
-                    </svg>
-                  </div>
-                  <div className="kala-feat-card-body">
-                    <strong className="kala-feat-title">Pan-India Delivery</strong>
-                    <span className="kala-feat-desc">Direct tracked express doorstep dispatch</span>
-                  </div>
-                </div>
-              </div>
 
               {/* Action Buttons */}
               <div className="kala-hero-action-row">
@@ -113,7 +56,7 @@ export const CustomApparel: React.FC = () => {
                   className="kala-hero-cta-btn primary"
                   id="custom-apparel-start-cta"
                 >
-                  <span>Start Designing Your Apparel</span>
+                  <span>Start designing</span>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <polyline points="19 12 12 19 5 12" />
@@ -124,7 +67,7 @@ export const CustomApparel: React.FC = () => {
                   onClick={scrollToWorkflow}
                   className="kala-hero-cta-btn secondary"
                 >
-                  <span>See How It Works</span>
+                  <span>How it works</span>
                   <span className="cta-arrow" aria-hidden="true">→</span>
                 </button>
               </div>
@@ -134,34 +77,6 @@ export const CustomApparel: React.FC = () => {
             <div className="kala-hero-spotlight-col">
               <div className="kala-spotlight-stage">
                 
-                {/* Ambient Glow Aura */}
-                <div className="kala-stage-aura" aria-hidden="true" />
-
-                {/* Floating VFX Badges */}
-                <div className="kala-vfx-badge vfx-badge-top-right">
-                  <span className="vfx-icon">✨</span>
-                  <div className="vfx-text">
-                    <strong>100% Combed Cotton</strong>
-                    <span>220 GSM Heavyweight</span>
-                  </div>
-                </div>
-
-                <div className="kala-vfx-badge vfx-badge-bottom-left">
-                  <span className="vfx-pulse-dot" />
-                  <div className="vfx-text">
-                    <strong>High-Definition DTF</strong>
-                    <span>Washproof &bull; 50+ Washes</span>
-                  </div>
-                </div>
-
-                <div className="kala-vfx-badge vfx-badge-bottom-right">
-                  <span className="vfx-icon">⚡</span>
-                  <div className="vfx-text">
-                    <strong>Zero Setup Fee</strong>
-                    <span>Instant Live Preview</span>
-                  </div>
-                </div>
-
                 {/* Floating Garment Mockup */}
                 <div className="kala-spotlight-image-wrapper">
                   <img
@@ -172,8 +87,6 @@ export const CustomApparel: React.FC = () => {
                     className="kala-spotlight-garment-img"
                     loading="eager"
                   />
-                  {/* Subtle garment shadow */}
-                  <div className="kala-garment-drop-shadow" aria-hidden="true" />
                 </div>
 
                 {/* Interactive Color Switcher */}
