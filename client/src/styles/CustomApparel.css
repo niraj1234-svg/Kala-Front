@@ -760,3 +760,198 @@
     width: 100%;
   }
 }
+
+
+/* ==========================================================================
+   MINIMAL PREMIUM PASS — CUSTOM APPAREL HERO
+   Keep KALA's existing palette; reduce decorative UI and visual competition.
+   ========================================================================== */
+.kala-hub-part-1 {
+  padding: clamp(2.25rem, 4vw, 3.5rem) 0;
+  background: #FAF9F6;
+}
+
+.kala-hero-showcase-grid {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(2rem, 4vw, 3.25rem);
+}
+
+.kala-part-badge {
+  margin-bottom: 1rem;
+  box-shadow: none;
+}
+
+.kala-badge-dot {
+  box-shadow: none;
+  animation: none;
+}
+
+.kala-part-main-title {
+  max-width: 620px;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 750;
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+  text-transform: none;
+}
+
+.title-gradient-accent {
+  color: #D94700;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+}
+
+.kala-part-main-desc {
+  max-width: 540px;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #5F6368;
+}
+
+.kala-hero-action-row {
+  gap: 0.75rem;
+}
+
+.kala-hero-cta-btn {
+  min-height: 48px;
+  border-radius: 6px;
+  padding: 0.8rem 1.15rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  box-shadow: none !important;
+}
+
+.kala-hero-cta-btn.primary:hover,
+.kala-hero-cta-btn.secondary:hover {
+  transform: none;
+}
+
+.kala-spotlight-stage {
+  height: 440px;
+  max-width: 500px;
+  padding: 1.25rem;
+  background: #F1F0EC;
+  border: 1px solid #E5E2DD;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.kala-spotlight-garment-img {
+  max-width: 320px;
+  max-height: 320px;
+  filter: none;
+  animation: none;
+}
+
+.kala-spotlight-image-wrapper {
+  height: 340px;
+}
+
+.kala-spotlight-controls {
+  bottom: 14px;
+  background: #FFFFFF;
+  border: 1px solid #E5E2DD;
+  border-radius: 8px;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.color-toggle-pill {
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.color-toggle-pill.active {
+  background: #FFF7F2;
+}
+
+@media (max-width: 1024px) {
+  .kala-hero-showcase-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .kala-hero-content {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .kala-part-main-desc {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .kala-hero-action-row {
+    justify-content: flex-start;
+  }
+
+  .kala-hero-spotlight-col {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .kala-hub-part-1 {
+    padding: 1.75rem 0 2rem;
+  }
+
+  .kala-part-main-title {
+    font-size: clamp(1.9rem, 8vw, 2.4rem);
+  }
+
+  .kala-part-main-desc {
+    font-size: 0.95rem;
+  }
+
+  .kala-hero-action-row {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .kala-hero-cta-btn {
+    width: 100%;
+  }
+
+  .kala-spotlight-stage {
+    height: 340px;
+    border-radius: 10px;
+  }
+
+  .kala-spotlight-image-wrapper {
+    height: 270px;
+  }
+
+  .kala-spotlight-garment-img {
+    max-width: 230px;
+    max-height: 250px;
+  }
+
+  .kala-spotlight-controls {
+    max-width: calc(100% - 1rem);
+    gap: 0.4rem;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .controls-label {
+    font-size: 0.62rem;
+  }
+
+  .color-toggle-pill {
+    padding: 0.3rem 0.45rem;
+    font-size: 0.65rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kala-custom-apparel-hub *,
+  .kala-custom-apparel-hub *::before,
+  .kala-custom-apparel-hub *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
