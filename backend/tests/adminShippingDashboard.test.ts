@@ -209,24 +209,72 @@ async function runTests() {
       assert(!json.includes('token'), 'Never exposes raw JWT authentication tokens')
     }
 
-    // --- Group 6: Safety Gate Protection for Manual Admin Actions ---
-    console.log('\n--- Group 6: Manual Admin Safety Gate Protection ---')
+    // --- Group 6: Manual Admin Fulfillment & Safety Gate Protection ---
+    console.log('\n--- Group 6: Manual Admin Fulfillment & Safety Gate Protection ---')
     createMockOrder({
       orderId: 'KALA-UNFULFILLED-01',
       status: 'confirmed',
       payment: { status: 'paid', method: 'razorpay' },
+      shippingAddress: { address: 'Main Road', city: 'Bilaspur', state: 'Chhattisgarh', pincode: '495004' },
+      items: [{ productId: 'P1', name: 'KALA Tee', size: 'M', price: 999, quantity: 1, weightKg: 0.28 }],
+      pricing: { subtotal: 999, shipping: 0, total: 999 },
       shiprocketOrder: undefined,
     })
 
-    // 1. Manual Admin Retry when fulfillment flag is disabled
+    // Mock global fetch for Shiprocket API calls during manual admin retry
+    const origFetch = global.fetch
+    let shiprocketCreateDispatched = false
+    global.fetch = (async (input: RequestInfo | URL) => {
+      const url = String(input)
+      if (url.includes('/auth/login')) {
+        return new Response(JSON.stringify({ token: 'mock-admin-token' }), { status: 200 })
+      }
+      if (url.includes('/orders/create/adhoc')) {
+        shiprocketCreateDispatched = true
+        return new Response(
+          JSON.stringify({ order_id: 55441, shipment_id: 66551, status: 'NEW' }),
+          { status: 200 }
+        )
+      }
+      return new Response('Not found', { status: 404 })
+    }) as any
+
+    // 1. Manual Admin Retry succeeds even when auto fulfillment flag is disabled
     delete process.env.SHIPROCKET_AUTO_FULFILLMENT_ENABLED
+    delete process.env.SHIPROCKET_AUTO_AWB_ENABLED
     const { req: safeRetryReq, res: safeRetryRes } = createMockReqRes({}, { orderId: 'KALA-UNFULFILLED-01' })
     await retryOrderShipment(safeRetryReq, safeRetryRes)
-    assert(safeRetryRes.getStatusCode() === 200, 'Returns HTTP 200 safe response')
-    assert(safeRetryRes.getData()?.success === false, 'Fulfillment blocked by safety gate')
-    assert(safeRetryRes.getData()?.message.includes('safety flag'), 'Explains fulfillment is disabled by safety flag')
+    assert(safeRetryRes.getStatusCode() === 200, 'Returns HTTP 200 on manual retry')
+    assert(safeRetryRes.getData()?.success === true, 'Manual admin retry succeeds when auto flag is disabled')
+    assert(safeRetryRes.getData()?.shipmentId === 66551, 'Shipment ID returned to admin')
+    assert(shiprocketCreateDispatched, 'Dispatched Shiprocket order creation on explicit admin retry')
+    global.fetch = origFetch
 
-    // 2. Manual Admin Pickup when pickup flag is disabled
+    // 2. Manual Admin Retry rejects unpaid orders
+    createMockOrder({
+      orderId: 'KALA-UNPAID-ADMIN-01',
+      status: 'pending',
+      payment: { status: 'pending', method: 'razorpay' },
+      shiprocketOrder: undefined,
+    })
+    const { req: unpaidReq, res: unpaidRes } = createMockReqRes({}, { orderId: 'KALA-UNPAID-ADMIN-01' })
+    await retryOrderShipment(unpaidReq, unpaidRes)
+    assert(unpaidRes.getStatusCode() === 400, 'Rejects unpaid order with HTTP 400')
+    assert(unpaidRes.getData()?.message.includes('not paid'), 'Explains order is not paid')
+
+    // 3. Manual Admin Retry rejects cancelled orders
+    createMockOrder({
+      orderId: 'KALA-CANCELLED-ADMIN-01',
+      status: 'cancelled',
+      payment: { status: 'paid', method: 'razorpay' },
+      shiprocketOrder: undefined,
+    })
+    const { req: cancelReq, res: cancelRes } = createMockReqRes({}, { orderId: 'KALA-CANCELLED-ADMIN-01' })
+    await retryOrderShipment(cancelReq, cancelRes)
+    assert(cancelRes.getStatusCode() === 400, 'Rejects cancelled order with HTTP 400')
+    assert(cancelRes.getData()?.message.includes('cancelled'), 'Explains order is cancelled')
+
+    // 4. Manual Admin Pickup when pickup flag is disabled
     createMockOrder({
       orderId: 'KALA-WITH-SHIPMENT-01',
       status: 'confirmed',

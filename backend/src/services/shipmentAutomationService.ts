@@ -341,7 +341,7 @@ async function executeShipmentWorkflow(
     let awbCode = order.shiprocketOrder.awbCode
     let courierName = order.shiprocketOrder.courierName
 
-    const isAwbEnabled = isShiprocketAutoAwbEnabled() || Boolean(options.forceAwb || options.force)
+    const isAwbEnabled = isShiprocketAutoAwbEnabled() || Boolean(options.forceAwb)
 
     if (!awbCode && !isAwbEnabled) {
       console.log(
@@ -477,7 +477,7 @@ async function executeShipmentWorkflow(
     // =========================================================================
     // STEP 5: SCHEDULE PICKUP (Phase 4)
     // =========================================================================
-    const isPickupEnabled = isShiprocketAutoPickupEnabled() || Boolean(options.forcePickup || options.force)
+    const isPickupEnabled = isShiprocketAutoPickupEnabled() || Boolean(options.forcePickup)
     const autoPickup = options.autoSchedulePickup !== false && isPickupEnabled
     if (autoPickup && shipmentId && !order.shiprocketOrder.pickupTokenNumber) {
       try {

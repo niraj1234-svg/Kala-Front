@@ -10,14 +10,14 @@ import {
   schedulePickup,
 } from '../services/shiprocketShipmentService'
 import {
-  isShiprocketAutoFulfillmentEnabled,
   isShiprocketAutoPickupEnabled,
 } from '../config/shiprocketConfig'
 
 /**
  * POST /api/admin/shipping/retry/:orderId
- * Retries shipment creation, AWB assignment, or fulfillment for an existing paid order.
- * Protected by SHIPROCKET_AUTO_FULFILLMENT_ENABLED safety gate.
+ * Explicit manual admin fulfillment endpoint:
+ * Allows authenticated administrators to manually fulfill eligible paid orders via Shiprocket
+ * even when background automatic fulfillment (SHIPROCKET_AUTO_FULFILLMENT_ENABLED) is disabled.
  */
 export const retryOrderShipment = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -33,7 +33,30 @@ export const retryOrderShipment = async (req: Request, res: Response): Promise<v
       return
     }
 
-    // If already fulfilled with AWB, return active status safely
+    // 1. Order Status Safeguard: Reject cancelled orders
+    if (order.status === 'cancelled') {
+      res.status(400).json({
+        success: false,
+        orderId: order.orderId,
+        status: 'cancelled',
+        message: 'Cannot fulfill a cancelled order.',
+      })
+      return
+    }
+
+    // 2. Payment Status Safeguard: Strictly verify payment from database (never allow unpaid or pending-payment orders)
+    const isPaid = order.payment?.status === 'paid' || order.status === 'confirmed' || order.status === 'processing'
+    if (!isPaid) {
+      res.status(400).json({
+        success: false,
+        orderId: order.orderId,
+        status: order.shiprocketOrder?.status || 'pending',
+        message: 'Order is not paid. Shipment fulfillment is only permitted for paid orders.',
+      })
+      return
+    }
+
+    // 3. Idempotency Check: If already fulfilled with AWB, return active status safely without re-creating
     if (order.shiprocketOrder?.shipmentId && order.shiprocketOrder?.awbCode) {
       res.status(200).json({
         success: true,
@@ -47,19 +70,8 @@ export const retryOrderShipment = async (req: Request, res: Response): Promise<v
       return
     }
 
-    // Production Safety Gate: Disallow live fulfillment if safety flag is disabled
-    if (!isShiprocketAutoFulfillmentEnabled()) {
-      res.status(200).json({
-        success: false,
-        orderId: order.orderId,
-        status: order.shiprocketOrder?.status || 'pending',
-        message:
-          'Shiprocket live fulfillment is disabled by safety flag (SHIPROCKET_AUTO_FULFILLMENT_ENABLED !== true). Enable the environment flag in Render to permit live order creation.',
-      })
-      return
-    }
-
-    const result = await retryShipmentWorkflow(orderId)
+    // Explicit manual admin override: { force: true } creates shipment regardless of SHIPROCKET_AUTO_FULFILLMENT_ENABLED
+    const result = await retryShipmentWorkflow(orderId, { force: true })
 
     res.status(result.success ? 200 : 400).json({
       success: result.success,
