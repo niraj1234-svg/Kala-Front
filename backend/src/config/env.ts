@@ -111,7 +111,7 @@ export function validateEnv(): EnvValidationResult {
 
 /**
  * Resolves allowed CORS origins from CLIENT_URL (supports single or comma-separated origins),
- * ensuring local development origins are preserved in non-production environments.
+ * approved production and preview origins, and local development origins in non-production environments.
  */
 export function getAllowedOrigins(): string[] {
   const rawClientUrl = process.env.CLIENT_URL || ''
@@ -119,6 +119,27 @@ export function getAllowedOrigins(): string[] {
     .split(',')
     .map((origin) => origin.trim().replace(/\/+$/, ''))
     .filter(Boolean)
+
+  // Explicitly approved production storefront and Vercel preview origins
+  const approvedOrigins = [
+    'https://www.kalaofficial.store',
+    'https://kalaofficial.store',
+    'https://kala-front-oa3puwsvr-niraj1234-svgs-projects.vercel.app',
+  ]
+
+  // Optional additional comma-separated origins from environment
+  const rawAdditionalOrigins = process.env.ADDITIONAL_ALLOWED_ORIGINS || ''
+  const additionalOrigins = rawAdditionalOrigins
+    .split(',')
+    .map((origin) => origin.trim().replace(/\/+$/, ''))
+    .filter(Boolean)
+
+  const allApprovedOrigins = [...approvedOrigins, ...additionalOrigins]
+  for (const origin of allApprovedOrigins) {
+    if (!parsedOrigins.includes(origin)) {
+      parsedOrigins.push(origin)
+    }
+  }
 
   const isProduction = process.env.NODE_ENV === 'production'
 
