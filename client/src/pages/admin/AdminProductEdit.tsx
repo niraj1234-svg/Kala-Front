@@ -307,7 +307,9 @@ export const AdminProductEdit: React.FC = () => {
                 required
               />
             </div>
+          </div>
 
+          <div className="admin-form-row">
             {/* Finished Product Weight (grams) */}
             <div className="admin-form-group flex-1">
               <label htmlFor="edit-weight" className="admin-form-label">

@@ -1199,14 +1199,17 @@
 .admin-form-row {
   display: flex;
   gap: 1.25rem;
+  flex-wrap: wrap;
 }
 
 .admin-form-row .flex-1 {
   flex: 1;
+  min-width: 220px;
 }
 
 .admin-form-row .flex-2 {
   flex: 2;
+  min-width: 280px;
 }
 
 .admin-image-input-group {
@@ -2041,7 +2044,8 @@
   font-size: 0.85rem;
 }
 
-.admin-form-row {
+.admin-modal-body .admin-form-row,
+.admin-modal-form .admin-form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
@@ -2100,7 +2104,8 @@
 }
 
 @media (max-width: 640px) {
-  .admin-form-row {
+  .admin-modal-body .admin-form-row,
+  .admin-modal-form .admin-form-row {
     grid-template-columns: 1fr;
   }
 }
@@ -3329,58 +3334,64 @@
   background: rgba(255, 255, 255, 0.02);
   padding: 0.75rem;
   border-radius: 6px;
-  margin-bottom: 0.85rem;
-  font-size: 0.8125rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.admin-shiprocket-meta-grid .admin-meta-row {
+.admin-meta-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
+  font-size: 0.8rem;
 }
 
-.admin-shiprocket-btn-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-  margin-bottom: 0.65rem;
+.admin-btn-copy {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.68rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #d4d4d8;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.admin-tracking-timeline {
+.admin-btn-copy:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.admin-tracking-scans-timeline {
+  max-height: 280px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  position: relative;
-  margin-top: 0.5rem;
-  padding-left: 1.25rem;
-  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-right: 0.25rem;
 }
 
-.admin-tracking-step {
-  position: relative;
+.admin-scan-card {
+  background: #18181c;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 0.55rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
-.admin-tracking-step::before {
-  content: '';
-  position: absolute;
-  left: -1.6rem;
-  top: 0.25rem;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #ff5722;
-  border: 2px solid #18181b;
+.admin-scan-activity {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #f4f4f5;
 }
 
-.admin-tracking-step-header {
+.admin-scan-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 0.82rem;
-  margin-bottom: 0.2rem;
-}
-
-.admin-tracking-step-activity {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   color: #a1a1aa;
 }
+
+
+
