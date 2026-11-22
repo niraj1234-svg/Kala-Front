@@ -155,6 +155,7 @@ export interface IShiprocketOrderRecord {
   courierId?: number
   courierName?: string
   awbCode?: string
+  awbAssignedAt?: Date
   labelUrl?: string
   labelGeneratedAt?: Date
   invoiceUrl?: string
@@ -436,6 +437,7 @@ const ShiprocketOrderRecordSchema = new Schema(
     courierId: { type: Number },
     courierName: { type: String },
     awbCode: { type: String },
+    awbAssignedAt: { type: Date },
     labelUrl: { type: String },
     labelGeneratedAt: { type: Date },
     invoiceUrl: { type: String },
