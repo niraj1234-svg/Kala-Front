@@ -27,6 +27,43 @@ const STATUS_OPTIONS: AdminOrderStatus[] = [
   'cancelled',
 ]
 
+/**
+ * Calculates estimated package specifications from saved order item weight snapshots
+ * using identical business rules to backend calculateOrderPackageSpecs:
+ * - Iterates items, reading saved item.weightKg (fallback to 0.5 kg if <= 0 or missing)
+ * - Multiplies by item quantity (clamped to >= 1)
+ * - Clamps total package weight between 0.1 kg and 10.0 kg, rounded to 2 decimals
+ * - Calculates dimensions: 25 cm (L) × 20 cm (B) × clamp(3..30 cm, 3 * min(totalQty, 10)) (H)
+ */
+export function calculateEstimatedPackageSpecs(items?: Array<{ quantity?: number; weightKg?: number }>): {
+  weightKg: number
+  dimensions: { length: number; breadth: number; height: number }
+} {
+  if (!items || items.length === 0) {
+    return {
+      weightKg: 0.5,
+      dimensions: { length: 25, breadth: 20, height: 3 },
+    }
+  }
+
+  let totalWeight = 0
+  let totalQty = 0
+
+  for (const item of items) {
+    const qty = Math.max(1, Math.round(Number(item.quantity) || 1))
+    const itemWeight = Number(item.weightKg) > 0 ? Number(item.weightKg) : 0.5
+    totalWeight += itemWeight * qty
+    totalQty += qty
+  }
+
+  const weightKg = Math.min(10.0, Math.max(0.1, Math.round(totalWeight * 100) / 100))
+  const length = 25
+  const breadth = 20
+  const height = Math.min(30, Math.max(3, 3 * Math.min(totalQty, 10)))
+
+  return { weightKg, dimensions: { length, breadth, height } }
+}
+
 export const AdminOrderDetail: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>()
   const [order, setOrder] = useState<AdminOrder | null>(null)
@@ -50,7 +87,10 @@ export const AdminOrderDetail: React.FC = () => {
   const [isLabelLoading, setIsLabelLoading] = useState<boolean>(false)
   const [isInvoiceLoading, setIsInvoiceLoading] = useState<boolean>(false)
   const [isPickupLoading, setIsPickupLoading] = useState<boolean>(false)
-  const [shippingFeedback, setShippingFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const [shippingFeedback, setShippingFeedback] = useState<{
+    type: 'success' | 'error' | 'info'
+    message: string
+  } | null>(null)
   const [copiedAwb, setCopiedAwb] = useState<boolean>(false)
   const [trackingModalOpen, setTrackingModalOpen] = useState<boolean>(false)
   const [liveTrackingData, setLiveTrackingData] = useState<{
@@ -160,11 +200,52 @@ export const AdminOrderDetail: React.FC = () => {
     setShippingFeedback(null)
     try {
       const res = await retryAdminOrderShipment(order.orderId)
-      if (res.success) {
-        setShippingFeedback({ type: 'success', message: res.message || 'Shipment fulfillment retried successfully.' })
-        await loadOrder()
-      } else {
+      if (!res.success) {
         setShippingFeedback({ type: 'error', message: res.message || 'Failed to retry shipment.' })
+        return
+      }
+
+      // Re-fetch authoritative persisted order state from backend
+      let persistedOrder: AdminOrder | null = null
+      try {
+        const freshData = await fetchAdminOrderById(order.orderId)
+        if (freshData?.order) {
+          persistedOrder = freshData.order
+          setOrder(freshData.order)
+          setSelectedStatus(freshData.order.status)
+          setTrackingNumber(freshData.order.tracking?.trackingNumber || '')
+          setCarrier(freshData.order.tracking?.carrier || '')
+        }
+      } catch {
+        // Fallback if re-fetch encounters a transient network issue
+      }
+
+      // Verify whether the backend response and persisted state both confirm that shipment/order exists
+      const hasPersistedOrderId = Boolean(persistedOrder?.shiprocketOrder?.orderId)
+      const hasPersistedShipmentId = Boolean(persistedOrder?.shiprocketOrder?.shipmentId)
+      const hasResponseOrderId = Boolean(res.shiprocketOrderId)
+      const hasResponseShipmentId = Boolean(res.shipmentId)
+
+      const isPersistedConfirmed = hasPersistedOrderId || hasPersistedShipmentId
+
+      if (isPersistedConfirmed) {
+        // Persisted state confirms the shipment/order
+        setShippingFeedback({
+          type: 'success',
+          message: res.message || 'Shiprocket order and shipment created successfully.',
+        })
+      } else if (hasResponseOrderId || hasResponseShipmentId) {
+        // Backend returned IDs in response, but re-fetched order document has not persisted them yet
+        setShippingFeedback({
+          type: 'info',
+          message: 'Shipment request acknowledged by Shiprocket. Awaiting database persistence confirmation — please refresh in a moment.',
+        })
+      } else {
+        // Neither persisted state nor response IDs confirm order creation
+        setShippingFeedback({
+          type: 'info',
+          message: 'Fulfillment request acknowledged. Shipment status verification is pending — please refresh to check updated status.',
+        })
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error retrying shipment.'
@@ -880,10 +961,23 @@ export const AdminOrderDetail: React.FC = () => {
             {shippingFeedback && (
               <div
                 className={`admin-feedback-alert ${
-                  shippingFeedback.type === 'success' ? 'feedback-success' : 'feedback-error'
+                  shippingFeedback.type === 'success'
+                    ? 'feedback-success'
+                    : shippingFeedback.type === 'info'
+                    ? 'feedback-info'
+                    : 'feedback-error'
                 }`}
                 role="alert"
-                style={{ marginBottom: '0.75rem' }}
+                style={{
+                  marginBottom: '0.75rem',
+                  ...(shippingFeedback.type === 'info'
+                    ? {
+                        background: 'rgba(59, 130, 246, 0.12)',
+                        border: '1px solid rgba(59, 130, 246, 0.25)',
+                        color: '#60a5fa',
+                      }
+                    : {}),
+                }}
               >
                 {shippingFeedback.message}
               </div>
@@ -932,13 +1026,34 @@ export const AdminOrderDetail: React.FC = () => {
                   )}
                 </div>
               </div>
-              {order.shiprocketOrder?.weightKg && (
-                <div className="admin-meta-row">
+              {/* Package Specs: Persisted Actual vs Pre-Fulfillment Estimated */}
+              {order.shiprocketOrder?.weightKg ? (
+                <div className="admin-meta-row" data-testid="actual-package-specs">
                   <span className="text-muted">Package Specs:</span>
                   <span className="text-white text-xs">
-                    {order.shiprocketOrder.weightKg} kg ({order.shiprocketOrder.dimensions?.length || 25}×{order.shiprocketOrder.dimensions?.breadth || 20}×{order.shiprocketOrder.dimensions?.height || 3} cm)
+                    {order.shiprocketOrder.weightKg} kg (
+                    {order.shiprocketOrder.dimensions?.length || 25}×
+                    {order.shiprocketOrder.dimensions?.breadth || 20}×
+                    {order.shiprocketOrder.dimensions?.height || 3} cm)
                   </span>
                 </div>
+              ) : (
+                (() => {
+                  const estimated = calculateEstimatedPackageSpecs(
+                    order.items as Array<{ quantity?: number; weightKg?: number }>
+                  )
+                  return (
+                    <div className="admin-meta-row" data-testid="estimated-package-specs">
+                      <span className="text-muted">Estimated Package Specs:</span>
+                      <span className="text-white text-xs" style={{ opacity: 0.9 }}>
+                        ~{estimated.weightKg} kg ({estimated.dimensions.length}×{estimated.dimensions.breadth}×{estimated.dimensions.height} cm)
+                        <span className="text-muted" style={{ marginLeft: '0.35rem', fontSize: '0.68rem' }}>
+                          (pre-fulfillment estimate)
+                        </span>
+                      </span>
+                    </div>
+                  )
+                })()
               )}
               <div className="admin-meta-row">
                 <span className="text-muted">Pickup Status:</span>
