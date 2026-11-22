@@ -132,6 +132,7 @@ export type ShiprocketShipmentStatus =
   | 'label_generated'
   | 'pickup_scheduled'
   | 'pickup_generated'
+  | 'pickup_completed'
   | 'in_transit'
   | 'out_for_delivery'
   | 'delivered'
@@ -154,6 +155,7 @@ export interface AdminShiprocketOrderRecord {
   channelOrderId?: string
   awbCode?: string
   courierName?: string
+  courierId?: number
   labelUrl?: string
   labelGeneratedAt?: string
   invoiceUrl?: string
@@ -166,8 +168,17 @@ export interface AdminShiprocketOrderRecord {
   retryCount?: number
   lastAttemptAt?: string
   currentTrackingStatus?: string
-  trackingScans?: AdminTrackingScan[]
   lastTrackingSyncAt?: string
+  awbAssignedAt?: string
+  trackingScans?: AdminTrackingScan[]
+  weightKg?: number
+  dimensions?: {
+    length: number
+    breadth: number
+    height: number
+  }
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface AdminShippingActionResponse {
@@ -182,11 +193,30 @@ export interface AdminShippingActionResponse {
 
 export interface AdminShippingTrackResponse {
   success: boolean
-  orderId?: string
-  awbCode?: string
+  orderId: string
+  awbCode: string
   currentStatus?: string
+  currentLocation?: string
+  etd?: string
   scans: AdminTrackingScan[]
   trackingUrl?: string
+  message: string
+}
+
+export interface AdminShippingUrlResponse {
+  success: boolean
+  orderId: string
+  labelUrl?: string
+  invoiceUrl?: string
+  message?: string
+}
+
+export interface AdminShippingPickupResponse {
+  success: boolean
+  orderId: string
+  pickupStatus?: number
+  pickupTokenNumber?: string
+  pickupScheduledDate?: string
   message: string
 }
 
@@ -1284,26 +1314,29 @@ export async function trackAdminOrderShipment(orderId: string): Promise<AdminShi
 /**
  * Generates and fetches shipping label PDF URL for a shipment.
  */
-export async function getAdminOrderShippingLabel(orderId: string): Promise<{ success: boolean; labelUrl?: string; message: string }> {
-  return adminFetch<{ success: boolean; labelUrl?: string; message: string }>(`/admin/shipping/label/${encodeURIComponent(orderId)}`, {
-    method: 'POST',
+export async function getAdminOrderShippingLabel(orderId: string): Promise<AdminShippingUrlResponse> {
+  return adminFetch<AdminShippingUrlResponse>(`/admin/shipping/label/${encodeURIComponent(orderId)}`, {
+    method: 'GET',
   })
 }
 
 /**
  * Generates and fetches commercial invoice PDF URL for a shipment.
  */
-export async function getAdminOrderInvoice(orderId: string): Promise<{ success: boolean; invoiceUrl?: string; message: string }> {
-  return adminFetch<{ success: boolean; invoiceUrl?: string; message: string }>(`/admin/shipping/invoice/${encodeURIComponent(orderId)}`, {
-    method: 'POST',
+export async function getAdminOrderInvoice(orderId: string): Promise<AdminShippingUrlResponse> {
+  return adminFetch<AdminShippingUrlResponse>(`/admin/shipping/invoice/${encodeURIComponent(orderId)}`, {
+    method: 'GET',
   })
 }
 
 /**
  * Requests courier pickup for an assigned shipment.
  */
-export async function scheduleAdminOrderPickup(orderId: string, pickupDate?: string): Promise<{ success: boolean; pickupToken?: string; message: string }> {
-  return adminFetch<{ success: boolean; pickupToken?: string; message: string }>(`/admin/shipping/pickup/${encodeURIComponent(orderId)}`, {
+export async function scheduleAdminOrderPickup(
+  orderId: string,
+  pickupDate?: string
+): Promise<AdminShippingPickupResponse> {
+  return adminFetch<AdminShippingPickupResponse>(`/admin/shipping/pickup/${encodeURIComponent(orderId)}`, {
     method: 'POST',
     body: JSON.stringify(pickupDate ? { pickupDate } : {}),
   })
