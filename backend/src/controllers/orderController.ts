@@ -9,6 +9,8 @@ import { Transaction } from '../models/Transaction'
 import { InventoryLog } from '../models/InventoryLog'
 import { AuthenticatedUser } from '../middleware/authMiddleware'
 import { sendOrderPlacedAlert } from '../services/notificationService'
+import { isValidPincode } from '../services/shiprocketServiceabilityService'
+import { normalizeProductWeightKg } from '../services/shipmentAutomationService'
 import mongoose from 'mongoose'
 
 const VALID_SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'BULK', 'BULK (MIXED S-XXL)', 'FREE SIZE', 'CUSTOM']
@@ -181,6 +183,14 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       res.status(400).json({
         success: false,
         message: 'Invalid order data: Complete shipping address (address, city, state, pincode) is required.',
+      })
+      return
+    }
+
+    if (!isValidPincode(shippingAddress.pincode)) {
+      res.status(400).json({
+        success: false,
+        message: 'Invalid delivery pincode: Must be a 6-digit Indian PIN code.',
       })
       return
     }
@@ -496,6 +506,8 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         ? Math.round(bundleData.price / bundleData.slotCount)
         : baseProductPrice + customPrice
 
+      const weightKg = normalizeProductWeightKg(dbProduct?.weight)
+
       return {
         productId: dbProduct ? dbProduct.id : (customFallback?.id || item.productId.trim()),
         vendorId: dbProduct?.vendorId || 'kala-admin',
@@ -506,6 +518,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         color: typeof item.color === 'string' ? item.color.trim() : (customizationData?.color || ''),
         quantity: Math.floor(Number(item.quantity)),
         price: unitPrice, // STRICT: ALWAYS authoritative server-side pricing
+        ...(weightKg !== undefined ? { weightKg } : {}),
         ...(customizationData ? { customization: customizationData } : {}),
       }
     })

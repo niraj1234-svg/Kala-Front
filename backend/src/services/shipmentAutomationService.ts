@@ -49,26 +49,60 @@ export interface ShipmentWorkflowResult {
 const inFlightWorkflows = new Map<string, Promise<ShipmentWorkflowResult>>()
 
 /**
- * Calculates total shipment package weight and mailer bag dimensions based on items in order.
- * - Minimum single apparel item: 0.1kg - 0.5kg
- * - Scales safely with multi-item orders
- * - Bounded within safe shipping limits (0.1kg to 10.0kg)
+ * Normalizes a product's configured weight into kilograms.
+ *
+ * Unit Resolution Rules:
+ * - If weight > 10, it is treated as grams (e.g. 280g -> 0.28kg, 650g -> 0.65kg).
+ * - If weight is > 0 and <= 10, it is treated as kilograms (e.g. 0.5kg, 0.8kg).
+ * - If weight is missing, zero, negative, or not finite, returns undefined (caller falls back to 0.5kg).
  */
-export function calculateOrderPackageSpecs(items: IOrder['items']): {
+export function normalizeProductWeightKg(rawWeight: unknown): number | undefined {
+  if (rawWeight === null || rawWeight === undefined) return undefined
+  const val = typeof rawWeight === 'number' ? rawWeight : Number(rawWeight)
+  if (!Number.isFinite(val) || val <= 0) {
+    return undefined
+  }
+  // Values greater than 10 represent grams in apparel manufacturing (e.g. 280 GSM / 650g hoodie)
+  if (val > 10) {
+    return Number((val / 1000).toFixed(3))
+  }
+  return Number(val.toFixed(3))
+}
+
+/**
+ * Calculates total shipment package weight and mailer bag dimensions based on items in order.
+ * - Product-aware per-unit weight: Uses item.weightKg when valid, otherwise defaults to 0.5kg
+ * - Safe quantity multiplication: Multiplies per-unit weight by quantity exactly once
+ * - Minimum single apparel item: 0.1kg - 0.5kg
+ * - Bounded within safe shipping limits (0.1kg to 10.0kg)
+ * - Mailer bag dimensions: 25cm x 20cm x height (3cm per unit, capped at 30cm, min 3cm)
+ * - Safe fallback for empty/malformed item arrays: produces non-zero package defaults (0.1kg, 25x20x3cm)
+ */
+export function calculateOrderPackageSpecs(items?: IOrder['items']): {
   weightKg: number
   dimensions: { length: number; breadth: number; height: number }
 } {
   let totalWeight = 0
   let totalUnits = 0
 
-  for (const item of items) {
-    const qty = Math.max(1, item.quantity || 1)
-    totalUnits += qty
-    // Default single shirt weight is 0.5kg (500g)
-    totalWeight += qty * DEFAULT_SHIPMENT_WEIGHT_KG
+  if (Array.isArray(items)) {
+    for (const item of items) {
+      if (!item) continue
+      const rawQty = item.quantity
+      const qty = Math.max(1, Math.floor(typeof rawQty === 'number' && Number.isFinite(rawQty) ? rawQty : 1))
+      totalUnits += qty
+
+      // Use item.weightKg if valid positive number; otherwise fall back to DEFAULT_SHIPMENT_WEIGHT_KG (0.5kg)
+      const perUnitWeight =
+        typeof item.weightKg === 'number' && Number.isFinite(item.weightKg) && item.weightKg > 0
+          ? item.weightKg
+          : DEFAULT_SHIPMENT_WEIGHT_KG
+
+      totalWeight += qty * perUnitWeight
+    }
   }
 
-  // Safe clamping: minimum 0.1kg, maximum 10kg
+  // Safe clamping: minimum 0.1kg, maximum 10.0kg
   const clampedWeight = Math.max(MIN_SHIPMENT_WEIGHT_KG, Math.min(totalWeight, 10.0))
 
   // Dimensions: single mailer bag is 25x20x3 cm; scale height for multiple items

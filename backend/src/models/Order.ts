@@ -52,6 +52,7 @@ export interface IOrderItem {
   color?: string
   quantity: number
   price: number
+  weightKg?: number
   customization?: ICustomDesignDetails
 }
 
@@ -248,6 +249,10 @@ const OrderItemSchema = new Schema<IOrderItem>(
     price: {
       type: Number,
       required: true,
+      min: 0,
+    },
+    weightKg: {
+      type: Number,
       min: 0,
     },
     customization: {
