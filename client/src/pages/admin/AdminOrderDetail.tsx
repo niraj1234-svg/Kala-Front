@@ -4,6 +4,13 @@ import {
   fetchAdminOrderById,
   updateAdminOrderStatus,
   updateAdminOrderTracking,
+  type ShiprocketShipmentStatus,
+  type AdminTrackingScan,
+  retryAdminOrderShipment,
+  trackAdminOrderShipment,
+  getAdminOrderShippingLabel,
+  getAdminOrderInvoice,
+  scheduleAdminOrderPickup,
   type AdminOrder,
   type AdminOrderStatus,
 } from '../../services/adminApi'
@@ -37,6 +44,28 @@ export const AdminOrderDetail: React.FC = () => {
   const [isUpdatingTracking, setIsUpdatingTracking] = useState<boolean>(false)
   const [trackingFeedback, setTrackingFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
+  // Shiprocket Shipping state
+  const [isRetryingShipment, setIsRetryingShipment] = useState<boolean>(false)
+  const [isTrackingLoading, setIsTrackingLoading] = useState<boolean>(false)
+  const [isLabelLoading, setIsLabelLoading] = useState<boolean>(false)
+  const [isInvoiceLoading, setIsInvoiceLoading] = useState<boolean>(false)
+  const [isPickupLoading, setIsPickupLoading] = useState<boolean>(false)
+  const [shippingFeedback, setShippingFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const [copiedAwb, setCopiedAwb] = useState<boolean>(false)
+  const [trackingModalOpen, setTrackingModalOpen] = useState<boolean>(false)
+  const [liveTrackingData, setLiveTrackingData] = useState<{
+    currentStatus?: string
+    currentLocation?: string
+    etd?: string
+    scans: AdminTrackingScan[]
+  } | null>(null)
+  const [pickupModalOpen, setPickupModalOpen] = useState<boolean>(false)
+  const [pickupDateInput, setPickupDateInput] = useState<string>(() => {
+    const d = new Date()
+    d.setDate(d.getDate() + 1)
+    return d.toISOString().split('T')[0]
+  })
+
   const loadOrder = useCallback(async () => {
     if (!orderId) return
     setIsLoading(true)
@@ -59,6 +88,189 @@ export const AdminOrderDetail: React.FC = () => {
   useEffect(() => {
     loadOrder()
   }, [loadOrder])
+
+  const getShiprocketStatusBadgeClass = (status?: ShiprocketShipmentStatus) => {
+    switch (status) {
+      case 'delivered':
+        return 'status-badge status-success'
+      case 'out_for_delivery':
+        return 'status-badge status-cyan'
+      case 'in_transit':
+      case 'pickup_completed':
+        return 'status-badge status-info'
+      case 'pickup_scheduled':
+        return 'status-badge status-purple'
+      case 'awb_assigned':
+      case 'label_generated':
+      case 'created':
+        return 'status-badge status-info'
+      case 'rto_initiated':
+      case 'rto_delivered':
+        return 'status-badge status-orange'
+      case 'failed':
+        return 'status-badge status-danger'
+      default:
+        return 'status-badge status-neutral'
+    }
+  }
+
+  const formatShiprocketStatusDisplay = (status?: ShiprocketShipmentStatus) => {
+    switch (status) {
+      case 'pending':
+        return 'Pending Fulfillment'
+      case 'created':
+        return 'Order Created in Shiprocket'
+      case 'awb_assigned':
+        return 'AWB Assigned'
+      case 'label_generated':
+        return 'Label Generated'
+      case 'pickup_scheduled':
+        return 'Pickup Scheduled'
+      case 'pickup_completed':
+        return 'Picked Up'
+      case 'in_transit':
+        return 'In Transit'
+      case 'out_for_delivery':
+        return 'Out for Delivery'
+      case 'delivered':
+        return 'Delivered'
+      case 'rto_initiated':
+        return 'RTO Initiated'
+      case 'rto_delivered':
+        return 'RTO Delivered'
+      case 'cancelled':
+        return 'Shipment Cancelled'
+      case 'failed':
+        return 'Fulfillment Failed'
+      default:
+        return 'Not Initiated'
+    }
+  }
+
+  const handleCopyAwb = (awb: string) => {
+    if (!awb) return
+    navigator.clipboard.writeText(awb)
+    setCopiedAwb(true)
+    setTimeout(() => setCopiedAwb(false), 2000)
+  }
+
+  const handleRetryShipment = async () => {
+    if (!order) return
+    setIsRetryingShipment(true)
+    setShippingFeedback(null)
+    try {
+      const res = await retryAdminOrderShipment(order.orderId)
+      if (res.success) {
+        setShippingFeedback({ type: 'success', message: res.message || 'Shipment fulfillment retried successfully.' })
+        await loadOrder()
+      } else {
+        setShippingFeedback({ type: 'error', message: res.message || 'Failed to retry shipment.' })
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error retrying shipment.'
+      setShippingFeedback({ type: 'error', message: msg })
+    } finally {
+      setIsRetryingShipment(false)
+    }
+  }
+
+  const handleTrackShipment = async () => {
+    if (!order) return
+    setIsTrackingLoading(true)
+    setShippingFeedback(null)
+    try {
+      const res = await trackAdminOrderShipment(order.orderId)
+      if (res.success) {
+        setLiveTrackingData({
+          currentStatus: res.currentStatus,
+          currentLocation: res.currentLocation,
+          etd: res.etd,
+          scans: res.scans || [],
+        })
+        setTrackingModalOpen(true)
+        await loadOrder()
+      } else {
+        setShippingFeedback({ type: 'error', message: res.message || 'Failed to retrieve tracking data.' })
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error retrieving tracking data.'
+      setShippingFeedback({ type: 'error', message: msg })
+    } finally {
+      setIsTrackingLoading(false)
+    }
+  }
+
+  const handleDownloadLabel = async () => {
+    if (!order) return
+    if (order.shiprocketOrder?.labelUrl) {
+      window.open(order.shiprocketOrder.labelUrl, '_blank', 'noopener,noreferrer')
+      return
+    }
+    setIsLabelLoading(true)
+    setShippingFeedback(null)
+    try {
+      const res = await getAdminOrderShippingLabel(order.orderId)
+      if (res.success && res.labelUrl) {
+        window.open(res.labelUrl, '_blank', 'noopener,noreferrer')
+        await loadOrder()
+      } else {
+        setShippingFeedback({ type: 'error', message: res.message || 'Failed to generate shipping label.' })
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error generating shipping label.'
+      setShippingFeedback({ type: 'error', message: msg })
+    } finally {
+      setIsLabelLoading(false)
+    }
+  }
+
+  const handleDownloadInvoice = async () => {
+    if (!order) return
+    if (order.shiprocketOrder?.invoiceUrl) {
+      window.open(order.shiprocketOrder.invoiceUrl, '_blank', 'noopener,noreferrer')
+      return
+    }
+    setIsInvoiceLoading(true)
+    setShippingFeedback(null)
+    try {
+      const res = await getAdminOrderInvoice(order.orderId)
+      if (res.success && res.invoiceUrl) {
+        window.open(res.invoiceUrl, '_blank', 'noopener,noreferrer')
+        await loadOrder()
+      } else {
+        setShippingFeedback({ type: 'error', message: res.message || 'Failed to generate invoice.' })
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error generating invoice.'
+      setShippingFeedback({ type: 'error', message: msg })
+    } finally {
+      setIsInvoiceLoading(false)
+    }
+  }
+
+  const handleSchedulePickup = async () => {
+    if (!order) return
+    setIsPickupLoading(true)
+    setShippingFeedback(null)
+    try {
+      const res = await scheduleAdminOrderPickup(order.orderId, pickupDateInput || undefined)
+      if (res.success) {
+        setShippingFeedback({
+          type: 'success',
+          message: `Pickup scheduled successfully! Token: ${res.pickupTokenNumber || 'Assigned'}${res.pickupScheduledDate ? ` (Date: ${res.pickupScheduledDate})` : ''}`,
+        })
+        setPickupModalOpen(false)
+        await loadOrder()
+      } else {
+        setShippingFeedback({ type: 'error', message: res.message || 'Failed to schedule pickup.' })
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error scheduling pickup.'
+      setShippingFeedback({ type: 'error', message: msg })
+    } finally {
+      setIsPickupLoading(false)
+    }
+  }
 
   const handleStatusSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -654,6 +866,168 @@ export const AdminOrderDetail: React.FC = () => {
 
         {/* Right Column: Administrative Actions & Controls */}
         <aside className="admin-detail-sidebar">
+          {/* Shiprocket Logistics & Fulfillment Section */}
+          <div className="admin-card-section admin-shiprocket-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.75rem' }}>
+              <h3 className="admin-section-title" style={{ margin: 0 }}>
+                Shiprocket Fulfillment
+              </h3>
+              <span className={`status-badge ${getShiprocketStatusBadgeClass(order.shiprocketOrder?.status)}`}>
+                {formatShiprocketStatusDisplay(order.shiprocketOrder?.status)}
+              </span>
+            </div>
+
+            {shippingFeedback && (
+              <div
+                className={`admin-feedback-alert ${
+                  shippingFeedback.type === 'success' ? 'feedback-success' : 'feedback-error'
+                }`}
+                role="alert"
+                style={{ marginBottom: '0.75rem' }}
+              >
+                {shippingFeedback.message}
+              </div>
+            )}
+
+            {order.shiprocketOrder?.lastError && (
+              <div className="admin-feedback-alert feedback-error" role="alert" style={{ marginBottom: '0.75rem' }}>
+                <strong>Logistics Error:</strong> {order.shiprocketOrder.lastError}
+              </div>
+            )}
+
+            <div className="admin-shiprocket-meta-grid">
+              <div className="admin-meta-row">
+                <span className="text-muted">Shiprocket Order ID:</span>
+                <span className="font-mono text-white font-medium">
+                  {order.shiprocketOrder?.orderId ? `#${order.shiprocketOrder.orderId}` : 'Not created'}
+                </span>
+              </div>
+              <div className="admin-meta-row">
+                <span className="text-muted">Shipment ID:</span>
+                <span className="font-mono text-white font-medium">
+                  {order.shiprocketOrder?.shipmentId ? `#${order.shiprocketOrder.shipmentId}` : 'Not assigned'}
+                </span>
+              </div>
+              <div className="admin-meta-row">
+                <span className="text-muted">Courier Partner:</span>
+                <span className="font-medium text-white">
+                  {order.shiprocketOrder?.courierName || 'Not assigned'}
+                </span>
+              </div>
+              <div className="admin-meta-row">
+                <span className="text-muted">AWB Code:</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <span className="font-mono text-white font-bold">
+                    {order.shiprocketOrder?.awbCode || order.tracking?.trackingNumber || 'Pending'}
+                  </span>
+                  {(order.shiprocketOrder?.awbCode || order.tracking?.trackingNumber) && (
+                    <button
+                      type="button"
+                      className="admin-btn-copy"
+                      onClick={() => handleCopyAwb(order.shiprocketOrder?.awbCode || order.tracking?.trackingNumber || '')}
+                      title="Copy AWB code"
+                    >
+                      {copiedAwb ? 'Copied' : 'Copy'}
+                    </button>
+                  )}
+                </div>
+              </div>
+              {order.shiprocketOrder?.weightKg && (
+                <div className="admin-meta-row">
+                  <span className="text-muted">Package Specs:</span>
+                  <span className="text-white text-xs">
+                    {order.shiprocketOrder.weightKg} kg ({order.shiprocketOrder.dimensions?.length || 25}×{order.shiprocketOrder.dimensions?.breadth || 20}×{order.shiprocketOrder.dimensions?.height || 3} cm)
+                  </span>
+                </div>
+              )}
+              <div className="admin-meta-row">
+                <span className="text-muted">Pickup Status:</span>
+                <span className="text-white text-xs">
+                  {order.shiprocketOrder?.pickupTokenNumber
+                    ? `Token: ${order.shiprocketOrder.pickupTokenNumber}${order.shiprocketOrder.pickupScheduledDate ? ` (${order.shiprocketOrder.pickupScheduledDate})` : ''}`
+                    : 'Not scheduled'}
+                </span>
+              </div>
+              {order.shiprocketOrder?.currentTrackingStatus && (
+                <div className="admin-meta-row">
+                  <span className="text-muted">Live Tracking:</span>
+                  <span className="text-white text-xs font-semibold">
+                    {order.shiprocketOrder.currentTrackingStatus}
+                    {order.shiprocketOrder.lastTrackingSyncAt && (
+                      <span className="text-muted" style={{ display: 'block', fontSize: '0.68rem', fontWeight: 'normal' }}>
+                        (Synced {formatDate(order.shiprocketOrder.lastTrackingSyncAt)})
+                      </span>
+                    )}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons Grid */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.85rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-secondary"
+                  onClick={handleTrackShipment}
+                  disabled={isTrackingLoading || (!order.shiprocketOrder?.awbCode && !order.tracking?.trackingNumber)}
+                  title={(!order.shiprocketOrder?.awbCode && !order.tracking?.trackingNumber) ? 'Assign AWB first to track' : 'Sync live tracking from Shiprocket'}
+                >
+                  {isTrackingLoading ? 'Syncing...' : 'Sync Tracking'}
+                </button>
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-secondary"
+                  onClick={handleDownloadLabel}
+                  disabled={isLabelLoading || !order.shiprocketOrder?.shipmentId}
+                  title={!order.shiprocketOrder?.shipmentId ? 'Create shipment first to generate label' : 'View or download shipping label'}
+                >
+                  {isLabelLoading ? 'Generating...' : order.shiprocketOrder?.labelUrl ? 'View Label' : 'Generate Label'}
+                </button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-secondary"
+                  onClick={handleDownloadInvoice}
+                  disabled={isInvoiceLoading || !order.shiprocketOrder?.orderId}
+                  title={!order.shiprocketOrder?.orderId ? 'Create order first to generate invoice' : 'View or download invoice'}
+                >
+                  {isInvoiceLoading ? 'Generating...' : order.shiprocketOrder?.invoiceUrl ? 'View Invoice' : 'Generate Invoice'}
+                </button>
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-secondary"
+                  onClick={() => setPickupModalOpen(true)}
+                  disabled={isPickupLoading || !order.shiprocketOrder?.shipmentId || Boolean(order.shiprocketOrder?.pickupTokenNumber)}
+                  title={
+                    !order.shiprocketOrder?.shipmentId
+                      ? 'Shipment must exist before scheduling pickup'
+                      : order.shiprocketOrder?.pickupTokenNumber
+                        ? 'Pickup already scheduled'
+                        : 'Schedule courier pickup'
+                  }
+                >
+                  {order.shiprocketOrder?.pickupTokenNumber ? 'Pickup Scheduled' : 'Schedule Pickup'}
+                </button>
+              </div>
+
+              {(!order.shiprocketOrder?.awbCode || order.shiprocketOrder?.status === 'failed') && (
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-primary full-width"
+                  onClick={handleRetryShipment}
+                  disabled={isRetryingShipment || order.payment?.status !== 'paid'}
+                  title={order.payment?.status !== 'paid' ? 'Order must be paid before fulfilling' : 'Retry order creation & AWB assignment'}
+                  style={{ marginTop: '0.2rem' }}
+                >
+                  {isRetryingShipment ? 'Fulfilling...' : 'Retry / Fulfill Shipment'}
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Order Fulfillment Section */}
           <div className="admin-card-section">
             <h3 className="admin-section-title">Order Fulfillment</h3>
@@ -807,6 +1181,148 @@ export const AdminOrderDetail: React.FC = () => {
             </div>
           )}
         </aside>
+      {/* Shiprocket Tracking Modal */}
+      {trackingModalOpen && (
+        <div className="admin-modal-overlay" role="dialog" aria-modal="true">
+          <div className="admin-modal-card" style={{ maxWidth: '600px', width: '92%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
+              <h3 className="admin-modal-title" style={{ margin: 0 }}>
+                Real-Time Tracking Scans
+              </h3>
+              <button
+                type="button"
+                className="admin-btn-action"
+                onClick={() => setTrackingModalOpen(false)}
+                style={{ padding: '0.2rem 0.6rem' }}
+              >
+                ✕ Close
+              </button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.65rem', marginBottom: '1rem', background: '#121214', padding: '0.75rem', borderRadius: '6px' }}>
+              <div>
+                <span className="text-muted text-xs block">Current Status</span>
+                <span className="font-semibold text-white text-sm">
+                  {liveTrackingData?.currentStatus || order?.shiprocketOrder?.currentTrackingStatus || 'In Progress'}
+                </span>
+              </div>
+              <div>
+                <span className="text-muted text-xs block">Current Location</span>
+                <span className="font-medium text-white text-sm">
+                  {liveTrackingData?.currentLocation || 'In Transit'}
+                </span>
+              </div>
+              {liveTrackingData?.etd && (
+                <div>
+                  <span className="text-muted text-xs block">Estimated Delivery</span>
+                  <span className="font-medium text-emerald-400 text-sm">{liveTrackingData.etd}</span>
+                </div>
+              )}
+            </div>
+
+            <h4 style={{ fontSize: '0.82rem', fontWeight: 600, color: '#d4d4d8', marginBottom: '0.5rem' }}>
+              Activity Scan History ({liveTrackingData?.scans?.length || 0})
+            </h4>
+
+            {(!liveTrackingData?.scans || liveTrackingData.scans.length === 0) ? (
+              <p className="text-muted text-sm" style={{ padding: '1rem 0', textAlign: 'center' }}>
+                No tracking scans recorded yet by the courier partner.
+              </p>
+            ) : (
+              <div className="admin-tracking-scans-timeline">
+                {liveTrackingData.scans.map((scan, idx) => (
+                  <div key={idx} className="admin-scan-card">
+                    <div className="admin-scan-activity">{scan.activity}</div>
+                    <div className="admin-scan-meta">
+                      <span>{scan.location || 'Hub / Sorting Center'}</span>
+                      <span>{formatDate(scan.date)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="admin-modal-actions" style={{ marginTop: '1.25rem' }}>
+              <button
+                type="button"
+                className="admin-btn admin-btn-secondary"
+                onClick={() => setTrackingModalOpen(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Shiprocket Courier Pickup Confirmation Modal */}
+      {pickupModalOpen && (
+        <div className="admin-modal-overlay" role="dialog" aria-modal="true">
+          <div className="admin-modal-card" style={{ maxWidth: '520px', width: '92%' }}>
+            <h3 className="admin-modal-title">Schedule Courier Pickup</h3>
+            <p className="admin-modal-body">
+              Confirm courier pickup request for Order{' '}
+              <strong className="text-white font-mono">{order?.orderId}</strong> (Shipment ID:{' '}
+              <strong className="text-white font-mono">#{order?.shiprocketOrder?.shipmentId}</strong>).
+            </p>
+
+            <div style={{ background: '#121214', padding: '0.85rem', borderRadius: '6px', margin: '0.85rem 0', display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.82rem' }}>
+              <div className="admin-meta-row">
+                <span className="text-muted">Courier:</span>
+                <span className="text-white font-medium">{order?.shiprocketOrder?.courierName || 'Auto-Assigned Courier'}</span>
+              </div>
+              <div className="admin-meta-row">
+                <span className="text-muted">AWB Code:</span>
+                <span className="font-mono text-white">{order?.shiprocketOrder?.awbCode || order?.tracking?.trackingNumber}</span>
+              </div>
+              <div className="admin-meta-row">
+                <span className="text-muted">Pickup Postcode:</span>
+                <span className="text-white">495004 (Bilaspur Warehouse)</span>
+              </div>
+            </div>
+
+            <div className="admin-form-group" style={{ marginBottom: '1rem' }}>
+              <label htmlFor="pickup-date-input" className="admin-form-label">
+                Scheduled Pickup Date
+              </label>
+              <input
+                id="pickup-date-input"
+                type="date"
+                className="admin-form-input"
+                value={pickupDateInput}
+                onChange={(e) => setPickupDateInput(e.target.value)}
+                disabled={isPickupLoading}
+              />
+              <span className="text-muted text-xs" style={{ marginTop: '0.25rem', display: 'block' }}>
+                Couriers typically pick up between 11:00 AM and 6:00 PM on the scheduled date.
+              </span>
+            </div>
+
+            <div className="admin-feedback-alert feedback-error" style={{ marginBottom: '1rem', fontSize: '0.78rem' }}>
+              <strong>Notice:</strong> This action notifies Shiprocket and creates a live pickup token with the assigned courier partner.
+            </div>
+
+            <div className="admin-modal-actions">
+              <button
+                type="button"
+                className="admin-btn admin-btn-secondary"
+                onClick={() => setPickupModalOpen(false)}
+                disabled={isPickupLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="admin-btn admin-btn-primary"
+                onClick={handleSchedulePickup}
+                disabled={isPickupLoading}
+              >
+                {isPickupLoading ? 'Scheduling...' : 'Confirm & Schedule Pickup'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   )

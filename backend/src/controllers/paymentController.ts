@@ -10,6 +10,7 @@ import {
 import { Order } from '../models/Order'
 import { getAuthenticatedUser, AuthResult } from '../middleware/authMiddleware'
 import { sendOrderPaidNotifications } from '../services/notificationService'
+import { triggerShipmentWorkflow } from '../services/shipmentAutomationService'
 
 /**
  * Verifies that the requester has legitimate ownership over the KALA order.
@@ -353,6 +354,11 @@ export const verifyRazorpayPayment = async (req: Request, res: Response): Promis
           sendOrderPaidNotifications(order).catch((notifErr) => {
             console.error('[PaymentController] sendOrderPaidNotifications error:', notifErr)
           })
+
+          // Trigger automatic Shiprocket shipment creation workflow (Phases 3 & 4)
+          triggerShipmentWorkflow(cleanOrderId).catch((shipErr) => {
+            console.error(`[PaymentController] triggerShipmentWorkflow error for ${cleanOrderId}:`, shipErr)
+          })
         }
       }
     }
@@ -446,6 +452,11 @@ export const handleRazorpayWebhook = async (req: Request, res: Response): Promis
         // Idempotent notifications (will not send duplicates if already sent)
         sendOrderPaidNotifications(order).catch((err) => {
           console.error('[PaymentController] Webhook notification dispatch error:', err)
+        })
+
+        // Trigger automatic Shiprocket shipment creation workflow (Phases 3 & 4)
+        triggerShipmentWorkflow(order.orderId).catch((shipErr) => {
+          console.error(`[PaymentController] Webhook triggerShipmentWorkflow error for ${order.orderId}:`, shipErr)
         })
       }
     }

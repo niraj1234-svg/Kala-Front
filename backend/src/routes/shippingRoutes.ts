@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import rateLimit from 'express-rate-limit'
 import { getServiceability } from '../controllers/shippingController'
+import shiprocketWebhookRouter from './shiprocketWebhookRoutes'
 
 export const shippingRouter = Router()
 
@@ -22,7 +23,10 @@ export const shippingLimiter = rateLimit({
   },
 })
 
-// GET /api/shipping/serviceability
+// GET /api/shipping/serviceability (Rate limited public inquiry endpoint)
 shippingRouter.get('/serviceability', shippingLimiter, getServiceability)
+
+// POST /api/shipping/webhook (Authenticated Shiprocket webhook endpoint - bypasses IP rate limiter)
+shippingRouter.use('/webhook', shiprocketWebhookRouter)
 
 export default shippingRouter

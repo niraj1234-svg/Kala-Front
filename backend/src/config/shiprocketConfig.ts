@@ -120,3 +120,55 @@ export const DEFAULT_PACKAGE_DIMENSIONS: PackageDimensions = {
   breadth: 20,
   height: 3,
 }
+
+/**
+ * Standard Shiprocket Pickup Location nickname.
+ * Configured under Shiprocket Dashboard -> Settings -> Pickup Address.
+ * Defaults to 'Primary' or warehouse location.
+ */
+export const DEFAULT_SHIPROCKET_PICKUP_LOCATION = 'Primary'
+
+/**
+ * Retrieves the configured Shiprocket pickup location nickname.
+ */
+export function getShiprocketPickupLocation(): string {
+  const envLocation = sanitizeCredential(process.env.SHIPROCKET_PICKUP_LOCATION)
+  return envLocation || DEFAULT_SHIPROCKET_PICKUP_LOCATION
+}
+
+/**
+ * Retrieves the configured Shiprocket webhook authentication token / secret.
+ * Prioritizes SHIPROCKET_WEBHOOK_TOKEN (Render environment variable),
+ * with backward-compatible fallback to SHIPROCKET_WEBHOOK_SECRET.
+ */
+export function getShiprocketWebhookSecret(): string {
+  return (
+    sanitizeCredential(process.env.SHIPROCKET_WEBHOOK_TOKEN) ||
+    sanitizeCredential(process.env.SHIPROCKET_WEBHOOK_SECRET)
+  )
+}
+
+/**
+ * Production Safety Gate: Automatic Shipment Creation.
+ * Defaults to FALSE. When false, order payment verification will NOT create
+ * a Shiprocket order until explicitly enabled in production.
+ */
+export function isShiprocketAutoFulfillmentEnabled(): boolean {
+  return process.env.SHIPROCKET_AUTO_FULFILLMENT_ENABLED === 'true'
+}
+
+/**
+ * Production Safety Gate: Automatic AWB Assignment.
+ * Defaults to FALSE. When false, AWB is not assigned automatically upon order creation.
+ */
+export function isShiprocketAutoAwbEnabled(): boolean {
+  return process.env.SHIPROCKET_AUTO_AWB_ENABLED === 'true'
+}
+
+/**
+ * Production Safety Gate: Automatic Courier Pickup Scheduling.
+ * Defaults to FALSE. When false, courier pickup is not scheduled automatically.
+ */
+export function isShiprocketAutoPickupEnabled(): boolean {
+  return process.env.SHIPROCKET_AUTO_PICKUP_ENABLED === 'true'
+}

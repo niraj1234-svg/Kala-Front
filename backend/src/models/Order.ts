@@ -123,6 +123,65 @@ export interface IOrderBundle {
   slotCount: number
 }
 
+export type ShiprocketShipmentStatus =
+  | 'pending'
+  | 'created'
+  | 'awb_assigned'
+  | 'label_generated'
+  | 'pickup_scheduled'
+  | 'pickup_generated'
+  | 'in_transit'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'rto_initiated'
+  | 'rto_delivered'
+  | 'cancelled'
+  | 'failed'
+
+export interface IShiprocketTrackingScan {
+  date: string
+  status: string
+  activity: string
+  location: string
+  srStatus?: string
+}
+
+export interface IShiprocketOrderRecord {
+  orderId?: number | string
+  shipmentId?: number | string
+  status: ShiprocketShipmentStatus
+  statusCode?: number
+  channelOrderId?: string
+  courierId?: number
+  courierName?: string
+  awbCode?: string
+  labelUrl?: string
+  labelGeneratedAt?: Date
+  invoiceUrl?: string
+  invoiceGeneratedAt?: Date
+  manifestUrl?: string
+  pickupScheduledDate?: string
+  pickupTokenNumber?: string
+  pickupGeneratedAt?: Date
+  routingCode?: string
+  weightKg?: number
+  dimensions?: {
+    length: number
+    breadth: number
+    height: number
+  }
+  pickupLocation?: string
+  trackingUrl?: string
+  currentTrackingStatus?: string
+  trackingScans?: IShiprocketTrackingScan[]
+  lastTrackingSyncAt?: Date
+  lastError?: string
+  retryCount?: number
+  lastAttemptAt?: Date
+  createdAt?: Date
+  updatedAt?: Date
+}
+
 export interface IOrder extends Document {
   orderId: string
   userId?: string
@@ -139,6 +198,7 @@ export interface IOrder extends Document {
   payment?: IOrderPayment
   status: OrderStatus
   tracking?: ITracking
+  shiprocketOrder?: IShiprocketOrderRecord
   statusHistory?: IOrderStatusHistory[]
   createdAt: Date
   updatedAt: Date
@@ -337,6 +397,74 @@ const BundleSchema = new Schema(
   { _id: false }
 )
 
+const ShiprocketTrackingScanSchema = new Schema(
+  {
+    date: { type: String },
+    status: { type: String },
+    activity: { type: String },
+    location: { type: String },
+    srStatus: { type: String },
+  },
+  { _id: false }
+)
+
+const ShiprocketOrderRecordSchema = new Schema(
+  {
+    orderId: { type: Schema.Types.Mixed },
+    shipmentId: { type: Schema.Types.Mixed },
+    status: {
+      type: String,
+      default: 'pending',
+      enum: [
+        'pending',
+        'created',
+        'awb_assigned',
+        'label_generated',
+        'pickup_scheduled',
+        'pickup_generated',
+        'in_transit',
+        'out_for_delivery',
+        'delivered',
+        'rto_initiated',
+        'rto_delivered',
+        'cancelled',
+        'failed',
+      ],
+    },
+    statusCode: { type: Number },
+    channelOrderId: { type: String },
+    courierId: { type: Number },
+    courierName: { type: String },
+    awbCode: { type: String },
+    labelUrl: { type: String },
+    labelGeneratedAt: { type: Date },
+    invoiceUrl: { type: String },
+    invoiceGeneratedAt: { type: Date },
+    manifestUrl: { type: String },
+    pickupScheduledDate: { type: String },
+    pickupTokenNumber: { type: String },
+    pickupGeneratedAt: { type: Date },
+    routingCode: { type: String },
+    weightKg: { type: Number },
+    dimensions: {
+      length: { type: Number },
+      breadth: { type: Number },
+      height: { type: Number },
+    },
+    pickupLocation: { type: String },
+    trackingUrl: { type: String },
+    currentTrackingStatus: { type: String },
+    trackingScans: [ShiprocketTrackingScanSchema],
+    lastTrackingSyncAt: { type: Date },
+    lastError: { type: String },
+    retryCount: { type: Number, default: 0 },
+    lastAttemptAt: { type: Date },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+  },
+  { _id: false }
+)
+
 const OrderSchema = new Schema<IOrder>(
   {
     orderId: {
@@ -487,6 +615,11 @@ OrderSchema.index({ 'coupon.code': 1 })
 OrderSchema.index({ 'payment.razorpayPaymentId': 1 })
 OrderSchema.index({ 'payment.razorpayOrderId': 1 })
 OrderSchema.index({ createdAt: -1 })
+
+OrderSchema.index({ 'shiprocketOrder.orderId': 1 })
+OrderSchema.index({ 'shiprocketOrder.shipmentId': 1 })
+OrderSchema.index({ 'shiprocketOrder.awbCode': 1 })
+OrderSchema.index({ 'shiprocketOrder.status': 1 })
 
 export const Order = mongoose.model<IOrder>('Order', OrderSchema)
 export default Order
