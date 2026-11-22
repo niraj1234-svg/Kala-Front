@@ -10,12 +10,14 @@ import {
 } from './shiprocketShipmentService'
 import {
   checkCourierServiceability,
+  isValidPincode,
 } from './shiprocketServiceabilityService'
 import {
   DEFAULT_PACKAGE_DIMENSIONS,
   DEFAULT_SHIPMENT_WEIGHT_KG,
   MIN_SHIPMENT_WEIGHT_KG,
   MAX_SHIPMENT_WEIGHT_KG,
+  SHIPROCKET_PICKUP_POSTCODE,
   isShiprocketAutoFulfillmentEnabled,
   isShiprocketAutoAwbEnabled,
   isShiprocketAutoPickupEnabled,
@@ -49,13 +51,12 @@ export interface ShipmentWorkflowResult {
 const inFlightWorkflows = new Map<string, Promise<ShipmentWorkflowResult>>()
 
 /**
- * Normalizes a product's finished garment weight into kilograms.
+ * Normalizes a product's configured weight into kilograms.
  *
  * Unit Resolution Rules:
- * - Standardized convention: All weights entered via Admin or Vendor interface are FINISHED PRODUCT WEIGHT IN GRAMS (e.g. 180g, 250g, 280g, 650g, 700g).
- * - Values > 10 are treated as grams and converted to kilograms (e.g. 280g -> 0.28kg, 650g -> 0.65kg, 700g -> 0.70kg).
- * - Values > 0 and <= 10 are treated as kilograms directly (legacy/decimal format support e.g. 0.5kg, 0.8kg).
- * - Missing, zero, negative, or not finite values return undefined (caller falls back to DEFAULT_SHIPMENT_WEIGHT_KG = 0.5kg).
+ * - If weight > 10, it is treated as grams (e.g. 280g -> 0.28kg, 650g -> 0.65kg).
+ * - If weight is > 0 and <= 10, it is treated as kilograms (e.g. 0.5kg, 0.8kg).
+ * - If weight is missing, zero, negative, or not finite, returns undefined (caller falls back to 0.5kg).
  */
 export function normalizeProductWeightKg(rawWeight: unknown): number | undefined {
   if (rawWeight === null || rawWeight === undefined) return undefined
@@ -165,6 +166,16 @@ async function executeShipmentWorkflow(
     }
   }
 
+  // 0. Cancelled Order Check: Never fulfill a cancelled order
+  if (order.status === 'cancelled') {
+    return {
+      success: false,
+      kalaOrderId: cleanOrderId,
+      status: 'cancelled',
+      message: 'Order is cancelled. Shipment creation is aborted.',
+    }
+  }
+
   // 1. Strict Payment Check: Shipment MUST NEVER be created before verified payment
   const isPaid = order.payment?.status === 'paid' || order.status === 'confirmed' || order.status === 'processing'
   if (!isPaid) {
@@ -241,6 +252,37 @@ async function executeShipmentWorkflow(
     let shipmentId = order.shiprocketOrder.shipmentId
 
     if (!shiprocketOrderId || !shipmentId) {
+      // Validate customer delivery PIN code
+      const deliveryPincode = order.shippingAddress?.pincode?.trim()
+      if (!isValidPincode(deliveryPincode)) {
+        order.shiprocketOrder.status = 'failed'
+        order.shiprocketOrder.lastError = `Invalid delivery PIN code: '${deliveryPincode}'. Must be a valid 6-digit Indian postal code.`
+        order.shiprocketOrder.updatedAt = new Date()
+        await order.save()
+
+        return {
+          success: false,
+          kalaOrderId: cleanOrderId,
+          status: 'failed',
+          message: `Shiprocket order creation aborted: Invalid delivery PIN code '${deliveryPincode}'.`,
+        }
+      }
+
+      // Validate warehouse pickup PIN code
+      if (!isValidPincode(SHIPROCKET_PICKUP_POSTCODE)) {
+        order.shiprocketOrder.status = 'failed'
+        order.shiprocketOrder.lastError = `Invalid warehouse pickup PIN code: '${SHIPROCKET_PICKUP_POSTCODE}'. Must be a valid 6-digit Indian postal code.`
+        order.shiprocketOrder.updatedAt = new Date()
+        await order.save()
+
+        return {
+          success: false,
+          kalaOrderId: cleanOrderId,
+          status: 'failed',
+          message: `Shiprocket order creation aborted: Invalid pickup PIN code '${SHIPROCKET_PICKUP_POSTCODE}'.`,
+        }
+      }
+
       const createResult = await createShiprocketOrder(
         {
           orderId: cleanOrderId,
@@ -511,6 +553,25 @@ export async function retryShipmentWorkflow(
       kalaOrderId: cleanOrderId,
       status: 'failed',
       message: `Order not found with ID '${cleanOrderId}'.`,
+    }
+  }
+
+  if (order.status === 'cancelled') {
+    return {
+      success: false,
+      kalaOrderId: cleanOrderId,
+      status: 'cancelled',
+      message: 'Cannot retry fulfillment for a cancelled order.',
+    }
+  }
+
+  const isPaid = order.payment?.status === 'paid' || order.status === 'confirmed' || order.status === 'processing'
+  if (!isPaid) {
+    return {
+      success: false,
+      kalaOrderId: cleanOrderId,
+      status: order.shiprocketOrder?.status || 'pending',
+      message: 'Payment not verified: Shipment retry is only permitted for paid orders.',
     }
   }
 

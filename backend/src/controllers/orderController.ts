@@ -812,12 +812,19 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         },
         ...(bundleData ? { bundle: bundleData } : {}),
         ...(couponSnapshot ? { coupon: couponSnapshot } : {}),
-        status: 'pending',
+        status: total === 0 ? 'confirmed' : 'pending',
+        payment: total === 0 ? {
+          method: 'zero_value_checkout',
+          status: 'paid',
+          paidAt: new Date(),
+        } : {
+          status: 'pending',
+        },
         statusHistory: [
           {
-            status: 'pending',
+            status: total === 0 ? 'confirmed' : 'pending',
             changedAt: new Date(),
-            note: 'Order placed by customer',
+            note: total === 0 ? 'Order confirmed via zero-value checkout (100% discount)' : 'Order placed by customer',
           },
         ],
       })
