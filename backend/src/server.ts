@@ -34,6 +34,7 @@ import adminVendorRouter from './routes/adminVendorRoutes'
 import marketplaceRouter from './routes/marketplaceRoutes'
 import shopRouter from './routes/shopRoutes'
 import adminSettingsRouter from './routes/adminSettingsRoutes'
+import shippingRouter from './routes/shippingRoutes'
 
 // Validate required environment configuration at startup
 validateEnv()
@@ -116,6 +117,7 @@ app.use('/api/vendors', vendorRouter)
 app.use('/api/vendor', vendorRouter)
 app.use('/api/marketplace', marketplaceRouter)
 app.use('/api/shops', shopRouter)
+app.use('/api/shipping', shippingRouter)
 
 // Admin Management Routes (Protected by requireAuth + requireAdmin)
 app.use('/api/admin/dashboard', adminDashboardRouter)

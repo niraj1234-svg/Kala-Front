@@ -81,3 +81,42 @@ export function getMaskedShiprocketEmail(email?: string): string {
  * Shiprocket API base URL for external logistics integration.
  */
 export const SHIPROCKET_API_BASE_URL = 'https://apiv2.shiprocket.in/v1/external'
+
+/**
+ * Package Dimensions Interface for Logistics Rate Calculations
+ */
+export interface PackageDimensions {
+  length: number
+  breadth: number
+  height: number
+}
+
+/**
+ * Standard KALA Manufacturing & Fulfillment Pickup Postcode.
+ * Warehouse location: Bilaspur, Chhattisgarh, India (495004).
+ */
+export const SHIPROCKET_PICKUP_POSTCODE = '495004'
+
+/**
+ * Default shipment weight in kilograms for standard single apparel items (500g).
+ */
+export const DEFAULT_SHIPMENT_WEIGHT_KG = 0.5
+
+/**
+ * Minimum permitted shipment weight in kilograms (100g).
+ */
+export const MIN_SHIPMENT_WEIGHT_KG = 0.1
+
+/**
+ * Maximum permitted single-parcel shipment weight in kilograms for standard apparel (1kg).
+ */
+export const MAX_SHIPMENT_WEIGHT_KG = 1.0
+
+/**
+ * Default package dimensions in centimeters for standard apparel mailer bag (25cm x 20cm x 3cm).
+ */
+export const DEFAULT_PACKAGE_DIMENSIONS: PackageDimensions = {
+  length: 25,
+  breadth: 20,
+  height: 3,
+}
