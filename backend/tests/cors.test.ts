@@ -108,6 +108,14 @@ async function runTests() {
   console.log('Test Suite 1: getAllowedOrigins() Allowlist Resolution')
   const origins = getAllowedOrigins()
   assert(
+    origins.includes('https://kala-front-git-qikink-live-integration-niraj1234-svgs-projects.vercel.app'),
+    'Approved branch preview origin (kala-front-git-qikink-live-integration) is present in allowedOrigins'
+  )
+  assert(
+    origins.includes('https://project-wmdn7-git-qikink-live-integration-niraj1234-svgs-projects.vercel.app'),
+    'Approved branch preview origin (project-wmdn7-git-qikink-live-integration) is present in allowedOrigins'
+  )
+  assert(
     origins.includes('https://kala-front-oa3puwsvr-niraj1234-svgs-projects.vercel.app'),
     'Approved Vercel preview origin is present in allowedOrigins'
   )
@@ -132,13 +140,35 @@ async function runTests() {
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', () => resolve()))
 
   try {
+    const branchPreviewOrigin = 'https://kala-front-git-qikink-live-integration-niraj1234-svgs-projects.vercel.app'
     const previewOrigin = 'https://kala-front-oa3puwsvr-niraj1234-svgs-projects.vercel.app'
     const prodOrigin = 'https://www.kalaofficial.store'
     const prodApexOrigin = 'https://kalaofficial.store'
     const unapprovedOrigin = 'https://malicious-attacker-domain.com'
 
-    // Case A: Approved Vercel preview origin on /api/auth/admin/login (POST)
-    console.log('\n  Case A: Approved Vercel preview origin on POST /api/auth/admin/login')
+    // Case A1: Approved branch preview origin on /api/auth/admin/login (POST)
+    console.log('\n  Case A1: Approved branch preview origin on POST /api/auth/admin/login')
+    const resA1 = await sendOptionsRequest(server, '/api/auth/admin/login', branchPreviewOrigin, 'POST', 'content-type')
+    assert(resA1.statusCode === 204, `Preflight status code is 204 (got ${resA1.statusCode})`)
+    assert(
+      resA1.headers['access-control-allow-origin'] === branchPreviewOrigin,
+      `Access-Control-Allow-Origin header exactly equals ${branchPreviewOrigin}`
+    )
+    assert(
+      resA1.headers['access-control-allow-credentials'] === 'true',
+      'Access-Control-Allow-Credentials header is "true"'
+    )
+    assert(
+      (resA1.headers['access-control-allow-methods'] || '').includes('POST'),
+      'Access-Control-Allow-Methods includes POST'
+    )
+    assert(
+      (resA1.headers['access-control-allow-headers'] || '').includes('content-type'),
+      'Access-Control-Allow-Headers includes content-type'
+    )
+
+    // Case A2: Approved Vercel preview origin on /api/auth/admin/login (POST)
+    console.log('\n  Case A2: Approved Vercel preview origin on POST /api/auth/admin/login')
     const resA = await sendOptionsRequest(server, '/api/auth/admin/login', previewOrigin, 'POST', 'content-type')
     assert(resA.statusCode === 204, `Preflight status code is 204 (got ${resA.statusCode})`)
     assert(
@@ -188,8 +218,8 @@ async function runTests() {
       'Unapproved origin does NOT receive Access-Control-Allow-Origin header'
     )
 
-    // Case D: All 3 problem endpoints with approved preview origin
-    console.log('\n  Case D: Approved preview origin on all 3 target endpoints')
+    // Case D: All 3 problem endpoints with approved preview origins
+    console.log('\n  Case D: Approved branch preview origin on all 3 target endpoints')
     const endpoints = [
       { path: '/api/visitors/first-visit', method: 'GET' },
       { path: '/api/products', method: 'GET' },
@@ -197,10 +227,20 @@ async function runTests() {
     ]
 
     for (const ep of endpoints) {
-      const resD = await sendOptionsRequest(server, ep.path, previewOrigin, ep.method, 'content-type')
+      const resD1 = await sendOptionsRequest(server, ep.path, branchPreviewOrigin, ep.method, 'content-type')
       assert(
-        resD.headers['access-control-allow-origin'] === previewOrigin,
-        `Endpoint ${ep.method} ${ep.path} allows preview origin`
+        resD1.headers['access-control-allow-origin'] === branchPreviewOrigin,
+        `Endpoint ${ep.method} ${ep.path} allows branch preview origin`
+      )
+      assert(
+        resD1.headers['access-control-allow-credentials'] === 'true',
+        `Endpoint ${ep.method} ${ep.path} sets credentials=true for branch preview origin`
+      )
+
+      const resD2 = await sendOptionsRequest(server, ep.path, previewOrigin, ep.method, 'content-type')
+      assert(
+        resD2.headers['access-control-allow-origin'] === previewOrigin,
+        `Endpoint ${ep.method} ${ep.path} allows legacy preview origin`
       )
     }
   } finally {

@@ -125,6 +125,8 @@ export function getAllowedOrigins(): string[] {
     'https://www.kalaofficial.store',
     'https://kalaofficial.store',
     'https://kala-front-oa3puwsvr-niraj1234-svgs-projects.vercel.app',
+    'https://kala-front-git-qikink-live-integration-niraj1234-svgs-projects.vercel.app',
+    'https://project-wmdn7-git-qikink-live-integration-niraj1234-svgs-projects.vercel.app',
   ]
 
   // Optional additional comma-separated origins from environment
