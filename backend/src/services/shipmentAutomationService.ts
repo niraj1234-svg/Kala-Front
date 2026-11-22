@@ -49,12 +49,13 @@ export interface ShipmentWorkflowResult {
 const inFlightWorkflows = new Map<string, Promise<ShipmentWorkflowResult>>()
 
 /**
- * Normalizes a product's configured weight into kilograms.
+ * Normalizes a product's finished garment weight into kilograms.
  *
  * Unit Resolution Rules:
- * - If weight > 10, it is treated as grams (e.g. 280g -> 0.28kg, 650g -> 0.65kg).
- * - If weight is > 0 and <= 10, it is treated as kilograms (e.g. 0.5kg, 0.8kg).
- * - If weight is missing, zero, negative, or not finite, returns undefined (caller falls back to 0.5kg).
+ * - Standardized convention: All weights entered via Admin or Vendor interface are FINISHED PRODUCT WEIGHT IN GRAMS (e.g. 180g, 250g, 280g, 650g, 700g).
+ * - Values > 10 are treated as grams and converted to kilograms (e.g. 280g -> 0.28kg, 650g -> 0.65kg, 700g -> 0.70kg).
+ * - Values > 0 and <= 10 are treated as kilograms directly (legacy/decimal format support e.g. 0.5kg, 0.8kg).
+ * - Missing, zero, negative, or not finite values return undefined (caller falls back to DEFAULT_SHIPMENT_WEIGHT_KG = 0.5kg).
  */
 export function normalizeProductWeightKg(rawWeight: unknown): number | undefined {
   if (rawWeight === null || rawWeight === undefined) return undefined

@@ -1159,6 +1159,7 @@ export const createVendorProduct = async (req: Request, res: Response): Promise<
       sku,
       shippingInfo,
       approvalStatus, // 'DRAFT' | 'PENDING' | 'APPROVED'
+      weight,
     } = req.body
 
     if (!name || !name.trim()) {
@@ -1207,6 +1208,19 @@ export const createVendorProduct = async (req: Request, res: Response): Promise<
 
     const isAvailable = finalApprovalStatus === 'APPROVED'
 
+    let parsedWeight: number | undefined = undefined
+    if (weight !== undefined && weight !== null && weight !== '') {
+      const numWeight = typeof weight === 'number' ? weight : Number(weight)
+      if (!Number.isFinite(numWeight) || numWeight <= 0) {
+        res.status(400).json({
+          success: false,
+          message: 'Finished product weight must be a valid positive number in grams.',
+        })
+        return
+      }
+      parsedWeight = numWeight
+    }
+
     const product = await Product.create({
       id: productId,
       name: name.trim(),
@@ -1229,6 +1243,7 @@ export const createVendorProduct = async (req: Request, res: Response): Promise<
       rejectionReason: '',
       status: isAvailable ? 'ACTIVE' : 'DRAFT',
       available: isAvailable,
+      ...(parsedWeight !== undefined ? { weight: parsedWeight } : {}),
     })
 
     res.status(201).json({
@@ -1286,6 +1301,7 @@ export const updateVendorProduct = async (req: Request, res: Response): Promise<
       shippingInfo,
       status,
       approvalStatus,
+      weight,
     } = req.body
 
     if (name) product.name = name.trim()
@@ -1302,6 +1318,22 @@ export const updateVendorProduct = async (req: Request, res: Response): Promise<
     if (stock !== undefined) product.stock = Number(stock)
     if (sku !== undefined) product.sku = sku.trim()
     if (shippingInfo !== undefined) product.shippingInfo = shippingInfo.trim()
+
+    if (weight !== undefined) {
+      if (weight === null || weight === '') {
+        product.weight = undefined
+      } else {
+        const numWeight = typeof weight === 'number' ? weight : Number(weight)
+        if (!Number.isFinite(numWeight) || numWeight <= 0) {
+          res.status(400).json({
+            success: false,
+            message: 'Finished product weight must be a valid positive number in grams.',
+          })
+          return
+        }
+        product.weight = numWeight
+      }
+    }
 
     if (approvalStatus) {
       product.approvalStatus = approvalStatus

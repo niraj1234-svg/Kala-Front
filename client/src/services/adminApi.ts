@@ -769,6 +769,7 @@ export interface AdminProduct {
   image: string
   description: string
   available: boolean
+  weight?: number | null
   createdAt?: string
   updatedAt?: string
 }
@@ -792,6 +793,7 @@ export interface CreateAdminProductPayload {
   image: string
   description: string
   available?: boolean
+  weight?: number | null
 }
 
 export interface UpdateAdminProductPayload {
@@ -801,6 +803,7 @@ export interface UpdateAdminProductPayload {
   image?: string
   description?: string
   available?: boolean
+  weight?: number | null
 }
 
 export interface DeleteAdminProductResponse {

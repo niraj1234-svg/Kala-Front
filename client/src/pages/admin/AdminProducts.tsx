@@ -476,6 +476,7 @@ export const AdminProducts: React.FC = () => {
                   <th>Product Details</th>
                   <th>Category</th>
                   <th>Price</th>
+                  <th>Weight</th>
                   <th>Stock Availability</th>
                   <th className="text-right" style={{ whiteSpace: 'nowrap', minWidth: '220px' }}>Actions</th>
                 </tr>
@@ -506,6 +507,11 @@ export const AdminProducts: React.FC = () => {
                       <span className="admin-category-badge">{prod.category}</span>
                     </td>
                     <td className="font-medium text-white">{formatPrice(prod.price)}</td>
+                    <td>
+                      <span style={{ fontSize: '0.85rem', color: prod.weight ? '#E5E5E5' : '#888' }}>
+                        {prod.weight ? `${prod.weight}g` : '0.5kg (default)'}
+                      </span>
+                    </td>
                     <td>
                       <span
                         className={

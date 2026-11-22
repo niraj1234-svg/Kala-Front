@@ -151,7 +151,7 @@ export const getAdminProductById = async (req: Request, res: Response): Promise<
  */
 export const createAdminProduct = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id, name, category, price, image, description, available } = req.body
+    const { id, name, category, price, image, description, available, weight } = req.body
 
     // 1. Validate name
     if (!name || typeof name !== 'string' || !name.trim()) {
@@ -215,7 +215,21 @@ export const createAdminProduct = async (req: Request, res: Response): Promise<v
       return
     }
 
-    // 7. Create in MongoDB
+    // 7. Validate Optional Finished Product Weight (in grams)
+    let parsedWeight: number | undefined = undefined
+    if (weight !== undefined && weight !== null && weight !== '') {
+      const numWeight = typeof weight === 'number' ? weight : Number(weight)
+      if (!Number.isFinite(numWeight) || numWeight <= 0) {
+        res.status(400).json({
+          success: false,
+          message: 'Finished product weight must be a valid positive number in grams.',
+        })
+        return
+      }
+      parsedWeight = numWeight
+    }
+
+    // 8. Create in MongoDB
     const isAvailable = typeof available === 'boolean' ? available : true
     const newProduct = await Product.create({
       id: targetId,
@@ -225,6 +239,7 @@ export const createAdminProduct = async (req: Request, res: Response): Promise<v
       image: image.trim(),
       description: description.trim(),
       available: isAvailable,
+      ...(parsedWeight !== undefined ? { weight: parsedWeight } : {}),
     })
 
     res.status(201).json({
@@ -252,7 +267,7 @@ export const createAdminProduct = async (req: Request, res: Response): Promise<v
 export const updateAdminProduct = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params
-    const { name, category, price, image, description, available } = req.body
+    const { name, category, price, image, description, available, weight } = req.body
 
     if (!id || typeof id !== 'string') {
       res.status(400).json({
@@ -282,6 +297,7 @@ export const updateAdminProduct = async (req: Request, res: Response): Promise<v
       image: string
       description: string
       available: boolean
+      weight: number
     }> = {}
 
     // Validate fields if provided
@@ -352,7 +368,24 @@ export const updateAdminProduct = async (req: Request, res: Response): Promise<v
       updates.available = available
     }
 
-    if (Object.keys(updates).length === 0) {
+    const unsets: Record<string, string> = {}
+    if (weight !== undefined) {
+      if (weight === null || weight === '') {
+        unsets.weight = ''
+      } else {
+        const numWeight = typeof weight === 'number' ? weight : Number(weight)
+        if (!Number.isFinite(numWeight) || numWeight <= 0) {
+          res.status(400).json({
+            success: false,
+            message: 'Finished product weight must be a valid positive number in grams.',
+          })
+          return
+        }
+        updates.weight = numWeight
+      }
+    }
+
+    if (Object.keys(updates).length === 0 && Object.keys(unsets).length === 0) {
       res.status(400).json({
         success: false,
         message: 'No valid update fields provided.',
@@ -360,9 +393,13 @@ export const updateAdminProduct = async (req: Request, res: Response): Promise<v
       return
     }
 
+    const updateDoc: any = {}
+    if (Object.keys(updates).length > 0) updateDoc.$set = updates
+    if (Object.keys(unsets).length > 0) updateDoc.$unset = unsets
+
     const updatedProduct = await Product.findByIdAndUpdate(
       product._id,
-      { $set: updates },
+      updateDoc,
       { new: true, runValidators: true }
     )
 

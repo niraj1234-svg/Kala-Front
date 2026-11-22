@@ -13,6 +13,34 @@ import { isValidPincode } from '../services/shiprocketServiceabilityService'
 import { normalizeProductWeightKg } from '../services/shipmentAutomationService'
 import mongoose from 'mongoose'
 
+/**
+ * Provisional finished garment weight defaults (in grams) for custom apparel items.
+ * Used for Shiprocket courier parcel calculations when product is not in database catalog.
+ * Note: These are provisional finished garment estimates in grams, distinct from fabric GSM.
+ */
+export const PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS: Record<string, number> = {
+  'custom-t-shirt': 250,
+  'custom-tshirt': 250,
+  't-shirt': 250,
+  'tshirt': 250,
+  'custom-hoodie': 700,
+  'hoodie': 700,
+  'custom-jersey': 200,
+  'jersey': 200,
+  'bulk-tshirt': 250,
+  'bulk-tshirt-black': 250,
+  'bulk-tshirt-white': 250,
+  'bulk-hoodie': 700,
+  'bulk-hoodie-black': 700,
+  'bulk-hoodie-white': 700,
+  'bulk-jersey': 200,
+  'bulk-jersey-black': 200,
+  'bulk-jersey-white': 200,
+  'custom-polo': 250,
+  'polo': 250,
+  'bulk-polo': 250,
+}
+
 const VALID_SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'BULK', 'BULK (MIXED S-XXL)', 'FREE SIZE', 'CUSTOM']
 
 /**
@@ -233,13 +261,14 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     }
 
     // 5. Authoritative Custom Apparel Catalog & MongoDB Product Lookup
-    const CUSTOM_APPAREL_CATALOG: Record<string, { id: string; name: string; price: number; image: string; apparelType: string }> = {
+    const CUSTOM_APPAREL_CATALOG: Record<string, { id: string; name: string; price: number; image: string; apparelType: string; weightGrams?: number }> = {
       'custom-t-shirt': {
         id: 'custom-t-shirt',
         name: 'KALA Custom Printed T-Shirt',
         price: 349,
         image: '/custom-apparel/kala-custom-hero-floating.png',
         apparelType: 't-shirt',
+        weightGrams: 250,
       },
       'custom-tshirt': {
         id: 'custom-t-shirt',
@@ -247,6 +276,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 349,
         image: '/custom-apparel/kala-custom-hero-floating.png',
         apparelType: 't-shirt',
+        weightGrams: 250,
       },
       'tshirt': {
         id: 'custom-t-shirt',
@@ -254,6 +284,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 349,
         image: '/custom-apparel/kala-custom-hero-floating.png',
         apparelType: 't-shirt',
+        weightGrams: 250,
       },
       't-shirt': {
         id: 'custom-t-shirt',
@@ -261,6 +292,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 349,
         image: '/custom-apparel/kala-custom-hero-floating.png',
         apparelType: 't-shirt',
+        weightGrams: 250,
       },
       'custom-hoodie': {
         id: 'custom-hoodie',
@@ -268,6 +300,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 699,
         image: 'Streetwear -02.png',
         apparelType: 'hoodie',
+        weightGrams: 700,
       },
       'hoodie': {
         id: 'custom-hoodie',
@@ -275,6 +308,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 699,
         image: 'Streetwear -02.png',
         apparelType: 'hoodie',
+        weightGrams: 700,
       },
       'custom-jersey': {
         id: 'custom-jersey',
@@ -282,6 +316,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 429,
         image: 'gaming 01.png',
         apparelType: 'jersey',
+        weightGrams: 200,
       },
       'jersey': {
         id: 'custom-jersey',
@@ -289,6 +324,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 429,
         image: 'gaming 01.png',
         apparelType: 'jersey',
+        weightGrams: 200,
       },
       'bulk-tshirt': {
         id: 'bulk-tshirt',
@@ -296,6 +332,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 175,
         image: '/mockups/tshirt-black-front.svg',
         apparelType: 'tshirt',
+        weightGrams: 250,
       },
       'bulk-tshirt-black': {
         id: 'bulk-tshirt',
@@ -303,6 +340,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 175,
         image: '/mockups/tshirt-black-front.svg',
         apparelType: 'tshirt',
+        weightGrams: 250,
       },
       'bulk-tshirt-white': {
         id: 'bulk-tshirt',
@@ -310,6 +348,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 175,
         image: '/mockups/tshirt-white-front.svg',
         apparelType: 'tshirt',
+        weightGrams: 250,
       },
       'bulk-hoodie': {
         id: 'bulk-hoodie',
@@ -317,6 +356,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 680,
         image: '/mockups/hoodie-black-front.svg',
         apparelType: 'hoodie',
+        weightGrams: 700,
       },
       'bulk-hoodie-black': {
         id: 'bulk-hoodie',
@@ -324,6 +364,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 680,
         image: '/mockups/hoodie-black-front.svg',
         apparelType: 'hoodie',
+        weightGrams: 700,
       },
       'bulk-hoodie-white': {
         id: 'bulk-hoodie',
@@ -331,6 +372,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 680,
         image: '/mockups/hoodie-white-front.svg',
         apparelType: 'hoodie',
+        weightGrams: 700,
       },
       'bulk-jersey': {
         id: 'bulk-jersey',
@@ -338,6 +380,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 350,
         image: '/mockups/jersey-black-front.svg',
         apparelType: 'jersey',
+        weightGrams: 200,
       },
       'bulk-jersey-black': {
         id: 'bulk-jersey',
@@ -345,6 +388,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 350,
         image: '/mockups/jersey-black-front.svg',
         apparelType: 'jersey',
+        weightGrams: 200,
       },
       'bulk-jersey-white': {
         id: 'bulk-jersey',
@@ -352,6 +396,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 350,
         image: '/mockups/jersey-white-front.svg',
         apparelType: 'jersey',
+        weightGrams: 200,
       },
       'custom-polo': {
         id: 'custom-polo',
@@ -359,6 +404,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 299,
         image: '/custom-apparel/polos/regular-jmp-polo.png',
         apparelType: 'polo',
+        weightGrams: 250,
       },
       'polo': {
         id: 'custom-polo',
@@ -366,6 +412,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 299,
         image: '/custom-apparel/polos/regular-jmp-polo.png',
         apparelType: 'polo',
+        weightGrams: 250,
       },
       'bulk-polo': {
         id: 'custom-polo',
@@ -373,6 +420,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         price: 299,
         image: '/custom-apparel/polos/regular-jmp-polo.png',
         apparelType: 'polo',
+        weightGrams: 250,
       },
     }
 
@@ -506,7 +554,16 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         ? Math.round(bundleData.price / bundleData.slotCount)
         : baseProductPrice + customPrice
 
-      const weightKg = normalizeProductWeightKg(dbProduct?.weight)
+      // Authoritative finished garment weight determination:
+      // 1. From database product weight if catalog item (e.g. 280g)
+      // 2. From custom apparel provisional defaults if custom apparel (e.g. 250g, 700g, 200g)
+      // 3. Normalized into kilograms exactly once at the order snapshot boundary (0.28kg, 0.25kg, 0.70kg)
+      const rawProductWeight =
+        dbProduct?.weight !== undefined
+          ? dbProduct.weight
+          : (customFallback?.weightGrams ?? PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS[pid])
+
+      const weightKg = normalizeProductWeightKg(rawProductWeight)
 
       return {
         productId: dbProduct ? dbProduct.id : (customFallback?.id || item.productId.trim()),

@@ -53,6 +53,7 @@ export const AdminProductEdit: React.FC = () => {
   const [name, setName] = useState<string>('')
   const [category, setCategory] = useState<AdminProductCategory>('Streetwear')
   const [price, setPrice] = useState<string>('')
+  const [weight, setWeight] = useState<string>('')
   const [image, setImage] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [available, setAvailable] = useState<boolean>(true)
@@ -72,6 +73,7 @@ export const AdminProductEdit: React.FC = () => {
       setName(res.product.name)
       setCategory(res.product.category)
       setPrice(String(res.product.price))
+      setWeight(res.product.weight !== undefined && res.product.weight !== null ? String(res.product.weight) : '')
       setImage(res.product.image)
       setDescription(res.product.description)
       setAvailable(res.product.available)
@@ -127,6 +129,16 @@ export const AdminProductEdit: React.FC = () => {
       return
     }
 
+    let numWeight: number | null = null
+    if (weight.trim()) {
+      const parsed = Number(weight.trim())
+      if (isNaN(parsed) || !isFinite(parsed) || parsed <= 0) {
+        setSaveError('Finished product weight must be a valid positive number in grams.')
+        return
+      }
+      numWeight = parsed
+    }
+
     setIsSaving(true)
 
     try {
@@ -137,6 +149,7 @@ export const AdminProductEdit: React.FC = () => {
         image: image.trim(),
         description: description.trim(),
         available,
+        weight: numWeight,
       })
 
       setSaveSuccess('Product updated successfully!')
@@ -293,6 +306,25 @@ export const AdminProductEdit: React.FC = () => {
                 disabled={isSaving}
                 required
               />
+            </div>
+
+            {/* Finished Product Weight (grams) */}
+            <div className="admin-form-group flex-1">
+              <label htmlFor="edit-weight" className="admin-form-label">
+                Finished Product Weight (grams)
+              </label>
+              <input
+                id="edit-weight"
+                type="number"
+                min="1"
+                step="1"
+                className="admin-form-input font-mono"
+                placeholder="e.g. 280 (tee) or 650 (hoodie)"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                disabled={isSaving}
+              />
+              <span className="admin-form-hint">Physical weight in grams (used for Shiprocket parcel calculation). Leave empty to clear.</span>
             </div>
 
             {/* Availability */}

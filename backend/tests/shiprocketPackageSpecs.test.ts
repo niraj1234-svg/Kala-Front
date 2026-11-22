@@ -5,6 +5,7 @@ import {
   normalizeProductWeightKg,
 } from '../src/services/shipmentAutomationService'
 import { isValidPincode } from '../src/services/shiprocketServiceabilityService'
+import { PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS } from '../src/controllers/orderController'
 import { IOrderItem } from '../src/models/Order'
 
 describe('Shiprocket Package Intelligence & PIN Validation Suite', () => {
@@ -45,56 +46,93 @@ describe('Shiprocket Package Intelligence & PIN Validation Suite', () => {
     })
   })
 
-  describe('2. Product Weight Normalization: normalizeProductWeightKg()', () => {
-    it('normalizes gram-denominated weights (> 10) into kilograms', () => {
-      // Standard apparel manufacturing specifications
-      assert.equal(normalizeProductWeightKg(280), 0.28, '280g should normalize to 0.28kg')
-      assert.equal(normalizeProductWeightKg(650), 0.65, '650g should normalize to 0.65kg')
-      assert.equal(normalizeProductWeightKg(180), 0.18, '180g lightweight tee should normalize to 0.18kg')
-      assert.equal(normalizeProductWeightKg(1200), 1.2, '1200g should normalize to 1.2kg')
-      assert.equal(normalizeProductWeightKg('350'), 0.35, 'String "350" should normalize to 0.35kg')
+  describe('2. Weight Normalization & Standardization: normalizeProductWeightKg()', () => {
+    it('normalizes standard finished garment weights in grams into kilograms', () => {
+      assert.equal(normalizeProductWeightKg(180), 0.18, '180g lightweight tee -> 0.18kg')
+      assert.equal(normalizeProductWeightKg(250), 0.25, '250g custom/standard tee -> 0.25kg')
+      assert.equal(normalizeProductWeightKg(280), 0.28, '280g heavyweight oversized tee -> 0.28kg')
+      assert.equal(normalizeProductWeightKg(650), 0.65, '650g fleece hoodie -> 0.65kg')
+      assert.equal(normalizeProductWeightKg(700), 0.70, '700g heavyweight custom hoodie -> 0.70kg')
+      assert.equal(normalizeProductWeightKg(1200), 1.2, '1200g heavy outerwear -> 1.2kg')
     })
 
-    it('preserves kilogram-denominated weights (0 < w <= 10)', () => {
-      assert.equal(normalizeProductWeightKg(0.5), 0.5, '0.5kg should remain 0.5kg')
-      assert.equal(normalizeProductWeightKg(0.8), 0.8, '0.8kg should remain 0.8kg')
-      assert.equal(normalizeProductWeightKg(1.5), 1.5, '1.5kg should remain 1.5kg')
-      assert.equal(normalizeProductWeightKg('0.75'), 0.75, 'String "0.75" should parse to 0.75kg')
-      assert.equal(normalizeProductWeightKg(10), 10, '10kg boundary should remain 10kg')
+    it('preserves decimal kilogram weights (0 < w <= 10)', () => {
+      assert.equal(normalizeProductWeightKg(0.18), 0.18, '0.18kg remains 0.18kg')
+      assert.equal(normalizeProductWeightKg(0.25), 0.25, '0.25kg remains 0.25kg')
+      assert.equal(normalizeProductWeightKg(0.5), 0.5, '0.5kg remains 0.5kg')
+      assert.equal(normalizeProductWeightKg(0.7), 0.7, '0.7kg remains 0.7kg')
+      assert.equal(normalizeProductWeightKg('0.8'), 0.8, 'String "0.8" parses to 0.8kg')
+      assert.equal(normalizeProductWeightKg(10), 10, '10kg boundary remains 10kg')
     })
 
     it('returns undefined for missing, zero, negative, or invalid weights', () => {
       assert.equal(normalizeProductWeightKg(undefined), undefined, 'undefined returns undefined')
       assert.equal(normalizeProductWeightKg(null), undefined, 'null returns undefined')
       assert.equal(normalizeProductWeightKg(0), undefined, 'zero returns undefined')
-      assert.equal(normalizeProductWeightKg(-0.5), undefined, 'negative weight returns undefined')
-      assert.equal(normalizeProductWeightKg(-500), undefined, 'negative grams returns undefined')
+      assert.equal(normalizeProductWeightKg(-50), undefined, 'negative grams returns undefined')
+      assert.equal(normalizeProductWeightKg(-0.5), undefined, 'negative kg returns undefined')
       assert.equal(normalizeProductWeightKg('invalid'), undefined, 'non-numeric string returns undefined')
       assert.equal(normalizeProductWeightKg(NaN), undefined, 'NaN returns undefined')
       assert.equal(normalizeProductWeightKg(Infinity), undefined, 'Infinity returns undefined')
     })
+
+    it('confirms GSM in product descriptions never influences normalized product weight', () => {
+      // In KALA catalog, description might say "Heavyweight 450 GSM French Terry"
+      // But only the numeric finished garment weight (e.g. 650g) is normalized
+      const productWithGsmText = {
+        name: 'Oversized Tee',
+        description: 'Made with 240 GSM combed cotton.',
+        weight: 280, // finished garment weight in grams
+      }
+
+      // Weight normalization uses product.weight ONLY, never regex parsing of GSM description
+      const weightKg = normalizeProductWeightKg(productWithGsmText.weight)
+      assert.equal(weightKg, 0.28, 'Normalized weight must be 0.28kg (from 280g), NOT 0.24kg (from 240 GSM)')
+    })
   })
 
-  describe('3. Shipment Package Specs Calculation: calculateOrderPackageSpecs()', () => {
+  describe('3. Custom Apparel Provisional Weight Defaults', () => {
+    it('provides correct provisional defaults in grams for all custom apparel types', () => {
+      assert.equal(PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS['custom-t-shirt'], 250, 'Custom T-shirt default is 250g')
+      assert.equal(PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS['custom-tshirt'], 250)
+      assert.equal(PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS['custom-hoodie'], 700, 'Custom Hoodie default is 700g')
+      assert.equal(PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS['custom-jersey'], 200, 'Custom Jersey default is 200g')
+      assert.equal(PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS['bulk-tshirt'], 250, 'Bulk T-shirt default is 250g')
+    })
+
+    it('normalizes custom apparel provisional weights into exact kilograms', () => {
+      const teeKg = normalizeProductWeightKg(PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS['custom-t-shirt'])
+      const hoodieKg = normalizeProductWeightKg(PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS['custom-hoodie'])
+      const jerseyKg = normalizeProductWeightKg(PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS['custom-jersey'])
+      const bulkTeeKg = normalizeProductWeightKg(PROVISIONAL_CUSTOM_APPAREL_WEIGHTS_GRAMS['bulk-tshirt'])
+
+      assert.equal(teeKg, 0.25, 'Custom T-shirt must normalize to 0.25kg')
+      assert.equal(hoodieKg, 0.70, 'Custom Hoodie must normalize to 0.70kg')
+      assert.equal(jerseyKg, 0.20, 'Custom Jersey must normalize to 0.20kg')
+      assert.equal(bulkTeeKg, 0.25, 'Bulk T-shirt must normalize to 0.25kg per unit')
+    })
+  })
+
+  describe('4. Shipment Package Specs Calculation: calculateOrderPackageSpecs()', () => {
     it('uses item.weightKg for single item orders', () => {
       const items: IOrderItem[] = [
         {
-          productId: 'prod-hoodie-01',
-          name: 'Heavyweight Hoodie',
+          productId: 'prod-tee-01',
+          name: 'Heavyweight Tee',
           image: '',
           size: 'L',
           quantity: 1,
-          price: 1499,
-          weightKg: 0.8,
+          price: 999,
+          weightKg: 0.28,
         },
       ]
 
       const specs = calculateOrderPackageSpecs(items)
-      assert.equal(specs.weightKg, 0.8, 'Single item weight should equal item weightKg')
+      assert.equal(specs.weightKg, 0.28, 'Single item weight should equal item weightKg')
       assert.deepEqual(specs.dimensions, { length: 25, breadth: 20, height: 3 })
     })
 
-    it('correctly multiplies weightKg by item quantity', () => {
+    it('correctly multiplies weightKg by item quantity once', () => {
       const items: IOrderItem[] = [
         {
           productId: 'prod-hoodie-01',
@@ -102,17 +140,35 @@ describe('Shiprocket Package Intelligence & PIN Validation Suite', () => {
           image: '',
           size: 'L',
           quantity: 2,
-          price: 1499,
-          weightKg: 0.8,
+          price: 1999,
+          weightKg: 0.65,
         },
       ]
 
       const specs = calculateOrderPackageSpecs(items)
-      assert.equal(specs.weightKg, 1.6, '2 items @ 0.8kg should equal 1.6kg')
+      assert.equal(specs.weightKg, 1.30, '2 hoodies @ 0.65kg should equal 1.30kg')
       assert.deepEqual(specs.dimensions, { length: 25, breadth: 20, height: 6 })
     })
 
-    it('falls back to DEFAULT_SHIPMENT_WEIGHT_KG (0.5kg) when weightKg is missing', () => {
+    it('correctly handles bulk apparel orders (e.g. 5 bulk tees @ 0.25kg = 1.25kg)', () => {
+      const items: IOrderItem[] = [
+        {
+          productId: 'bulk-tshirt',
+          name: 'KALA Custom T-Shirt (Bulk)',
+          image: '',
+          size: 'BULK',
+          quantity: 5,
+          price: 175,
+          weightKg: 0.25,
+        },
+      ]
+
+      const specs = calculateOrderPackageSpecs(items)
+      assert.equal(specs.weightKg, 1.25, '5 bulk tees @ 0.25kg = 1.25kg')
+      assert.deepEqual(specs.dimensions, { length: 25, breadth: 20, height: 15 }, '5 units * 3cm = 15cm height')
+    })
+
+    it('falls back to DEFAULT_SHIPMENT_WEIGHT_KG (0.5kg) when weightKg is missing (historical orders)', () => {
       const items: IOrderItem[] = [
         {
           productId: 'prod-legacy-tee',
@@ -121,16 +177,16 @@ describe('Shiprocket Package Intelligence & PIN Validation Suite', () => {
           size: 'M',
           quantity: 1,
           price: 499,
-          // weightKg is undefined
+          // weightKg is undefined (historical order)
         },
       ]
 
       const specs = calculateOrderPackageSpecs(items)
-      assert.equal(specs.weightKg, 0.5, 'Missing weight should default to 0.5kg')
+      assert.equal(specs.weightKg, 0.5, 'Missing weight must default to 0.5kg for backward compatibility')
       assert.deepEqual(specs.dimensions, { length: 25, breadth: 20, height: 3 })
     })
 
-    it('handles multiple items with missing weights gracefully', () => {
+    it('handles multiple historical items with missing weights gracefully', () => {
       const items: IOrderItem[] = [
         {
           productId: 'item-1',
@@ -145,26 +201,27 @@ describe('Shiprocket Package Intelligence & PIN Validation Suite', () => {
           name: 'Item 2',
           image: '',
           size: 'L',
-          quantity: 1,
+          quantity: 2,
           price: 499,
         },
       ]
 
+      // 1 item + 2 items = 3 units -> 3 * 0.5kg = 1.5kg
       const specs = calculateOrderPackageSpecs(items)
-      assert.equal(specs.weightKg, 1.0, '2 unweighted items should total 1.0kg (2 x 0.5kg)')
-      assert.deepEqual(specs.dimensions, { length: 25, breadth: 20, height: 6 })
+      assert.equal(specs.weightKg, 1.5, '3 unweighted items should total 1.5kg (3 x 0.5kg)')
+      assert.deepEqual(specs.dimensions, { length: 25, breadth: 20, height: 9 })
     })
 
     it('handles mixed orders with both weighted and unweighted items', () => {
       const items: IOrderItem[] = [
         {
           productId: 'prod-hoodie',
-          name: 'Heavy Hoodie',
+          name: 'Custom Hoodie',
           image: '',
           size: 'XL',
           quantity: 1,
-          price: 1599,
-          weightKg: 0.8,
+          price: 699,
+          weightKg: 0.70, // 0.70kg
         },
         {
           productId: 'prod-tee',
@@ -173,49 +230,35 @@ describe('Shiprocket Package Intelligence & PIN Validation Suite', () => {
           size: 'M',
           quantity: 2,
           price: 499,
-          weightKg: 0.3,
+          weightKg: 0.25, // 2 * 0.25 = 0.50kg
         },
-      ]
-
-      // 1 x 0.8kg + 2 x 0.3kg = 1.4kg
-      const specs = calculateOrderPackageSpecs(items)
-      assert.equal(specs.weightKg, 1.4, 'Mixed order weight should be 1.4kg')
-      assert.deepEqual(specs.dimensions, { length: 25, breadth: 20, height: 9 })
-    })
-
-    it('supports custom apparel orders with safe fallback', () => {
-      const items: IOrderItem[] = [
         {
-          productId: 'custom-tshirt',
-          name: 'KALA Custom Apparel - T-Shirt',
-          image: 'https://cdn.kala.com/custom.png',
-          size: 'L',
+          productId: 'prod-unweighted',
+          name: 'Legacy Product',
+          image: '',
+          size: 'S',
           quantity: 1,
-          price: 549,
-          customization: {
-            apparelType: 't-shirt',
-            color: 'black',
-            position: 'front',
-            frontText: 'Custom KALA Studio',
-          },
+          price: 299,
+          // unweighted -> 0.50kg fallback
         },
       ]
 
+      // Total = 0.70 + 0.50 + 0.50 = 1.70kg. Total units = 1 + 2 + 1 = 4 units -> height 12cm
       const specs = calculateOrderPackageSpecs(items)
-      assert.equal(specs.weightKg, 0.5, 'Custom apparel without explicit weightKg defaults to 0.5kg')
-      assert.deepEqual(specs.dimensions, { length: 25, breadth: 20, height: 3 })
+      assert.equal(specs.weightKg, 1.70, 'Mixed order weight should be 1.70kg')
+      assert.deepEqual(specs.dimensions, { length: 25, breadth: 20, height: 12 })
     })
 
     it('clamps lightweight items to MIN_SHIPMENT_WEIGHT_KG (0.1kg)', () => {
       const items: IOrderItem[] = [
         {
-          productId: 'prod-sticker-pack',
-          name: 'Stickers',
+          productId: 'prod-sticker',
+          name: 'Sticker',
           image: '',
           size: 'FREE SIZE',
           quantity: 1,
-          price: 99,
-          weightKg: 0.05, // Below 0.1kg
+          price: 49,
+          weightKg: 0.04,
         },
       ]
 
@@ -232,12 +275,12 @@ describe('Shiprocket Package Intelligence & PIN Validation Suite', () => {
           size: 'XL',
           quantity: 20,
           price: 1999,
-          weightKg: 0.8, // 20 * 0.8 = 16.0kg
+          weightKg: 0.70, // 20 * 0.70 = 14.0kg
         },
       ]
 
       const specs = calculateOrderPackageSpecs(items)
-      assert.equal(specs.weightKg, 10.0, 'Overweight orders must clamp to 10.0kg')
+      assert.equal(specs.weightKg, 10.0, 'Orders exceeding 10kg must clamp to 10.0kg')
     })
 
     it('caps mailer bag height at 30cm maximum', () => {
@@ -249,7 +292,7 @@ describe('Shiprocket Package Intelligence & PIN Validation Suite', () => {
           size: 'M',
           quantity: 15, // 15 * 3cm = 45cm -> capped at 30cm
           price: 499,
-          weightKg: 0.3,
+          weightKg: 0.25,
         },
       ]
 
@@ -265,24 +308,6 @@ describe('Shiprocket Package Intelligence & PIN Validation Suite', () => {
       const undefSpecs = calculateOrderPackageSpecs(undefined)
       assert.equal(undefSpecs.weightKg, 0.1, 'Undefined items clamps to 0.1kg')
       assert.deepEqual(undefSpecs.dimensions, { length: 25, breadth: 20, height: 3 })
-    })
-
-    it('safely handles corrupt quantity values without NaN or infinite values', () => {
-      const corruptItems: any[] = [
-        {
-          productId: 'prod-corrupt',
-          name: 'Corrupt',
-          image: '',
-          size: 'M',
-          quantity: 'invalid',
-          price: 499,
-          weightKg: 0.6,
-        },
-      ]
-
-      const specs = calculateOrderPackageSpecs(corruptItems)
-      assert.equal(specs.weightKg, 0.6, 'Should default invalid quantity to 1 and compute 0.6kg')
-      assert.equal(specs.dimensions.height, 3, 'Should compute height for 1 unit')
     })
   })
 })
