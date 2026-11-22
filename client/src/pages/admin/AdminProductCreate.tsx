@@ -46,6 +46,7 @@ export const AdminProductCreate: React.FC = () => {
   const [customId, setCustomId] = useState<string>('')
   const [category, setCategory] = useState<AdminProductCategory>('Streetwear')
   const [price, setPrice] = useState<string>('')
+  const [weight, setWeight] = useState<string>('')
   const [image, setImage] = useState<string>('Streetwear 01.png')
   const [description, setDescription] = useState<string>('')
   const [available, setAvailable] = useState<boolean>(true)
@@ -93,6 +94,16 @@ export const AdminProductCreate: React.FC = () => {
       return
     }
 
+    let numWeight: number | undefined = undefined
+    if (weight.trim()) {
+      const parsed = Number(weight.trim())
+      if (isNaN(parsed) || !isFinite(parsed) || parsed <= 0) {
+        setErrorMessage('Finished product weight must be a valid positive number in grams.')
+        return
+      }
+      numWeight = parsed
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -104,6 +115,7 @@ export const AdminProductCreate: React.FC = () => {
         image: image.trim(),
         description: description.trim(),
         available,
+        weight: numWeight,
       }
 
       const res = await createAdminProduct(payload)
@@ -226,6 +238,27 @@ export const AdminProductCreate: React.FC = () => {
                 disabled={isSubmitting}
                 required
               />
+            </div>
+          </div>
+
+          <div className="admin-form-row">
+            {/* Finished Product Weight (grams) */}
+            <div className="admin-form-group flex-1">
+              <label htmlFor="prod-weight" className="admin-form-label">
+                Finished Product Weight (grams)
+              </label>
+              <input
+                id="prod-weight"
+                type="number"
+                min="1"
+                step="1"
+                className="admin-form-input font-mono"
+                placeholder="e.g. 280 (tee) or 650 (hoodie)"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                disabled={isSubmitting}
+              />
+              <span className="admin-form-hint">Physical weight in grams (used for Shiprocket parcel calculation).</span>
             </div>
 
             {/* Availability */}

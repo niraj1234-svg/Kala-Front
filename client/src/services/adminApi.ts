@@ -125,6 +125,101 @@ export interface AdminOrderStatusHistory {
   changedBy?: string
 }
 
+export type ShiprocketShipmentStatus =
+  | 'pending'
+  | 'created'
+  | 'awb_assigned'
+  | 'label_generated'
+  | 'pickup_scheduled'
+  | 'pickup_generated'
+  | 'pickup_completed'
+  | 'in_transit'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'rto_initiated'
+  | 'rto_delivered'
+  | 'cancelled'
+  | 'failed'
+
+export interface AdminTrackingScan {
+  date: string
+  status: string
+  activity: string
+  location: string
+  srStatus?: string
+}
+
+export interface AdminShiprocketOrderRecord {
+  orderId?: number | string
+  shipmentId?: number | string
+  channelOrderId?: string
+  awbCode?: string
+  courierName?: string
+  courierId?: number
+  labelUrl?: string
+  labelGeneratedAt?: string
+  invoiceUrl?: string
+  invoiceGeneratedAt?: string
+  pickupScheduledDate?: string
+  pickupTokenNumber?: string
+  pickupGeneratedAt?: string
+  status: ShiprocketShipmentStatus
+  lastError?: string
+  retryCount?: number
+  lastAttemptAt?: string
+  currentTrackingStatus?: string
+  lastTrackingSyncAt?: string
+  awbAssignedAt?: string
+  trackingScans?: AdminTrackingScan[]
+  weightKg?: number
+  dimensions?: {
+    length: number
+    breadth: number
+    height: number
+  }
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface AdminShippingActionResponse {
+  success: boolean
+  orderId?: string
+  shiprocketOrderId?: number | string
+  shipmentId?: number | string
+  awbCode?: string
+  status?: ShiprocketShipmentStatus
+  message: string
+}
+
+export interface AdminShippingTrackResponse {
+  success: boolean
+  orderId: string
+  awbCode: string
+  currentStatus?: string
+  currentLocation?: string
+  etd?: string
+  scans: AdminTrackingScan[]
+  trackingUrl?: string
+  message: string
+}
+
+export interface AdminShippingUrlResponse {
+  success: boolean
+  orderId: string
+  labelUrl?: string
+  invoiceUrl?: string
+  message?: string
+}
+
+export interface AdminShippingPickupResponse {
+  success: boolean
+  orderId: string
+  pickupStatus?: number
+  pickupTokenNumber?: string
+  pickupScheduledDate?: string
+  message: string
+}
+
 export interface AdminOrder {
   orderId: string
   userId?: string
@@ -141,6 +236,7 @@ export interface AdminOrder {
   }
   status: AdminOrderStatus
   tracking?: AdminOrderTracking
+  shiprocketOrder?: AdminShiprocketOrderRecord
   statusHistory?: AdminOrderStatusHistory[]
   createdAt: string
   updatedAt: string
@@ -673,6 +769,7 @@ export interface AdminProduct {
   image: string
   description: string
   available: boolean
+  weight?: number | null
   createdAt?: string
   updatedAt?: string
 }
@@ -696,6 +793,7 @@ export interface CreateAdminProductPayload {
   image: string
   description: string
   available?: boolean
+  weight?: number | null
 }
 
 export interface UpdateAdminProductPayload {
@@ -705,6 +803,7 @@ export interface UpdateAdminProductPayload {
   image?: string
   description?: string
   available?: boolean
+  weight?: number | null
 }
 
 export interface DeleteAdminProductResponse {
@@ -1192,3 +1291,56 @@ export {
   type AdminReviewsResponse,
   type AdminReviewDetailResponse,
 } from './reviewApi'
+
+// =========================================================================
+// SHIPROCKET LOGISTICS & SHIPPING (ADMIN)
+// =========================================================================
+
+/**
+ * Retries or triggers fulfillment and AWB assignment for an order via Shiprocket.
+ */
+export async function retryAdminOrderShipment(orderId: string): Promise<AdminShippingActionResponse> {
+  return adminFetch<AdminShippingActionResponse>(`/admin/shipping/retry/${encodeURIComponent(orderId)}`, {
+    method: 'POST',
+  })
+}
+
+/**
+ * Queries real-time tracking from Shiprocket using the assigned AWB code.
+ */
+export async function trackAdminOrderShipment(orderId: string): Promise<AdminShippingTrackResponse> {
+  return adminFetch<AdminShippingTrackResponse>(`/admin/shipping/track/${encodeURIComponent(orderId)}`, {
+    method: 'GET',
+  })
+}
+
+/**
+ * Generates and fetches shipping label PDF URL for a shipment.
+ */
+export async function getAdminOrderShippingLabel(orderId: string): Promise<AdminShippingUrlResponse> {
+  return adminFetch<AdminShippingUrlResponse>(`/admin/shipping/label/${encodeURIComponent(orderId)}`, {
+    method: 'GET',
+  })
+}
+
+/**
+ * Generates and fetches commercial invoice PDF URL for a shipment.
+ */
+export async function getAdminOrderInvoice(orderId: string): Promise<AdminShippingUrlResponse> {
+  return adminFetch<AdminShippingUrlResponse>(`/admin/shipping/invoice/${encodeURIComponent(orderId)}`, {
+    method: 'GET',
+  })
+}
+
+/**
+ * Requests courier pickup for an assigned shipment.
+ */
+export async function scheduleAdminOrderPickup(
+  orderId: string,
+  pickupDate?: string
+): Promise<AdminShippingPickupResponse> {
+  return adminFetch<AdminShippingPickupResponse>(`/admin/shipping/pickup/${encodeURIComponent(orderId)}`, {
+    method: 'POST',
+    body: JSON.stringify(pickupDate ? { pickupDate } : {}),
+  })
+}

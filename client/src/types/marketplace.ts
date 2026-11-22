@@ -57,6 +57,7 @@ export interface MarketplaceProduct {
   sizes?: string[]
   colors?: string[]
   shippingInfo?: string
+  weight?: number | null
   status?: 'DRAFT' | 'ACTIVE' | 'OUT_OF_STOCK' | 'ARCHIVED' | 'RESTRICTED'
   approvalStatus?: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED'
   rejectionReason?: string

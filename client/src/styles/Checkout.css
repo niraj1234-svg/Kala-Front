@@ -577,3 +577,148 @@
   margin-top: 0.2rem;
 }
 
+/* ==========================================================================
+   SHIPPING SERVICEABILITY BADGE & ADVISORY DISPLAY
+   ========================================================================== */
+
+.kala-shipping-badge {
+  margin-top: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 2px;
+  font-size: 0.775rem;
+  line-height: 1.4;
+  animation: kalaFadeIn 0.2s ease-in;
+}
+
+@keyframes kalaFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kala-shipping-badge-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Checking State */
+.kala-shipping-badge.checking {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+}
+
+.kala-shipping-badge-content.checking {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.kala-shipping-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #cbd5e1;
+  border-top-color: #06413f;
+  border-radius: 50%;
+  animation: kala-spin 0.6s linear infinite;
+}
+
+@keyframes kala-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.kala-shipping-text {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Serviceable State */
+.kala-shipping-badge.serviceable {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.kala-shipping-badge-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.kala-shipping-icon {
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.kala-shipping-title {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.kala-shipping-free-tag {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  background-color: #15803d;
+  color: #ffffff;
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  margin-left: auto;
+}
+
+.kala-shipping-eta {
+  font-size: 0.725rem;
+  color: #15803d;
+  margin-top: 0.15rem;
+}
+
+.kala-shipping-date {
+  color: #166534;
+  font-weight: 600;
+}
+
+/* Unserviceable State */
+.kala-shipping-badge.unserviceable {
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+}
+
+.kala-shipping-badge.unserviceable .kala-shipping-title {
+  color: #92400e;
+}
+
+.kala-shipping-desc {
+  margin: 0.2rem 0 0;
+  font-size: 0.725rem;
+  color: #78350f;
+  line-height: 1.35;
+}
+
+/* Temporarily Unavailable State */
+.kala-shipping-badge.temporarily_unavailable {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+}
+
+.kala-shipping-badge.temporarily_unavailable .kala-shipping-title {
+  color: #374151;
+}
+
+.kala-shipping-badge.temporarily_unavailable .kala-shipping-desc {
+  margin: 0.2rem 0 0;
+  font-size: 0.725rem;
+  color: #4b5563;
+  line-height: 1.35;
+}

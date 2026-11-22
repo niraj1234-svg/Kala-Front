@@ -7,6 +7,11 @@ import type { CreateOrderPayload, ValidateCouponResponse } from '../services/ord
 import { createRazorpayOrder, verifyRazorpayPayment, loadRazorpayScript } from '../services/paymentApi'
 import type { RazorpayOptions, RazorpaySuccessResponse, RazorpayErrorResponse } from '../types/razorpay'
 import { saveOrder } from '../types/order'
+import {
+  checkShippingServiceability,
+  formatEstimatedDeliveryDate,
+  type PublicDeliveryEstimate,
+} from '../services/shippingApi'
 import '../styles/Checkout.css'
 
 interface FormData {
@@ -113,6 +118,98 @@ export const Checkout: React.FC = () => {
   const [isApplyingCoupon, setIsApplyingCoupon] = useState<boolean>(false)
   const [couponError, setCouponError] = useState<string | null>(null)
   const [couponSuccess, setCouponSuccess] = useState<string | null>(null)
+
+  // Shipping serviceability state (Advisory display only, never blocks checkout)
+  type ServiceabilityUIStatus = 'idle' | 'checking' | 'serviceable' | 'unserviceable' | 'temporarily_unavailable'
+  const [shippingStatus, setShippingStatus] = useState<ServiceabilityUIStatus>('idle')
+  const [shippingEstimate, setShippingEstimate] = useState<PublicDeliveryEstimate | null>(null)
+  const [shippingLocation, setShippingLocation] = useState<{ city?: string; state?: string } | null>(null)
+  const [shippingMessage, setShippingMessage] = useState<string | null>(null)
+
+  const requestIdRef = useRef<number>(0)
+  const abortControllerRef = useRef<AbortController | null>(null)
+
+  // Serviceability check with 400ms debounce, AbortController, and request sequence tracking
+  useEffect(() => {
+    const cleanPin = formData.pinCode.trim()
+
+    // 1. Cancel any active in-flight request on pincode change
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+    }
+
+    // 2. Clear previous results when pincode is incomplete or invalid
+    if (!/^\d{6}$/.test(cleanPin)) {
+      setShippingStatus('idle')
+      setShippingEstimate(null)
+      setShippingLocation(null)
+      setShippingMessage(null)
+      return
+    }
+
+    // 3. Initiate debounced check for valid 6-digit PIN
+    setShippingStatus('checking')
+    setShippingMessage('Checking delivery serviceability...')
+
+    const currentRequestId = ++requestIdRef.current
+    const controller = new AbortController()
+    abortControllerRef.current = controller
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await checkShippingServiceability(cleanPin, controller.signal)
+
+        // Drop stale responses or if request was aborted
+        if (currentRequestId !== requestIdRef.current || controller.signal.aborted) {
+          return
+        }
+
+        if (res && res.success && res.serviceable) {
+          setShippingStatus('serviceable')
+          setShippingEstimate(res.deliveryEstimate || null)
+          setShippingLocation(
+            res.city || res.state ? { city: res.city, state: res.state } : null
+          )
+          setShippingMessage(res.message || 'Delivery is available for this pincode.')
+        } else if (res && res.status === 'unserviceable') {
+          setShippingStatus('unserviceable')
+          setShippingEstimate(null)
+          setShippingLocation(null)
+          setShippingMessage(res.message || 'Delivery is currently unavailable for this pincode.')
+        } else if (res && res.status === 'invalid_input') {
+          setShippingStatus('unserviceable')
+          setShippingEstimate(null)
+          setShippingLocation(null)
+          setShippingMessage(res.message || 'Invalid delivery pincode.')
+        } else {
+          setShippingStatus('temporarily_unavailable')
+          setShippingEstimate(null)
+          setShippingLocation(null)
+          setShippingMessage(
+            res?.message || 'Delivery check is temporarily unavailable. You can still proceed with your order.'
+          )
+        }
+      } catch (err: any) {
+        // AbortError is expected when user types or unmounts; ignore completely
+        if (err?.name === 'AbortError' || controller.signal.aborted) {
+          return
+        }
+        if (currentRequestId !== requestIdRef.current) {
+          return
+        }
+        setShippingStatus('temporarily_unavailable')
+        setShippingEstimate(null)
+        setShippingLocation(null)
+        setShippingMessage('Unable to verify delivery ETA right now. You can still proceed with your order.')
+      }
+    }, 400)
+
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [formData.pinCode])
 
   // Cart / Bundle mutation reactivity: automatically revalidate or invalidate coupon when items change
   const cartKey = JSON.stringify(
@@ -732,6 +829,75 @@ export const Checkout: React.FC = () => {
                   autoComplete="postal-code"
                 />
                 {errors.pinCode && <span className="kala-form-error">{errors.pinCode}</span>}
+
+                {/* Shipping Serviceability Feedback (Advisory Display - Never Blocks Checkout) */}
+                {shippingStatus !== 'idle' && (
+                  <div
+                    className={`kala-shipping-badge ${shippingStatus}`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    {shippingStatus === 'checking' && (
+                      <div className="kala-shipping-badge-content checking">
+                        <span className="kala-shipping-spinner" aria-hidden="true" />
+                        <span className="kala-shipping-text">Checking delivery serviceability...</span>
+                      </div>
+                    )}
+
+                    {shippingStatus === 'serviceable' && (
+                      <div className="kala-shipping-badge-content serviceable">
+                        <div className="kala-shipping-badge-header">
+                          <span className="kala-shipping-icon" aria-hidden="true">✓</span>
+                          <span className="kala-shipping-title">
+                            Delivery Available{shippingLocation?.city ? ` to ${shippingLocation.city}` : ''}
+                            {shippingLocation?.state && !shippingLocation?.city ? ` to ${shippingLocation.state}` : ''}
+                          </span>
+                          <span className="kala-shipping-free-tag">FREE</span>
+                        </div>
+                        {shippingEstimate && (
+                          <div className="kala-shipping-eta">
+                            {shippingEstimate.minEstimatedDays && shippingEstimate.maxEstimatedDays ? (
+                              shippingEstimate.minEstimatedDays === shippingEstimate.maxEstimatedDays ? (
+                                <span>Estimated delivery: <strong>{shippingEstimate.minEstimatedDays} days</strong></span>
+                              ) : (
+                                <span>Estimated delivery: <strong>{shippingEstimate.minEstimatedDays}–{shippingEstimate.maxEstimatedDays} business days</strong></span>
+                              )
+                            ) : shippingEstimate.minEstimatedDays ? (
+                              <span>Estimated delivery: <strong>within {shippingEstimate.minEstimatedDays} business days</strong></span>
+                            ) : null}
+                            {formatEstimatedDeliveryDate(shippingEstimate.estimatedDeliveryDate) && (
+                              <span className="kala-shipping-date"> (by {formatEstimatedDeliveryDate(shippingEstimate.estimatedDeliveryDate)})</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {shippingStatus === 'unserviceable' && (
+                      <div className="kala-shipping-badge-content unserviceable">
+                        <div className="kala-shipping-badge-header">
+                          <span className="kala-shipping-icon" aria-hidden="true">⚠</span>
+                          <span className="kala-shipping-title">Delivery may be delayed for this PIN</span>
+                        </div>
+                        <p className="kala-shipping-desc">
+                          {shippingMessage || `Couriers report limited serviceability for PIN ${formData.pinCode.trim()}. You can still place your order; our team will arrange alternate delivery if required.`}
+                        </p>
+                      </div>
+                    )}
+
+                    {shippingStatus === 'temporarily_unavailable' && (
+                      <div className="kala-shipping-badge-content temporarily-unavailable">
+                        <div className="kala-shipping-badge-header">
+                          <span className="kala-shipping-icon" aria-hidden="true">ℹ</span>
+                          <span className="kala-shipping-title">Live delivery check unavailable</span>
+                        </div>
+                        <p className="kala-shipping-desc">
+                          {shippingMessage || 'Could not fetch real-time courier ETA. You can still proceed with your order.'}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </section>

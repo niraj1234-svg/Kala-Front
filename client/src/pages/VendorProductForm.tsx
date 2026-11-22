@@ -36,6 +36,7 @@ export const VendorProductForm: React.FC = () => {
     description: '',
     stock: '50',
     sku: '',
+    weight: '',
     status: 'ACTIVE',
     sizes: ['S', 'M', 'L', 'XL'],
     colors: 'Black, White',
@@ -73,6 +74,7 @@ export const VendorProductForm: React.FC = () => {
             description: found.description || '',
             stock: found.stock !== undefined ? String(found.stock) : '50',
             sku: found.sku || '',
+            weight: found.weight !== undefined && found.weight !== null ? String(found.weight) : '',
             status: found.status || 'ACTIVE',
             sizes: found.sizes || ['S', 'M', 'L'],
             colors: Array.isArray(found.colors) ? found.colors.join(', ') : 'Black, White',
@@ -133,6 +135,16 @@ export const VendorProductForm: React.FC = () => {
       return
     }
 
+    let numWeight: number | undefined = undefined
+    if (formData.weight && formData.weight.trim()) {
+      const parsed = Number(formData.weight.trim())
+      if (isNaN(parsed) || !isFinite(parsed) || parsed <= 0) {
+        setError('Finished product weight must be a valid positive number in grams.')
+        return
+      }
+      numWeight = parsed
+    }
+
     setSubmitting(true)
     try {
       const payload = {
@@ -144,6 +156,7 @@ export const VendorProductForm: React.FC = () => {
         description: formData.description.trim(),
         stock: Number(formData.stock) || 0,
         sku: formData.sku.trim(),
+        weight: numWeight,
         status: formData.status as any,
         sizes: formData.sizes,
         colors: formData.colors
@@ -339,6 +352,23 @@ export const VendorProductForm: React.FC = () => {
                 value={formData.sku}
                 onChange={handleInputChange}
               />
+            </div>
+
+            <div className="vendor-form-group">
+              <label className="vendor-form-label">Finished Product Weight (grams)</label>
+              <input
+                type="number"
+                name="weight"
+                min="1"
+                step="1"
+                className="vendor-form-input"
+                placeholder="e.g. 280 (T-shirt) or 650 (Hoodie)"
+                value={formData.weight}
+                onChange={handleInputChange}
+              />
+              <span style={{ fontSize: '0.78rem', color: '#888', marginTop: '0.25rem', display: 'block' }}>
+                Actual finished garment weight in grams for shipping package specs.
+              </span>
             </div>
           </div>
 

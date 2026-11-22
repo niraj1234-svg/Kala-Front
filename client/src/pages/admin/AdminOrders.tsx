@@ -131,6 +131,32 @@ export const AdminOrders: React.FC = () => {
     }
   }
 
+  const getShiprocketStatusBadgeClass = (status?: string) => {
+    switch (status) {
+      case 'delivered':
+        return 'status-badge status-success'
+      case 'out_for_delivery':
+        return 'status-badge status-cyan'
+      case 'in_transit':
+        return 'status-badge status-purple'
+      case 'pickup_scheduled':
+      case 'pickup_generated':
+      case 'label_generated':
+      case 'awb_assigned':
+        return 'status-badge status-info'
+      case 'created':
+        return 'status-badge status-orange'
+      case 'failed':
+      case 'cancelled':
+        return 'status-badge status-danger'
+      case 'rto_initiated':
+      case 'rto_delivered':
+        return 'status-badge status-warning'
+      default:
+        return 'status-badge status-neutral'
+    }
+  }
+
   const getStatusBadgeClass = (status: AdminOrderStatus) => {
     switch (status) {
       case 'confirmed':
@@ -309,6 +335,21 @@ export const AdminOrders: React.FC = () => {
                         <span className={getStatusBadgeClass(order.status)}>
                           {formatStatusDisplay(order.status).toUpperCase()}
                         </span>
+                        {order.shiprocketOrder?.status && (
+                          <div style={{ marginTop: '0.35rem' }}>
+                            <span
+                              className={getShiprocketStatusBadgeClass(order.shiprocketOrder.status)}
+                              style={{ fontSize: '0.62rem', padding: '0.1rem 0.4rem', textTransform: 'uppercase' }}
+                            >
+                              SR: {order.shiprocketOrder.status.replace(/_/g, ' ')}
+                            </span>
+                            {order.shiprocketOrder.awbCode && (
+                              <div className="font-mono text-[10px] text-zinc-400" style={{ marginTop: '0.1rem' }}>
+                                AWB: {order.shiprocketOrder.awbCode}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </td>
                       <td>
                         {/* Change Status Dropdown */}

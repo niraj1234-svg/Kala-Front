@@ -10,6 +10,7 @@ import {
 import { Order } from '../models/Order'
 import { getAuthenticatedUser, AuthResult } from '../middleware/authMiddleware'
 import { sendOrderPaidNotifications } from '../services/notificationService'
+import { triggerShipmentWorkflow } from '../services/shipmentAutomationService'
 
 /**
  * Verifies that the requester has legitimate ownership over the KALA order.
@@ -325,6 +326,25 @@ export const verifyRazorpayPayment = async (req: Request, res: Response): Promis
       const order = await Order.findOne({ orderId: cleanOrderId })
 
       if (order) {
+        if (order.status === 'cancelled') {
+          res.status(400).json({
+            success: false,
+            message: 'Cannot verify payment for a cancelled order.',
+          })
+          return
+        }
+
+        if (order.payment?.razorpayOrderId && order.payment.razorpayOrderId !== razorpay_order_id.trim()) {
+          console.warn(
+            `[PaymentController] Razorpay order mismatch for ${cleanOrderId}: expected ${order.payment.razorpayOrderId}, received ${razorpay_order_id.trim()}`
+          )
+          res.status(400).json({
+            success: false,
+            message: 'Payment verification failed: Razorpay order ID mismatch.',
+          })
+          return
+        }
+
         if (order.payment?.status === 'paid' || order.status === 'confirmed') {
           console.warn(`[PaymentController] Duplicate payment notice: order ${cleanOrderId} already marked paid.`)
         } else {
@@ -353,6 +373,11 @@ export const verifyRazorpayPayment = async (req: Request, res: Response): Promis
           sendOrderPaidNotifications(order).catch((notifErr) => {
             console.error('[PaymentController] sendOrderPaidNotifications error:', notifErr)
           })
+
+          // Trigger automatic Shiprocket shipment creation workflow (Phases 3 & 4)
+          triggerShipmentWorkflow(cleanOrderId).catch((shipErr) => {
+            console.error(`[PaymentController] triggerShipmentWorkflow error for ${cleanOrderId}:`, shipErr)
+          })
         }
       }
     }
@@ -375,7 +400,7 @@ export const verifyRazorpayPayment = async (req: Request, res: Response): Promis
 
 /**
  * POST /api/payment/webhook
- * Razorpay server-to-server webhook endpoint with signature verification and idempotency.
+ * Razorpay server-to-server webhook endpoint with signature verification, amount checking, and idempotency.
  */
 export const handleRazorpayWebhook = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -383,14 +408,23 @@ export const handleRazorpayWebhook = async (req: Request, res: Response): Promis
     const receivedSignature = req.headers['x-razorpay-signature'] as string | undefined
 
     // 1. Verify webhook signature if secret is configured
-    if (webhookSecret && receivedSignature) {
+    if (webhookSecret) {
+      if (!receivedSignature || typeof receivedSignature !== 'string') {
+        console.warn('[PaymentController] Webhook signature missing in headers.')
+        res.status(400).json({ success: false, message: 'Missing x-razorpay-signature header.' })
+        return
+      }
+
       const payloadString = JSON.stringify(req.body)
       const expectedSignature = crypto
         .createHmac('sha256', webhookSecret)
         .update(payloadString)
         .digest('hex')
 
-      if (receivedSignature !== expectedSignature) {
+      const bufIncoming = Buffer.from(receivedSignature.trim())
+      const bufExpected = Buffer.from(expectedSignature)
+
+      if (bufIncoming.length !== bufExpected.length || !crypto.timingSafeEqual(bufIncoming, bufExpected)) {
         console.warn('[PaymentController] Webhook signature verification failed.')
         res.status(400).json({ success: false, message: 'Invalid webhook signature.' })
         return
@@ -402,6 +436,14 @@ export const handleRazorpayWebhook = async (req: Request, res: Response): Promis
     const orderEntity = req.body?.payload?.order?.entity
 
     console.log(`[PaymentController] Webhook received: ${event}`)
+
+    // Handle failed payments explicitly without triggering fulfillment
+    if (event === 'payment.failed') {
+      const razorpayOrderId = paymentEntity?.order_id || orderEntity?.id
+      console.log(`[PaymentController] Payment failed event recorded for Razorpay order: ${razorpayOrderId}`)
+      res.status(200).json({ status: 'ok', note: 'payment.failed acknowledged; fulfillment bypassed' })
+      return
+    }
 
     if (event === 'payment.captured' || event === 'order.paid') {
       const razorpayOrderId = paymentEntity?.order_id || orderEntity?.id
@@ -418,6 +460,26 @@ export const handleRazorpayWebhook = async (req: Request, res: Response): Promis
       }
 
       if (order) {
+        if (order.status === 'cancelled') {
+          console.warn(`[PaymentController] Webhook received for cancelled order ${order.orderId}. Ignoring.`)
+          res.status(200).json({ status: 'ok', note: 'Order was cancelled; fulfillment aborted' })
+          return
+        }
+
+        // Validate paid amount against authoritative server-calculated total
+        const paidAmountPaise = typeof paymentEntity?.amount === 'number' ? paymentEntity.amount : undefined
+        const expectedAmountPaise = Math.round(order.pricing.total * 100)
+        if (paidAmountPaise !== undefined && paidAmountPaise !== expectedAmountPaise) {
+          console.error(
+            `[PaymentController] Payment amount mismatch for order ${order.orderId}: expected ${expectedAmountPaise} paise, received ${paidAmountPaise} paise.`
+          )
+          res.status(400).json({
+            success: false,
+            message: 'Payment amount mismatch against server-calculated total.',
+          })
+          return
+        }
+
         if (order.payment?.status !== 'paid') {
           order.status = 'confirmed'
           order.payment = {
@@ -441,12 +503,21 @@ export const handleRazorpayWebhook = async (req: Request, res: Response): Promis
 
           await order.save()
           console.log(`[PaymentController] Webhook marked order ${order.orderId} as paid & confirmed.`)
-        }
 
-        // Idempotent notifications (will not send duplicates if already sent)
-        sendOrderPaidNotifications(order).catch((err) => {
-          console.error('[PaymentController] Webhook notification dispatch error:', err)
-        })
+          // Idempotent notifications (ONLY dispatched on initial transition to paid)
+          sendOrderPaidNotifications(order).catch((err) => {
+            console.error('[PaymentController] Webhook notification dispatch error:', err)
+          })
+
+          // Trigger automatic Shiprocket shipment creation workflow (Phases 3 & 4)
+          triggerShipmentWorkflow(order.orderId).catch((shipErr) => {
+            console.error(`[PaymentController] Webhook triggerShipmentWorkflow error for ${order.orderId}:`, shipErr)
+          })
+        } else {
+          console.log(
+            `[PaymentController] Duplicate webhook event for already-paid order ${order.orderId}. Acknowledging without re-fulfilling.`
+          )
+        }
       }
     }
 
